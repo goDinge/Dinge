@@ -35,7 +35,7 @@ const MapScreen = (props) => {
       <MapView
         style={styles.map}
         region={region}
-        minZoomLevel={15}
+        minZoomLevel={14}
         maxZoomLevel={16}
       >
         {dummyMarkers.map((item, index) => (
