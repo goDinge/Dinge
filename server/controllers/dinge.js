@@ -1,28 +1,88 @@
+const fs = require('fs');
 const Ding = require('../models/Ding');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const aws = require('aws-sdk');
 
 //desc    CREATE Ding
 //route   POST /api/dinge
 //access  private
 exports.createDing = asyncHandler(async (req, res, next) => {
   const user = req.user.id;
-  const { title, dingType, location, thumbUrl, imgUrl } = req.body;
+  //const { title, dingType, location, thumbUrl, imgUrl } = req.body;
+  const { title, dingType, location } = req.body;
 
-  if (!title || !location || !thumbUrl || !imgUrl) {
-    return next(new ErrorResponse('Please upload all info required.', 400));
+  let imgUrl, thumbUrl;
+
+  if (!title || !location) {
+    return next(
+      new ErrorResponse('Please enter title and location info.', 400)
+    );
   }
 
-  const ding = await Ding.create({
-    user,
-    title,
-    dingType,
-    location,
-    thumbUrl,
-    imgUrl,
+  uploads = req.files;
+  aws.config.setPromisesDependency();
+  aws.config.update({
+    accessKeyId: process.env.ACCESSKEYID,
+    secretAccessKey: process.env.SECRETACCESSKEY,
+    region: process.env.REGION,
   });
 
-  res.status(200).json({ success: true, data: ding });
+  //console.log(uploads);
+
+  const s3 = new aws.S3();
+
+  let folder; //img vs thumbnails
+
+  uploads.forEach((upload) => {
+    folder = 'img';
+    if (upload.originalname.includes('-thumb')) {
+      folder = 'thumbnails';
+    }
+    let params = {
+      ACL: 'public-read',
+      Bucket: process.env.BUCKET_NAME,
+      Body: fs.createReadStream(upload.path),
+      Key: `${folder}/${upload.originalname}`,
+    };
+
+    s3.upload(params, async (err, data) => {
+      if (err) {
+        res.json({ msg: err });
+      }
+
+      fs.unlinkSync(upload.path);
+
+      if (data) {
+        if (data.key.includes('thumbnails')) {
+          thumbUrl = data.Location;
+        } else {
+          imgUrl = data.Location;
+        }
+      }
+
+      //submissionPic only created when all uploads are completed
+      //submission only gets saved then
+      if (imgUrl && thumbUrl) {
+        console.log(
+          'Files have been uploaded to S3 and URLs created successfully'
+        );
+
+        console.log(location);
+
+        const ding = await Ding.create({
+          user,
+          title,
+          dingType,
+          location,
+          thumbUrl,
+          imgUrl,
+        });
+
+        res.status(200).json({ success: true, data: ding });
+      }
+    });
+  });
 });
 
 //desc     REPORT ding by ID
