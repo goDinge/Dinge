@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, Modal, StyleSheet } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Marker } from 'react-native-maps';
 
 const CustomMarker = (props) => {
@@ -18,23 +19,25 @@ const CustomMarker = (props) => {
     MARKER_WIDTH,
     MARKER_HEIGHT
   );
+
   return (
-    <View style={styles.markerContainer}>
+    <TouchableOpacity style={styles.markerContainer}>
       <Marker
         coordinate={{
-          latitude: props.data.lat,
-          longitude: props.data.lng,
+          latitude: props.data.location.latitude,
+          longitude: props.data.location.longitude,
         }}
         centerOffset={CENTEROFFSET} //iOS
         anchor={ANCHOR} //google maps
         // centerOffset={{ x: -9, y: -52 }} //iOS
         // anchor={{ x: 0.75, y: 0.95 }} //google maps
         tracksViewChanges={true}
+        onPress={props.onSelect}
       >
-        <Image style={styles.pic} source={{ uri: props.data.url }} />
+        <Image style={styles.pic} source={{ uri: props.data.thumbUrl }} />
         <Image style={styles.pin} source={require('../assets/pin.png')} />
       </Marker>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -9,7 +9,6 @@ const aws = require('aws-sdk');
 //access  private
 exports.createDing = asyncHandler(async (req, res, next) => {
   const user = req.user.id;
-  //const { title, dingType, location, thumbUrl, imgUrl } = req.body;
   const { title, dingType, location } = req.body;
 
   let imgUrl, thumbUrl;
@@ -28,11 +27,9 @@ exports.createDing = asyncHandler(async (req, res, next) => {
     region: process.env.REGION,
   });
 
-  //console.log(uploads);
-
   const s3 = new aws.S3();
 
-  let folder; //img vs thumbnails
+  let folder;
 
   uploads.forEach((upload) => {
     folder = 'img';
@@ -61,14 +58,12 @@ exports.createDing = asyncHandler(async (req, res, next) => {
         }
       }
 
-      //submissionPic only created when all uploads are completed
-      //submission only gets saved then
+      //imgUrl and thumbUrl only get populated when all S3 uploads are completed
+      //ding only gets saved then
       if (imgUrl && thumbUrl) {
         console.log(
           'Files have been uploaded to S3 and URLs created successfully'
         );
-
-        console.log(location);
 
         const ding = await Ding.create({
           user,

@@ -17,11 +17,11 @@ const DingSchema = new mongoose.Schema({
   },
   location: {
     latitude: {
-      type: String,
+      type: Number,
       required: true,
     },
     longitude: {
-      type: String,
+      type: Number,
       required: true,
     },
   },

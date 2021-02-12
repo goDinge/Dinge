@@ -1,16 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Modal,
+  Pressable,
+  TouchableOpacity,
+  ActivityIndicator,
+  Dimensions,
+  StyleSheet,
+} from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import MapView from 'react-native-maps';
 import CustomMarker from '../components/CustomMarker';
 import CustomBillboard from '../components/CustomBillboard';
-import { dummyMarkers } from '../data/dummyMarkers';
 import { dummyBillboards } from '../data/dummyBillboards';
+import * as dingeActions from '../store/actions/dinge';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const MapScreen = (props) => {
+  const [error, setError] = useState(undefined);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [region, setRegion] = useState({
     latitude: 43.650609,
     longitude: -79.389441,
@@ -18,10 +31,31 @@ const MapScreen = (props) => {
     longitudeDelta: 0.0421,
   });
 
+  const dispatch = useDispatch();
+
+  //state.reducer.sliceOfReducer
+  const dinge = useSelector((state) => state.dinge.dinge);
+
   useEffect(() => {
+    loadData();
     setMapLoaded(true);
   }, [setMapLoaded]);
 
+  const loadData = async () => {
+    setError(null);
+    try {
+      await dispatch(dingeActions.getDinge());
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const selectDingHandler = (item) => {
+    props.navigation.navigate('Ding');
+    console.log(item);
+  };
+
+  //load map
   if (!mapLoaded) {
     return (
       <View>
@@ -38,12 +72,23 @@ const MapScreen = (props) => {
         minZoomLevel={14}
         maxZoomLevel={16}
       >
-        {dummyMarkers.map((item, index) => (
-          <CustomMarker key={index} data={item} />
+        <TouchableOpacity onPress={() => console.log('pressed')}>
+          <Image
+            style={styles.cameraIcon}
+            source={require('../assets/camera-icon.png')}
+          />
+        </TouchableOpacity>
+
+        {dinge.map((item, index) => (
+          <CustomMarker
+            key={index}
+            data={item}
+            onSelect={() => selectDingHandler(item)}
+          />
         ))}
-        {dummyBillboards.map((item, index) => (
+        {/* {dummyBillboards.map((item, index) => (
           <CustomBillboard key={index} data={item} />
-        ))}
+        ))} */}
       </MapView>
     </View>
   );
@@ -53,6 +98,13 @@ const styles = StyleSheet.create({
   map: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
+  },
+  cameraIcon: {
+    position: 'absolute',
+    top: 100,
+    right: 20,
+    height: 80,
+    width: 80,
   },
 });
 

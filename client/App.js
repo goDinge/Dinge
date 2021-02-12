@@ -1,15 +1,54 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import MapScreen from './screens/MapScreen';
+import React, { useState } from 'react';
+import { LogBox, StyleSheet } from 'react-native';
+import AppLoading from 'expo-app-loading';
+import * as Font from 'expo-font';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import ReduxThunk from 'redux-thunk';
 
-export default function App() {
+import dingeReducer from './store/reducers/dinge';
+import AppNavigator from './navigation/AppNavigator';
+
+const fetchFonts = () => {
+  return Font.loadAsync({
+    'cereal-book': require('./assets/fonts/AirbnbCerealBook.ttf'),
+    'cereal-bold': require('./assets/fonts/AirbnbCerealBold.ttf'),
+    'cereal-medium': require('./assets/fonts/AirbnbCerealMedium.ttf'),
+    'cereal-light': require('./assets/fonts/AirbnbCerealLight.ttf'),
+  });
+};
+
+const rootReducer = combineReducers({
+  dinge: dingeReducer,
+});
+
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
+
+const App = () => {
+  LogBox.ignoreLogs(['Setting a timer']);
+
+  const [fontLoaded, setFontLoaded] = useState(false);
+
+  if (!fontLoaded) {
+    return (
+      <AppLoading
+        startAsync={fetchFonts}
+        onFinish={() => {
+          setFontLoaded(true);
+        }}
+        onError={console.warn}
+      />
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <MapScreen />
-    </View>
+    <Provider store={store}>
+      <AppNavigator />
+    </Provider>
   );
-}
+};
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
