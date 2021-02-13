@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   View,
-  Text,
   Image,
-  Modal,
+  Platform,
   Pressable,
   TouchableOpacity,
   ActivityIndicator,
@@ -13,9 +12,11 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import MapView from 'react-native-maps';
 import CustomMarker from '../components/CustomMarker';
-import CustomBillboard from '../components/CustomBillboard';
-import { dummyBillboards } from '../data/dummyBillboards';
+import CustomCameraIcon from '../components/CustomCameraIcon';
 import * as dingeActions from '../store/actions/dinge';
+
+// import CustomBillboard from '../components/CustomBillboard';
+// import { dummyBillboards } from '../data/dummyBillboards';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -55,6 +56,10 @@ const MapScreen = (props) => {
     console.log(item);
   };
 
+  const selectCameraHandler = () => {
+    props.navigation.navigate('Upload');
+  };
+
   //load map
   if (!mapLoaded) {
     return (
@@ -72,13 +77,6 @@ const MapScreen = (props) => {
         minZoomLevel={14}
         maxZoomLevel={16}
       >
-        <TouchableOpacity onPress={() => console.log('pressed')}>
-          <Image
-            style={styles.cameraIcon}
-            source={require('../assets/camera-icon.png')}
-          />
-        </TouchableOpacity>
-
         {dinge.map((item, index) => (
           <CustomMarker
             key={index}
@@ -86,10 +84,10 @@ const MapScreen = (props) => {
             onSelect={() => selectDingHandler(item)}
           />
         ))}
-        {/* {dummyBillboards.map((item, index) => (
-          <CustomBillboard key={index} data={item} />
-        ))} */}
       </MapView>
+      <View style={styles.buttonContainer}>
+        <CustomCameraIcon onSelect={selectCameraHandler} />
+      </View>
     </View>
   );
 };
@@ -98,13 +96,12 @@ const styles = StyleSheet.create({
   map: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
-  },
-  cameraIcon: {
     position: 'absolute',
-    top: 100,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    top: 20,
     right: 20,
-    height: 80,
-    width: 80,
   },
 });
 

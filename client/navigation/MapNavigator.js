@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import MapScreen from '../screens/MapScreen';
+import UploadScreen from '../screens/UploadScreen';
 import CameraScreen from '../screens/CameraScreen';
 import SocialScreen from '../screens/SocialScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -43,6 +44,16 @@ export const MapNavigator = () => {
         component={DingScreen}
         options={{ headerTitle: 'Ding' }}
       />
+      <MapStackNavigator.Screen
+        name="Upload"
+        component={UploadScreen}
+        options={{ headerTitle: 'Dinge!' }}
+      />
+      <MapStackNavigator.Screen
+        name="Camera"
+        component={CameraScreen}
+        options={{ headerTitle: 'Camera' }}
+      />
     </MapStackNavigator.Navigator>
   );
 };
@@ -52,6 +63,11 @@ const CameraStackNavigator = createStackNavigator();
 export const CameraNavigator = () => {
   return (
     <CameraStackNavigator.Navigator screenOptions={defaultNavOptions}>
+      <CameraStackNavigator.Screen
+        name="Upload"
+        component={UploadScreen}
+        options={{ headerTitle: 'Dinge!' }}
+      />
       <CameraStackNavigator.Screen
         name="Camera"
         component={CameraScreen}

@@ -1,6 +1,12 @@
 import React from 'react';
-import { View, Image, Modal, StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {
+  View,
+  Image,
+  Modal,
+  TouchableOpacity,
+  Pressable,
+  StyleSheet,
+} from 'react-native';
 import { Marker } from 'react-native-maps';
 
 const CustomMarker = (props) => {
@@ -21,7 +27,7 @@ const CustomMarker = (props) => {
   );
 
   return (
-    <TouchableOpacity style={styles.markerContainer}>
+    <Pressable style={styles.markerContainer}>
       <Marker
         coordinate={{
           latitude: props.data.location.latitude,
@@ -37,7 +43,7 @@ const CustomMarker = (props) => {
         <Image style={styles.pic} source={{ uri: props.data.thumbUrl }} />
         <Image style={styles.pin} source={require('../assets/pin.png')} />
       </Marker>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
