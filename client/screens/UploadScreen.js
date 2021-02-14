@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   View,
   Text,
-  Button,
+  ScrollView,
+  Dimensions,
   Image,
   StyleSheet,
   Alert,
@@ -15,11 +16,14 @@ import * as Permissions from 'expo-permissions';
 import * as dingeActions from '../store/actions/dinge';
 
 import Colors from '../constants/Colors';
+import CustomButton from '../components/CustomButton';
+import CustomInput from '../components/CustomInput';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const UploadScreen = (props) => {
   const image = useSelector((state) => state.image.image);
   const [isFetching, setIsFetching] = useState(false);
-  const [userLocation, setUserLocation] = useState({});
 
   const dispatch = useDispatch();
 
@@ -51,29 +55,24 @@ const UploadScreen = (props) => {
       const location = await Location.getCurrentPositionAsync({
         timeout: 5000,
       });
-      setUserLocation(location);
 
       const awsImage = await ImageManipulator.manipulateAsync(
         image.uri,
-        [{ resize: { width: 400, height: 400 } }],
-        { compress: 0.5, base64: false }
+        [{ resize: { width: 600, height: 600 } }],
+        { compress: 0.7 }
       );
 
       const awsThumb = await ImageManipulator.manipulateAsync(
         image.uri,
-        [{ resize: { width: 120, height: 120 } }],
-        { compress: 0.3, base64: false }
+        [{ resize: { width: 140, height: 140 } }],
+        { compress: 0.5 }
       );
 
       const lat = location.coords.latitude;
       const long = location.coords.longitude;
-      const latLong = { latitude: lat, longitude: long };
-
-      // console.log('aws-image', awsImage);
-      // console.log('aws-thumb', awsThumb);
 
       await dispatch(
-        dingeActions.postDing('home', latLong, awsImage, awsThumb)
+        dingeActions.postDing('balcony', lat, long, awsImage, awsThumb)
       );
     } catch (err) {
       Alert.alert('Could not fetch location!', 'Please try again later.', [
@@ -86,33 +85,43 @@ const UploadScreen = (props) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <View style={styles.imagePreview}>
-          {image !== '' ? (
-            <Image style={styles.image} source={{ uri: image.uri }} />
-          ) : (
-            <Text style={styles.textRegular}>No image taken yet</Text>
-          )}
-        </View>
-        <View style={styles.button}>
-          <Button
-            title="Take Picture"
-            color={Colors.primary}
-            onPress={takeImageHandler}
-          />
-        </View>
-        <View style={styles.button}>
-          {isFetching ? (
-            <ActivityIndicator size="small" />
-          ) : (
-            <Button
-              title="Upload to Dinge"
+      <ScrollView>
+        <View style={styles.imageContainer}>
+          <View style={styles.imagePreview}>
+            {image !== '' ? (
+              <Image style={styles.image} source={{ uri: image.uri }} />
+            ) : (
+              <Text style={styles.textRegular}>No image taken yet</Text>
+            )}
+          </View>
+          <View style={styles.buttonContainer}>
+            <CustomButton
+              onSelect={takeImageHandler}
               color={Colors.primary}
-              onPress={uploadToDingeHandler}
-            />
-          )}
+              style={styles.button}
+            >
+              <Text style={styles.buttonText}>Snap Pic</Text>
+            </CustomButton>
+          </View>
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.descriptionTitle}>Description</Text>
+            <CustomInput style={styles.descriptionInput} />
+          </View>
+          <View style={styles.buttonContainer}>
+            {isFetching ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              <CustomButton
+                onSelect={uploadToDingeHandler}
+                color={Colors.primary}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Upload Pic</Text>
+              </CustomButton>
+            )}
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -122,15 +131,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    marginTop: 20,
   },
   imageContainer: {
-    width: '90%',
+    width: '100%',
     alignItems: 'center',
+    marginTop: 20,
   },
   imagePreview: {
-    width: '100%',
-    height: 300,
+    width: SCREEN_WIDTH * 0.9,
+    height: SCREEN_WIDTH * 0.9,
     marginBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -144,9 +153,34 @@ const styles = StyleSheet.create({
   textRegular: {
     fontFamily: 'cereal-light',
   },
-  button: {
+  buttonContainer: {
     marginVertical: 10,
   },
+  button: {
+    width: 200,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 20,
+    fontFamily: 'cereal-bold',
+    color: 'white',
+  },
+  descriptionContainer: {
+    marginVertical: 10,
+    marginTop: 20,
+    width: '100%',
+    alignItems: 'center',
+  },
+  descriptionTitle: {
+    fontSize: 18,
+    marginBottom: 10,
+    fontFamily: 'cereal-medium',
+    alignSelf: 'flex-start',
+    color: Colors.gray,
+  },
+  descriptionInput: {},
 });
 
 export default UploadScreen;

@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Image,
-  Platform,
-  Pressable,
-  TouchableOpacity,
-  ActivityIndicator,
-  Dimensions,
-  StyleSheet,
-} from 'react-native';
+import { View, ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import MapView from 'react-native-maps';
 import CustomMarker from '../components/CustomMarker';

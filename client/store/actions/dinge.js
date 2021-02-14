@@ -17,32 +17,44 @@ export const getDinge = () => {
   };
 };
 
-export const postDing = (title, location, img, thumb) => {
+export const postDing = (title, lat, long, img, thumb) => {
   return async (dispatch) => {
     try {
-      // let body = new FormData();
-      // body.append('title', title);
-      // body.append('location', location);
-      // body.append('img', img);
-      // body.append('img', thumb);
-      // console.log('body', body);
+      const thumbName = img.uri.split('/').pop();
+      const thumbNameFixed = thumbName.split('.')[0].concat('-thumb.jpg');
+      console.log(thumbNameFixed);
+
+      let formData = new FormData();
+      formData.append('title', JSON.stringify(title));
+      formData.append('location[latitude]', JSON.stringify(lat));
+      formData.append('location[longitude]', JSON.stringify(long));
+      formData.append('img', {
+        uri: `file://${img.uri}`,
+        type: 'image/jpg',
+        name: `${thumbName}`,
+      });
+      formData.append('img', {
+        uri: `file://${thumb.uri}`,
+        type: 'image/jpg',
+        name: `${thumbNameFixed}`,
+      });
+      //console.log('FORMDATA', formData);
 
       const config = {
         headers: {
-          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       };
 
-      const body = JSON.stringify({ title, location });
-
       const response = await axios.post(
         'http://192.168.0.197:5000/api/dinge',
-        body,
+        formData,
         config
       );
 
       const newDing = response.data.data;
-      console.log('newding', newDing);
+      // console.log('newding', newDing);
 
       dispatch({
         type: POST_DING,

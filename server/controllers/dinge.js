@@ -19,8 +19,6 @@ exports.createDing = asyncHandler(async (req, res, next) => {
     );
   }
 
-  console.log(req.body);
-
   uploads = req.files;
   aws.config.setPromisesDependency();
   aws.config.update({
@@ -32,6 +30,8 @@ exports.createDing = asyncHandler(async (req, res, next) => {
   const s3 = new aws.S3();
 
   let folder;
+
+  console.log(uploads);
 
   uploads.forEach((upload) => {
     folder = 'img';
