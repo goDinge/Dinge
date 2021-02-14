@@ -1,2 +1,4 @@
 export const GET_DINGE = 'GET_DINGE';
-export const TAKE_IMAGE = 'TAKE_IMAGE';
+export const POST_DING = 'POST_DING';
+
+export const SET_IMAGE = 'SET_IMAGE';

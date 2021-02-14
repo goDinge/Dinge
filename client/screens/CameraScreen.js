@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
+import { useDispatch } from 'react-redux';
 
-const CameraScreen = () => {
+import * as imageActions from '../store/actions/image';
+
+const CameraScreen = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -20,11 +25,14 @@ const CameraScreen = () => {
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
   }
+
   return (
     <View style={styles.cameraContainer}>
       <Camera
         style={styles.cameraContainer}
         type={type}
+        ratio="1:1"
+        whiteBalance="auto"
         ref={(ref) => {
           setCameraRef(ref);
         }}
@@ -46,8 +54,11 @@ const CameraScreen = () => {
             style={{ alignSelf: 'center' }}
             onPress={async () => {
               if (cameraRef) {
-                let image = await cameraRef.takePictureAsync();
-                console.log('photo', image);
+                const image = await cameraRef.takePictureAsync({
+                  skipProcessing: true,
+                });
+                await dispatch(imageActions.setImage(image));
+                await props.navigation.navigate('Upload');
               }
             }}
           >

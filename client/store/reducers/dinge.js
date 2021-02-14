@@ -1,7 +1,8 @@
-import { GET_DINGE } from '../types';
+import { GET_DINGE, POST_DING } from '../types';
 
 const initialState = {
   dinge: [],
+  newDing: {},
 };
 
 export default (state = initialState, action) => {
@@ -10,6 +11,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         dinge: action.dinge,
+      };
+    case POST_DING:
+      return {
+        ...state,
+        newDing: action.dinge,
       };
   }
   return state;

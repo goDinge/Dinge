@@ -8,7 +8,7 @@ const aws = require('aws-sdk');
 //route   POST /api/dinge
 //access  private
 exports.createDing = asyncHandler(async (req, res, next) => {
-  const user = req.user.id;
+  //const user = req.user.id;
   const { title, dingType, location } = req.body;
 
   let imgUrl, thumbUrl;
@@ -18,6 +18,8 @@ exports.createDing = asyncHandler(async (req, res, next) => {
       new ErrorResponse('Please enter title and location info.', 400)
     );
   }
+
+  console.log(req.body);
 
   uploads = req.files;
   aws.config.setPromisesDependency();
@@ -66,7 +68,7 @@ exports.createDing = asyncHandler(async (req, res, next) => {
         );
 
         const ding = await Ding.create({
-          user,
+          //user,
           title,
           dingType,
           location,
