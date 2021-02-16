@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   getUsers,
+  getUserById,
   getCurrentUser,
   followUser,
   reportUser,
@@ -13,6 +14,7 @@ const router = express.Router();
 const { protect } = require('../middleware/auth');
 
 router.get('/', getUsers);
+router.get('/:id', getUserById);
 router.get('/me', protect, getCurrentUser);
 router.put('/reports/:id', protect, reportUser);
 router.put('/follow/:id', protect, followUser);

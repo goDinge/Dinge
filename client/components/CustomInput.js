@@ -3,12 +3,11 @@ import { View, Text, TextInput, Dimensions, StyleSheet } from 'react-native';
 
 import Colors from '../constants/Colors';
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-
 const CustomInput = (props) => {
   const [value, onChangeText] = useState('');
   return (
     <TextInput
+      {...props}
       style={styles.inputField}
       onChangeText={(text) => onChangeText(text)}
       value={value}

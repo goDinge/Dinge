@@ -22,7 +22,6 @@ export const postDing = (title, lat, long, img, thumb) => {
     try {
       const thumbName = img.uri.split('/').pop();
       const thumbNameFixed = thumbName.split('.')[0].concat('-thumb.jpg');
-      console.log(thumbNameFixed);
 
       let formData = new FormData();
       formData.append('title', JSON.stringify(title));
@@ -38,7 +37,6 @@ export const postDing = (title, lat, long, img, thumb) => {
         type: 'image/jpg',
         name: `${thumbNameFixed}`,
       });
-      //console.log('FORMDATA', formData);
 
       const config = {
         headers: {

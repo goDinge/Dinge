@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   View,
   Text,
+  TextInput,
   ScrollView,
   Dimensions,
   Image,
@@ -24,6 +25,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const UploadScreen = (props) => {
   const image = useSelector((state) => state.image.image);
   const [isFetching, setIsFetching] = useState(false);
+  const [value, onChangeText] = useState('');
 
   const dispatch = useDispatch();
 
@@ -105,7 +107,11 @@ const UploadScreen = (props) => {
           </View>
           <View style={styles.descriptionContainer}>
             <Text style={styles.descriptionTitle}>Description</Text>
-            <CustomInput style={styles.descriptionInput} />
+            <TextInput
+              style={styles.descriptionInput}
+              onChangeText={(text) => onChangeText(text)}
+              value={value}
+            />
           </View>
           <View style={styles.buttonContainer}>
             {isFetching ? (
@@ -180,7 +186,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     color: Colors.gray,
   },
-  descriptionInput: {},
+  descriptionInput: {
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.gray,
+    width: '100%',
+    fontFamily: 'cereal-light',
+    fontSize: 16,
+    color: Colors.gray,
+  },
 });
 
 export default UploadScreen;

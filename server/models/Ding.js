@@ -8,7 +8,7 @@ const DingSchema = new mongoose.Schema({
     type: String,
     default: 'testing default user',
   },
-  title: {
+  description: {
     type: String,
     required: true,
   },
