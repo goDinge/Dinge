@@ -18,7 +18,6 @@ import * as dingeActions from '../store/actions/dinge';
 
 import Colors from '../constants/Colors';
 import CustomButton from '../components/CustomButton';
-import CustomInput from '../components/CustomInput';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 

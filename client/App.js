@@ -8,6 +8,7 @@ import ReduxThunk from 'redux-thunk';
 
 import dingeReducer from './store/reducers/dinge';
 import imageReducer from './store/reducers/image';
+import userReducer from './store/reducers/user';
 import AppNavigator from './navigation/AppNavigator';
 
 const fetchFonts = () => {
@@ -22,6 +23,7 @@ const fetchFonts = () => {
 const rootReducer = combineReducers({
   dinge: dingeReducer,
   image: imageReducer,
+  user: userReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
