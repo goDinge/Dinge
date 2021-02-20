@@ -8,12 +8,12 @@ const aws = require('aws-sdk');
 //route   POST /api/dinge
 //access  private
 exports.createDing = asyncHandler(async (req, res, next) => {
-  //const user = req.user.id;
-  const { title, dingType, location } = req.body;
+  const user = req.user.id;
+  const { description, dingType, location } = req.body;
 
   let imgUrl, thumbUrl;
 
-  if (!title || !location) {
+  if (!description || !location) {
     return next(
       new ErrorResponse('Please enter title and location info.', 400)
     );
@@ -68,8 +68,8 @@ exports.createDing = asyncHandler(async (req, res, next) => {
         );
 
         const ding = await Ding.create({
-          //user,
-          title,
+          user,
+          description,
           dingType,
           location,
           thumbUrl,

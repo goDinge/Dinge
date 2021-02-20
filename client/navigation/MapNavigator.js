@@ -4,12 +4,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import MapScreen from '../screens/MapScreen';
-import UploadScreen from '../screens/UploadScreen';
-import CameraScreen from '../screens/CameraScreen';
+import MapScreen from '../screens/map/MapScreen';
+import DingScreen from '../screens/map/DingScreen';
+import UploadScreen from '../screens/camera/UploadScreen';
+import CameraScreen from '../screens/camera/CameraScreen';
+import AuthScreen from '../screens/auth/AuthScreen';
 import SocialScreen from '../screens/SocialScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import DingScreen from '../screens/DingScreen';
+import ProfileScreen from '../screens/user/ProfileScreen';
 
 import Colors from '../constants/Colors';
 
@@ -27,6 +28,21 @@ const defaultNavOptions = {
   },
   headerBackTitle: '',
   headerTintColor: 'white',
+};
+
+const AuthStackNavigator = createStackNavigator();
+
+export const AuthNavigator = () => {
+  return (
+    <AuthStackNavigator.Navigator screenOptions={defaultNavOptions}>
+      <AuthStackNavigator.Screen
+        name="Auth"
+        component={AuthScreen}
+        options={{ headerTitle: 'Login / Register' }}
+      />
+      <AuthStackNavigator.Screen name="Profile" component={ProfileScreen} />
+    </AuthStackNavigator.Navigator>
+  );
 };
 
 const MapStackNavigator = createStackNavigator();
@@ -140,7 +156,6 @@ export const BottomTabNavigator = () => {
       }}
     >
       <MapBottomTabNavigator.Screen name="Map" component={MapNavigator} />
-      <MapBottomTabNavigator.Screen name="Camera" component={CameraNavigator} />
       <MapBottomTabNavigator.Screen name="Social" component={SocialNavigator} />
       <MapBottomTabNavigator.Screen
         name="Profile"

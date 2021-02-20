@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 
 const DingSchema = new mongoose.Schema({
   user: {
-    //type: mongoose.Schema.ObjectId,
-    //ref: 'User',
-    //required: true,
-    type: String,
-    default: 'testing default user',
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: true,
+    // type: String,
+    // default: 'testing default user',
   },
   description: {
     type: String,

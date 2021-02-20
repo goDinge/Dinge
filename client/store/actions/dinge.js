@@ -17,14 +17,14 @@ export const getDinge = () => {
   };
 };
 
-export const postDing = (title, lat, long, img, thumb) => {
+export const postDing = (description, lat, long, img, thumb) => {
   return async (dispatch) => {
     try {
       const thumbName = img.uri.split('/').pop();
       const thumbNameFixed = thumbName.split('.')[0].concat('-thumb.jpg');
 
       let formData = new FormData();
-      formData.append('title', JSON.stringify(title));
+      formData.append('description', JSON.stringify(description));
       formData.append('location[latitude]', JSON.stringify(lat));
       formData.append('location[longitude]', JSON.stringify(long));
       formData.append('img', {

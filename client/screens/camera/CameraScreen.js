@@ -3,7 +3,7 @@ import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 import { useDispatch } from 'react-redux';
 
-import * as imageActions from '../store/actions/image';
+import * as imageActions from '../../store/actions/image';
 
 const CameraScreen = (props) => {
   const [hasPermission, setHasPermission] = useState(null);

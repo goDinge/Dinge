@@ -17,8 +17,8 @@ const multerMultiple = multer({
 const router = express.Router();
 
 router.get('/', getDinge);
-//router.post('/', protect, multerMultiple, createDing);
-router.post('/', multerMultiple, createDing);
+router.post('/', protect, multerMultiple, createDing);
+//router.post('/', multerMultiple, createDing);
 router.put('/reports/:id', protect, reportDing);
 router.delete('/:id', deleteDingById);
 

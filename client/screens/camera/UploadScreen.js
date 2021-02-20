@@ -14,10 +14,10 @@ import {
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
-import * as dingeActions from '../store/actions/dinge';
+import * as dingeActions from '../../store/actions/dinge';
 
-import Colors from '../constants/Colors';
-import CustomButton from '../components/CustomButton';
+import Colors from '../../constants/Colors';
+import CustomButton from '../../components/CustomButton';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -72,8 +72,10 @@ const UploadScreen = (props) => {
       const lat = location.coords.latitude;
       const long = location.coords.longitude;
 
+      console.log(value);
+
       await dispatch(
-        dingeActions.postDing('balcony', lat, long, awsImage, awsThumb)
+        dingeActions.postDing(value, lat, long, awsImage, awsThumb)
       );
     } catch (err) {
       Alert.alert('Could not fetch location!', 'Please try again later.', [
