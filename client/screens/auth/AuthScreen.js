@@ -17,6 +17,7 @@ import CustomButton from '../../components/CustomButton';
 import * as authActions from '../../store/actions/auth';
 
 import { FORM_INPUT_UPDATE } from '../../store/types';
+import Colors from '../../constants/Colors';
 
 const formReducer = (state, action) => {
   if (action.type === FORM_INPUT_UPDATE) {
@@ -122,12 +123,16 @@ const Auth = (props) => {
       {isLoading ? (
         <ActivityIndicator />
       ) : (
-        <CustomCard style={styles.authContainer}>
-          <ScrollView style={styles.scrollView}>
+        <View style={styles.container}>
+          <Text style={styles.titleText}>Dinge</Text>
+          <View style={styles.authContainer}>
+            <Text style={styles.subtitleText}>
+              {isSignup ? 'Sign-up' : 'Login'}
+            </Text>
             {isSignup ? (
               <CustomInput
                 id="name"
-                label="name"
+                placeholder="profile name"
                 keyboardType="default"
                 autoCapitalize="none"
                 errorText="Please enter your name"
@@ -139,7 +144,7 @@ const Auth = (props) => {
             ) : null}
             <CustomInput
               id="email"
-              label="e-mail"
+              placeholder="e-mail"
               keyboardType="email-address"
               autoCapitalize="none"
               errorText="Please enter a valid email"
@@ -150,7 +155,7 @@ const Auth = (props) => {
             />
             <CustomInput
               id="password"
-              label="password"
+              placeholder="password"
               keyboardType="default"
               secureTextEntry
               autoCapitalize="none"
@@ -164,7 +169,7 @@ const Auth = (props) => {
             {isSignup ? (
               <CustomInput
                 id="password2"
-                label="confirm password"
+                placeholder="confirm password"
                 keyboardType="default"
                 secureTextEntry
                 autoCapitalize="none"
@@ -176,34 +181,33 @@ const Auth = (props) => {
                 style={styles.textInput}
               />
             ) : null}
-            <View style={styles.buttonGroupContainer}>
-              <View style={styles.buttonContainer}>
-                <CustomButton onSelect={authHandler}>
-                  <Text style={styles.buttonText}>
-                    {isSignup ? 'Register' : 'Login'}
-                  </Text>
-                </CustomButton>
-              </View>
-              <View style={styles.buttonContainer}>
-                <CustomButton
-                  onSelect={() => setIsSignup((prevState) => !prevState)}
-                >
-                  <Text style={styles.buttonText}>{`Switch to ${
-                    isSignup ? 'Login' : 'Register'
-                  }`}</Text>
-                </CustomButton>
-              </View>
-              <View style={styles.buttonContainer}>
-                <CustomButton
-                  title="Forgot Password"
-                  onSelect={() => props.navigation.navigate('ForgotPassword')}
-                >
-                  <Text style={styles.buttonText}>Forgot Password</Text>
-                </CustomButton>
-              </View>
+            <View style={styles.buttonContainer}>
+              <CustomButton style={styles.mainButton} onSelect={authHandler}>
+                <Text style={styles.mainButtonText}>
+                  {isSignup ? 'Sign-up' : 'Login'}
+                </Text>
+              </CustomButton>
             </View>
-          </ScrollView>
-        </CustomCard>
+          </View>
+          <View style={styles.bottomContainer}>
+            <CustomButton
+              title="Sign-up"
+              style={styles.buttonContainer}
+              onSelect={() => setIsSignup((prevState) => !prevState)}
+            >
+              <Text style={styles.buttonText}>
+                {isSignup ? 'Login' : 'Sign-up'}
+              </Text>
+            </CustomButton>
+            <CustomButton
+              title="Forgot Password"
+              style={styles.buttonContainer}
+              onSelect={() => props.navigation.navigate('ForgotPassword')}
+            >
+              <Text style={styles.buttonText}>Forgot Password</Text>
+            </CustomButton>
+          </View>
+        </View>
       )}
     </KeyboardAvoidingView>
   );
@@ -213,41 +217,72 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: Colors.primary,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+    width: '80%',
+    paddingTop: 20,
+    paddingBottom: 60,
+  },
+  titleText: {
+    alignSelf: 'flex-start',
+    fontFamily: 'cereal-black',
+    fontSize: 40,
+    color: '#fff',
   },
   authContainer: {
-    width: '80%',
-    maxWidth: 400,
+    width: '100%',
     maxHeight: 600,
-    paddingHorizontal: 10,
     paddingVertical: 20,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  scrollView: {
-    width: '80%',
+  subtitleText: {
+    color: '#fff',
+    fontSize: 28,
+    fontFamily: 'cereal-bold',
+    alignSelf: 'flex-start',
   },
   textInput: {
-    height: 22,
     borderBottomColor: '#ccc',
     borderBottomWidth: 1,
-    fontSize: 16,
+    backgroundColor: '#fff',
+    fontSize: 18,
   },
   buttonGroupContainer: {
     marginTop: 15,
   },
   buttonContainer: {
     marginVertical: 3,
+    marginTop: 30,
   },
   buttonText: {
     fontSize: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 2,
+    textAlign: 'center',
+    fontFamily: 'cereal-bold',
+    color: 'white',
+  },
+  mainButtonText: {
+    fontSize: 24,
     paddingVertical: 8,
     paddingHorizontal: 15,
     textAlign: 'center',
     fontFamily: 'cereal-bold',
     color: 'white',
+  },
+  bottomContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  mainButton: {
+    width: 200,
+    backgroundColor: Colors.secondary,
+    borderRadius: 12,
   },
 });
 

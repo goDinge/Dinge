@@ -19,8 +19,8 @@ const defaultNavOptions = {
     backgroundColor: Colors.primary,
   },
   headerTitleStyle: {
-    fontFamily: 'cereal-bold',
-    fontSize: 30,
+    fontFamily: 'cereal-black',
+    fontSize: 24,
   },
   headerBackTitleStyle: {
     fontFamily: 'cereal-medium',
@@ -30,15 +30,31 @@ const defaultNavOptions = {
   headerTintColor: 'white',
 };
 
+const defaultNavOptionsAuth = {
+  headerStyle: {
+    backgroundColor: '#fff',
+  },
+  headerTitleStyle: {
+    fontFamily: 'cereal-bold',
+    fontSize: 20,
+  },
+  headerBackTitleStyle: {
+    fontFamily: 'cereal-medium',
+    fontSize: 20,
+  },
+  headerBackTitle: '',
+  headerTintColor: Colors.primary,
+};
+
 const AuthStackNavigator = createStackNavigator();
 
 export const AuthNavigator = () => {
   return (
-    <AuthStackNavigator.Navigator screenOptions={defaultNavOptions}>
+    <AuthStackNavigator.Navigator screenOptions={defaultNavOptionsAuth}>
       <AuthStackNavigator.Screen
         name="Auth"
         component={AuthScreen}
-        options={{ headerTitle: 'Login / Register' }}
+        options={{ headerTitle: 'Login / Sign-up' }}
       />
       <AuthStackNavigator.Screen name="Profile" component={ProfileScreen} />
     </AuthStackNavigator.Navigator>

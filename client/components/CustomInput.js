@@ -91,15 +91,17 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: 'cereal-bold',
-    marginVertical: 5,
+    marginVertical: 2,
   },
   input: {
-    fontSize: 18,
+    fontSize: 22,
     fontFamily: 'cereal-book',
-    paddingHorizontal: 2,
+    paddingHorizontal: 5,
     paddingVertical: 5,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    borderWidth: 1,
+    backgroundColor: '#fff',
   },
   errorContainer: {
     marginVertical: 2,

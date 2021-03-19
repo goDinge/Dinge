@@ -15,6 +15,7 @@ import AppNavigator from './navigation/AppNavigator';
 
 const fetchFonts = () => {
   return Font.loadAsync({
+    'cereal-black': require('./assets/fonts/AirbnbCerealBlack.ttf'),
     'cereal-book': require('./assets/fonts/AirbnbCerealBook.ttf'),
     'cereal-bold': require('./assets/fonts/AirbnbCerealBold.ttf'),
     'cereal-medium': require('./assets/fonts/AirbnbCerealMedium.ttf'),
