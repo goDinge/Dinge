@@ -73,6 +73,7 @@ const Auth = (props) => {
   const authHandler = async () => {
     let action;
     if (isSignup) {
+      console.log(formState);
       if (formState.inputValues.password !== formState.inputValues.password2) {
         Alert.alert(
           'Password Invalid',
@@ -91,6 +92,7 @@ const Auth = (props) => {
         formState.inputValues.email,
         formState.inputValues.password
       );
+      console.log(formState);
     }
     setError(null);
     setIsLoading(true);
@@ -224,7 +226,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '80%',
     paddingTop: 20,
-    paddingBottom: 60,
+    paddingBottom: 30,
   },
   titleText: {
     alignSelf: 'flex-start',
@@ -235,9 +237,7 @@ const styles = StyleSheet.create({
   authContainer: {
     width: '100%',
     maxHeight: 600,
-    paddingVertical: 20,
     alignItems: 'center',
-    justifyContent: 'center',
   },
   subtitleText: {
     color: '#fff',

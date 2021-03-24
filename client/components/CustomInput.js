@@ -34,6 +34,7 @@ const CustomInput = (props) => {
     if (inputState.touched) {
       onInputChange(id, inputState.value, inputState.isValid);
     }
+    //onInputChange(id, inputState.value, inputState.isValid);
   }, [inputState, onInputChange, id]);
 
   const textChangeHandler = (text) => {
@@ -67,7 +68,7 @@ const CustomInput = (props) => {
 
   return (
     <View style={styles.formControl}>
-      <Text style={styles.label}>{props.label}</Text>
+      {/* <Text style={styles.label}>{props.label}</Text> */}
       <TextInput
         {...props}
         style={styles.input}
@@ -88,6 +89,7 @@ const CustomInput = (props) => {
 const styles = StyleSheet.create({
   formControl: {
     width: '100%',
+    marginVertical: 7,
   },
   label: {
     fontFamily: 'cereal-bold',
