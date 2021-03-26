@@ -6,6 +6,7 @@ import {
   ScrollView,
   Dimensions,
   StyleSheet,
+  Pressable,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -51,6 +52,11 @@ const DingScreen = (props) => {
     }
   };
 
+  const publicProfile = () => {
+    console.log('public profile');
+    props.navigation.navigate('Public');
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -76,7 +82,9 @@ const DingScreen = (props) => {
             />
           </View>
           <View style={styles.socialContainer}>
-            <Text style={styles.userName}>{user.name}</Text>
+            <Pressable onPressIn={publicProfile}>
+              <Text style={styles.userName}>{user.name}</Text>
+            </Pressable>
             <View style={styles.timeContainer}>
               <Text style={styles.timeText}>
                 {timeConverter(ding.createdAt)}

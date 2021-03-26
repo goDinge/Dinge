@@ -44,7 +44,6 @@ const MapScreen = (props) => {
 
   const selectDingHandler = (item) => {
     props.navigation.navigate('Ding', item);
-    //console.log(item);
   };
 
   const selectCameraHandler = () => {

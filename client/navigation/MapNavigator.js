@@ -8,6 +8,7 @@ import MapScreen from '../screens/map/MapScreen';
 import DingScreen from '../screens/map/DingScreen';
 import UploadScreen from '../screens/camera/UploadScreen';
 import CameraScreen from '../screens/camera/CameraScreen';
+import PublicScreen from '../screens/map/PublicScreen';
 import AuthScreen from '../screens/auth/AuthScreen';
 import SocialScreen from '../screens/SocialScreen';
 import ProfileScreen from '../screens/user/ProfileScreen';
@@ -86,6 +87,11 @@ export const MapNavigator = () => {
         component={CameraScreen}
         options={{ headerTitle: 'Camera' }}
       />
+      <MapStackNavigator.Screen
+        name="Public"
+        component={PublicScreen}
+        options={{ headerTitle: 'Public' }}
+      />
     </MapStackNavigator.Navigator>
   );
 };
@@ -127,7 +133,7 @@ const ProfileStackNavigator = createStackNavigator();
 
 export const ProfileNavigator = () => {
   return (
-    <ProfileStackNavigator.Navigator screenOptions={defaultNavOptions}>
+    <ProfileStackNavigator.Navigator screenOptions={defaultNavOptionsAuth}>
       <ProfileStackNavigator.Screen
         name="Profile"
         component={ProfileScreen}

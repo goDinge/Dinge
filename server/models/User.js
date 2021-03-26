@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
     select: false,
   },
+  avatar: {
+    type: String,
+    default: 'https://dinge.s3.us-east-2.amazonaws.com/avatar/avatar.png',
+  },
   role: {
     type: String,
     enum: ['user', 'business', 'admin'],

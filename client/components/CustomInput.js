@@ -30,11 +30,11 @@ const CustomInput = (props) => {
   const { onInputChange, id } = props;
 
   useEffect(() => {
-    //onInputChange is only triggered when onBlur
-    if (inputState.touched) {
-      onInputChange(id, inputState.value, inputState.isValid);
-    }
-    //onInputChange(id, inputState.value, inputState.isValid);
+    // **onInputChange is only triggered when onBlur - this is problematic**
+    // if (inputState.touched) {
+    //   onInputChange(id, inputState.value, inputState.isValid);
+    // }
+    onInputChange(id, inputState.value, inputState.isValid);
   }, [inputState, onInputChange, id]);
 
   const textChangeHandler = (text) => {
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontFamily: 'cereal-book',
-    color: 'red',
+    color: '#fff',
     fontSize: 13,
   },
 });
