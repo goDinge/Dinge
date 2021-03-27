@@ -90,7 +90,13 @@ export const MapNavigator = () => {
       <MapStackNavigator.Screen
         name="Public"
         component={PublicScreen}
-        options={{ headerTitle: 'Public' }}
+        options={{
+          headerTitle: 'Public',
+          headerStyle: {
+            backgroundColor: '#fff',
+          },
+          headerTintColor: Colors.primary,
+        }}
       />
     </MapStackNavigator.Navigator>
   );

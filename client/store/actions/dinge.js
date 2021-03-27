@@ -7,6 +7,8 @@ export const getDinge = () => {
       const response = await axios.get('http://192.168.0.197:5000/api/dinge');
       const dingeAll = response.data.data;
 
+      console.log(dingeAll);
+
       dispatch({
         type: GET_DINGE,
         dinge: dingeAll,

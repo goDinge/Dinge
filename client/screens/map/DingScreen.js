@@ -52,9 +52,8 @@ const DingScreen = (props) => {
     }
   };
 
-  const publicProfile = () => {
-    console.log('public profile');
-    props.navigation.navigate('Public');
+  const publicProfile = (userId) => {
+    props.navigation.navigate('Public', userId);
   };
 
   return (
@@ -67,22 +66,22 @@ const DingScreen = (props) => {
           <View style={styles.iconContainer}>
             <MaterialCommunityIcons
               name="heart-outline"
-              size={36}
+              size={30}
               style={styles.icon}
             />
             <MaterialCommunityIcons
               name="comment-outline"
-              size={36}
+              size={30}
               style={styles.icon}
             />
             <MaterialCommunityIcons
               name="flag-outline"
-              size={38}
+              size={30}
               style={styles.icon}
             />
           </View>
           <View style={styles.socialContainer}>
-            <Pressable onPressIn={publicProfile}>
+            <Pressable onPressIn={() => publicProfile(user._id)}>
               <Text style={styles.userName}>{user.name}</Text>
             </Pressable>
             <View style={styles.timeContainer}>
@@ -102,6 +101,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    backgroundColor: '#fff',
   },
   imageContainer: {
     width: '100%',

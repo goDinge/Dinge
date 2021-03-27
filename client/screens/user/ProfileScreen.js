@@ -12,8 +12,6 @@ const ProfileScreen = (props) => {
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.authUser);
 
-  console.log(authUser);
-
   const date = new Date(authUser.createdAt);
   const monthNumber = date.getMonth() + 1;
   const month = getMonthName(monthNumber);
@@ -112,7 +110,6 @@ const styles = StyleSheet.create({
   leftContainer: {
     justifyContent: 'space-between',
   },
-  nameEmailContainer: {},
   avatar: {
     height: 120,
     width: 120,
@@ -125,7 +122,7 @@ const styles = StyleSheet.create({
   },
   userEmail: {
     fontFamily: 'cereal-book',
-    fontSize: 18,
+    fontSize: 16,
     color: '#999',
   },
   statsContainer: {

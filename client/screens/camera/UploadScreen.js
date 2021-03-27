@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   View,
@@ -24,7 +24,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const UploadScreen = (props) => {
   const image = useSelector((state) => state.image.image);
   const [isFetching, setIsFetching] = useState(false);
-  const [value, onChangeText] = useState('');
+  const [text, onChangeText] = useState('');
 
   const dispatch = useDispatch();
 
@@ -72,11 +72,12 @@ const UploadScreen = (props) => {
       const lat = location.coords.latitude;
       const long = location.coords.longitude;
 
-      console.log(value);
+      console.log(text);
 
       await dispatch(
-        dingeActions.postDing(value, lat, long, awsImage, awsThumb)
+        dingeActions.postDing(text, lat, long, awsImage, awsThumb)
       );
+      await dispatch(dingeActions.getDinge());
     } catch (err) {
       Alert.alert('Could not fetch location!', 'Please try again later.', [
         { text: 'Okay' },
@@ -84,6 +85,7 @@ const UploadScreen = (props) => {
       console.log(err.message);
     }
     setIsFetching(false);
+    props.navigation.navigate('Map');
   };
 
   return (
@@ -111,12 +113,12 @@ const UploadScreen = (props) => {
             <TextInput
               style={styles.descriptionInput}
               onChangeText={(text) => onChangeText(text)}
-              value={value}
+              value={text}
             />
           </View>
           <View style={styles.buttonContainer}>
             {isFetching ? (
-              <ActivityIndicator size="small" />
+              <ActivityIndicator size="large" color={Colors.primary} />
             ) : (
               <CustomButton
                 onSelect={uploadToDingeHandler}
