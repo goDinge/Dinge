@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 
 import * as authActions from '../../store/actions/auth';
 

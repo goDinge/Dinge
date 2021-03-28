@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import MapView from 'react-native-maps';
+import * as Location from 'expo-location';
 
 import CustomMarker from '../../components/CustomMarker';
 import CustomCameraIcon from '../../components/CustomCameraIcon';
@@ -10,31 +11,41 @@ import Colors from '../../constants/Colors';
 
 import * as dingeActions from '../../store/actions/dinge';
 
-// import CustomBillboard from '../components/CustomBillboard';
-// import { dummyBillboards } from '../data/dummyBillboards';
-
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const MapScreen = (props) => {
-  //need to render MapScreen on navigation after upload pic AND manually whenever user wants
   const [error, setError] = useState(undefined);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [refresh, setRefresh] = useState(false);
-  const [region, setRegion] = useState({
-    latitude: 43.650609,
-    longitude: -79.389441,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+  const [region, setRegion] = useState(location);
 
   const dispatch = useDispatch();
   const dinge = useSelector((state) => state.dinge.dinge);
 
   useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    })();
+  }, []);
+
+  useEffect(() => {
     loadData();
-    console.log('useEffect runs');
     setMapLoaded(true);
   }, [setMapLoaded]);
 
@@ -46,6 +57,13 @@ const MapScreen = (props) => {
       setError(err.message);
     }
   };
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
 
   const selectDingHandler = (item) => {
     props.navigation.navigate('Ding', item);
@@ -61,9 +79,9 @@ const MapScreen = (props) => {
   };
 
   //load map
-  if (!mapLoaded) {
+  if (!mapLoaded || !location) {
     return (
-      <View>
+      <View style={styles.indicatorContainer}>
         <ActivityIndicator size="large" color={Colors.primary} />
       </View>
     );
@@ -96,6 +114,12 @@ const MapScreen = (props) => {
 };
 
 const styles = StyleSheet.create({
+  indicatorContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   map: {
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,

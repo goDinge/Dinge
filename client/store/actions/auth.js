@@ -1,6 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AUTHENTICATE, SET_AUTH_USER, SET_DID_TRY_AL, LOGOUT } from '../types';
+import { HOME_IP } from '@env';
 
 let timer;
 const oneMonth = 30 * 24 * 60 * 60 * 1000;
@@ -37,7 +38,7 @@ export const register = (name, email, password) => {
 
     try {
       const response = await axios.post(
-        'http://192.168.0.197:5000/api/auth/',
+        `http://${HOME_IP}/api/auth/`,
         body,
         config
       );
@@ -74,7 +75,7 @@ export const login = (email, password) => {
     const body = JSON.stringify({ email, password });
     try {
       const response = await axios.post(
-        'http://192.168.0.197:5000/api/auth/login',
+        `http://${HOME_IP}/api/auth/login`,
         body,
         config
       );

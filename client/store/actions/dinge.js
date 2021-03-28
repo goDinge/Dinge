@@ -1,13 +1,14 @@
 import axios from 'axios';
 import { GET_DINGE, POST_DING } from '../types';
+import { HOME_IP } from '@env';
 
 export const getDinge = () => {
   return async (dispatch) => {
     try {
-      const response = await axios.get('http://192.168.0.197:5000/api/dinge');
+      const response = await axios.get(`http://${HOME_IP}/api/dinge`);
       const dingeAll = response.data.data;
 
-      console.log(dingeAll);
+      //console.log(dingeAll);
 
       dispatch({
         type: GET_DINGE,
@@ -48,7 +49,7 @@ export const postDing = (description, lat, long, img, thumb) => {
       };
 
       const response = await axios.post(
-        'http://192.168.0.197:5000/api/dinge',
+        `http://${HOME_IP}/api/dinge`,
         formData,
         config
       );
