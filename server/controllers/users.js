@@ -19,9 +19,11 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 });
 
 //desc     GET login user
-//route    GET /api/users/me
+//route    GET /api/users/current/me
 //access   Private
 exports.getCurrentUser = asyncHandler(async (req, res, next) => {
+  console.log('user', req.user);
+
   const user = await User.findById(req.user.id);
 
   if (!user) {
@@ -50,7 +52,10 @@ exports.getUserById = asyncHandler(async (req, res, next) => {
 exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
 
-  const { avatar } = req.body;
+  console.log('req.file', req.file);
+  console.log('req.body', req.body);
+
+  const avatar = req.file;
 
   if (!user) {
     return next(new ErrorResponse(`No user found.`));
@@ -86,12 +91,13 @@ exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
       fs.unlinkSync(avatar.path);
 
       if (data) {
-        avatarUrl = data.location;
+        console.log(data);
+        avatarUrl = data.Location;
         console.log(
           'Avatar has been uploaded to S3 and URL created successfully'
         );
 
-        user.avatar = avatar;
+        user.avatar = avatarUrl;
         await user.save();
 
         res.status(200).json({ success: true, data: user });

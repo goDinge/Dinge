@@ -42,23 +42,22 @@ const ProfileScreen = (props) => {
   }, []);
 
   const imagePickerHandler = async () => {
-    console.log('image picker handler');
-
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
+        allowsEditing: false,
         aspect: [1, 1],
         quality: 0.2,
       });
 
-      console.log(result);
-
       if (!result.cancelled) {
-        setImage(result.uri);
+        setImage(result);
       }
 
-      await dispatch(userActions.updateCurrentUserAvatar(image));
+      console.log('image object on device: ', result);
+
+      //await dispatch(userActions.updateCurrentUserAvatar(image));
+      await dispatch(authActions.updateAuthAvatar(result));
     } catch (err) {
       Alert.alert('Could not upload avatar!', 'Please try again later.', [
         { text: 'Okay' },

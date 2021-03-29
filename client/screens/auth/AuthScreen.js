@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import CustomCard from '../../components/CustomCard';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import * as authActions from '../../store/actions/auth';

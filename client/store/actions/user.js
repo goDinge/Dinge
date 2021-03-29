@@ -21,15 +21,28 @@ export const getUser = (userId) => {
 export const updateCurrentUserAvatar = (avatar) => {
   return async (dispatch) => {
     try {
-      const body = JSON.stringify({ avatar });
+      console.log('avatar', avatar);
+
+      //const body = JSON.stringify({ avatar });
+
+      const avatarName = avatar.uri.split('/').pop();
+
+      const formData = new FormData();
+
+      formData.append('avatar', {
+        uri: `file://${avatar.uri}`,
+        type: 'image/jpg',
+        name: `${avatarName}`,
+      });
+
       const config = {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'form-data',
         },
       };
       const response = await axios.put(
-        `http://${HOME_IP}/api/auth/me`,
-        body,
+        `http://${HOME_IP}/api/users/me`,
+        formData,
         config
       );
 

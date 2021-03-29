@@ -1,4 +1,10 @@
-import { AUTHENTICATE, SET_AUTH_USER, LOGOUT, SET_DID_TRY_AL } from '../types';
+import {
+  AUTHENTICATE,
+  SET_AUTH_USER,
+  LOGOUT,
+  SET_DID_TRY_AL,
+  UPDATE_AUTH_AVATAR,
+} from '../types';
 
 const initialState = {
   token: null,
@@ -8,6 +14,7 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
+  console.log('action', action);
   switch (action.type) {
     case AUTHENTICATE:
       return {
@@ -25,6 +32,14 @@ export default (state = initialState, action) => {
       return {
         ...state,
         didTryAutoLogin: true,
+      };
+    case UPDATE_AUTH_AVATAR:
+      return {
+        ...state,
+        authUser: {
+          ...state,
+          avatar: action.authUser,
+        },
       };
     case LOGOUT:
       return {

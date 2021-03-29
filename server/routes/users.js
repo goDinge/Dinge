@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 const {
   getUsers,
   getUserById,
@@ -14,10 +15,15 @@ const router = express.Router();
 
 const { protect } = require('../middleware/auth');
 
+const multerSingle = multer({
+  dest: 'uploads/',
+  //limits: { fieldSize: 300 * 300 },
+}).single('avatar');
+
 router.get('/', getUsers);
 router.get('/:id', getUserById);
-router.get('/me', protect, getCurrentUser);
-router.put('/me', protect, updateCurrentUserAvatar);
+router.get('/current/me', protect, getCurrentUser);
+router.put('/me', protect, multerSingle, updateCurrentUserAvatar);
 router.put('/reports/:id', protect, reportUser);
 router.put('/follow/:id', protect, followUser);
 router.put('/followers/:id', protect, removeFollower);
