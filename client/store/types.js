@@ -5,6 +5,7 @@ export const SET_IMAGE = 'SET_IMAGE';
 
 export const GET_USER = 'GET_USER';
 export const SET_AUTH_USER = 'SET_AUTH_USER';
+export const UPDATE_USER_AVATAR = 'UPDATE_USER_AVATAR';
 
 export const AUTHENTICATE = 'AUTHENTICATE';
 export const LOGOUT = 'LOGOUT';

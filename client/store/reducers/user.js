@@ -1,4 +1,4 @@
-import { GET_USER } from '../types';
+import { GET_USER, UPDATE_USER_AVATAR } from '../types';
 
 const initialState = {
   user: {},
@@ -11,6 +11,12 @@ export default (state = initialState, action) => {
         ...state,
         user: action.user,
       };
+    case UPDATE_USER_AVATAR: {
+      return {
+        ...state,
+        user: action.user,
+      };
+    }
   }
   return state;
 };

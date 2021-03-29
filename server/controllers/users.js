@@ -1,7 +1,9 @@
+const fs = require('fs');
 const User = require('../models/User');
 const Ding = require('../models/Ding');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const aws = require('aws-sdk');
 
 //desc     get all users
 //route    GET /api/users
@@ -40,6 +42,63 @@ exports.getUserById = asyncHandler(async (req, res, next) => {
   }
 
   res.status(200).json({ success: true, data: user });
+});
+
+//desc     UPDATE loggedin user
+//route    PUT /api/users/me
+//access   Private
+exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  const { avatar } = req.body;
+
+  if (!user) {
+    return next(new ErrorResponse(`No user found.`));
+  }
+
+  if (!avatar) {
+    return next(new ErrorResponse(`No avatar found.`));
+  }
+
+  let avatarUrl;
+
+  aws.config.setPromisesDependency();
+  aws.config.update({
+    accessKeyId: process.env.ACCESSKEYID,
+    secretAccessKey: process.env.SECRETACCESSKEY,
+    region: process.env.REGION,
+  });
+
+  const s3 = new aws.S3();
+
+  const upload = (avatar) => {
+    let params = {
+      ACL: 'public-read',
+      Bucket: process.env.BUCKET_NAME,
+      Body: fs.createReadStream(avatar.path),
+      Key: `avatar/${avatar.originalname}`,
+    };
+    s3.upload(params, async (err, data) => {
+      if (err) {
+        res.json({ msg: err });
+      }
+
+      fs.unlinkSync(avatar.path);
+
+      if (data) {
+        avatarUrl = data.location;
+        console.log(
+          'Avatar has been uploaded to S3 and URL created successfully'
+        );
+
+        user.avatar = avatar;
+        await user.save();
+
+        res.status(200).json({ success: true, data: user });
+      }
+    });
+  };
+  upload(avatar);
 });
 
 //desc     ADD follow user

@@ -1,15 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  Pressable,
+  Alert,
+} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 import * as authActions from '../../store/actions/auth';
+import * as userActions from '../../store/actions/user';
 
 import CustomButton from '../../components/CustomButton';
 import Colors from '../../constants/Colors';
 import getMonthName from '../../helpers/getMonth';
 
 const ProfileScreen = (props) => {
+  const [image, setImage] = useState(null);
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.authUser);
 
@@ -17,6 +27,45 @@ const ProfileScreen = (props) => {
   const monthNumber = date.getMonth() + 1;
   const month = getMonthName(monthNumber);
   const year = date.getFullYear();
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const {
+          status,
+        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
+
+  const imagePickerHandler = async () => {
+    console.log('image picker handler');
+
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.2,
+      });
+
+      console.log(result);
+
+      if (!result.cancelled) {
+        setImage(result.uri);
+      }
+
+      await dispatch(userActions.updateCurrentUserAvatar(image));
+    } catch (err) {
+      Alert.alert('Could not upload avatar!', 'Please try again later.', [
+        { text: 'Okay' },
+      ]);
+      console.log(err.message);
+    }
+  };
 
   const logout = async () => {
     await dispatch(authActions.logout());
@@ -35,7 +84,9 @@ const ProfileScreen = (props) => {
               Joined: {month} {year}
             </Text>
           </View>
-          <Image style={styles.avatar} source={{ uri: authUser.avatar }} />
+          <Pressable onPressIn={imagePickerHandler}>
+            <Image style={styles.avatar} source={{ uri: authUser.avatar }} />
+          </Pressable>
         </View>
         <ScrollView style={styles.statsContainer}>
           <Text style={styles.title}>Statistics</Text>
