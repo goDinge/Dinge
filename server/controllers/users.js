@@ -18,21 +18,6 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
   res.status(200).json(users);
 });
 
-//desc     GET login user
-//route    GET /api/users/current/me
-//access   Private
-exports.getCurrentUser = asyncHandler(async (req, res, next) => {
-  console.log('user', req.user);
-
-  const user = await User.findById(req.user.id);
-
-  if (!user) {
-    return next(new ErrorResponse(`No user found.`));
-  }
-
-  res.status(200).json({ success: true, data: user });
-});
-
 //desc     GET user by user ID
 //route    GET /api/users/:id
 //access   Public
@@ -53,7 +38,6 @@ exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
 
   console.log('req.file', req.file);
-  console.log('req.body', req.body);
 
   const avatar = req.file;
 
@@ -76,6 +60,8 @@ exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
 
   const s3 = new aws.S3();
 
+  //extracted the 'save to S3 process' out to a function
+  //don't need to do that
   const upload = (avatar) => {
     let params = {
       ACL: 'public-read',

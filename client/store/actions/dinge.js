@@ -8,8 +8,6 @@ export const getDinge = () => {
       const response = await axios.get(`http://${HOME_IP}/api/dinge`);
       const dingeAll = response.data.data;
 
-      //console.log(dingeAll);
-
       dispatch({
         type: GET_DINGE,
         dinge: dingeAll,

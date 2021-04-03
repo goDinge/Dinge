@@ -63,6 +63,21 @@ exports.login = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+//desc     GET login user
+//route    GET /api/auth/me
+//access   Private
+exports.getAuthUser = asyncHandler(async (req, res, next) => {
+  console.log('user', req.user);
+
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return next(new ErrorResponse(`No user found.`));
+  }
+
+  res.status(200).json({ success: true, data: user });
+});
+
 /*** HELPER ***/
 const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();

@@ -12,21 +12,30 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 
 import * as authActions from '../../store/actions/auth';
-import * as userActions from '../../store/actions/user';
-
 import CustomButton from '../../components/CustomButton';
 import Colors from '../../constants/Colors';
 import getMonthName from '../../helpers/getMonth';
 
 const ProfileScreen = (props) => {
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.authUser);
+
+  console.log('auth-user from profile', authUser);
 
   const date = new Date(authUser.createdAt);
   const monthNumber = date.getMonth() + 1;
   const month = getMonthName(monthNumber);
   const year = date.getFullYear();
+
+  useEffect(() => {
+    const getAuthUser = async () => {
+      await dispatch(authActions.getAuthUser());
+      setIsLoading(false);
+    };
+    getAuthUser();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -45,7 +54,7 @@ const ProfileScreen = (props) => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: false,
+        allowsEditing: true,
         aspect: [1, 1],
         quality: 0.2,
       });
@@ -54,9 +63,6 @@ const ProfileScreen = (props) => {
         setImage(result);
       }
 
-      console.log('image object on device: ', result);
-
-      //await dispatch(userActions.updateCurrentUserAvatar(image));
       await dispatch(authActions.updateAuthAvatar(result));
     } catch (err) {
       Alert.alert('Could not upload avatar!', 'Please try again later.', [

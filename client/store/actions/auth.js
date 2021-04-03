@@ -3,9 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   AUTHENTICATE,
   SET_AUTH_USER,
+  GET_AUTH_USER,
   SET_DID_TRY_AL,
   LOGOUT,
-  UPDATE_AUTH_AVATAR,
 } from '../types';
 import { HOME_IP } from '@env';
 
@@ -29,13 +29,26 @@ export const setAuthUser = (resData) => {
   };
 };
 
-export const setAuthAvatar = (resData) => {
-  console.log('setAuthAvatar hit');
-  return (dispatch) => {
-    dispatch({
-      type: UPDATE_AUTH_AVATAR,
-      authUser: resData,
-    });
+export const getAuthUser = () => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.get(`http://${HOME_IP}/api/auth/me`);
+
+      if (!response) {
+        throw new Error('You are not logged in');
+      }
+
+      const user = response.data.data;
+
+      console.log('user action', user);
+
+      await dispatch({
+        type: GET_AUTH_USER,
+        authUser: user,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
   };
 };
 
@@ -46,10 +59,7 @@ export const setDidTryAL = () => {
 export const updateAuthAvatar = (avatar) => {
   return async (dispatch) => {
     try {
-      console.log('avatar', avatar);
-
       const avatarName = avatar.uri.split('/').pop();
-
       const formData = new FormData();
 
       formData.append('avatar', {
@@ -71,16 +81,7 @@ export const updateAuthAvatar = (avatar) => {
 
       const newAvatar = response.data.data;
       console.log('newAvatar', newAvatar.avatar);
-
-      // dispatch({
-      //   type: UPDATE_AUTH_AVATAR,
-      //   authUser: newAvatar,
-      // });
       await dispatch(setAuthUser(newAvatar));
-      //await dispatch(setAuthAvatar(newAvatar.avatar));
-      // dispatch({ type: SET_AUTH_USER, authUser: resData });
-
-      console.log('state updated');
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }
@@ -115,10 +116,6 @@ export const register = (name, email, password) => {
         resData.user
       );
       await dispatch(setAuthUser(resData.user));
-      // await dispatch({
-      //   type: SET_AUTH_USER,
-      //   authUser: resData.user,
-      // });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }
@@ -152,10 +149,6 @@ export const login = (email, password) => {
         resData.user
       );
       await dispatch(setAuthUser(resData.user));
-      // await dispatch({
-      //   type: SET_AUTH_USER,
-      //   authUser: resData.user,
-      // });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }

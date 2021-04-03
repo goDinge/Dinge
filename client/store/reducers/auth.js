@@ -4,6 +4,7 @@ import {
   LOGOUT,
   SET_DID_TRY_AL,
   UPDATE_AUTH_AVATAR,
+  GET_AUTH_USER,
 } from '../types';
 
 const initialState = {
@@ -14,7 +15,6 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
-  console.log('action', action);
   switch (action.type) {
     case AUTHENTICATE:
       return {
@@ -24,6 +24,11 @@ export default (state = initialState, action) => {
         authUser: action.authUser,
       };
     case SET_AUTH_USER:
+      return {
+        ...state,
+        authUser: action.authUser,
+      };
+    case GET_AUTH_USER:
       return {
         ...state,
         authUser: action.authUser,
