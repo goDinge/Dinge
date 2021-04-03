@@ -1,18 +1,37 @@
 import axios from 'axios';
-import { ADD_DING_TO_FAV } from '../types';
+import { LIKE_DING, UNLIKE_DING } from '../types';
 import { HOME_IP } from '@env';
 
-export const addDingToFav = (dingId) => {
+export const likeDing = (dingId) => {
   return async (dispatch) => {
     try {
-      console.log(dingId);
-
-      const response = await axios.put(`http://${HOME_IP}/api/ding/${dingId}`);
-      const ding = response.data.data;
+      const response = await axios.put(
+        `http://${HOME_IP}/api/ding/likes/${dingId}`
+      );
+      const likesList = response.data.data.likes;
 
       dispatch({
-        type: ADD_DING_TO_FAV,
-        ding: ding,
+        type: LIKE_DING,
+        likesList: likesList,
+      });
+    } catch (err) {
+      console.log(err.message);
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const unlikeDing = (dingId) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.delete(
+        `http://${HOME_IP}/api/ding/likes/${dingId}`
+      );
+      const likesList = response.data.data.likes;
+
+      dispatch({
+        type: UNLIKE_DING,
+        likesList: likesList,
       });
     } catch (err) {
       console.log(err.message);

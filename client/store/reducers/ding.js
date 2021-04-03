@@ -1,15 +1,20 @@
-import { ADD_DING_TO_FAV } from '../types';
+import { LIKE_DING, UNLIKE_DING } from '../types';
 
 const initialState = {
-  ding: {},
+  likesList: [],
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case ADD_DING_TO_FAV:
+    case LIKE_DING:
       return {
         ...state,
-        ding: action.ding,
+        likesList: action.likes,
+      };
+    case UNLIKE_DING:
+      return {
+        ...state,
+        likesList: action.likes,
       };
   }
   return state;

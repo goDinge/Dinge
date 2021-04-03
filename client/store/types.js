@@ -1,6 +1,7 @@
 export const GET_DINGE = 'GET_DINGE';
 export const POST_DING = 'POST_DING';
-export const ADD_DING_TO_FAV = 'ADD_DING_TO_FAV';
+export const LIKE_DING = 'LIKE_DING';
+export const UNLIKE_DING = 'UNLIKE_DING';
 
 export const SET_IMAGE = 'SET_IMAGE';
 

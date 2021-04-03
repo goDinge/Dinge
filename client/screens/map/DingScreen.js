@@ -22,6 +22,9 @@ const DingScreen = (props) => {
   const ding = props.route.params;
   const description = JSON.parse(ding.description);
   const user = useSelector((state) => state.user.user);
+  const dingLikes = useSelector((state) => state.ding.likesList);
+
+  //console.log(dingLikes);
 
   const timeConverter = (dateISO) => {
     const dateDing = new Date(dateISO);
@@ -57,10 +60,17 @@ const DingScreen = (props) => {
     props.navigation.navigate('Public', userId);
   };
 
-  const addFav = async (dingId) => {
+  const likeDingHandler = async (dingId) => {
     setError(null);
+    console.log('ding', typeof ding._id);
     try {
-      await dispatch(dingActions.addDingToFav(dingId));
+      if (ding.likes.includes(user._id)) {
+        await dispatch(dingActions.unlikeDing(dingId));
+        console.log('not liked');
+      } else {
+        await dispatch(dingActions.likeDing(dingId));
+        console.log('liked');
+      }
     } catch (err) {
       setError(err.message);
     }
@@ -78,7 +88,7 @@ const DingScreen = (props) => {
               name="heart-outline"
               size={30}
               style={styles.icon}
-              onPress={() => console.log('pressed')}
+              onPress={() => likeDingHandler(ding._id)}
             />
             <MaterialCommunityIcons
               name="comment-outline"
