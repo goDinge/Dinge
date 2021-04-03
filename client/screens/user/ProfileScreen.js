@@ -30,14 +30,6 @@ const ProfileScreen = (props) => {
   const year = date.getFullYear();
 
   useEffect(() => {
-    const getAuthUser = async () => {
-      await dispatch(authActions.getAuthUser());
-      setIsLoading(false);
-    };
-    getAuthUser();
-  }, []);
-
-  useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
         const {
@@ -90,7 +82,11 @@ const ProfileScreen = (props) => {
             </Text>
           </View>
           <Pressable onPressIn={imagePickerHandler}>
-            <Image style={styles.avatar} source={{ uri: authUser.avatar }} />
+            <Image
+              style={styles.avatar}
+              source={{ uri: authUser.avatar }}
+              defaultSource={require('../../assets/avatar.png')}
+            />
           </Pressable>
         </View>
         <ScrollView style={styles.statsContainer}>

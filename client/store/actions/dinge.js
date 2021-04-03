@@ -53,7 +53,6 @@ export const postDing = (description, lat, long, img, thumb) => {
       );
 
       const newDing = response.data.data;
-      // console.log('newding', newDing);
 
       dispatch({
         type: POST_DING,

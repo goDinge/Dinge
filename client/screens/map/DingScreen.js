@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import * as userActions from '../../store/actions/user';
+import * as dingActions from '../../store/actions/ding';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -56,6 +57,15 @@ const DingScreen = (props) => {
     props.navigation.navigate('Public', userId);
   };
 
+  const addFav = async (dingId) => {
+    setError(null);
+    try {
+      await dispatch(dingActions.addDingToFav(dingId));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -68,6 +78,7 @@ const DingScreen = (props) => {
               name="heart-outline"
               size={30}
               style={styles.icon}
+              onPress={() => console.log('pressed')}
             />
             <MaterialCommunityIcons
               name="comment-outline"

@@ -15,12 +15,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-//app.use(express.multipart());
 
 //Routes
 const auth = require('./routes/auth');
 const users = require('./routes/users');
 const dinge = require('./routes/dinge');
+const ding = require('./routes/ding');
 
 //Routes setup
 app.get('/', (req, res) => {
@@ -32,6 +32,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', auth);
 app.use('/api/users', users);
 app.use('/api/dinge', dinge);
+app.use('/api/ding', ding);
 
 app.use(errorHandler);
 

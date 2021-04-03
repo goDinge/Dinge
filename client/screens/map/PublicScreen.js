@@ -20,7 +20,11 @@ const PublicScreen = (props) => {
           <Text style={styles.text}>Rep: 1852</Text>
         </View>
         <View style={styles.avatarContainer}>
-          <Image style={styles.avatar} source={{ uri: user.avatar }} />
+          <Image
+            style={styles.avatar}
+            source={{ uri: user.avatar }}
+            defaultSource={require('../../assets/avatar.png')}
+          />
         </View>
       </View>
     </View>

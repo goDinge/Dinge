@@ -1,5 +1,6 @@
 const fs = require('fs');
 const Ding = require('../models/Ding');
+const User = require('../models/User');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const aws = require('aws-sdk');

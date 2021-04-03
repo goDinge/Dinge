@@ -10,6 +10,7 @@ import CustomReloadIcon from '../../components/CustomReloadIcon';
 import Colors from '../../constants/Colors';
 
 import * as dingeActions from '../../store/actions/dinge';
+import * as authActions from '../../store/actions/auth';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -52,6 +53,7 @@ const MapScreen = (props) => {
   const loadData = async () => {
     setError(null);
     try {
+      await dispatch(authActions.getAuthUser());
       await dispatch(dingeActions.getDinge());
     } catch (err) {
       setError(err.message);
