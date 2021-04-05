@@ -9,12 +9,12 @@ export default (state = initialState, action) => {
     case LIKE_DING:
       return {
         ...state,
-        likesList: action.likes,
+        likesList: action.likesList,
       };
     case UNLIKE_DING:
       return {
         ...state,
-        likesList: action.likes,
+        likesList: action.likesList,
       };
   }
   return state;

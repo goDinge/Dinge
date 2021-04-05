@@ -13,6 +13,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import * as userActions from '../../store/actions/user';
 import * as dingActions from '../../store/actions/ding';
+import Colors from '../../constants/Colors';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -24,7 +25,7 @@ const DingScreen = (props) => {
   const user = useSelector((state) => state.user.user);
   const dingLikes = useSelector((state) => state.ding.likesList);
 
-  //console.log(dingLikes);
+  console.log(dingLikes);
 
   const timeConverter = (dateISO) => {
     const dateDing = new Date(dateISO);
@@ -60,13 +61,19 @@ const DingScreen = (props) => {
     props.navigation.navigate('Public', userId);
   };
 
+  let liked;
+  if (dingLikes.includes(user._id)) {
+    liked = true;
+  } else {
+    liked = false;
+  }
+
   const likeDingHandler = async (dingId) => {
     setError(null);
-    console.log('ding', typeof ding._id);
     try {
-      if (ding.likes.includes(user._id)) {
+      if (liked) {
         await dispatch(dingActions.unlikeDing(dingId));
-        console.log('not liked');
+        console.log('unliked');
       } else {
         await dispatch(dingActions.likeDing(dingId));
         console.log('liked');
@@ -85,7 +92,8 @@ const DingScreen = (props) => {
         <View style={styles.infoContainer}>
           <View style={styles.iconContainer}>
             <MaterialCommunityIcons
-              name="heart-outline"
+              name={liked ? 'heart' : 'heart-outline'}
+              color={liked ? Colors.red : 'black'}
               size={30}
               style={styles.icon}
               onPress={() => likeDingHandler(ding._id)}
