@@ -102,22 +102,18 @@ exports.reportDing = asyncHandler(async (req, res, next) => {
   });
 });
 
-//desc    DELETE Ding by ID
-//route   DELETE /api/dinge/:id
-//access  public
-exports.deleteDingById = asyncHandler(async (req, res, next) => {
-  const dingId = req.params.id;
-  const ding = await Ding.findByIdAndDelete(dingId);
-  res.status(200).json({
-    success: true,
-    data: ding,
-  });
-});
-
 //desc    GET all Dinge
 //route   GET /api/dinge
 //access  public
 exports.getDinge = asyncHandler(async (req, res, next) => {
   const dinge = await Ding.find();
   res.status(200).json({ success: true, data: dinge });
+});
+
+//desc    GET Ding by ID
+//route   GET /api/dinge/:id
+//access  public
+exports.getDing = asyncHandler(async (req, res, next) => {
+  const ding = await Ding.findById(req.params.id);
+  res.status(200).json({ success: true, data: ding });
 });

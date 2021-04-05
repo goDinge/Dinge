@@ -1,4 +1,5 @@
 export const GET_DINGE = 'GET_DINGE';
+export const GET_DING = 'GET_DING';
 export const POST_DING = 'POST_DING';
 export const LIKE_DING = 'LIKE_DING';
 export const UNLIKE_DING = 'UNLIKE_DING';

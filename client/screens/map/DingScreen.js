@@ -9,23 +9,32 @@ import {
   Pressable,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 import * as userActions from '../../store/actions/user';
-import * as dingActions from '../../store/actions/ding';
+import * as dingeActions from '../../store/actions/dinge';
 import Colors from '../../constants/Colors';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const DingScreen = (props) => {
-  const [error, setError] = useState(undefined);
-
   const ding = props.route.params;
+  const authUser = useSelector((state) => state.auth.authUser);
+
+  let initLike = false;
+  if (ding.likes.includes(authUser._id)) {
+    initLike = true;
+  }
+
+  const [error, setError] = useState(undefined);
+  const [like, setLike] = useState(initLike);
+  console.log(like);
+
   const description = JSON.parse(ding.description);
   const user = useSelector((state) => state.user.user);
-  const dingLikes = useSelector((state) => state.ding.likesList);
 
-  console.log(dingLikes);
+  const dingLikes = useSelector((state) => state.dinge.likesList);
+  console.log('dingLikes', dingLikes);
 
   const timeConverter = (dateISO) => {
     const dateDing = new Date(dateISO);
@@ -61,22 +70,17 @@ const DingScreen = (props) => {
     props.navigation.navigate('Public', userId);
   };
 
-  let liked;
-  if (dingLikes.includes(user._id)) {
-    liked = true;
-  } else {
-    liked = false;
-  }
-
   const likeDingHandler = async (dingId) => {
     setError(null);
     try {
-      if (liked) {
-        await dispatch(dingActions.unlikeDing(dingId));
+      if (like) {
+        await dispatch(dingeActions.unlikeDing(dingId));
         console.log('unliked');
+        setLike(false);
       } else {
-        await dispatch(dingActions.likeDing(dingId));
+        await dispatch(dingeActions.likeDing(dingId));
         console.log('liked');
+        setLike(true);
       }
     } catch (err) {
       setError(err.message);
@@ -92,8 +96,8 @@ const DingScreen = (props) => {
         <View style={styles.infoContainer}>
           <View style={styles.iconContainer}>
             <MaterialCommunityIcons
-              name={liked ? 'heart' : 'heart-outline'}
-              color={liked ? Colors.red : 'black'}
+              name={like ? 'heart' : 'heart-outline'}
+              color={like ? Colors.red : 'black'}
               size={30}
               style={styles.icon}
               onPress={() => likeDingHandler(ding._id)}
@@ -108,6 +112,13 @@ const DingScreen = (props) => {
               size={30}
               style={styles.icon}
             />
+            {ding.user === authUser._id ? (
+              <MaterialIcons
+                name="highlight-remove"
+                size={30}
+                style={styles.icon}
+              />
+            ) : null}
           </View>
           <View style={styles.socialContainer}>
             <Pressable onPressIn={() => publicProfile(user._id)}>
@@ -146,7 +157,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   icon: {
-    marginRight: 12,
+    marginRight: 15,
   },
   userName: {
     fontFamily: 'cereal-bold',

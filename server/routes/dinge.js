@@ -2,9 +2,9 @@ const express = require('express');
 const multer = require('multer');
 const {
   getDinge,
+  getDing,
   createDing,
   reportDing,
-  deleteDingById,
 } = require('../controllers/dinge');
 
 const { protect } = require('../middleware/auth');
@@ -17,9 +17,8 @@ const multerMultiple = multer({
 const router = express.Router();
 
 router.get('/', getDinge);
+router.get('/:id', getDing);
 router.post('/', protect, multerMultiple, createDing);
-//router.post('/', multerMultiple, createDing);
 router.put('/reports/:id', protect, reportDing);
-router.delete('/:id', deleteDingById);
 
 module.exports = router;

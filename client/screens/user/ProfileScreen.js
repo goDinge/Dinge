@@ -8,6 +8,7 @@ import {
   Image,
   Pressable,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -18,11 +19,10 @@ import getMonthName from '../../helpers/getMonth';
 
 const ProfileScreen = (props) => {
   const [image, setImage] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.authUser);
-
-  console.log('auth-user from profile', authUser);
 
   const date = new Date(authUser.createdAt);
   const monthNumber = date.getMonth() + 1;
@@ -67,6 +67,20 @@ const ProfileScreen = (props) => {
   const logout = async () => {
     await dispatch(authActions.logout());
   };
+
+  // if (!authUser) {
+  //   setIsLoading(true);
+  // }
+
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        color={Colors.primary}
+        size="large"
+        style={styles.actIndicator}
+      />
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -137,6 +151,12 @@ const ProfileScreen = (props) => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
+  actIndicator: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.primary,

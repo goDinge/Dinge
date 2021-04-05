@@ -20,11 +20,11 @@ const MapScreen = (props) => {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [region, setRegion] = useState(location);
 
   const dispatch = useDispatch();
   const dinge = useSelector((state) => state.dinge.dinge);
+  const authUser = useSelector((state) => state.auth.authUser);
 
   useEffect(() => {
     (async () => {
@@ -81,7 +81,7 @@ const MapScreen = (props) => {
   };
 
   //load map
-  if (!mapLoaded || !location) {
+  if (!mapLoaded || !location || !authUser) {
     return (
       <View style={styles.indicatorContainer}>
         <ActivityIndicator size="large" color={Colors.primary} />

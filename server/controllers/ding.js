@@ -12,8 +12,6 @@ exports.likeDing = asyncHandler(async (req, res, next) => {
 
   const dingLikes = ding.likes;
 
-  //dingLikes.push(userId);
-
   if (!dingLikes.includes(userId)) {
     dingLikes.push(userId);
   } else {
@@ -39,5 +37,26 @@ exports.unlikeDing = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: ding,
+  });
+});
+
+//desc    DELETE Ding by ID
+//route   DELETE /api/ding/:id
+//access  private
+exports.deleteDingById = asyncHandler(async (req, res, next) => {
+  const ding = await Ding.findOne({ _id: req.params.id });
+  const userId = req.user.id;
+
+  if (ding.user.toString() === userId) {
+    await ding.remove();
+  } else {
+    return next(
+      new ErrorResponse('User not authorized to delete this Ding', 400)
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    data: 'ding removed',
   });
 });

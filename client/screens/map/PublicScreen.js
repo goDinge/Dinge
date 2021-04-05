@@ -2,11 +2,9 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { View, Text, StyleSheet, Image } from 'react-native';
 
-import * as userAction from '../../store/actions/user';
 import Colors from '../../constants/Colors';
 
 const PublicScreen = (props) => {
-  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
 
   return (
