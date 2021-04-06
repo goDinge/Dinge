@@ -28,13 +28,17 @@ const DingScreen = (props) => {
 
   const [error, setError] = useState(undefined);
   const [like, setLike] = useState(initLike);
-  console.log(like);
 
   const description = JSON.parse(ding.description);
   const user = useSelector((state) => state.user.user);
+  //const dingUE = useSelector((state) => state.dinge.ding);
 
-  const dingLikes = useSelector((state) => state.dinge.likesList);
-  console.log('dingLikes', dingLikes);
+  // console.log('ding from props', ding);
+  // console.log('ding from UseEffect', dingUE);
+
+  // not useful at the moment, but reducer might come in handy later
+  // const dingLikes = useSelector((state) => state.dinge.likesList);
+  // console.log('dingLikes', dingLikes);
 
   const timeConverter = (dateISO) => {
     const dateDing = new Date(dateISO);
@@ -55,12 +59,22 @@ const DingScreen = (props) => {
 
   useEffect(() => {
     loadUser(ding.user);
-  }, [loadUser]);
+    loadDing(ding._id);
+  }, [loadUser, loadDing]);
 
   const loadUser = async (user) => {
     setError(null);
     try {
       await dispatch(userActions.getUser(user));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const loadDing = async (dingId) => {
+    setError(null);
+    try {
+      await dispatch(dingeActions.getDing(dingId));
     } catch (err) {
       setError(err.message);
     }
@@ -74,17 +88,27 @@ const DingScreen = (props) => {
     setError(null);
     try {
       if (like) {
-        await dispatch(dingeActions.unlikeDing(dingId));
-        console.log('unliked');
         setLike(false);
+        await dispatch(dingeActions.unlikeDing(dingId));
       } else {
-        await dispatch(dingeActions.likeDing(dingId));
-        console.log('liked');
         setLike(true);
+        await dispatch(dingeActions.likeDing(dingId));
       }
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const deleteDing = async (dingId) => {
+    console.log('deleting', dingId);
+    setError(null);
+    try {
+      await dispatch(dingeActions.deleteDingById(dingId));
+      await dispatch(dingeActions.getDinge());
+    } catch (error) {
+      setError(err.message);
+    }
+    props.navigation.navigate('Map');
   };
 
   return (
@@ -117,6 +141,7 @@ const DingScreen = (props) => {
                 name="highlight-remove"
                 size={30}
                 style={styles.icon}
+                onPress={() => deleteDing(ding._id)}
               />
             ) : null}
           </View>

@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { GET_DINGE, POST_DING, LIKE_DING, UNLIKE_DING } from '../types';
+import {
+  GET_DINGE,
+  GET_DING,
+  POST_DING,
+  LIKE_DING,
+  UNLIKE_DING,
+} from '../types';
 import { HOME_IP } from '@env';
 
 export const getDinge = () => {
@@ -25,7 +31,7 @@ export const getDing = (dingId) => {
       const ding = response.data.data;
 
       dispatch({
-        type: GET_DINGE,
+        type: GET_DING,
         ding: ding,
       });
     } catch (err) {
@@ -108,12 +114,21 @@ export const unlikeDing = (dingId) => {
       );
       const likesList = response.data.data.likes;
 
-      console.log(likesList);
-
       dispatch({
         type: UNLIKE_DING,
         likesList: likesList,
       });
+    } catch (err) {
+      console.log(err.message);
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const deleteDingById = (dingId) => {
+  return async (dispatch) => {
+    try {
+      await axios.delete(`http://${HOME_IP}/api/ding/${dingId}`);
     } catch (err) {
       console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
