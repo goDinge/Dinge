@@ -1,4 +1,4 @@
-import { SET_IMAGE, GET_IMAGE } from '../types';
+import { SET_IMAGE, RESET_IMAGE } from '../types';
 
 const initialState = {
   image: '',
@@ -10,6 +10,10 @@ export default (state = initialState, action) => {
       return {
         ...state,
         image: action.image,
+      };
+    case RESET_IMAGE:
+      return {
+        ...initialState,
       };
   }
   return state;

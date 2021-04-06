@@ -14,7 +14,9 @@ import {
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
+
 import * as dingeActions from '../../store/actions/dinge';
+import * as imageActions from '../../store/actions/image';
 
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
@@ -76,6 +78,7 @@ const UploadScreen = (props) => {
         dingeActions.postDing(text, lat, long, awsImage, awsThumb)
       );
       await dispatch(dingeActions.getDinge());
+      await dispatch(imageActions.resetImage(''));
     } catch (err) {
       Alert.alert('Could not fetch location!', 'Please try again later.', [
         { text: 'Okay' },
@@ -87,25 +90,36 @@ const UploadScreen = (props) => {
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
+    <ScrollView>
+      <View style={styles.container}>
         <View style={styles.imageContainer}>
           <View style={styles.imagePreview}>
             {image !== '' ? (
               <Image style={styles.image} source={{ uri: image.uri }} />
             ) : (
-              <Text style={styles.textRegular}>No image taken yet</Text>
+              <View style={styles.buttonContainer}>
+                <CustomButton
+                  onSelect={takeImageHandler}
+                  color={Colors.primary}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>Snap Pic</Text>
+                </CustomButton>
+              </View>
             )}
           </View>
-          <View style={styles.buttonContainer}>
-            <CustomButton
-              onSelect={takeImageHandler}
-              color={Colors.primary}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>Snap Pic</Text>
-            </CustomButton>
-          </View>
+          {image ? (
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                onSelect={takeImageHandler}
+                color={Colors.primary}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Re-take Pic</Text>
+              </CustomButton>
+            </View>
+          ) : null}
+
           <View style={styles.descriptionContainer}>
             <Text style={styles.descriptionTitle}>Description</Text>
             <TextInput
@@ -128,8 +142,8 @@ const UploadScreen = (props) => {
             )}
           </View>
         </View>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -138,6 +152,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
+    paddingBottom: 40,
   },
   imageContainer: {
     width: '100%',
@@ -161,7 +176,7 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-light',
   },
   buttonContainer: {
-    marginVertical: 10,
+    marginVertical: 8,
   },
   button: {
     width: 200,
@@ -175,9 +190,9 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   descriptionContainer: {
-    marginVertical: 10,
-    marginTop: 20,
-    width: '100%',
+    marginVertical: 8,
+    marginTop: 10,
+    width: '90%',
     alignItems: 'center',
   },
   descriptionTitle: {

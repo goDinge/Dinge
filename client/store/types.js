@@ -5,6 +5,7 @@ export const LIKE_DING = 'LIKE_DING';
 export const UNLIKE_DING = 'UNLIKE_DING';
 
 export const SET_IMAGE = 'SET_IMAGE';
+export const RESET_IMAGE = 'RESET_IMAGE';
 
 export const GET_USER = 'GET_USER';
 export const SET_AUTH_USER = 'SET_AUTH_USER';

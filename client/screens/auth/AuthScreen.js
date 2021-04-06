@@ -124,91 +124,93 @@ const Auth = (props) => {
       {isLoading ? (
         <ActivityIndicator />
       ) : (
-        <View style={styles.container}>
-          <Text style={styles.titleText}>Dinge</Text>
-          <View style={styles.authContainer}>
-            <Text style={styles.subtitleText}>
-              {isSignup ? 'Sign-up' : 'Login'}
-            </Text>
-            {isSignup ? (
+        <ScrollView contentContainerStyle={styles.outerContainer}>
+          <View style={styles.container}>
+            <Text style={styles.titleText}>Dinge</Text>
+            <View style={styles.authContainer}>
+              <Text style={styles.subtitleText}>
+                {isSignup ? 'Sign-up' : 'Login'}
+              </Text>
+              {isSignup ? (
+                <CustomInput
+                  id="name"
+                  placeholder="profile name"
+                  keyboardType="default"
+                  autoCapitalize="none"
+                  errorText="Please enter your name"
+                  onInputChange={inputChangeHandler}
+                  initialValue=""
+                  required
+                  style={styles.textInput}
+                />
+              ) : null}
               <CustomInput
-                id="name"
-                placeholder="profile name"
-                keyboardType="default"
+                id="email"
+                placeholder="e-mail"
+                keyboardType="email-address"
                 autoCapitalize="none"
-                errorText="Please enter your name"
+                errorText="Please enter a valid email"
                 onInputChange={inputChangeHandler}
                 initialValue=""
                 required
                 style={styles.textInput}
               />
-            ) : null}
-            <CustomInput
-              id="email"
-              placeholder="e-mail"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              errorText="Please enter a valid email"
-              onInputChange={inputChangeHandler}
-              initialValue=""
-              required
-              style={styles.textInput}
-            />
-            <CustomInput
-              id="password"
-              placeholder="password"
-              keyboardType="default"
-              secureTextEntry
-              autoCapitalize="none"
-              minLength={6}
-              errorText="Please enter a valid password"
-              onInputChange={inputChangeHandler}
-              initialValue=""
-              required
-              style={styles.textInput}
-            />
-            {isSignup ? (
               <CustomInput
-                id="password2"
-                placeholder="confirm password"
+                id="password"
+                placeholder="password"
                 keyboardType="default"
                 secureTextEntry
                 autoCapitalize="none"
                 minLength={6}
-                errorText="Please confirm your password"
+                errorText="Please enter a valid password"
                 onInputChange={inputChangeHandler}
                 initialValue=""
                 required
                 style={styles.textInput}
               />
-            ) : null}
-            <View style={styles.buttonContainer}>
-              <CustomButton style={styles.mainButton} onSelect={authHandler}>
-                <Text style={styles.mainButtonText}>
-                  {isSignup ? 'Sign-up' : 'Login'}
+              {isSignup ? (
+                <CustomInput
+                  id="password2"
+                  placeholder="confirm password"
+                  keyboardType="default"
+                  secureTextEntry
+                  autoCapitalize="none"
+                  minLength={6}
+                  errorText="Please confirm your password"
+                  onInputChange={inputChangeHandler}
+                  initialValue=""
+                  required
+                  style={styles.textInput}
+                />
+              ) : null}
+              <View style={styles.buttonContainer}>
+                <CustomButton style={styles.mainButton} onSelect={authHandler}>
+                  <Text style={styles.mainButtonText}>
+                    {isSignup ? 'Sign-up' : 'Login'}
+                  </Text>
+                </CustomButton>
+              </View>
+            </View>
+            <View style={styles.bottomContainer}>
+              <CustomButton
+                title="Sign-up"
+                style={styles.buttonContainer}
+                onSelect={() => setIsSignup((prevState) => !prevState)}
+              >
+                <Text style={styles.buttonText}>
+                  {isSignup ? 'Login' : 'Sign-up'}
                 </Text>
+              </CustomButton>
+              <CustomButton
+                title="Forgot Password"
+                style={styles.buttonContainer}
+                onSelect={() => props.navigation.navigate('ForgotPassword')}
+              >
+                <Text style={styles.buttonText}>Forgot Password</Text>
               </CustomButton>
             </View>
           </View>
-          <View style={styles.bottomContainer}>
-            <CustomButton
-              title="Sign-up"
-              style={styles.buttonContainer}
-              onSelect={() => setIsSignup((prevState) => !prevState)}
-            >
-              <Text style={styles.buttonText}>
-                {isSignup ? 'Login' : 'Sign-up'}
-              </Text>
-            </CustomButton>
-            <CustomButton
-              title="Forgot Password"
-              style={styles.buttonContainer}
-              onSelect={() => props.navigation.navigate('ForgotPassword')}
-            >
-              <Text style={styles.buttonText}>Forgot Password</Text>
-            </CustomButton>
-          </View>
-        </View>
+        </ScrollView>
       )}
     </KeyboardAvoidingView>
   );
@@ -219,6 +221,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: Colors.primary,
+  },
+  outerContainer: {
+    flex: 1,
+    alignItems: 'center',
   },
   container: {
     flex: 1,

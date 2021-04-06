@@ -33,6 +33,7 @@ const CameraScreen = (props) => {
         type={type}
         ratio="1:1"
         whiteBalance="auto"
+        autoFocus="on"
         ref={(ref) => {
           setCameraRef(ref);
         }}

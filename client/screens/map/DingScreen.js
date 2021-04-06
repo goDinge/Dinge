@@ -100,7 +100,6 @@ const DingScreen = (props) => {
   };
 
   const deleteDing = async (dingId) => {
-    console.log('deleting', dingId);
     setError(null);
     try {
       await dispatch(dingeActions.deleteDingById(dingId));
