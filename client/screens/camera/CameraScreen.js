@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 import { useDispatch } from 'react-redux';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+//import { RNCamera as Camera } from "react-native-camera";
 
 import * as imageActions from '../../store/actions/image';
 
@@ -9,6 +11,8 @@ const CameraScreen = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.on);
+  const [flashIcon, setFlashIcon] = useState('flash');
 
   const dispatch = useDispatch();
 
@@ -26,6 +30,25 @@ const CameraScreen = (props) => {
     return <Text>No access to camera</Text>;
   }
 
+  const flashModes = [0, 1, 2, 3];
+  const flashIcons = ['flash-off', 'flash', 'flashlight', 'flash-auto'];
+
+  const flashModeHandler = () => {
+    //find current index
+    const findCurrentIndex = (element) => element === flashIcon;
+
+    let index = flashIcons.findIndex(findCurrentIndex);
+
+    // move one icon up the array
+    if (index !== 3) {
+      index = index + 1;
+    } else {
+      index = 0;
+    }
+    setFlashMode(flashModes[index]);
+    setFlashIcon(flashIcons[index]);
+  };
+
   return (
     <View style={styles.cameraContainer}>
       <Camera
@@ -34,6 +57,7 @@ const CameraScreen = (props) => {
         ratio="1:1"
         whiteBalance="auto"
         autoFocus="on"
+        flashMode={flashMode}
         ref={(ref) => {
           setCameraRef(ref);
         }}
@@ -51,6 +75,15 @@ const CameraScreen = (props) => {
           >
             <Text style={styles.flipText}>flip</Text>
           </TouchableOpacity>
+          <View>
+            <MaterialCommunityIcons
+              name={flashIcon}
+              color="white"
+              size={32}
+              style={styles.flashButton}
+              onPress={flashModeHandler}
+            />
+          </View>
           <TouchableOpacity
             style={{ alignSelf: 'center' }}
             onPress={async () => {
@@ -86,6 +119,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     justifyContent: 'flex-end',
   },
+  flashButton: {
+    alignSelf: 'flex-start',
+    position: 'absolute',
+    top: 22,
+    left: 27,
+  },
   flipButton: {
     borderWidth: 1,
     marginRight: 15,
@@ -100,7 +139,6 @@ const styles = StyleSheet.create({
   },
   flipText: {
     fontSize: 20,
-
     fontFamily: 'cereal-bold',
     color: 'white',
   },
