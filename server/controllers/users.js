@@ -4,6 +4,7 @@ const Ding = require('../models/Ding');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const aws = require('aws-sdk');
+const repScores = require('../utils/repScores');
 
 //desc     get all users
 //route    GET /api/users
@@ -193,6 +194,22 @@ exports.deleteUserById = asyncHandler(async (req, res, next) => {
 
   await User.findByIdAndDelete(user);
   await Ding.deleteMany({ user });
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
+//desc     UPDATE reputation
+//route    PUT /api/users/:id/:score
+//access   Private
+exports.updateRepById = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  const score = req.params.score;
+
+  user.reputation = user.reputation + score;
+  user.save();
 
   res.status(200).json({
     success: true,

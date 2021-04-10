@@ -128,6 +128,8 @@ export const login = (email, password) => {
       },
     };
     const body = JSON.stringify({ email, password });
+
+    console.log(HOME_IP);
     try {
       const response = await axios.post(
         `http://${HOME_IP}/api/auth/login`,

@@ -69,7 +69,7 @@ export const postDing = (description, lat, long, img, thumb) => {
       };
 
       const response = await axios.post(
-        `http://${HOME_IP}/api/dinge`,
+        `http://${HOME_IP}/api/dinge/`,
         formData,
         config
       );

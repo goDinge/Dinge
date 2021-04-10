@@ -3,7 +3,7 @@ const multer = require('multer');
 const {
   getUsers,
   getUserById,
-  //getCurrentUser,
+  updateRepById,
   updateCurrentUserAvatar,
   followUser,
   reportUser,
@@ -22,6 +22,7 @@ const multerSingle = multer({
 
 router.get('/', getUsers);
 router.get('/:id', getUserById);
+router.put('/:id/:score', protect, updateRepById);
 router.put('/me', protect, multerSingle, updateCurrentUserAvatar);
 router.put('/reports/:id', protect, reportUser);
 router.put('/follow/:id', protect, followUser);

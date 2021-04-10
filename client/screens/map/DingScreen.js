@@ -7,6 +7,7 @@ import {
   Dimensions,
   StyleSheet,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -28,9 +29,11 @@ const DingScreen = (props) => {
 
   const [error, setError] = useState(undefined);
   const [like, setLike] = useState(initLike);
+  const [isLoading, setIsLoading] = useState(true);
 
   const description = JSON.parse(ding.description);
   const user = useSelector((state) => state.user.user);
+
   //const dingUE = useSelector((state) => state.dinge.ding);
 
   // console.log('ding from props', ding);
@@ -73,11 +76,13 @@ const DingScreen = (props) => {
 
   const loadDing = async (dingId) => {
     setError(null);
+    setIsLoading(true);
     try {
       await dispatch(dingeActions.getDing(dingId));
     } catch (err) {
       setError(err.message);
     }
+    setIsLoading(false);
   };
 
   const publicProfile = (userId) => {
@@ -109,6 +114,14 @@ const DingScreen = (props) => {
     }
     props.navigation.navigate('Map');
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.indicatorContainer}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -166,6 +179,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#fff',
+  },
+  indicatorContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   imageContainer: {
     width: '100%',

@@ -11,8 +11,8 @@ const CameraScreen = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
-  const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.on);
-  const [flashIcon, setFlashIcon] = useState('flash');
+  const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.auto);
+  const [flashIcon, setFlashIcon] = useState('flash-auto');
 
   const dispatch = useDispatch();
 

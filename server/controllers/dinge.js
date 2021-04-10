@@ -3,13 +3,15 @@ const Ding = require('../models/Ding');
 const User = require('../models/User');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const repScores = require('../utils/repScores');
 const aws = require('aws-sdk');
 
 //desc    CREATE Ding
 //route   POST /api/dinge
 //access  private
 exports.createDing = asyncHandler(async (req, res, next) => {
-  const user = req.user.id;
+  const userId = req.user.id;
+  const user = await User.findById(req.user.id);
   const { description, dingType, location } = req.body;
 
   let imgUrl, thumbUrl;
@@ -69,13 +71,16 @@ exports.createDing = asyncHandler(async (req, res, next) => {
         );
 
         const ding = await Ding.create({
-          user,
+          user: userId,
           description,
           dingType,
           location,
           thumbUrl,
           imgUrl,
         });
+
+        user.reputation = user.reputation + repScores.uploadDing;
+        user.save();
 
         res.status(200).json({ success: true, data: ding });
       }

@@ -25,7 +25,6 @@ export default (state = initialState, action) => {
         ...state,
         ding: action.ding,
       };
-
     case POST_DING:
       return {
         ...state,
