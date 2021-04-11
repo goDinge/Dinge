@@ -15,7 +15,7 @@ const PublicScreen = (props) => {
             <Text style={styles.userName}>{user.name}</Text>
             <Text style={styles.userLevel}>{user.level}</Text>
           </View>
-          <Text style={styles.text}>Rep: 1852</Text>
+          <Text style={styles.text}>Rep: {user.reputation}</Text>
         </View>
         <View style={styles.avatarContainer}>
           <Image

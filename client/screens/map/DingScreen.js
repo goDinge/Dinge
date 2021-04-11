@@ -13,17 +13,21 @@ import { useSelector, useDispatch } from 'react-redux';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 import * as userActions from '../../store/actions/user';
-import * as dingeActions from '../../store/actions/dinge';
+import * as dingActions from '../../store/actions/ding';
+import * as authActions from '../../store/actions/auth';
 import Colors from '../../constants/Colors';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const DingScreen = (props) => {
   const ding = props.route.params;
+  console.log('props', ding.likes);
   const authUser = useSelector((state) => state.auth.authUser);
+  const dingState = useSelector((state) => state.ding.ding);
+  console.log('state', dingState.likes);
 
   let initLike = false;
-  if (ding.likes.includes(authUser._id)) {
+  if (dingState.likes.includes(authUser._id)) {
     initLike = true;
   }
 
@@ -33,15 +37,6 @@ const DingScreen = (props) => {
 
   const description = JSON.parse(ding.description);
   const user = useSelector((state) => state.user.user);
-
-  //const dingUE = useSelector((state) => state.dinge.ding);
-
-  // console.log('ding from props', ding);
-  // console.log('ding from UseEffect', dingUE);
-
-  // not useful at the moment, but reducer might come in handy later
-  // const dingLikes = useSelector((state) => state.dinge.likesList);
-  // console.log('dingLikes', dingLikes);
 
   const timeConverter = (dateISO) => {
     const dateDing = new Date(dateISO);
@@ -63,22 +58,36 @@ const DingScreen = (props) => {
   useEffect(() => {
     loadUser(ding.user);
     loadDing(ding._id);
-  }, [loadUser, loadDing]);
+    loadAuthUser();
+  }, [loadUser, loadDing, loadAuthUser]);
 
   const loadUser = async (user) => {
     setError(null);
+    setIsLoading(true);
     try {
       await dispatch(userActions.getUser(user));
     } catch (err) {
       setError(err.message);
     }
+    setIsLoading(false);
+  };
+
+  const loadAuthUser = async () => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(authActions.getAuthUser());
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsLoading(false);
   };
 
   const loadDing = async (dingId) => {
     setError(null);
     setIsLoading(true);
     try {
-      await dispatch(dingeActions.getDing(dingId));
+      await dispatch(dingActions.getDing(dingId));
     } catch (err) {
       setError(err.message);
     }
@@ -94,10 +103,12 @@ const DingScreen = (props) => {
     try {
       if (like) {
         setLike(false);
-        await dispatch(dingeActions.unlikeDing(dingId));
+        await dispatch(dingActions.unlikeDing(dingId));
+        await dispatch(authActions.getAuthUser());
       } else {
         setLike(true);
-        await dispatch(dingeActions.likeDing(dingId));
+        await dispatch(dingActions.likeDing(dingId));
+        await dispatch(authActions.getAuthUser());
       }
     } catch (err) {
       setError(err.message);

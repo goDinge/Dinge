@@ -30,6 +30,21 @@ const ProfileScreen = (props) => {
   const year = date.getFullYear();
 
   useEffect(() => {
+    loadAuthUser();
+  }, []);
+
+  const loadAuthUser = async () => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(authActions.getAuthUser());
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
         const {
@@ -67,10 +82,6 @@ const ProfileScreen = (props) => {
   const logout = async () => {
     await dispatch(authActions.logout());
   };
-
-  // if (!authUser) {
-  //   setIsLoading(true);
-  // }
 
   if (isLoading) {
     return (
@@ -112,7 +123,7 @@ const ProfileScreen = (props) => {
             </View>
             <View style={styles.statBox}>
               <Text style={styles.statsTitle}>Rep</Text>
-              <Text style={styles.stats}>1852</Text>
+              <Text style={styles.stats}>{authUser.reputation}</Text>
             </View>
           </View>
           <View style={styles.rowStat}>

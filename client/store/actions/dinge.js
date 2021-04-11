@@ -24,21 +24,21 @@ export const getDinge = () => {
   };
 };
 
-export const getDing = (dingId) => {
-  return async (dispatch) => {
-    try {
-      const response = await axios.get(`http://${HOME_IP}/api/dinge/${dingId}`);
-      const ding = response.data.data;
+// export const getDing = (dingId) => {
+//   return async (dispatch) => {
+//     try {
+//       const response = await axios.get(`http://${HOME_IP}/api/dinge/${dingId}`);
+//       const ding = response.data.data;
 
-      dispatch({
-        type: GET_DING,
-        ding: ding,
-      });
-    } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
-    }
-  };
-};
+//       dispatch({
+//         type: GET_DING,
+//         ding: ding,
+//       });
+//     } catch (err) {
+//       throw new Error('Cannot connect with server. Please try again.');
+//     }
+//   };
+// };
 
 export const postDing = (description, lat, long, img, thumb) => {
   return async (dispatch) => {

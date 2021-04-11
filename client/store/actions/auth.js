@@ -39,6 +39,7 @@ export const getAuthUser = () => {
       }
 
       const user = response.data.data;
+      console.log(user);
 
       await dispatch({
         type: GET_AUTH_USER,
