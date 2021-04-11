@@ -1,11 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, ActivityIndicator } from 'react-native';
 
+import * as userActions from '../../store/actions/user';
 import Colors from '../../constants/Colors';
 
 const PublicScreen = (props) => {
+  const [error, setError] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(false);
   const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    loadUser(user._id);
+  }, []);
+
+  const loadUser = async (user) => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(userActions.getUser(user));
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsLoading(false);
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.indicatorContainer}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -35,6 +62,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  indicatorContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -21,11 +21,9 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const DingScreen = (props) => {
   const ding = props.route.params;
-  console.log('props', ding.likes);
   const authUser = useSelector((state) => state.auth.authUser);
   const dingState = useSelector((state) => state.ding.ding);
-
-  console.log('state', dingState.likes);
+  const user = useSelector((state) => state.user.user);
 
   let initLike = false;
   if (dingState.likes) {
@@ -35,11 +33,10 @@ const DingScreen = (props) => {
   }
 
   const [error, setError] = useState(undefined);
-  const [like, setLike] = useState(initLike);
   const [isLoading, setIsLoading] = useState(true);
+  //const [toReload, setToReload] = useState(false);
 
   const description = JSON.parse(ding.description);
-  const user = useSelector((state) => state.user.user);
 
   const timeConverter = (dateISO) => {
     const dateDing = new Date(dateISO);
@@ -80,7 +77,6 @@ const DingScreen = (props) => {
     setIsLoading(true);
     try {
       await dispatch(authActions.getAuthUser());
-      console.log('authUser loaded');
     } catch (err) {
       setError(err.message);
     }
@@ -92,32 +88,37 @@ const DingScreen = (props) => {
     setIsLoading(true);
     try {
       await dispatch(dingActions.getDing(dingId));
-      console.log('ding loaded');
     } catch (err) {
       setError(err.message);
     }
     setIsLoading(false);
   };
 
-  const publicProfile = (userId) => {
+  const publicProfileHandler = (userId) => {
     props.navigation.navigate('Public', userId);
   };
 
   const likeDingHandler = async (dingId) => {
     setError(null);
+    //many Actions are dispatched here for the purpose of updating reputation in real time
+    //should refactor to improve performance
     try {
-      if (like) {
-        setLike(false);
+      if (initLike) {
+        initLike = false;
         await dispatch(dingActions.unlikeDing(dingId));
         await dispatch(authActions.getAuthUser());
+        await dispatch(userActions.getUser(userId));
       } else {
-        setLike(true);
+        initLike = true;
         await dispatch(dingActions.likeDing(dingId));
         await dispatch(authActions.getAuthUser());
+        await dispatch(userActions.getUser(userId));
       }
     } catch (err) {
       setError(err.message);
     }
+    //setToReload((prevState) => !prevState);
+    console.log('Ding screen user reputation', user.reputation);
   };
 
   const deleteDing = async (dingId) => {
@@ -147,34 +148,41 @@ const DingScreen = (props) => {
         </View>
         <View style={styles.infoContainer}>
           <View style={styles.iconContainer}>
-            <MaterialCommunityIcons
-              name={like ? 'heart' : 'heart-outline'}
-              color={like ? Colors.red : 'black'}
-              size={30}
-              style={styles.icon}
-              onPress={() => likeDingHandler(ding._id)}
-            />
-            <MaterialCommunityIcons
-              name="comment-outline"
-              size={30}
-              style={styles.icon}
-            />
-            <MaterialCommunityIcons
-              name="flag-outline"
-              size={30}
-              style={styles.icon}
-            />
-            {ding.user === authUser._id ? (
-              <MaterialIcons
-                name="highlight-remove"
+            <View style={styles.iconLeftContainer}>
+              <MaterialCommunityIcons
+                name={initLike ? 'thumb-up' : 'thumb-up-outline'}
+                color={initLike ? Colors.primary : 'black'}
                 size={30}
                 style={styles.icon}
-                onPress={() => deleteDing(ding._id)}
+                onPress={() => likeDingHandler(ding._id)}
               />
-            ) : null}
+              <Text style={styles.likesCount}>
+                {dingState.likes && dingState.likes.length}
+              </Text>
+            </View>
+            <View style={styles.iconRightContainer}>
+              <MaterialCommunityIcons
+                name="comment-outline"
+                size={30}
+                style={styles.icon}
+              />
+              <MaterialCommunityIcons
+                name="flag-outline"
+                size={30}
+                style={styles.icon}
+              />
+              {ding.user === authUser._id ? (
+                <MaterialIcons
+                  name="highlight-remove"
+                  size={30}
+                  style={styles.icon}
+                  onPress={() => deleteDing(ding._id)}
+                />
+              ) : null}
+            </View>
           </View>
           <View style={styles.socialContainer}>
-            <Pressable onPressIn={() => publicProfile(user._id)}>
+            <Pressable onPressIn={() => publicProfileHandler(user._id)}>
               <Text style={styles.userName}>{user.name}</Text>
             </Pressable>
             <View style={styles.timeContainer}>
@@ -214,8 +222,20 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  iconLeftContainer: {
+    flexDirection: 'row',
+  },
+  iconRightContainer: {
+    flexDirection: 'row',
   },
   icon: {
+    marginRight: 15,
+  },
+  likesCount: {
+    fontFamily: 'cereal-bold',
+    fontSize: 20,
     marginRight: 15,
   },
   userName: {
@@ -237,7 +257,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   socialContainer: {
-    marginVertical: 10,
+    marginVertical: 15,
   },
 });
 
