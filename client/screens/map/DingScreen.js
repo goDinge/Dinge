@@ -24,11 +24,14 @@ const DingScreen = (props) => {
   console.log('props', ding.likes);
   const authUser = useSelector((state) => state.auth.authUser);
   const dingState = useSelector((state) => state.ding.ding);
+
   console.log('state', dingState.likes);
 
   let initLike = false;
-  if (dingState.likes.includes(authUser._id)) {
-    initLike = true;
+  if (dingState.likes) {
+    if (dingState.likes.includes(authUser._id)) {
+      initLike = true;
+    }
   }
 
   const [error, setError] = useState(undefined);
@@ -59,7 +62,7 @@ const DingScreen = (props) => {
     loadUser(ding.user);
     loadDing(ding._id);
     loadAuthUser();
-  }, [loadUser, loadDing, loadAuthUser]);
+  }, [loadUser, loadDing]);
 
   const loadUser = async (user) => {
     setError(null);
@@ -77,6 +80,7 @@ const DingScreen = (props) => {
     setIsLoading(true);
     try {
       await dispatch(authActions.getAuthUser());
+      console.log('authUser loaded');
     } catch (err) {
       setError(err.message);
     }
@@ -88,6 +92,7 @@ const DingScreen = (props) => {
     setIsLoading(true);
     try {
       await dispatch(dingActions.getDing(dingId));
+      console.log('ding loaded');
     } catch (err) {
       setError(err.message);
     }

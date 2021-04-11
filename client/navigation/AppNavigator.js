@@ -10,9 +10,9 @@ const AppNavigator = () => {
   const didTryAutoLogin = useSelector((state) => state.auth.didTryAutoLogin);
 
   const authUser = useSelector((state) => state.auth.authUser);
-  if (isAuth) {
-    console.log('auth-user', authUser);
-  }
+  // if (isAuth) {
+  //   console.log('auth-user', );
+  // }
 
   return (
     <NavigationContainer>

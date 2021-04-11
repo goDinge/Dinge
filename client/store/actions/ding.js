@@ -7,6 +7,7 @@ export const getDing = (dingId) => {
     try {
       const response = await axios.get(`http://${HOME_IP}/api/dinge/${dingId}`);
       const ding = response.data.data;
+      console.log('get ding hit');
 
       dispatch({
         type: GET_DING,
@@ -25,7 +26,7 @@ export const likeDing = (dingId) => {
         `http://${HOME_IP}/api/ding/likes/${dingId}`
       );
       const ding = response.data.data;
-      console.log('like hit');
+      console.log('like ding hit');
 
       dispatch({
         type: LIKE_DING,
