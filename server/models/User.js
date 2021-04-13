@@ -37,8 +37,8 @@ const UserSchema = new mongoose.Schema({
   },
   level: {
     type: String,
-    enum: ['rookie', 'Citizen', 'Influencer', 'Community Leader', 'Dinge Boss'],
-    default: 'rookie',
+    enum: ['Rookie', 'Citizen', 'Influencer', 'Community Leader', 'Dinge Boss'],
+    default: 'Rookie',
   },
   status: {
     type: String,

@@ -21,14 +21,20 @@ exports.likeDing = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('User has already liked this Ding', 400));
   }
 
-  ding.save();
+  await ding.save();
 
   if (dingUser.id !== user.id) {
     dingUser.reputation =
       dingUser.reputation + repScores.repScores.likeReceived;
+    if (dingUser.reputation >= 5) {
+      dingUser.level = 'Citizen';
+    }
     await dingUser.save();
 
     user.reputation = user.reputation + repScores.repScores.likeGiven;
+    if (user.reputation >= 5) {
+      user.level = 'Citizen';
+    }
     await user.save();
   }
 
@@ -51,9 +57,15 @@ exports.unlikeDing = asyncHandler(async (req, res, next) => {
   if (dingUser.id !== user.id) {
     dingUser.reputation =
       dingUser.reputation - repScores.repScores.likeReceived;
+    if (dingUser.reputation >= 5) {
+      dingUser.level = 'Citizen';
+    }
     await dingUser.save();
 
     user.reputation = user.reputation - repScores.repScores.likeGiven;
+    if (user.reputation >= 5) {
+      user.level = 'Citizen';
+    }
     await user.save();
   }
 
@@ -86,3 +98,22 @@ exports.deleteDingById = asyncHandler(async (req, res, next) => {
     data: 'ding removed',
   });
 });
+
+//Helper function
+//Reputation and Level calculation
+const repLevelCalc = async (dingUser, user) => {
+  if (dingUser.id !== user.id) {
+    dingUser.reputation =
+      dingUser.reputation - repScores.repScores.likeReceived;
+    if (dingUser.reputation >= 5) {
+      dingUser.level = 'Citizen';
+    }
+    await dingUser.save();
+
+    user.reputation = user.reputation - repScores.repScores.likeGiven;
+    if (user.reputation >= 5) {
+      user.level = 'Citizen';
+    }
+    await user.save();
+  }
+};

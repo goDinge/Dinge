@@ -34,7 +34,7 @@ const DingScreen = (props) => {
 
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
-  //const [toReload, setToReload] = useState(false);
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
 
   const description = JSON.parse(ding.description);
 
@@ -99,7 +99,9 @@ const DingScreen = (props) => {
   };
 
   const likeDingHandler = async (dingId) => {
+    console.log('like');
     setError(null);
+    setIsLikeLoading(true);
     //many Actions are dispatched here for the purpose of updating reputation in real time
     //should refactor to improve performance
     try {
@@ -117,8 +119,7 @@ const DingScreen = (props) => {
     } catch (err) {
       setError(err.message);
     }
-    //setToReload((prevState) => !prevState);
-    console.log('Ding screen user reputation', user.reputation);
+    setIsLikeLoading(false);
   };
 
   const deleteDing = async (dingId) => {
@@ -149,13 +150,20 @@ const DingScreen = (props) => {
         <View style={styles.infoContainer}>
           <View style={styles.iconContainer}>
             <View style={styles.iconLeftContainer}>
-              <MaterialCommunityIcons
-                name={initLike ? 'thumb-up' : 'thumb-up-outline'}
-                color={initLike ? Colors.primary : 'black'}
-                size={30}
-                style={styles.icon}
-                onPress={() => likeDingHandler(ding._id)}
-              />
+              {isLikeLoading ? (
+                <View style={styles.iconActInd}>
+                  <ActivityIndicator color={Colors.primary} size="small" />
+                </View>
+              ) : (
+                <MaterialCommunityIcons
+                  name={initLike ? 'thumb-up' : 'thumb-up-outline'}
+                  color={initLike ? Colors.primary : 'black'}
+                  size={30}
+                  style={styles.icon}
+                  onPress={() => likeDingHandler(ding._id)}
+                />
+              )}
+
               <Text style={styles.likesCount}>
                 {dingState.likes && dingState.likes.length}
               </Text>
@@ -165,11 +173,13 @@ const DingScreen = (props) => {
                 name="comment-outline"
                 size={30}
                 style={styles.icon}
+                onPress={() => console.log('comment')}
               />
               <MaterialCommunityIcons
                 name="flag-outline"
                 size={30}
                 style={styles.icon}
+                onPress={() => console.log('flag')}
               />
               {ding.user === authUser._id ? (
                 <MaterialIcons
@@ -219,6 +229,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     margin: 16,
+    marginLeft: 20,
   },
   iconContainer: {
     flexDirection: 'row',
@@ -231,12 +242,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   icon: {
-    marginRight: 15,
+    marginRight: 12,
+    padding: 3,
+  },
+  iconActInd: {
+    marginRight: 14,
+    paddingRight: 7,
+    paddingLeft: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   likesCount: {
     fontFamily: 'cereal-bold',
     fontSize: 20,
-    marginRight: 15,
+    marginRight: 12,
+    padding: 3,
   },
   userName: {
     fontFamily: 'cereal-bold',

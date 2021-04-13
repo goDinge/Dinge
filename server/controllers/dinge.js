@@ -80,6 +80,9 @@ exports.createDing = asyncHandler(async (req, res, next) => {
         });
 
         user.reputation = user.reputation + repScores.uploadDing;
+        if (user.reputation >= 5) {
+          user.level = 'Citizen';
+        }
         user.save();
 
         res.status(200).json({ success: true, data: ding });
