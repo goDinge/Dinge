@@ -7,6 +7,8 @@ import {
   Dimensions,
   StyleSheet,
   Pressable,
+  Alert,
+  Modal,
   ActivityIndicator,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
@@ -35,6 +37,7 @@ const DingScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const description = JSON.parse(ding.description);
 
@@ -99,7 +102,6 @@ const DingScreen = (props) => {
   };
 
   const likeDingHandler = async (dingId) => {
-    console.log('like');
     setError(null);
     setIsLikeLoading(true);
     //many Actions are dispatched here for the purpose of updating reputation in real time
@@ -122,15 +124,28 @@ const DingScreen = (props) => {
     setIsLikeLoading(false);
   };
 
-  const deleteDing = async (dingId) => {
+  const deleteDingHandler = async (dingId) => {
     setError(null);
     try {
       await dispatch(dingeActions.deleteDingById(dingId));
       await dispatch(dingeActions.getDinge());
-    } catch (error) {
+    } catch (err) {
       setError(err.message);
     }
     props.navigation.navigate('Map');
+  };
+
+  const openModelHandler = () => {
+    setModalVisible(true);
+  };
+
+  const reportDingHandler = async (dingId) => {
+    setError(null);
+    try {
+      await dispatch(dingActions.reportDingById(dingId));
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   if (isLoading) {
@@ -143,6 +158,35 @@ const DingScreen = (props) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.centeredView}>
+        <Modal animationType="slide" transparent={true} visible={modalVisible}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Do you want to report this Ding?
+              </Text>
+              <Pressable
+                style={styles.openButton}
+                onPress={() => {
+                  reportDingHandler(ding._id);
+                  Alert.alert('Ding reported!');
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <Text style={styles.reportText}>Report Ding!</Text>
+              </Pressable>
+              <View style={styles.right}>
+                <MaterialCommunityIcons
+                  name="close"
+                  size={30}
+                  style={styles.iconClose}
+                  onPress={() => setModalVisible(!modalVisible)}
+                />
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>
       <ScrollView>
         <View style={styles.imageContainer}>
           <Image style={styles.image} source={{ uri: ding.imgUrl }} />
@@ -179,14 +223,14 @@ const DingScreen = (props) => {
                 name="flag-outline"
                 size={30}
                 style={styles.icon}
-                onPress={() => console.log('flag')}
+                onPress={openModelHandler}
               />
               {ding.user === authUser._id ? (
                 <MaterialIcons
                   name="highlight-remove"
                   size={30}
                   style={styles.icon}
-                  onPress={() => deleteDing(ding._id)}
+                  onPress={() => deleteDingHandler(ding._id)}
                 />
               ) : null}
             </View>
@@ -252,6 +296,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  iconClose: {
+    alignItems: 'flex-end',
+    padding: 5,
+  },
   likesCount: {
     fontFamily: 'cereal-bold',
     fontSize: 20,
@@ -276,8 +324,43 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-medium',
     fontSize: 20,
   },
+  modalText: {
+    fontFamily: 'cereal-medium',
+    fontSize: 15,
+    color: 'black',
+  },
+  reportText: {
+    fontFamily: 'cereal-bold',
+    fontSize: 20,
+    color: Colors.primary,
+    padding: 20,
+  },
   socialContainer: {
     marginVertical: 15,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    paddingBottom: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  right: {
+    width: '100%',
+    alignSelf: 'flex-end',
   },
 });
 

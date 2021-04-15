@@ -75,6 +75,65 @@ exports.unlikeDing = asyncHandler(async (req, res, next) => {
   });
 });
 
+//desc    REPORT Ding
+//route   PUT /api/ding/reports/:id
+//access  private
+exports.reportDing = asyncHandler(async (req, res, next) => {
+  const ding = await Ding.findById(req.params.id);
+  const dingUser = await User.findById(ding.user);
+  const user = await User.findById(req.user.id);
+
+  const dingReports = ding.reports;
+
+  if (!dingReports.includes(user.id)) {
+    dingReports.push(user.id);
+  } else {
+    return next(new ErrorResponse('User has already reported this Ding', 400));
+  }
+
+  dingUser.reputation =
+    dingUser.reputation - repScores.repScores.reportReceived;
+  await dingUser.save();
+
+  user.reputation = user.reputation + repScores.repScores.reportGiven;
+  await user.save();
+
+  await ding.save();
+
+  res.status(200).json({
+    success: true,
+    data: 'ding reported',
+  });
+});
+
+//desc    UNREPORT Ding
+//route   DELETE /api/ding/reports/:id
+//access  private
+exports.unReportDing = asyncHandler(async (req, res, next) => {
+  await Ding.updateOne(
+    { _id: req.params.id },
+    { $pull: { reports: req.user.id } }
+  );
+
+  const ding = await Ding.findOne({ _id: req.params.id });
+  const dingUser = await User.findById(ding.user);
+  const user = await User.findById(req.user.id);
+
+  dingUser.reputation =
+    dingUser.reputation + repScores.repScores.reportReceived;
+  await dingUser.save();
+
+  user.reputation = user.reputation - repScores.repScores.reportGiven;
+  await user.save();
+
+  await ding.save();
+
+  res.status(200).json({
+    success: true,
+    data: 'ding unreported',
+  });
+});
+
 //desc    DELETE Ding by ID
 //route   DELETE /api/ding/:id
 //access  private
@@ -99,7 +158,7 @@ exports.deleteDingById = asyncHandler(async (req, res, next) => {
   });
 });
 
-//Helper function
+//Helper functions
 //Reputation and Level calculation
 const repLevelCalc = async (dingUser, user) => {
   if (dingUser.id !== user.id) {

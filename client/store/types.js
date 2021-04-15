@@ -3,6 +3,7 @@ export const GET_DING = 'GET_DING';
 export const POST_DING = 'POST_DING';
 export const LIKE_DING = 'LIKE_DING';
 export const UNLIKE_DING = 'UNLIKE_DING';
+export const REPORT_DING = 'REPORT_DING';
 
 export const SET_IMAGE = 'SET_IMAGE';
 export const RESET_IMAGE = 'RESET_IMAGE';

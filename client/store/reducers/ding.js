@@ -1,4 +1,4 @@
-import { GET_DING, LIKE_DING, UNLIKE_DING } from '../types';
+import { GET_DING, LIKE_DING, UNLIKE_DING, REPORT_DING } from '../types';
 
 const initialState = {
   ding: {},
@@ -17,6 +17,11 @@ export default (state = initialState, action) => {
         ding: action.ding,
       };
     case UNLIKE_DING:
+      return {
+        ...state,
+        ding: action.ding,
+      };
+    case REPORT_DING:
       return {
         ...state,
         ding: action.ding,
