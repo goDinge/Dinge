@@ -21,6 +21,7 @@ const auth = require('./routes/auth');
 const users = require('./routes/users');
 const dinge = require('./routes/dinge');
 const ding = require('./routes/ding');
+const comments = require('./routes/comments');
 
 //Routes setup
 app.get('/', (req, res) => {
@@ -33,6 +34,7 @@ app.use('/api/auth', auth);
 app.use('/api/users', users);
 app.use('/api/dinge', dinge);
 app.use('/api/ding', ding);
+app.use('/api/comments', comments);
 
 app.use(errorHandler);
 
