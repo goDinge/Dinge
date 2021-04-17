@@ -12,6 +12,9 @@ exports.createComment = asyncHandler(async (req, res, next) => {
   const dingId = req.params.id;
   const text = req.body.text;
   const ding = await Ding.findById(dingId);
+  const user = await User.findById(userId);
+
+  const userName = user.name;
 
   if (!ding) {
     return next(
@@ -20,9 +23,10 @@ exports.createComment = asyncHandler(async (req, res, next) => {
   }
 
   const comment = await Comment.create({
-    user: userId,
+    userId,
+    userName,
     text,
-    ding: dingId,
+    dingId,
   });
 
   ding.comments.push(comment._id);

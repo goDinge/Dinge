@@ -4,6 +4,7 @@ import {
   Text,
   Image,
   ScrollView,
+  FlatList,
   Dimensions,
   StyleSheet,
   Pressable,
@@ -41,6 +42,17 @@ const DingScreen = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const description = JSON.parse(ding.description);
+
+  const comments = dingState.comments;
+  console.log(comments);
+
+  // const Comment = (props) => (
+  //   <View>
+  //     <Text>{props.user}</Text>
+  //     <Text>{props.text}</Text>
+  //   </View>
+  // );
+  // const renderItem = ({ item }) => <Comment text={item.text} />;
 
   const timeConverter = (dateISO) => {
     const dateDing = new Date(dateISO);
@@ -128,7 +140,6 @@ const DingScreen = (props) => {
   const deleteDingHandler = async (dingId) => {
     setError(null);
     try {
-      console.log('handler block', dingId);
       await dispatch(dingeActions.deleteDingById(dingId));
       await dispatch(dingeActions.getDinge());
     } catch (err) {
@@ -161,7 +172,7 @@ const DingScreen = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.centeredView}>
-        <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <Modal animationType="fade" transparent={true} visible={modalVisible}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>
@@ -189,67 +200,88 @@ const DingScreen = (props) => {
           </View>
         </Modal>
       </View>
-      <ScrollView>
-        <View style={styles.imageContainer}>
-          <Image style={styles.image} source={{ uri: ding.imgUrl }} />
-        </View>
-        <View style={styles.infoContainer}>
-          <View style={styles.iconContainer}>
-            <View style={styles.iconLeftContainer}>
-              {isLikeLoading ? (
-                <View style={styles.iconActInd}>
-                  <ActivityIndicator color={Colors.primary} size="small" />
-                </View>
-              ) : (
-                <MaterialCommunityIcons
-                  name={initLike ? 'thumb-up' : 'thumb-up-outline'}
-                  color={initLike ? Colors.primary : 'black'}
-                  size={30}
-                  style={styles.icon}
-                  onPress={() => likeDingHandler(ding._id)}
-                />
-              )}
+      <View>
+        <ScrollView>
+          <View style={styles.imageContainer}>
+            <Image style={styles.image} source={{ uri: ding.imgUrl }} />
+          </View>
+          <View style={styles.infoContainer}>
+            <View style={styles.iconContainer}>
+              <View style={styles.iconLeftContainer}>
+                {isLikeLoading ? (
+                  <View style={styles.iconActInd}>
+                    <ActivityIndicator color={Colors.primary} size="small" />
+                  </View>
+                ) : (
+                  <MaterialCommunityIcons
+                    name={initLike ? 'thumb-up' : 'thumb-up-outline'}
+                    color={initLike ? Colors.primary : 'black'}
+                    size={30}
+                    style={styles.icon}
+                    onPress={() => likeDingHandler(ding._id)}
+                  />
+                )}
 
-              <Text style={styles.likesCount}>
-                {dingState.likes && dingState.likes.length}
-              </Text>
-            </View>
-            <View style={styles.iconRightContainer}>
-              <MaterialCommunityIcons
-                name="comment-outline"
-                size={30}
-                style={styles.icon}
-                onPress={() => console.log('comment')}
-              />
-              <MaterialCommunityIcons
-                name="flag-outline"
-                size={30}
-                style={styles.icon}
-                onPress={openModelHandler}
-              />
-              {ding.user === authUser._id ? (
-                <MaterialIcons
-                  name="highlight-remove"
+                <Text style={styles.likesCount}>
+                  {dingState.likes && dingState.likes.length}
+                </Text>
+              </View>
+              <View style={styles.iconRightContainer}>
+                <MaterialCommunityIcons
+                  name="comment-outline"
                   size={30}
                   style={styles.icon}
-                  onPress={() => deleteDingHandler(ding._id)}
+                  onPress={() => console.log('comment')}
                 />
-              ) : null}
+                <MaterialCommunityIcons
+                  name="flag-outline"
+                  size={30}
+                  style={styles.icon}
+                  onPress={openModelHandler}
+                />
+                {ding.user === authUser._id ? (
+                  <MaterialIcons
+                    name="highlight-remove"
+                    size={30}
+                    style={styles.icon}
+                    onPress={() => deleteDingHandler(ding._id)}
+                  />
+                ) : null}
+              </View>
             </View>
-          </View>
-          <View style={styles.socialContainer}>
-            <Pressable onPressIn={() => publicProfileHandler(user._id)}>
-              <Text style={styles.userName}>{user.name}</Text>
-            </Pressable>
-            <View style={styles.timeContainer}>
-              <Text style={styles.timeText}>
-                {timeConverter(ding.createdAt)}
+            <View style={styles.socialContainer}>
+              <Text
+                style={styles.userName}
+                onPress={() => publicProfileHandler(user._id)}
+              >
+                {user.name}
               </Text>
+
+              <View style={styles.timeContainer}>
+                <Text style={styles.timeText}>
+                  {timeConverter(ding.createdAt)}
+                </Text>
+              </View>
+              <Text style={styles.description}>{description}</Text>
             </View>
-            <Text style={styles.description}>{description}</Text>
           </View>
-        </View>
-      </ScrollView>
+          <View>
+            {comments.map((item, index) => {
+              return (
+                <View key={index} style={styles.commentsContainer}>
+                  <Text style={styles.description}>{item.userName}</Text>
+                  <Text style={styles.description}>{item.text}</Text>
+                </View>
+              );
+            })}
+            {/* <FlatList
+              data={comments}
+              renderItem={renderItem}
+              keyExtractor={(item) => item._id}
+            /> */}
+          </View>
+        </ScrollView>
+      </View>
     </View>
   );
 };
@@ -274,8 +306,8 @@ const styles = StyleSheet.create({
     height: SCREEN_WIDTH,
   },
   infoContainer: {
-    margin: 16,
-    marginLeft: 20,
+    marginVertical: 10,
+    marginHorizontal: 20,
   },
   iconContainer: {
     flexDirection: 'row',
@@ -312,6 +344,7 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-bold',
     fontSize: 20,
     marginBottom: 5,
+    alignSelf: 'flex-start',
   },
   description: {
     fontFamily: 'cereal-book',
@@ -338,7 +371,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   socialContainer: {
-    marginVertical: 15,
+    marginVertical: 10,
   },
   centeredView: {
     flex: 1,
@@ -363,6 +396,10 @@ const styles = StyleSheet.create({
   right: {
     width: '100%',
     alignSelf: 'flex-end',
+  },
+  commentsContainer: {
+    marginHorizontal: 20,
+    marginBottom: 20,
   },
 });
 
