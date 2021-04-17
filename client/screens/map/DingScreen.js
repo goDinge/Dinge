@@ -16,6 +16,7 @@ import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 import * as userActions from '../../store/actions/user';
 import * as dingActions from '../../store/actions/ding';
+import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
 import Colors from '../../constants/Colors';
 
@@ -127,6 +128,7 @@ const DingScreen = (props) => {
   const deleteDingHandler = async (dingId) => {
     setError(null);
     try {
+      console.log('handler block', dingId);
       await dispatch(dingeActions.deleteDingById(dingId));
       await dispatch(dingeActions.getDinge());
     } catch (err) {

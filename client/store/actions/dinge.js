@@ -24,22 +24,6 @@ export const getDinge = () => {
   };
 };
 
-// export const getDing = (dingId) => {
-//   return async (dispatch) => {
-//     try {
-//       const response = await axios.get(`http://${HOME_IP}/api/dinge/${dingId}`);
-//       const ding = response.data.data;
-
-//       dispatch({
-//         type: GET_DING,
-//         ding: ding,
-//       });
-//     } catch (err) {
-//       throw new Error('Cannot connect with server. Please try again.');
-//     }
-//   };
-// };
-
 export const postDing = (description, lat, long, img, thumb) => {
   return async (dispatch) => {
     try {
@@ -128,7 +112,15 @@ export const unlikeDing = (dingId) => {
 export const deleteDingById = (dingId) => {
   return async (dispatch) => {
     try {
-      await axios.delete(`http://${HOME_IP}/api/ding/${dingId}`);
+      const response = await axios.delete(
+        `http://${HOME_IP}/api/ding/${dingId}`
+      );
+      const dinge = response.data.data;
+
+      dispatch({
+        type: GET_DINGE,
+        dinge: dinge,
+      });
     } catch (err) {
       console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');

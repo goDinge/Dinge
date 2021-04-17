@@ -79,7 +79,7 @@ exports.createDing = asyncHandler(async (req, res, next) => {
           imgUrl,
         });
 
-        user.reputation = user.reputation + repScores.uploadDing;
+        user.reputation = user.reputation + repScores.repScores.uploadDing;
         if (user.reputation >= 5) {
           user.level = 'Citizen';
         }

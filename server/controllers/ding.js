@@ -152,9 +152,11 @@ exports.deleteDingById = asyncHandler(async (req, res, next) => {
     );
   }
 
+  const dinge = await Ding.find();
+
   res.status(200).json({
     success: true,
-    data: 'ding removed',
+    data: dinge,
   });
 });
 
