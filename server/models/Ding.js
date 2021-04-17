@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Comment = require('./Comment');
 
 const DingSchema = new mongoose.Schema({
   user: {
@@ -40,6 +41,14 @@ const DingSchema = new mongoose.Schema({
       {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
+      },
+    ],
+  },
+  comments: {
+    type: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Comment',
       },
     ],
   },

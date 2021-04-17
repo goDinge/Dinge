@@ -122,6 +122,6 @@ exports.getDinge = asyncHandler(async (req, res, next) => {
 //route   GET /api/dinge/:id
 //access  public
 exports.getDing = asyncHandler(async (req, res, next) => {
-  const ding = await Ding.findById(req.params.id);
+  const ding = await Ding.findById(req.params.id).populate('comments');
   res.status(200).json({ success: true, data: ding });
 });
