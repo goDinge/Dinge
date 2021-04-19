@@ -2,7 +2,6 @@ const Ding = require('../models/Ding');
 const Comment = require('../models/Comment');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const { findById } = require('../models/Comment');
 
 //desc    CREATE Comment by Ding ID
 //route   POST /api/comments/:id/
@@ -29,7 +28,7 @@ exports.createComment = asyncHandler(async (req, res, next) => {
     dingId,
   });
 
-  ding.comments.push(comment._id);
+  ding.comments.unshift(comment._id);
   ding.save();
 
   res.status(200).json({

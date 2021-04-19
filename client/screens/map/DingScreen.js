@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
+  TextInput,
   Image,
   ScrollView,
-  FlatList,
   Dimensions,
   StyleSheet,
   Pressable,
@@ -19,6 +19,8 @@ import * as userActions from '../../store/actions/user';
 import * as dingActions from '../../store/actions/ding';
 import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
+
+import CustomButton from '../../components/CustomButton';
 import Colors from '../../constants/Colors';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -40,19 +42,11 @@ const DingScreen = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [text, onChangeText] = useState(null);
 
   const description = JSON.parse(ding.description);
 
   const comments = dingState.comments;
-  console.log(comments);
-
-  // const Comment = (props) => (
-  //   <View>
-  //     <Text>{props.user}</Text>
-  //     <Text>{props.text}</Text>
-  //   </View>
-  // );
-  // const renderItem = ({ item }) => <Comment text={item.text} />;
 
   const timeConverter = (dateISO) => {
     const dateDing = new Date(dateISO);
@@ -114,7 +108,7 @@ const DingScreen = (props) => {
     props.navigation.navigate('Public', userId);
   };
 
-  const likeDingHandler = async (dingId) => {
+  const likeDingHandler = async (dingId, userId) => {
     setError(null);
     setIsLikeLoading(true);
     //many Actions are dispatched here for the purpose of updating reputation in real time
@@ -135,6 +129,7 @@ const DingScreen = (props) => {
       setError(err.message);
     }
     setIsLikeLoading(false);
+    await dispatch(dingActions.getDing(dingId));
   };
 
   const deleteDingHandler = async (dingId) => {
@@ -156,6 +151,17 @@ const DingScreen = (props) => {
     setError(null);
     try {
       await dispatch(dingActions.reportDingById(dingId));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const postCommentHandler = async (text, dingId) => {
+    setError(null);
+    try {
+      await dispatch(dingActions.postComment(text, dingId));
+      onChangeText(null);
+      await dispatch(dingActions.getDing(dingId));
     } catch (err) {
       setError(err.message);
     }
@@ -218,21 +224,14 @@ const DingScreen = (props) => {
                     color={initLike ? Colors.primary : 'black'}
                     size={30}
                     style={styles.icon}
-                    onPress={() => likeDingHandler(ding._id)}
+                    onPress={() => likeDingHandler(ding._id, user._id)}
                   />
                 )}
-
                 <Text style={styles.likesCount}>
                   {dingState.likes && dingState.likes.length}
                 </Text>
               </View>
               <View style={styles.iconRightContainer}>
-                <MaterialCommunityIcons
-                  name="comment-outline"
-                  size={30}
-                  style={styles.icon}
-                  onPress={() => console.log('comment')}
-                />
                 <MaterialCommunityIcons
                   name="flag-outline"
                   size={30}
@@ -256,7 +255,6 @@ const DingScreen = (props) => {
               >
                 {user.name}
               </Text>
-
               <View style={styles.timeContainer}>
                 <Text style={styles.timeText}>
                   {timeConverter(ding.createdAt)}
@@ -265,15 +263,41 @@ const DingScreen = (props) => {
               <Text style={styles.description}>{description}</Text>
             </View>
           </View>
-          <View>
-            {comments.map((item, index) => {
-              return (
-                <View key={index} style={styles.commentsContainer}>
-                  <Text style={styles.description}>{item.userName}</Text>
-                  <Text style={styles.description}>{item.text}</Text>
-                </View>
-              );
-            })}
+          <View style={styles.commentsInputContainer}>
+            <TextInput
+              style={styles.commentsInput}
+              onChangeText={onChangeText}
+              value={text}
+              placeholder="write comment"
+            />
+            <View style={styles.postButtonContainer}>
+              {text ? (
+                <CustomButton
+                  style={styles.postButton}
+                  onSelect={() => postCommentHandler(text, ding._id)}
+                >
+                  <Text style={styles.postButtonText}>Post</Text>
+                </CustomButton>
+              ) : (
+                <CustomButton
+                  style={styles.postButton}
+                  onSelect={() => Alert.alert('Please type something')}
+                >
+                  <Text style={styles.postButtonText}>Post</Text>
+                </CustomButton>
+              )}
+            </View>
+          </View>
+          <View style={styles.commentsContainer}>
+            {comments &&
+              comments.map((item, index) => {
+                return (
+                  <View key={index} style={styles.commentContainer}>
+                    <Text style={styles.commentsUserName}>{item.userName}</Text>
+                    <Text style={styles.description}>{item.text}</Text>
+                  </View>
+                );
+              })}
             {/* <FlatList
               data={comments}
               renderItem={renderItem}
@@ -397,9 +421,51 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'flex-end',
   },
+  commentsInputContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 18,
+    marginBottom: 20,
+  },
+  commentsInput: {
+    width: '80%',
+    backgroundColor: Colors.light,
+    borderRadius: 10,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    paddingVertical: 1,
+    paddingHorizontal: 10,
+    fontSize: 16,
+  },
+  postButtonContainer: {
+    width: 50,
+    marginLeft: 10,
+    justifyContent: 'center',
+  },
+  postButton: {
+    width: '100%',
+    backgroundColor: Colors.secondary,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  postButtonText: {
+    color: 'white',
+    fontFamily: 'cereal-bold',
+    paddingVertical: 5,
+    paddingHorizontal: 4,
+    fontSize: 16,
+  },
   commentsContainer: {
     marginHorizontal: 20,
+  },
+  commentContainer: {
     marginBottom: 20,
+  },
+  commentsUserName: {
+    fontFamily: 'cereal-bold',
+    fontSize: 16,
+    marginBottom: 2,
+    alignSelf: 'flex-start',
   },
 });
 

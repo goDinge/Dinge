@@ -5,4 +5,5 @@ export default {
   dark: '#484848',
   white: '#FFFFFF',
   red: '#FF2517',
+  light: '#FCF9F9',
 };

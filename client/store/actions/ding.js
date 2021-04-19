@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { LIKE_DING, UNLIKE_DING, GET_DING, REPORT_DING } from '../types';
+import {
+  LIKE_DING,
+  UNLIKE_DING,
+  GET_DING,
+  REPORT_DING,
+  POST_COMMENT,
+} from '../types';
 import { HOME_IP } from '@env';
 
 export const getDing = (dingId) => {
@@ -17,7 +23,7 @@ export const getDing = (dingId) => {
     }
   };
 };
-
+//need to be more specific about updating the proper slice of ding
 export const likeDing = (dingId) => {
   return async (dispatch) => {
     try {
@@ -59,7 +65,6 @@ export const unlikeDing = (dingId) => {
 export const reportDingById = (dingId) => {
   return async (dispatch) => {
     try {
-      console.log(dingId);
       const response = await axios.put(
         `http://${HOME_IP}/api/ding/reports/${dingId}`
       );
@@ -67,6 +72,35 @@ export const reportDingById = (dingId) => {
 
       dispatch({
         type: REPORT_DING,
+        ding: ding,
+      });
+    } catch (err) {
+      console.log(err.message);
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const postComment = (text, dingId) => {
+  return async (dispatch) => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const body = JSON.stringify({ text });
+
+      const response = await axios.post(
+        `http://${HOME_IP}/api/comments/${dingId}`,
+        body,
+        config
+      );
+      const ding = response.data.data;
+
+      dispatch({
+        type: POST_COMMENT,
         ding: ding,
       });
     } catch (err) {
