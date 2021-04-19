@@ -128,4 +128,23 @@ UserSchema.methods.getVerificationCode = function () {
   return veriCode;
 };
 
+//static method to calcuate reputation
+UserSchema.statics.getLevel = async function (userId) {
+  console.log(userId);
+
+  try {
+    const user = await this.model('User').findById(userId);
+    if (user.reputation > 10) {
+      await User.updateOne({ _id: userId }, { level: 'Influencer' });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+UserSchema.post('save', function () {
+  console.log('User schema post-save method triggered');
+  this.constructor.getLevel(this._id);
+});
+
 module.exports = User = mongoose.model('User', UserSchema);

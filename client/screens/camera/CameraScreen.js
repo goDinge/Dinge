@@ -3,7 +3,6 @@ import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 import { useDispatch } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-//import { RNCamera as Camera } from "react-native-camera";
 
 import * as imageActions from '../../store/actions/image';
 

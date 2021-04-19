@@ -1,5 +1,6 @@
 const Ding = require('../models/Ding');
 const User = require('../models/User');
+const Comment = require('../models/Comment');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const repScores = require('../utils/repScores');
@@ -26,15 +27,15 @@ exports.likeDing = asyncHandler(async (req, res, next) => {
   if (dingUser.id !== user.id) {
     dingUser.reputation =
       dingUser.reputation + repScores.repScores.likeReceived;
-    if (dingUser.reputation >= 5) {
-      dingUser.level = 'Citizen';
-    }
+    // if (dingUser.reputation >= 5) {
+    //   dingUser.level = 'Citizen';
+    // }
     await dingUser.save();
 
     user.reputation = user.reputation + repScores.repScores.likeGiven;
-    if (user.reputation >= 5) {
-      user.level = 'Citizen';
-    }
+    // if (user.reputation >= 5) {
+    //   user.level = 'Citizen';
+    // }
     await user.save();
   }
 
@@ -151,6 +152,8 @@ exports.deleteDingById = asyncHandler(async (req, res, next) => {
       new ErrorResponse('User not authorized to delete this Ding', 400)
     );
   }
+
+  await Comment.deleteMany({ dingId: ding });
 
   const dinge = await Ding.find();
 

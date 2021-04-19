@@ -130,7 +130,10 @@ const UploadScreen = (props) => {
           </View>
           <View style={styles.buttonContainer}>
             {isFetching ? (
-              <ActivityIndicator size="large" color={Colors.primary} />
+              <CustomButton color={Colors.primary} style={styles.buttonLoading}>
+                <Text style={styles.buttonTextLoading}>Uploading...</Text>
+                <ActivityIndicator color="white" size="small" />
+              </CustomButton>
             ) : (
               <CustomButton
                 onSelect={uploadToDingeHandler}
@@ -184,8 +187,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  buttonLoading: {
+    width: 200,
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   buttonText: {
     fontSize: 20,
+    fontFamily: 'cereal-bold',
+    color: 'white',
+  },
+  buttonTextLoading: {
+    fontSize: 20,
+    marginRight: 7,
     fontFamily: 'cereal-bold',
     color: 'white',
   },
