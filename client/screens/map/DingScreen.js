@@ -105,6 +105,7 @@ const DingScreen = (props) => {
   };
 
   const publicProfileHandler = (userId) => {
+    //console.log(userId);
     props.navigation.navigate('Public', userId);
   };
 
@@ -268,6 +269,7 @@ const DingScreen = (props) => {
               style={styles.commentsInput}
               onChangeText={onChangeText}
               value={text}
+              multiline={true}
               placeholder="write comment"
             />
             <View style={styles.postButtonContainer}>
@@ -293,8 +295,15 @@ const DingScreen = (props) => {
               comments.map((item, index) => {
                 return (
                   <View key={index} style={styles.commentContainer}>
-                    <Text style={styles.commentsUserName}>{item.userName}</Text>
-                    <Text style={styles.description}>{item.text}</Text>
+                    <View style={styles.textContainer}>
+                      <Text
+                        style={styles.commentsUserName}
+                        onPress={() => publicProfileHandler(item.userId)}
+                      >
+                        {item.userName}
+                      </Text>
+                      <Text style={styles.description}>{item.text}</Text>
+                    </View>
                   </View>
                 );
               })}
@@ -428,11 +437,11 @@ const styles = StyleSheet.create({
   },
   commentsInput: {
     width: '80%',
-    backgroundColor: Colors.light,
+    backgroundColor: Colors.lightBlue,
     borderRadius: 10,
     borderColor: '#ddd',
     borderWidth: 1,
-    paddingVertical: 1,
+    paddingVertical: 3,
     paddingHorizontal: 10,
     fontSize: 16,
   },
@@ -459,7 +468,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   commentContainer: {
-    marginBottom: 20,
+    marginBottom: 15,
+    backgroundColor: Colors.lightBlue,
+    borderRadius: 14,
+    borderColor: '#ddd',
+    borderWidth: 1,
+  },
+  textContainer: {
+    paddingHorizontal: 9,
+    paddingVertical: 4,
   },
   commentsUserName: {
     fontFamily: 'cereal-bold',

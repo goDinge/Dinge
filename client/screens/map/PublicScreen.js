@@ -8,11 +8,12 @@ import Colors from '../../constants/Colors';
 const PublicScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
-  const user = useSelector((state) => state.user.user);
+  const user = props.route.params;
+  const userState = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    loadUser(user._id);
+    loadUser(user);
   }, []);
 
   const loadUser = async (user) => {
@@ -39,15 +40,15 @@ const PublicScreen = (props) => {
       <View style={styles.profileContainer}>
         <View style={styles.idContainer}>
           <View style={styles.nameRankContainer}>
-            <Text style={styles.userName}>{user.name}</Text>
-            <Text style={styles.userLevel}>{user.level}</Text>
+            <Text style={styles.userName}>{userState.name}</Text>
+            <Text style={styles.userLevel}>{userState.level}</Text>
           </View>
-          <Text style={styles.text}>Rep: {user.reputation}</Text>
+          <Text style={styles.text}>Rep: {userState.reputation}</Text>
         </View>
         <View style={styles.avatarContainer}>
           <Image
             style={styles.avatar}
-            source={{ uri: user.avatar }}
+            source={{ uri: userState.avatar }}
             defaultSource={require('../../assets/avatar.png')}
           />
         </View>

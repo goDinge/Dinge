@@ -125,7 +125,9 @@ const UploadScreen = (props) => {
             <TextInput
               style={styles.descriptionInput}
               onChangeText={(text) => onChangeText(text)}
+              multiline={true}
               value={text}
+              placeholder="write description here"
             />
           </View>
           <View style={styles.buttonContainer}>

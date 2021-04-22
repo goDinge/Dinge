@@ -130,12 +130,19 @@ UserSchema.methods.getVerificationCode = function () {
 
 //static method to calcuate reputation
 UserSchema.statics.getLevel = async function (userId) {
-  console.log(userId);
-
   try {
     const user = await this.model('User').findById(userId);
-    if (user.reputation > 10) {
+    if (user.reputation < 10) {
+      await User.updateOne({ _id: userId }, { level: 'Rookie' });
+    }
+    if (user.reputation >= 10 && user.reputation < 20) {
+      await User.updateOne({ _id: userId }, { level: 'Citizen' });
+    }
+    if (user.reputation >= 20 && user.reputation < 30) {
       await User.updateOne({ _id: userId }, { level: 'Influencer' });
+    }
+    if (user.reputation >= 30) {
+      await User.updateOne({ _id: userId }, { level: 'Community Leader' });
     }
   } catch (error) {
     console.error(error);
@@ -143,7 +150,6 @@ UserSchema.statics.getLevel = async function (userId) {
 };
 
 UserSchema.post('save', function () {
-  console.log('User schema post-save method triggered');
   this.constructor.getLevel(this._id);
 });
 
