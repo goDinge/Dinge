@@ -17,7 +17,7 @@ const EventSchema = new mongoose.Schema({
   eventType: {
     type: String,
     required: true,
-    default: 'uncategorized',
+    default: 'other',
   },
   address: {
     type: String,

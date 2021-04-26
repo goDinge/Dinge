@@ -6,12 +6,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import MapScreen from '../screens/map/MapScreen';
 import DingScreen from '../screens/map/DingScreen';
+import PublicScreen from '../screens/map/PublicScreen';
 import UploadScreen from '../screens/camera/UploadScreen';
 import CameraScreen from '../screens/camera/CameraScreen';
-import PublicScreen from '../screens/map/PublicScreen';
 import AuthScreen from '../screens/auth/AuthScreen';
 import SocialScreen from '../screens/SocialScreen';
 import ProfileScreen from '../screens/user/ProfileScreen';
+import EventsScreen from '../screens/events/EventsScreen';
 
 import Colors from '../constants/Colors';
 
@@ -121,6 +122,20 @@ export const CameraNavigator = () => {
   );
 };
 
+const EventsStackNavigator = createStackNavigator();
+
+export const EventsNavigator = () => {
+  return (
+    <EventsStackNavigator.Navigator screenOptions={defaultNavOptions}>
+      <EventsStackNavigator.Screen
+        name="Events"
+        component={EventsScreen}
+        options={{ headerTitle: 'Events Listing' }}
+      />
+    </EventsStackNavigator.Navigator>
+  );
+};
+
 const SocialStackNavigator = createStackNavigator();
 
 export const SocialNavigator = () => {
@@ -159,6 +174,8 @@ const bottomTabOptions = ({ route }) => ({
       iconName = focused ? 'map-marker-radius' : 'map-marker-radius-outline';
     } else if (route.name === 'Camera') {
       iconName = focused ? 'camera' : 'camera-outline';
+    } else if (route.name === 'Events') {
+      iconName = focused ? 'calendar' : 'calendar-outline';
     } else if (route.name === 'Social') {
       iconName = focused ? 'account-group' : 'account-group-outline';
     } else if (route.name === 'Profile') {
@@ -184,6 +201,8 @@ export const BottomTabNavigator = () => {
       }}
     >
       <MapBottomTabNavigator.Screen name="Map" component={MapNavigator} />
+      <MapBottomTabNavigator.Screen name="Events" component={EventsNavigator} />
+
       <MapBottomTabNavigator.Screen name="Social" component={SocialNavigator} />
       <MapBottomTabNavigator.Screen
         name="Profile"

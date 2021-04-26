@@ -94,11 +94,13 @@ exports.createDing = asyncHandler(async (req, res, next) => {
 exports.reportDing = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
   const reportedDingId = req.params.id;
-
   const reportedDing = await Ding.findById(reportedDingId);
 
-  reportedDing.reports.push(userId);
+  if (!reportedDing) {
+    return next(ErrorResponse('No ding with this ID found', 400));
+  }
 
+  reportedDing.reports.push(userId);
   reportedDing.save();
 
   res.status(200).json({
@@ -112,6 +114,11 @@ exports.reportDing = asyncHandler(async (req, res, next) => {
 //access  public
 exports.getDinge = asyncHandler(async (req, res, next) => {
   const dinge = await Ding.find();
+
+  if (!dinge) {
+    return next(ErrorResponse('No dinge found', 400));
+  }
+
   res.status(200).json({ success: true, data: dinge });
 });
 
@@ -120,5 +127,10 @@ exports.getDinge = asyncHandler(async (req, res, next) => {
 //access  public
 exports.getDing = asyncHandler(async (req, res, next) => {
   const ding = await Ding.findById(req.params.id).populate('comments');
+
+  if (!ding) {
+    return next(ErrorResponse('No ding with this ID found', 400));
+  }
+
   res.status(200).json({ success: true, data: ding });
 });

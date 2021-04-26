@@ -8,9 +8,7 @@ const asyncHandler = require('../middleware/async');
 //route   POST /api/event
 //access  private
 exports.createEvent = asyncHandler(async (req, res, next) => {
-  console.log('create event');
   const userId = req.user.id;
-  console.log(userId);
   const {
     eventName,
     date,
@@ -39,11 +37,48 @@ exports.createEvent = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: event });
 });
 
-//eventName: Marketing Meeting
-//address: 134 Peter St 12th floor, Toronto, ON M5V 2H2
-//location: lat: 43.648303736639555, lng: -79.39395524010823
-//date: May 1st, 2021 7pm - "<YYYY-mm-ddTHH:MM:ss>" - "<2021-05-01T19:00:00>"
-//new Date("<2021-05-01T19:00:00>"a)
-//https://docs.mongodb.com/manual/reference/method/Date/
-//eventType: "business"
-//description: "Marketing at Publics Sapient office"
+//desc    DELETE Event by ID
+//route   DELETE /api/event/:id
+//access  private
+exports.deleteEventById = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+  const event = await Event.findById(req.params.id);
+
+  if (!event) {
+    return next(ErrorResponse('Event not found', 400));
+  }
+
+  if (userId === event.user.toString()) {
+    await event.remove();
+  } else {
+    return next(ErrorResponse('User not authorized', 400));
+  }
+
+  res.status(200).json({ success: true, data: 'event deleted' });
+});
+
+//desc    GET all Events
+//route   GET /api/event
+//access  public
+exports.getEvents = asyncHandler(async (req, res, next) => {
+  const events = await Event.find();
+
+  if (!events) {
+    return next(ErrorResponse('No events found', 400));
+  }
+
+  res.status(200).json({ success: true, data: events });
+});
+
+//desc    GET Event by ID
+//route   GET /api/events/:id
+//access  private
+exports.getEventById = asyncHandler(async (req, res, next) => {
+  const event = await Event.findById(req.params.id);
+
+  if (!event) {
+    return next(ErrorResponse('No event with this ID found', 400));
+  }
+
+  res.status(200).json({ success: true, data: event });
+});
