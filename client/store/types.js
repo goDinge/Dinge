@@ -6,6 +6,8 @@ export const UNLIKE_DING = 'UNLIKE_DING';
 export const REPORT_DING = 'REPORT_DING';
 export const POST_COMMENT = 'POST_COMMENT';
 
+export const GET_EVENTS = 'GET_EVENTS';
+
 export const SET_IMAGE = 'SET_IMAGE';
 export const RESET_IMAGE = 'RESET_IMAGE';
 

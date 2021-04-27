@@ -49,7 +49,7 @@ const DingScreen = (props) => {
   const comments = dingState.comments;
 
   const timeConverter = (dateISO) => {
-    const dateDing = new Date(dateISO);
+    const dateDing = new Date(dateISO); //dateISO is time of ding creation
     const dateMilli = dateDing.getTime();
     const dateNow = Date.now();
     const timeSinceUpload = dateNow - dateMilli;

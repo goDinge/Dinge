@@ -1,11 +1,5 @@
 import axios from 'axios';
-import {
-  GET_DINGE,
-  GET_DING,
-  POST_DING,
-  LIKE_DING,
-  UNLIKE_DING,
-} from '../types';
+import { GET_DINGE, POST_DING, LIKE_DING, UNLIKE_DING } from '../types';
 import { HOME_IP } from '@env';
 
 export const getDinge = () => {
