@@ -10,7 +10,16 @@ const EventSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  status: {
+    type: String,
+    enum: ['active', 'inactive'],
+    requried: true,
+  },
   date: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
     type: Date,
     required: true,
   },

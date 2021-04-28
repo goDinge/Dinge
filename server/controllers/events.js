@@ -11,7 +11,9 @@ exports.createEvent = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
   const {
     eventName,
+    status,
     date,
+    hours,
     eventType,
     address,
     location,
@@ -19,14 +21,25 @@ exports.createEvent = asyncHandler(async (req, res, next) => {
     description,
   } = req.body;
 
-  if (!eventName || !date || !eventType || !location || !description) {
+  if (
+    !eventName ||
+    !date ||
+    !eventType ||
+    !location ||
+    !description ||
+    !hours
+  ) {
     return next(new ErrorResponse('Please enter all neceesarily info.', 400));
   }
+
+  const endDate = Date.parse(date) + 1000 * 60 * 60 * hours;
 
   const event = await Event.create({
     eventName,
     user: userId,
+    status,
     date,
+    endDate,
     eventType,
     address,
     location,

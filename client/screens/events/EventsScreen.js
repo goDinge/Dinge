@@ -1,29 +1,51 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  FlatList,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import * as eventsActions from '../../store/actions/events';
 import Colors from '../../constants/Colors';
+import CustomButton from '../../components/CustomButton';
 
 const EventsScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [showEvents, setShowEvents] = useState([]);
   const [dateChosen, setDateChosen] = useState(0);
+  const [isLoading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const events = useSelector((state) => state.events.events);
+  const authUser = useSelector((state) => state.auth.authUser);
 
   useEffect(() => {
     loadEvents();
-  }, [loadEvents]);
+  }, []);
 
   const loadEvents = async () => {
     setError[null];
+    setLoading(true);
     try {
       await dispatch(eventsActions.getEvents());
     } catch (err) {
       setError(err.message);
     }
+    setLoading(false);
+  };
+
+  const sortEvents = (a, b) => {
+    if (a.date < b.date) {
+      return -1;
+    }
+    if (a.date > b.date) {
+      return 1;
+    }
+    return 0;
   };
 
   const pickDateHandler = (date, index) => {
@@ -34,6 +56,7 @@ const EventsScreen = (props) => {
         eventsToPush.push(event);
       }
     }
+    eventsToPush.sort(sortEvents);
     setShowEvents(eventsToPush);
   };
 
@@ -52,18 +75,32 @@ const EventsScreen = (props) => {
   const Item = ({ item }) => (
     <View style={styles.eventContainer}>
       <View style={styles.eventTimeContainer}>
-        <Text style={styles.eventText}>{convertAMPM(item.date)}</Text>
+        <Text style={styles.eventText}>
+          {convertAMPM(item.date)} - {convertAMPM(item.endDate)}
+        </Text>
       </View>
       <View style={styles.eventInfoContainer}>
         <Text style={styles.eventTextTitle}>{item.eventName}</Text>
         <Text style={styles.eventText}>
-          {item.description.slice(0, 20) + '...'}
+          {item.description.split(' ').slice(0, 9).join(' ') + '...'}
         </Text>
       </View>
     </View>
   );
 
   const renderItem = ({ item }) => <Item item={item} />;
+
+  const createEventHandler = (authUser) => {
+    console.log('create event authUser', authUser);
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.indicatorContainer}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -98,9 +135,13 @@ const EventsScreen = (props) => {
             keyExtractor={(item) => item._id}
           />
         </View>
-        <View>
-          <Text style={styles.dateText}>Events length: {events.length}</Text>
-          <Text style={styles.dateText}>Current Date: {currentDate}</Text>
+        <View style={styles.buttonContainer}>
+          <CustomButton
+            style={styles.createEventButton}
+            onSelect={() => createEventHandler(authUser._id)}
+          >
+            <Text style={styles.createEventButtonText}>Create Event</Text>
+          </CustomButton>
         </View>
       </View>
     </View>
@@ -115,7 +156,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
   },
+  indicatorContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   innerContainer: {
+    width: '100%',
     paddingVertical: 10,
   },
   datesContainer: {
@@ -150,18 +198,20 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-medium',
   },
   eventContainer: {
-    flexDirection: 'row',
     width: '100%',
-    marginVertical: 4,
+    marginBottom: 5,
+    marginTop: 2,
     paddingHorizontal: 10,
     borderBottomWidth: 0.5,
     borderBottomColor: '#eeeeee',
   },
   eventTimeContainer: {
-    width: '22%',
+    width: '100%',
+    marginBottom: 7,
   },
   eventInfoContainer: {
-    width: '78%',
+    width: '80%',
+    alignSelf: 'flex-end',
     padding: 10,
     backgroundColor: Colors.lightBlue,
     borderRadius: 20,
@@ -180,6 +230,25 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '75%',
     paddingVertical: 10,
+    shadowColor: 'black',
+    shadowOffset: { width: 10, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+  },
+  buttonContainer: {
+    alignItems: 'center',
+  },
+  createEventButton: {
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  createEventButtonText: {
+    color: 'white',
+    fontFamily: 'cereal-bold',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    fontSize: 16,
   },
 });
 

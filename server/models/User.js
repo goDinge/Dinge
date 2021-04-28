@@ -6,10 +6,13 @@ const crypto = require('crypto');
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
+    trim: true,
+    minlength: 3,
     required: [true, 'Please provide a name'],
   },
   email: {
     type: String,
+    unique: true,
     required: [true, 'Please provide your email address'],
     match: [
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
