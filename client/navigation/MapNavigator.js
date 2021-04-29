@@ -13,6 +13,7 @@ import AuthScreen from '../screens/auth/AuthScreen';
 import SocialScreen from '../screens/SocialScreen';
 import ProfileScreen from '../screens/user/ProfileScreen';
 import EventsScreen from '../screens/events/EventsScreen';
+import EventDetailsScreen from '../screens/events/EventDetailsScreen';
 
 import Colors from '../constants/Colors';
 
@@ -131,6 +132,11 @@ export const EventsNavigator = () => {
         name="Events"
         component={EventsScreen}
         options={{ headerTitle: 'Events Listing' }}
+      />
+      <EventsStackNavigator.Screen
+        name="Event Details"
+        component={EventDetailsScreen}
+        options={{ headerTitle: 'Event Details' }}
       />
     </EventsStackNavigator.Navigator>
   );

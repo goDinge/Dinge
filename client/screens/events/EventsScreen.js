@@ -79,12 +79,15 @@ const EventsScreen = (props) => {
           {convertAMPM(item.date)} - {convertAMPM(item.endDate)}
         </Text>
       </View>
-      <View style={styles.eventInfoContainer}>
+      <Pressable
+        style={styles.eventInfoContainer}
+        onPress={() => eventDetailsHandler(item)}
+      >
         <Text style={styles.eventTextTitle}>{item.eventName}</Text>
         <Text style={styles.eventText}>
           {item.description.split(' ').slice(0, 9).join(' ') + '...'}
         </Text>
-      </View>
+      </Pressable>
     </View>
   );
 
@@ -92,6 +95,10 @@ const EventsScreen = (props) => {
 
   const createEventHandler = (authUser) => {
     console.log('create event authUser', authUser);
+  };
+
+  const eventDetailsHandler = (event) => {
+    props.navigation.navigate('Event Details', event);
   };
 
   if (isLoading) {

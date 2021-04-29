@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   description: {
-    fontFamily: 'cereal-book',
+    fontFamily: 'cereal-light',
     fontSize: 16,
   },
   timeContainer: {
@@ -444,6 +444,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 10,
     fontSize: 16,
+    fontFamily: 'cereal-light',
   },
   postButtonContainer: {
     width: 50,
