@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import MapView from 'react-native-maps';
+import { useIsFocused } from '@react-navigation/native';
 import * as Location from 'expo-location';
 
 import CustomMarker from '../../components/CustomMarker';
@@ -23,6 +24,8 @@ const MapScreen = (props) => {
   const [region, setRegion] = useState(location);
 
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
+
   const dinge = useSelector((state) => state.dinge.dinge);
   const authUser = useSelector((state) => state.auth.authUser);
 
@@ -94,16 +97,17 @@ const MapScreen = (props) => {
       <MapView
         style={styles.map}
         region={region}
-        minZoomLevel={14}
-        maxZoomLevel={16}
+        minZoomLevel={13}
+        maxZoomLevel={17}
       >
-        {dinge.map((item, index) => (
-          <CustomMarker
-            key={index}
-            data={item}
-            onSelect={() => selectDingHandler(item)}
-          />
-        ))}
+        {isFocused &&
+          dinge.map((item, index) => (
+            <CustomMarker
+              key={index}
+              data={item}
+              onSelect={() => selectDingHandler(item)}
+            />
+          ))}
       </MapView>
       <View style={styles.buttonContainer}>
         <CustomCameraIcon onSelect={selectCameraHandler} />

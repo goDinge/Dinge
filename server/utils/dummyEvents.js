@@ -56,4 +56,5 @@
 //   "description": "Pellentesque non elit quis odio finibus interdum. Maecenas et urna ligula. In hac habitasse platea dictumst. Integer facilisis, tellus id hendrerit fermentum, justo magna convallis neque, ac pharetra purus metus laoreet dolor. Mauris condimentum lobortis ligula quis pharetra. Praesent dignissim fringilla enim, ut congue purus hendrerit eu. Aliquam euismod quam massa, sit amet pretium nulla eleifend quis. Donec nec vestibulum metus."
 // }
 
-// //"types of event/icons: arts (paint board), music (guitar), business (dollar sign), sports (ball), politics (fist)?"
+//"types of event/icons: arts (paint board), music (guitar), business (dollar sign),
+//sports (ball), politics (fist), party (spin table), exercise (jogger)"

@@ -94,7 +94,7 @@ const EventsScreen = (props) => {
   const renderItem = ({ item }) => <Item item={item} />;
 
   const createEventHandler = (authUser) => {
-    console.log('create event authUser', authUser);
+    props.navigation.navigate('Create Event', authUser);
   };
 
   const eventDetailsHandler = (event) => {
@@ -145,7 +145,7 @@ const EventsScreen = (props) => {
         <View style={styles.buttonContainer}>
           <CustomButton
             style={styles.createEventButton}
-            onSelect={() => createEventHandler(authUser._id)}
+            onSelect={() => createEventHandler(authUser)}
           >
             <Text style={styles.createEventButtonText}>Create Event</Text>
           </CustomButton>
@@ -161,7 +161,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
   },
   indicatorContainer: {
     flex: 1,

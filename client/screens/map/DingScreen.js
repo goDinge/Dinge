@@ -13,7 +13,12 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import {
+  MaterialCommunityIcons,
+  MaterialIcons,
+  FontAwesome,
+  Feather,
+} from '@expo/vector-icons';
 
 import * as userActions from '../../store/actions/user';
 import * as dingActions from '../../store/actions/ding';
@@ -49,7 +54,7 @@ const DingScreen = (props) => {
   const comments = dingState.comments;
 
   const timeConverter = (dateISO) => {
-    const dateDing = new Date(dateISO); //dateISO is time of ding creation
+    const dateDing = new Date(dateISO); //dateISO is time of ding creation that got passed in
     const dateMilli = dateDing.getTime();
     const dateNow = Date.now();
     const timeSinceUpload = dateNow - dateMilli;
@@ -105,7 +110,6 @@ const DingScreen = (props) => {
   };
 
   const publicProfileHandler = (userId) => {
-    //console.log(userId);
     props.navigation.navigate('Public', userId);
   };
 
@@ -220,10 +224,10 @@ const DingScreen = (props) => {
                     <ActivityIndicator color={Colors.primary} size="small" />
                   </View>
                 ) : (
-                  <MaterialCommunityIcons
-                    name={initLike ? 'thumb-up' : 'thumb-up-outline'}
+                  <FontAwesome
+                    name={initLike ? 'thumbs-up' : 'thumbs-o-up'}
                     color={initLike ? Colors.primary : 'black'}
-                    size={30}
+                    size={28}
                     style={styles.icon}
                     onPress={() => likeDingHandler(ding._id, user._id)}
                   />
@@ -233,9 +237,9 @@ const DingScreen = (props) => {
                 </Text>
               </View>
               <View style={styles.iconRightContainer}>
-                <MaterialCommunityIcons
-                  name="flag-outline"
-                  size={30}
+                <Feather
+                  name="flag"
+                  size={28}
                   style={styles.icon}
                   onPress={openModelHandler}
                 />
@@ -243,7 +247,7 @@ const DingScreen = (props) => {
                   <MaterialIcons
                     name="highlight-remove"
                     size={30}
-                    style={styles.icon}
+                    style={[styles.icon, { marginRight: 0 }]}
                     onPress={() => deleteDingHandler(ding._id)}
                   />
                 ) : null}

@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import MapView from 'react-native-maps';
+import { useIsFocused } from '@react-navigation/native';
+
 import * as Location from 'expo-location';
 
 import * as eventActions from '../../store/actions/events';
@@ -28,6 +30,7 @@ const EventDetailsScreen = (props) => {
   const [region, setRegion] = useState(location);
 
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     loadUser(event.user);
@@ -76,7 +79,7 @@ const EventDetailsScreen = (props) => {
     setIsLoading(false);
   };
 
-  if (isLoading) {
+  if (isLoading || !location) {
     return (
       <View style={styles.indicatorContainer}>
         <ActivityIndicator color={Colors.primary} size="large" />
@@ -112,15 +115,18 @@ const EventDetailsScreen = (props) => {
               <MapView
                 style={styles.map}
                 region={region}
-                minZoomLevel={14}
-                maxZoomLevel={16}
+                minZoomLevel={13}
+                maxZoomLevel={17}
               >
-                <CustomMarker data={event} />
+                {isFocused && <CustomMarker data={event} />}
               </MapView>
             </View>
             <View style={styles.aboutInfoContainer}>
               <Text style={[styles.eventTitle, { fontSize: 20 }]}>
                 About this event
+              </Text>
+              <Text style={[styles.eventInfo, { marginBottom: 8 }]}>
+                {event.address}
               </Text>
               <Text style={styles.eventText}>{event.description}</Text>
             </View>
@@ -141,19 +147,19 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     margin: 10,
-    width: '90%',
+    width: '94%',
   },
   topInfoContainer: {
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between',
+    marginTop: 6,
     marginBottom: 20,
   },
   eventTitle: {
     fontFamily: 'cereal-bold',
-    fontSize: 26,
-    marginTop: 4,
-    marginBottom: 8,
+    fontSize: 23,
+    marginBottom: 12,
   },
   eventInfo: {
     fontFamily: 'cereal-medium',
@@ -163,12 +169,13 @@ const styles = StyleSheet.create({
   eventText: {
     fontFamily: 'cereal-light',
     fontSize: 16,
+    color: Colors.gray,
   },
   avatarContainer: {},
   avatar: {
-    height: 120,
-    width: 120,
-    borderRadius: 60,
+    height: 100,
+    width: 100,
+    borderRadius: 50,
   },
   lowerInfoContainer: {
     width: '100%',
@@ -178,18 +185,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   map: {
-    width: '100%',
     height: 200,
   },
   aboutInfoContainer: {
-    backgroundColor: 'yellow',
     height: 500,
+    marginTop: 16,
   },
   indicatorContainer: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  pin: {
+    width: 50,
+    height: 50,
   },
 });
 

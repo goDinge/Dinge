@@ -53,6 +53,11 @@ const UploadScreen = (props) => {
       return;
     }
 
+    if (!image) {
+      Alert.alert('No Picture!', 'Please take picture.', [{ text: 'Ok' }]);
+      return;
+    }
+
     try {
       setIsFetching(true);
       const location = await Location.getCurrentPositionAsync({
