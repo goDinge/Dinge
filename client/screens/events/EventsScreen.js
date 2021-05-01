@@ -13,19 +13,38 @@ import * as eventsActions from '../../store/actions/events';
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
 
+const todayEventsDefault = (events) => {
+  let defaultEvents = [];
+  for (const event of events) {
+    if (convertDate(Date.now()) === convertDate(event.date)) {
+      defaultEvents.push(event);
+    }
+  }
+  return defaultEvents;
+};
+
 const EventsScreen = (props) => {
   const [error, setError] = useState(undefined);
-  const [showEvents, setShowEvents] = useState([]);
+  const [showEvents, setShowEvents] = useState(
+    events ? todayEventsDefault(events) : []
+  );
   const [dateChosen, setDateChosen] = useState(0);
   const [isLoading, setLoading] = useState(false);
-  const dispatch = useDispatch();
 
   const events = useSelector((state) => state.events.events);
   const authUser = useSelector((state) => state.auth.authUser);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     loadEvents();
   }, []);
+
+  useEffect(() => {
+    if (events) {
+      setShowEvents(todayEventsDefault(events));
+    }
+  }, [events]);
 
   const loadEvents = async () => {
     setError[null];
@@ -48,8 +67,9 @@ const EventsScreen = (props) => {
     return 0;
   };
 
+  let eventsToPush = [];
+
   const pickDateHandler = (date, index) => {
-    let eventsToPush = [];
     setDateChosen(index);
     for (const event of events) {
       if (date === convertDate(event.date)) {
@@ -236,10 +256,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '75%',
     paddingVertical: 10,
-    shadowColor: 'black',
-    shadowOffset: { width: 10, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
   },
   buttonContainer: {
     alignItems: 'center',

@@ -5,10 +5,10 @@ import {
   TextInput,
   Alert,
   Modal,
-  Pressable,
   KeyboardAvoidingView,
   ActivityIndicator,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
@@ -17,6 +17,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Geocoder from 'react-native-geocoding';
 import MapView from 'react-native-maps';
 import {
+  Entypo,
   Ionicons,
   SimpleLineIcons,
   MaterialCommunityIcons,
@@ -28,6 +29,9 @@ import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
 import CustomMarker from '../../components/CustomMarker';
 import CustomInput from '../../components/CustomInput';
+
+import { convertAMPM, properDate } from '../../helpers/dateConversions';
+
 import { GOOGLE_MAPS } from '@env';
 
 Geocoder.init(GOOGLE_MAPS);
@@ -122,7 +126,7 @@ const CreateEventScreen = (props) => {
     formIsValid: false,
   });
 
-  //console.log(formState);
+  console.log(formState);
 
   //Date and Time picker functions
   const onDateChange = (event, selectedDate) => {
@@ -132,10 +136,6 @@ const CreateEventScreen = (props) => {
     let isValid;
     if (currentDate > Date.now()) {
       isValid = true;
-    } else {
-      Alert.alert('Wrong date!', 'Please pick a date/time in the future.', [
-        { text: 'Ok' },
-      ]);
     }
     dispatchFormState({
       type: FORM_INPUT,
@@ -159,8 +159,8 @@ const CreateEventScreen = (props) => {
   const showTimepicker = () => {
     showMode('time');
   };
-  //End of Date and time picker function
 
+  //Text input
   const inputChangeHandler = (inputType, text) => {
     let isValid = false;
     if (text.trim().length > 0) {
@@ -223,12 +223,32 @@ const CreateEventScreen = (props) => {
     }
   };
 
+  //Event types
+  const eventTypes = [
+    'arts',
+    'business',
+    'community',
+    'culture',
+    'health',
+    'music',
+    'political',
+    'sports',
+    'other',
+  ];
+
   const eventTypeHandler = () => {
     setModalVisible(true);
   };
 
   const chooseEventType = (text) => {
-    console.log(text);
+    setEventType(text);
+    let isValid;
+    dispatchFormState({
+      type: FORM_INPUT,
+      value: text,
+      isValid: isValid,
+      input: 'eventType',
+    });
     setModalVisible(false);
   };
 
@@ -244,81 +264,107 @@ const CreateEventScreen = (props) => {
     <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={100}>
       <View style={styles.container}>
         <View style={styles.innerContainer}>
-          <TextInput
-            placeholder="enter event name"
-            style={styles.tempInput}
-            value={formState.inputValues.eventName}
-            onChangeText={(text) => inputChangeHandler('eventName', text)}
-          />
-          <View style={styles.dateContainer}>
-            <View style={styles.pickDateContainer}>
-              <Text style={[styles.instructionText, { width: '50%' }]}>
-                Pick date and time:
-              </Text>
-              <Ionicons
-                name="calendar-outline"
-                size={30}
-                onPress={showDatepicker}
-                style={{ marginRight: 20 }}
-              />
-              <SimpleLineIcons
-                name="clock"
-                size={30}
-                onPress={showTimepicker}
-                style={{ marginRight: 20 }}
+          <ScrollView>
+            <View style={styles.eventNameContainer}>
+              <Text style={styles.instructionText}>Event Name:</Text>
+              <TextInput
+                placeholder="enter event name"
+                style={styles.tempInput}
+                value={formState.inputValues.eventName}
+                onChangeText={(text) => inputChangeHandler('eventName', text)}
               />
             </View>
-            <View>
-              <Text style={styles.instructionText}>
-                Event Date:{' '}
-                {formState.inputValidities.date && datePicked && timePicked
-                  ? date.toISOString()
-                  : null}
+            <View style={styles.dateContainer}>
+              <View style={styles.pickDateContainer}>
+                <Text style={[styles.instructionText, { marginRight: 20 }]}>
+                  Select date and time
+                </Text>
+                <Ionicons
+                  name="calendar-outline"
+                  size={30}
+                  onPress={showDatepicker}
+                  style={{ marginRight: 40 }}
+                />
+                <SimpleLineIcons
+                  name="clock"
+                  size={30}
+                  onPress={showTimepicker}
+                  style={{ marginRight: 20 }}
+                />
+              </View>
+              <View
+                style={[styles.durationContainer, { flexDirection: 'row' }]}
+              >
+                <Text
+                  style={[
+                    styles.instructionText,
+                    { marginRight: 10 },
+                    { alignSelf: 'center' },
+                  ]}
+                >
+                  Event Duration:
+                </Text>
+                <TextInput
+                  placeholder="hours"
+                  style={[styles.tempInput]}
+                  value={formState.inputValues.hours}
+                  onChangeText={(text) => inputChangeHandler('hours', text)}
+                />
+              </View>
+            </View>
+            <View style={styles.durationContainer}>
+              <Text style={styles.instructionText}>Event Location:</Text>
+              <TextInput
+                placeholder="enter street address"
+                style={styles.tempInput}
+                value={formState.inputValues.address}
+                onChangeText={(text) => inputChangeHandler('address', text)}
+              />
+              <View style={styles.buttonContainer}>
+                <CustomButton
+                  onSelect={() =>
+                    loadMapHandler(region, formState.inputValues.address)
+                  }
+                >
+                  <Text style={styles.locateOnMapText}>Add Map Marker</Text>
+                </CustomButton>
+              </View>
+            </View>
+            <View style={styles.mapContainer}>
+              {mapLoaded ? (
+                <MapView
+                  style={styles.map}
+                  region={region}
+                  minZoomLevel={11}
+                  maxZoomLevel={17}
+                >
+                  {isFocused && mapLoaded && <CustomMarker data={tempEvent} />}
+                </MapView>
+              ) : null}
+            </View>
+            <View style={styles.eventTypeContainer}>
+              <Text style={[styles.instructionText, { marginRight: 15 }]}>
+                Event Type:
               </Text>
+              <Text style={styles.chosenEventTypeText}>{eventType}</Text>
+              <Entypo
+                name="triangle-down"
+                size={18}
+                onPress={eventTypeHandler}
+                style={{ paddingHorizontal: 2 }}
+              />
             </View>
-          </View>
-
-          <View>
-            <TextInput
-              placeholder="enter street address"
-              style={styles.tempInput}
-              value={formState.inputValues.address}
-              onChangeText={(text) => inputChangeHandler('address', text)}
-            />
-            <View style={styles.buttonContainer}>
-              <CustomButton
-                onSelect={() =>
-                  loadMapHandler(region, formState.inputValues.address)
-                }
-              >
-                <Text style={styles.locateOnMapText}>Add Map Marker</Text>
-              </CustomButton>
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.instructionText}>Description:</Text>
+              <TextInput
+                style={styles.tempInput}
+                value={formState.inputValues.description}
+                multiline={true}
+                onChangeText={(text) => inputChangeHandler('description', text)}
+              />
             </View>
-          </View>
-          <View style={styles.mapContainer}>
-            {mapLoaded ? (
-              <MapView
-                style={styles.map}
-                region={region}
-                minZoomLevel={10}
-                maxZoomLevel={17}
-              >
-                {isFocused && mapLoaded && <CustomMarker data={tempEvent} />}
-              </MapView>
-            ) : null}
-          </View>
-          <View style={styles.eventTypeContainer}>
-            <View
-              style={[styles.buttonContainer, { alignItems: 'flex-start' }]}
-            >
-              <CustomButton onSelect={eventTypeHandler}>
-                <Text style={styles.locateOnMapText}>Event Type:</Text>
-              </CustomButton>
-            </View>
-            <View style={styles.eventTypeField}>
-              <Text style={styles.instructionText}>{eventType}</Text>
-            </View>
-          </View>
+            <View style={styles.extraSpace}></View>
+          </ScrollView>
         </View>
         <View style={styles.centeredView}>
           <Modal
@@ -326,26 +372,20 @@ const CreateEventScreen = (props) => {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert('Modal has been closed.');
               setModalVisible(!modalVisible);
             }}
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Text
-                  style={styles.modalText}
-                  onPress={() => chooseEventType('arts')}
-                >
-                  arts
-                </Text>
-                <Text style={styles.modalText}>business</Text>
-                <Text style={styles.modalText}>community</Text>
-                <Text style={styles.modalText}>culture</Text>
-                <Text style={styles.modalText}>health</Text>
-                <Text style={styles.modalText}>music</Text>
-                <Text style={styles.modalText}>political</Text>
-                <Text style={styles.modalText}>sports</Text>
-                <Text style={styles.modalText}>other</Text>
+                {eventTypes.map((item, index) => (
+                  <Text
+                    key={index}
+                    style={styles.modalText}
+                    onPress={() => chooseEventType(item)}
+                  >
+                    {item}
+                  </Text>
+                ))}
                 <View style={styles.right}>
                   <MaterialCommunityIcons
                     name="close"
@@ -367,6 +407,7 @@ const CreateEventScreen = (props) => {
             is24Hour={true}
             display="default"
             onChange={onDateChange}
+            minimumDate={Date.now()}
           />
         )}
       </View>
@@ -390,11 +431,15 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     width: '94%',
-    paddingVertical: 14,
+    paddingVertical: 10,
+  },
+  eventNameContainer: {
+    marginVertical: 15,
   },
   instructionText: {
     fontSize: 16,
     fontFamily: 'cereal-medium',
+    marginBottom: 4,
   },
   tempInput: {
     borderColor: '#dddddd',
@@ -403,14 +448,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'cereal-light',
     paddingLeft: 15,
+    paddingRight: 15,
   },
-  dateContainer: {
-    marginVertical: 15,
-  },
+  // dateContainer: {
+  //   marginVertical: 15,
+  // },
   pickDateContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    marginBottom: 8,
+    marginVertical: 15,
   },
   dateTimeButton: {
     height: 40,
@@ -424,6 +470,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 16,
   },
+  durationContainer: {
+    marginVertical: 15,
+  },
   locateOnMapText: {
     color: 'white',
     fontFamily: 'cereal-bold',
@@ -433,6 +482,7 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     justifyContent: 'center',
+    marginBottom: 18,
   },
   map: {
     height: 200,
@@ -443,21 +493,20 @@ const styles = StyleSheet.create({
   },
   eventTypeContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    marginVertical: 15,
   },
-  eventTypeField: {
-    marginVertical: 10,
-    justifyContent: 'center',
-    marginLeft: 20,
-  },
-  eventTypePicker: {
-    height: 40,
-    width: '50%',
-    fontSize: 10,
+  chosenEventTypeText: {
+    width: 120,
+    fontSize: 16,
     fontFamily: 'cereal-medium',
+    textAlign: 'center',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#dddddd',
   },
-  eventTypeText: {
-    fontFamily: 'cereal-medium',
+  descriptionContainer: {
+    width: '100%',
+    marginVertical: 15,
   },
   centeredView: {
     flex: 1,
@@ -493,11 +542,7 @@ const styles = StyleSheet.create({
   iconClose: {
     alignItems: 'flex-end',
   },
+  extraSpace: {
+    height: 100,
+  },
 });
-
-// dummy
-// location: {
-//   latitude: 43.65226097211218,
-//   longitude: -79.39249034483628,
-// },
-// thumbUrl: 'https://dinge.s3.us-east-2.amazonaws.com/avatar/avatar.png',
