@@ -1,21 +1,32 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import {
   View,
   Text,
-  Button,
   TextInput,
+  Alert,
+  Modal,
+  Pressable,
   KeyboardAvoidingView,
+  ActivityIndicator,
   StyleSheet,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Geocoder from 'react-native-geocoding';
-import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
+import MapView from 'react-native-maps';
+import {
+  Ionicons,
+  SimpleLineIcons,
+  MaterialCommunityIcons,
+} from '@expo/vector-icons';
+import * as Location from 'expo-location';
 
 import * as eventsActions from '../../store/actions/events';
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
+import CustomMarker from '../../components/CustomMarker';
 import CustomInput from '../../components/CustomInput';
 import { GOOGLE_MAPS } from '@env';
 
@@ -49,23 +60,46 @@ const formReducer = (state, action) => {
 const CreateEventScreen = (props) => {
   const authUser = props.route.params;
 
+  const [error, setError] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+  const [datePicked, setDatePicked] = useState(false);
+  const [timePicked, setTimePicked] = useState(false);
+  const [location, setLocation] = useState(null);
+  const [region, setRegion] = useState(location);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [tempEvent, setTempEvent] = useState({
+    location: {
+      latitude: 0,
+      longitude: 0,
+    },
+  });
+  const [eventType, setEventType] = useState('community');
+  const [modalVisible, setModalVisible] = useState(false);
 
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
-  const coordLookUp = async () => {
-    try {
-      const json = await Geocoder.from('393 Dundas St W, Toronto, ON M5T 1G6');
-      var location = json.results[0].geometry.location;
-      console.log(location);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
 
-  //coordLookUp();
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    })();
+  }, [setLocation, setRegion]);
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -79,7 +113,7 @@ const CreateEventScreen = (props) => {
     },
     inputValidities: {
       eventName: false,
-      date: true,
+      date: false,
       eventType: false,
       location: false,
       description: false,
@@ -88,7 +122,7 @@ const CreateEventScreen = (props) => {
     formIsValid: false,
   });
 
-  console.log(formState);
+  //console.log(formState);
 
   //Date and Time picker functions
   const onDateChange = (event, selectedDate) => {
@@ -96,8 +130,12 @@ const CreateEventScreen = (props) => {
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
     let isValid;
-    if (currentDate > date) {
+    if (currentDate > Date.now()) {
       isValid = true;
+    } else {
+      Alert.alert('Wrong date!', 'Please pick a date/time in the future.', [
+        { text: 'Ok' },
+      ]);
     }
     dispatchFormState({
       type: FORM_INPUT,
@@ -105,8 +143,12 @@ const CreateEventScreen = (props) => {
       isValid: isValid,
       input: 'date',
     });
+    if (mode === 'time') {
+      setTimePicked(true);
+    } else {
+      setDatePicked(true);
+    }
   };
-  console.log(date);
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
@@ -120,7 +162,6 @@ const CreateEventScreen = (props) => {
   //End of Date and time picker function
 
   const inputChangeHandler = (inputType, text) => {
-    console.log('input change');
     let isValid = false;
     if (text.trim().length > 0) {
       isValid = true;
@@ -133,45 +174,189 @@ const CreateEventScreen = (props) => {
     });
   };
 
+  //Map and marker
+  const loadMapHandler = async (region, address) => {
+    await coordLookUp(address);
+    setMapLoaded(true);
+  };
+
+  const coordLookUp = async (address) => {
+    let coordsMongo = {
+      latitude: null,
+      longitude: null,
+    };
+    try {
+      const json = await Geocoder.from(address);
+      const coordsGoogle = json.results[0].geometry.location;
+
+      let isValid = false;
+      if (coordsGoogle) {
+        (coordsMongo = {
+          latitude: coordsGoogle.lat,
+          longitude: coordsGoogle.lng,
+        }),
+          setTempEvent({
+            location: {
+              latitude: coordsGoogle.lat,
+              longitude: coordsGoogle.lng,
+            },
+            thumbUrl:
+              'https://dinge.s3.us-east-2.amazonaws.com/avatar/avatar.png',
+          }),
+          setRegion({
+            latitude: coordsGoogle.lat,
+            longitude: coordsGoogle.lng,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }),
+          (isValid = true),
+          dispatchFormState({
+            type: FORM_INPUT,
+            value: coordsMongo,
+            isValid: isValid,
+            input: 'location',
+          });
+      }
+      return coordsMongo;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const eventTypeHandler = () => {
+    setModalVisible(true);
+  };
+
+  const chooseEventType = (text) => {
+    console.log(text);
+    setModalVisible(false);
+  };
+
+  if (isLoading || !location) {
+    return (
+      <View style={styles.indicatorContainer}>
+        <ActivityIndicator color={Colors.primary} size="large" />
+      </View>
+    );
+  }
+
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={100}>
       <View style={styles.container}>
         <View style={styles.innerContainer}>
-          <Text>{authUser.name}</Text>
           <TextInput
-            placeholder="Event Name"
+            placeholder="enter event name"
+            style={styles.tempInput}
             value={formState.inputValues.eventName}
             onChangeText={(text) => inputChangeHandler('eventName', text)}
           />
-          <View style={styles.pickDateContainer}>
-            <Text style={[styles.instructionText, { width: '50%' }]}>
-              Pick date and time:
-            </Text>
-            <Ionicons
-              name="calendar-outline"
-              size={30}
-              onPress={showDatepicker}
-              style={{ marginRight: 20 }}
-            />
-            <SimpleLineIcons
-              name="clock"
-              size={30}
-              onPress={showTimepicker}
-              style={{ marginRight: 20 }}
-            />
+          <View style={styles.dateContainer}>
+            <View style={styles.pickDateContainer}>
+              <Text style={[styles.instructionText, { width: '50%' }]}>
+                Pick date and time:
+              </Text>
+              <Ionicons
+                name="calendar-outline"
+                size={30}
+                onPress={showDatepicker}
+                style={{ marginRight: 20 }}
+              />
+              <SimpleLineIcons
+                name="clock"
+                size={30}
+                onPress={showTimepicker}
+                style={{ marginRight: 20 }}
+              />
+            </View>
+            <View>
+              <Text style={styles.instructionText}>
+                Event Date:{' '}
+                {formState.inputValidities.date && datePicked && timePicked
+                  ? date.toISOString()
+                  : null}
+              </Text>
+            </View>
           </View>
-          <View>
-            <Text style={styles.instructionText}>
-              Date: {date.toISOString()}
-            </Text>
-          </View>
+
           <View>
             <TextInput
-              placeholder="address"
+              placeholder="enter street address"
+              style={styles.tempInput}
               value={formState.inputValues.address}
               onChangeText={(text) => inputChangeHandler('address', text)}
             />
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                onSelect={() =>
+                  loadMapHandler(region, formState.inputValues.address)
+                }
+              >
+                <Text style={styles.locateOnMapText}>Add Map Marker</Text>
+              </CustomButton>
+            </View>
           </View>
+          <View style={styles.mapContainer}>
+            {mapLoaded ? (
+              <MapView
+                style={styles.map}
+                region={region}
+                minZoomLevel={10}
+                maxZoomLevel={17}
+              >
+                {isFocused && mapLoaded && <CustomMarker data={tempEvent} />}
+              </MapView>
+            ) : null}
+          </View>
+          <View style={styles.eventTypeContainer}>
+            <View
+              style={[styles.buttonContainer, { alignItems: 'flex-start' }]}
+            >
+              <CustomButton onSelect={eventTypeHandler}>
+                <Text style={styles.locateOnMapText}>Event Type:</Text>
+              </CustomButton>
+            </View>
+            <View style={styles.eventTypeField}>
+              <Text style={styles.instructionText}>{eventType}</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.');
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text
+                  style={styles.modalText}
+                  onPress={() => chooseEventType('arts')}
+                >
+                  arts
+                </Text>
+                <Text style={styles.modalText}>business</Text>
+                <Text style={styles.modalText}>community</Text>
+                <Text style={styles.modalText}>culture</Text>
+                <Text style={styles.modalText}>health</Text>
+                <Text style={styles.modalText}>music</Text>
+                <Text style={styles.modalText}>political</Text>
+                <Text style={styles.modalText}>sports</Text>
+                <Text style={styles.modalText}>other</Text>
+                <View style={styles.right}>
+                  <MaterialCommunityIcons
+                    name="close"
+                    size={30}
+                    style={styles.iconClose}
+                    onPress={() => setModalVisible(!modalVisible)}
+                  />
+                </View>
+              </View>
+            </View>
+          </Modal>
         </View>
 
         {show && (
@@ -197,14 +382,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
   },
+  indicatorContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   innerContainer: {
-    width: '90%',
-    paddingVertical: 10,
-    backgroundColor: 'yellow',
+    width: '94%',
+    paddingVertical: 14,
   },
   instructionText: {
     fontSize: 16,
     fontFamily: 'cereal-medium',
+  },
+  tempInput: {
+    borderColor: '#dddddd',
+    borderRadius: 10,
+    borderWidth: 0.5,
+    fontSize: 16,
+    fontFamily: 'cereal-light',
+    paddingLeft: 15,
+  },
+  dateContainer: {
+    marginVertical: 15,
   },
   pickDateContainer: {
     flexDirection: 'row',
@@ -223,4 +424,80 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 16,
   },
+  locateOnMapText: {
+    color: 'white',
+    fontFamily: 'cereal-bold',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    fontSize: 16,
+  },
+  mapContainer: {
+    justifyContent: 'center',
+  },
+  map: {
+    height: 200,
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  eventTypeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  eventTypeField: {
+    marginVertical: 10,
+    justifyContent: 'center',
+    marginLeft: 20,
+  },
+  eventTypePicker: {
+    height: 40,
+    width: '50%',
+    fontSize: 10,
+    fontFamily: 'cereal-medium',
+  },
+  eventTypeText: {
+    fontFamily: 'cereal-medium',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  modalView: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    paddingBottom: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    fontFamily: 'cereal-medium',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  right: {
+    width: '100%',
+    alignSelf: 'flex-end',
+  },
+  iconClose: {
+    alignItems: 'flex-end',
+  },
 });
+
+// dummy
+// location: {
+//   latitude: 43.65226097211218,
+//   longitude: -79.39249034483628,
+// },
+// thumbUrl: 'https://dinge.s3.us-east-2.amazonaws.com/avatar/avatar.png',

@@ -11,8 +11,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import MapView from 'react-native-maps';
 import { useIsFocused } from '@react-navigation/native';
 
-import * as Location from 'expo-location';
-
 import * as eventActions from '../../store/actions/events';
 import * as userActions from '../../store/actions/user';
 import Colors from '../../constants/Colors';

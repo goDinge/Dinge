@@ -26,6 +26,8 @@ const CustomMarker = (props) => {
     MARKER_HEIGHT
   );
 
+  //console.log(props);
+
   return (
     <Pressable style={styles.markerContainer}>
       <Marker

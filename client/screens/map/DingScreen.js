@@ -311,11 +311,6 @@ const DingScreen = (props) => {
                   </View>
                 );
               })}
-            {/* <FlatList
-              data={comments}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id}
-            /> */}
           </View>
         </ScrollView>
       </View>
