@@ -5,7 +5,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 
 //desc    CREATE Event
-//route   POST /api/event
+//route   POST /api/events
 //access  private
 exports.createEvent = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;

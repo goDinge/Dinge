@@ -41,7 +41,7 @@ const EventsScreen = (props) => {
   }, []);
 
   useEffect(() => {
-    if (events) {
+    if (events === true) {
       setShowEvents(todayEventsDefault(events));
     }
   }, [events]);
@@ -154,7 +154,6 @@ const EventsScreen = (props) => {
             );
           })}
         </View>
-
         <View style={styles.eventsList}>
           <FlatList
             data={showEvents}
@@ -254,11 +253,14 @@ const styles = StyleSheet.create({
   },
   eventsList: {
     width: '100%',
-    height: '75%',
-    paddingVertical: 10,
+    height: '80%',
+    paddingVertical: 4,
   },
   buttonContainer: {
+    position: 'absolute',
     alignItems: 'center',
+    bottom: -12,
+    alignSelf: 'center',
   },
   createEventButton: {
     height: 40,

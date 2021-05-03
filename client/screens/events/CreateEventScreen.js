@@ -3,7 +3,7 @@ import {
   View,
   Text,
   TextInput,
-  Alert,
+  Image,
   Modal,
   KeyboardAvoidingView,
   ActivityIndicator,
@@ -32,7 +32,7 @@ import CustomInput from '../../components/CustomInput';
 
 import { convertAMPM, properDate } from '../../helpers/dateConversions';
 
-import { GOOGLE_MAPS } from '@env';
+import { GOOGLE_MAPS, AWS_EVENT_TYPES } from '@env';
 
 Geocoder.init(GOOGLE_MAPS);
 
@@ -110,6 +110,7 @@ const CreateEventScreen = (props) => {
       eventName: '',
       date: '',
       eventType: '',
+      thumbUrl: '',
       address: '',
       location: '',
       description: '',
@@ -119,6 +120,7 @@ const CreateEventScreen = (props) => {
       eventName: false,
       date: false,
       eventType: false,
+      thumbUrl: false,
       location: false,
       description: false,
       hours: false,
@@ -126,7 +128,7 @@ const CreateEventScreen = (props) => {
     formIsValid: false,
   });
 
-  console.log(formState);
+  //console.log(formState);
 
   //Date and Time picker functions
   const onDateChange = (event, selectedDate) => {
@@ -166,6 +168,9 @@ const CreateEventScreen = (props) => {
     if (text.trim().length > 0) {
       isValid = true;
     }
+    if (inputType === 'hours' && text === Number) {
+      isValid = true;
+    }
     dispatchFormState({
       type: FORM_INPUT,
       value: text,
@@ -200,8 +205,7 @@ const CreateEventScreen = (props) => {
               latitude: coordsGoogle.lat,
               longitude: coordsGoogle.lng,
             },
-            thumbUrl:
-              'https://dinge.s3.us-east-2.amazonaws.com/avatar/avatar.png',
+            thumbUrl: `${AWS_EVENT_TYPES}${eventType}.png`,
           }),
           setRegion({
             latitude: coordsGoogle.lat,
@@ -231,6 +235,7 @@ const CreateEventScreen = (props) => {
     'culture',
     'health',
     'music',
+    'party',
     'political',
     'sports',
     'other',
@@ -242,14 +247,35 @@ const CreateEventScreen = (props) => {
 
   const chooseEventType = (text) => {
     setEventType(text);
-    let isValid;
+    let isValid = false;
+    if (text) {
+      isValid = true;
+    }
     dispatchFormState({
       type: FORM_INPUT,
       value: text,
       isValid: isValid,
       input: 'eventType',
     });
+    dispatchFormState({
+      type: FORM_INPUT,
+      value: `${AWS_EVENT_TYPES}${text}.png`,
+      isValid: isValid,
+      input: 'thumbUrl',
+    });
     setModalVisible(false);
+  };
+
+  const createEventHandler = async () => {
+    setError(null);
+    try {
+      await dispatch(eventsActions.createEvent(formState));
+      await dispatch(eventsActions.getEvents());
+      props.navigation.navigate('Events');
+    } catch (err) {
+      setError(err.message);
+      console.log(err.message);
+    }
   };
 
   if (isLoading || !location) {
@@ -274,6 +300,27 @@ const CreateEventScreen = (props) => {
                 onChangeText={(text) => inputChangeHandler('eventName', text)}
               />
             </View>
+            <View style={styles.eventTypeContainer}>
+              <Text style={[styles.instructionText, { marginRight: 15 }]}>
+                Event Type:
+              </Text>
+              <View style={{ flexDirection: 'row' }}>
+                <Text style={styles.chosenEventTypeText}>{eventType}</Text>
+                <Entypo
+                  name="triangle-down"
+                  size={18}
+                  onPress={eventTypeHandler}
+                  style={{ paddingHorizontal: 2 }}
+                />
+              </View>
+              <Image
+                style={styles.pic}
+                source={{
+                  uri: `${AWS_EVENT_TYPES}${eventType}.png`,
+                }}
+              />
+            </View>
+
             <View style={styles.dateContainer}>
               <View style={styles.pickDateContainer}>
                 <Text style={[styles.instructionText, { marginRight: 20 }]}>
@@ -292,6 +339,11 @@ const CreateEventScreen = (props) => {
                   style={{ marginRight: 20 }}
                 />
               </View>
+              <Text style={[styles.instructionText, styles.chosenDateText]}>
+                {formState.inputValidities.date && datePicked && timePicked
+                  ? properDate(date) + '  /  ' + convertAMPM(date)
+                  : null}
+              </Text>
               <View
                 style={[styles.durationContainer, { flexDirection: 'row' }]}
               >
@@ -306,6 +358,7 @@ const CreateEventScreen = (props) => {
                 </Text>
                 <TextInput
                   placeholder="hours"
+                  keyboardType="numeric"
                   style={[styles.tempInput]}
                   value={formState.inputValues.hours}
                   onChangeText={(text) => inputChangeHandler('hours', text)}
@@ -315,7 +368,7 @@ const CreateEventScreen = (props) => {
             <View style={styles.durationContainer}>
               <Text style={styles.instructionText}>Event Location:</Text>
               <TextInput
-                placeholder="enter street address"
+                placeholder="enter street address & city name"
                 style={styles.tempInput}
                 value={formState.inputValues.address}
                 onChangeText={(text) => inputChangeHandler('address', text)}
@@ -335,24 +388,12 @@ const CreateEventScreen = (props) => {
                 <MapView
                   style={styles.map}
                   region={region}
-                  minZoomLevel={11}
+                  minZoomLevel={12}
                   maxZoomLevel={17}
                 >
                   {isFocused && mapLoaded && <CustomMarker data={tempEvent} />}
                 </MapView>
               ) : null}
-            </View>
-            <View style={styles.eventTypeContainer}>
-              <Text style={[styles.instructionText, { marginRight: 15 }]}>
-                Event Type:
-              </Text>
-              <Text style={styles.chosenEventTypeText}>{eventType}</Text>
-              <Entypo
-                name="triangle-down"
-                size={18}
-                onPress={eventTypeHandler}
-                style={{ paddingHorizontal: 2 }}
-              />
             </View>
             <View style={styles.descriptionContainer}>
               <Text style={styles.instructionText}>Description:</Text>
@@ -362,6 +403,11 @@ const CreateEventScreen = (props) => {
                 multiline={true}
                 onChangeText={(text) => inputChangeHandler('description', text)}
               />
+            </View>
+            <View style={styles.buttonContainer}>
+              <CustomButton onSelect={createEventHandler}>
+                <Text style={styles.locateOnMapText}>Create Event</Text>
+              </CustomButton>
             </View>
             <View style={styles.extraSpace}></View>
           </ScrollView>
@@ -441,6 +487,13 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-medium',
     marginBottom: 4,
   },
+  chosenDateText: {
+    borderBottomWidth: 0.5,
+    borderColor: '#eee',
+    textAlign: 'center',
+    marginHorizontal: 30,
+    marginBottom: 15,
+  },
   tempInput: {
     borderColor: '#dddddd',
     borderRadius: 10,
@@ -450,9 +503,6 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
   },
-  // dateContainer: {
-  //   marginVertical: 15,
-  // },
   pickDateContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
@@ -498,11 +548,21 @@ const styles = StyleSheet.create({
   },
   chosenEventTypeText: {
     width: 120,
+    height: 22,
     fontSize: 16,
     fontFamily: 'cereal-medium',
     textAlign: 'center',
     borderBottomWidth: 0.5,
     borderBottomColor: '#dddddd',
+  },
+  pic: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderColor: 'red',
+    borderWidth: 2,
+    top: -15,
+    marginLeft: 20,
   },
   descriptionContainer: {
     width: '100%',

@@ -8,6 +8,7 @@ export const POST_COMMENT = 'POST_COMMENT';
 
 export const GET_EVENTS = 'GET_EVENTS';
 export const GET_EVENT = 'GET_EVENT';
+export const CREATE_EVENT = 'CREATE_EVENT';
 
 export const SET_IMAGE = 'SET_IMAGE';
 export const RESET_IMAGE = 'RESET_IMAGE';
