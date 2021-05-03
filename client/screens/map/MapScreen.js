@@ -87,16 +87,7 @@ const MapScreen = (props) => {
   };
 
   const now = new Date(Date.now()).getTime();
-  // console.log('now', now);
 
-  const eventDate = new Date(events[0].date).getTime();
-  // console.log('eventDate', eventDate);
-
-  // if (eventDate > now) {
-  //   console.log('true');
-  // }
-
-  //load map
   if (!mapLoaded || !location || !authUser) {
     return (
       <View style={styles.indicatorContainer}>

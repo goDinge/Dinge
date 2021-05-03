@@ -66,7 +66,7 @@ const CreateEventScreen = (props) => {
 
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
-  const [toReload, setToload] = useState(false);
+  const [eventToPass, setEventToPass] = useState(null);
   const [date, setDate] = useState(new Date(Date.now()));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -83,9 +83,21 @@ const CreateEventScreen = (props) => {
   });
   const [eventType, setEventType] = useState('community');
   const [modalVisible, setModalVisible] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+
+  const newEvent = useSelector((state) => state.events.newEvent);
+  if (newEvent) {
+    console.log('newEvent', newEvent.eventName);
+  }
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+
+  useEffect(() => {
+    {
+      newEvent ? setEventToPass(newEvent) : console.log('no new event');
+    }
+  }, [newEvent]);
 
   useEffect(() => {
     (async () => {
@@ -110,7 +122,7 @@ const CreateEventScreen = (props) => {
     inputValues: {
       eventName: '',
       date: '',
-      eventType: '',
+      eventType: 'community',
       thumbUrl: '',
       address: '',
       location: '',
@@ -120,7 +132,7 @@ const CreateEventScreen = (props) => {
     inputValidities: {
       eventName: false,
       date: false,
-      eventType: false,
+      eventType: true,
       thumbUrl: false,
       location: false,
       description: false,
@@ -276,7 +288,14 @@ const CreateEventScreen = (props) => {
       setError(err.message);
       console.log(err.message);
     }
-    props.navigation.navigate('Map');
+    //props.navigation.navigate('Map');
+    //props.navigation.navigate('Event Details', eventToPass);
+    setConfirmVisible(true);
+  };
+
+  const toEventDetailsHandler = () => {
+    setConfirmVisible(false);
+    props.navigation.navigate('Event Details', eventToPass);
   };
 
   if (isLoading || !location) {
@@ -402,6 +421,7 @@ const CreateEventScreen = (props) => {
                 style={styles.tempInput}
                 value={formState.inputValues.description}
                 multiline={true}
+                returnKeyType="done"
                 onChangeText={(text) => inputChangeHandler('description', text)}
               />
             </View>
@@ -440,6 +460,29 @@ const CreateEventScreen = (props) => {
                     style={styles.iconClose}
                     onPress={() => setModalVisible(!modalVisible)}
                   />
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </View>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={confirmVisible}
+            onRequestClose={() => {
+              seConfirmVisible(!confirmVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Event Created!</Text>
+                <View style={styles.buttonContainer}>
+                  <CustomButton onSelect={() => toEventDetailsHandler()}>
+                    <Text style={styles.locateOnMapText}>
+                      Go see your event
+                    </Text>
+                  </CustomButton>
                 </View>
               </View>
             </View>
@@ -578,7 +621,8 @@ const styles = StyleSheet.create({
   modalView: {
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 20,
+    paddingTop: 20,
+    paddingHorizontal: 25,
     paddingBottom: 15,
     alignItems: 'center',
     shadowColor: '#000',

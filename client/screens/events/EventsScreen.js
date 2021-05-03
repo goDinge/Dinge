@@ -23,6 +23,16 @@ const todayEventsDefault = (events) => {
   return defaultEvents;
 };
 
+const sortEvents = (a, b) => {
+  if (a.date < b.date) {
+    return -1;
+  }
+  if (a.date > b.date) {
+    return 1;
+  }
+  return 0;
+};
+
 const EventsScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [showEvents, setShowEvents] = useState(
@@ -41,8 +51,8 @@ const EventsScreen = (props) => {
   }, []);
 
   useEffect(() => {
-    if (events === true) {
-      setShowEvents(todayEventsDefault(events));
+    if (events) {
+      setShowEvents(todayEventsDefault(events.sort(sortEvents)));
     }
   }, [events]);
 
@@ -55,16 +65,6 @@ const EventsScreen = (props) => {
       setError(err.message);
     }
     setLoading(false);
-  };
-
-  const sortEvents = (a, b) => {
-    if (a.date < b.date) {
-      return -1;
-    }
-    if (a.date > b.date) {
-      return 1;
-    }
-    return 0;
   };
 
   let eventsToPush = [];
