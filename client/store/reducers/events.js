@@ -2,7 +2,7 @@ import { GET_EVENTS, CREATE_EVENT } from '../types';
 
 const initialState = {
   events: [],
-  newEvent: {},
+  newEvent: null,
   event: {},
 };
 

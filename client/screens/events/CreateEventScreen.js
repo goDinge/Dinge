@@ -66,6 +66,7 @@ const CreateEventScreen = (props) => {
 
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [toReload, setToload] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -271,11 +272,11 @@ const CreateEventScreen = (props) => {
     try {
       await dispatch(eventsActions.createEvent(formState));
       await dispatch(eventsActions.getEvents());
-      props.navigation.navigate('Events');
     } catch (err) {
       setError(err.message);
       console.log(err.message);
     }
+    props.navigation.navigate('Map');
   };
 
   if (isLoading || !location) {

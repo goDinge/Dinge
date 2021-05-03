@@ -54,7 +54,6 @@ export const createEvent = (formState) => {
         config
       );
       const event = response.data.data;
-      console.log('actions', event);
 
       dispatch({
         type: CREATE_EVENT,

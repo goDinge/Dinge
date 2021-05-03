@@ -12,6 +12,7 @@ import Colors from '../../constants/Colors';
 
 import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
+import * as eventsActions from '../../store/actions/events';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -27,6 +28,7 @@ const MapScreen = (props) => {
   const isFocused = useIsFocused();
 
   const dinge = useSelector((state) => state.dinge.dinge);
+  const events = useSelector((state) => state.events.events);
   const authUser = useSelector((state) => state.auth.authUser);
 
   useEffect(() => {
@@ -58,6 +60,7 @@ const MapScreen = (props) => {
     try {
       await dispatch(authActions.getAuthUser());
       await dispatch(dingeActions.getDinge());
+      await dispatch(eventsActions.getEvents());
     } catch (err) {
       setError(err.message);
     }
@@ -82,6 +85,16 @@ const MapScreen = (props) => {
     loadData();
     setMapLoaded(true);
   };
+
+  const now = new Date(Date.now()).getTime();
+  // console.log('now', now);
+
+  const eventDate = new Date(events[0].date).getTime();
+  // console.log('eventDate', eventDate);
+
+  // if (eventDate > now) {
+  //   console.log('true');
+  // }
 
   //load map
   if (!mapLoaded || !location || !authUser) {
@@ -108,6 +121,21 @@ const MapScreen = (props) => {
               onSelect={() => selectDingHandler(item)}
             />
           ))}
+        {isFocused &&
+          events.map((item, index) => {
+            if (
+              new Date(item.date).getTime() < now &&
+              new Date(item.endDate).getTime() > now
+            ) {
+              return (
+                <CustomMarker
+                  key={index}
+                  data={item}
+                  onSelect={() => console.log(item)}
+                />
+              );
+            }
+          })}
       </MapView>
       <View style={styles.buttonContainer}>
         <CustomCameraIcon onSelect={selectCameraHandler} />
