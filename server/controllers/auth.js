@@ -67,8 +67,6 @@ exports.login = asyncHandler(async (req, res, next) => {
 //route    GET /api/auth/me
 //access   Private
 exports.getAuthUser = asyncHandler(async (req, res, next) => {
-  console.log('user', req.user);
-
   const user = await User.findById(req.user.id);
 
   if (!user) {
@@ -88,9 +86,9 @@ const sendTokenResponse = (user, statusCode, res) => {
     //httpOnly: true,
   };
 
-  if (process.env.NODE_ENV === 'production') {
-    options.secure = true;
-  }
+  // if (process.env.NODE_ENV === 'production') {
+  //   options.secure = true;
+  // }
 
   //where we save token to cookie, with options
   res

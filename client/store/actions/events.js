@@ -5,6 +5,8 @@ import { HOME_IP } from '@env';
 export const getEvents = () => {
   return async (dispatch) => {
     try {
+      console.log('getEvents action - IP used:', HOME_IP);
+
       const response = await axios.get(`http://${HOME_IP}/api/events`);
       const events = response.data.data;
 
@@ -35,7 +37,6 @@ export const createEvent = (formState) => {
       description,
       hours,
     } = formState.inputValues;
-    console.log(eventType);
 
     const body = JSON.stringify({
       eventName,

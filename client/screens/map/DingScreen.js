@@ -228,7 +228,11 @@ const DingScreen = (props) => {
                     name={initLike ? 'thumbs-up' : 'thumbs-o-up'}
                     color={initLike ? Colors.primary : 'black'}
                     size={28}
-                    style={styles.icon}
+                    style={
+                      initLike
+                        ? styles.icon
+                        : [styles.icon, { paddingRight: 5 }]
+                    }
                     onPress={() => likeDingHandler(ding._id, user._id)}
                   />
                 )}
@@ -356,8 +360,8 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   iconActInd: {
-    marginRight: 14,
-    paddingRight: 7,
+    marginRight: 12,
+    paddingRight: 5,
     paddingLeft: 7,
     justifyContent: 'center',
     alignItems: 'center',

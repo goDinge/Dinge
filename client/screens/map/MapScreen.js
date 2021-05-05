@@ -58,9 +58,9 @@ const MapScreen = (props) => {
   const loadData = async () => {
     setError(null);
     try {
-      await dispatch(authActions.getAuthUser());
       await dispatch(dingeActions.getDinge());
       await dispatch(eventsActions.getEvents());
+      await dispatch(authActions.getAuthUser());
     } catch (err) {
       setError(err.message);
     }
@@ -79,6 +79,13 @@ const MapScreen = (props) => {
 
   const selectCameraHandler = () => {
     props.navigation.navigate('Upload');
+  };
+
+  const selectEventHandler = (item) => {
+    props.navigation.navigate('Events', {
+      screen: 'Event Details',
+      params: item,
+    });
   };
 
   const reloadHandler = () => {
@@ -122,7 +129,7 @@ const MapScreen = (props) => {
                 <CustomMarker
                   key={index}
                   data={item}
-                  onSelect={() => console.log(item)}
+                  onSelect={() => selectEventHandler(item)}
                 />
               );
             }

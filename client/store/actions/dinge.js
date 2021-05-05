@@ -5,6 +5,7 @@ import { HOME_IP } from '@env';
 export const getDinge = () => {
   return async (dispatch) => {
     try {
+      console.log('getDinge action - IP used:', HOME_IP);
       const response = await axios.get(`http://${HOME_IP}/api/dinge`);
       const dingeAll = response.data.data;
 

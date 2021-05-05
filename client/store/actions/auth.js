@@ -32,14 +32,13 @@ export const setAuthUser = (resData) => {
 export const getAuthUser = () => {
   return async (dispatch) => {
     try {
+      console.log('getAuthUser action - IP used:', HOME_IP);
       const response = await axios.get(`http://${HOME_IP}/api/auth/me`);
-
       if (!response) {
         throw new Error('You are not logged in');
       }
 
       const user = response.data.data;
-      //console.log(user);
 
       await dispatch({
         type: GET_AUTH_USER,
@@ -130,14 +129,12 @@ export const login = (email, password) => {
     };
     const body = JSON.stringify({ email, password });
 
-    console.log(HOME_IP);
     try {
       const response = await axios.post(
         `http://${HOME_IP}/api/auth/login`,
         body,
         config
       );
-
       const resData = response.data;
       await dispatch(
         authenticate(resData.token, resData.user._id, oneMonth, resData.user)
