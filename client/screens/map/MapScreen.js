@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { useIsFocused } from '@react-navigation/native';
 import * as Location from 'expo-location';
 
 import CustomMarker from '../../components/CustomMarker';
+import CustomBlueMarker from '../../components/CustomBlueMarker';
 import CustomCameraIcon from '../../components/CustomCameraIcon';
 import CustomReloadIcon from '../../components/CustomReloadIcon';
 import Colors from '../../constants/Colors';
@@ -44,8 +45,8 @@ const MapScreen = (props) => {
       setRegion({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitudeDelta: 0.04,
+        longitudeDelta: 0.04,
       });
     })();
   }, []);
@@ -95,6 +96,9 @@ const MapScreen = (props) => {
 
   const now = new Date(Date.now()).getTime();
 
+  console.log(location);
+  //console.log(dinge[0]);
+
   if (!mapLoaded || !location || !authUser) {
     return (
       <View style={styles.indicatorContainer}>
@@ -134,6 +138,9 @@ const MapScreen = (props) => {
               );
             }
           })}
+        {isFocused && location ? (
+          <CustomBlueMarker data={location} user={authUser} />
+        ) : null}
       </MapView>
       <View style={styles.buttonContainer}>
         <CustomCameraIcon onSelect={selectCameraHandler} />

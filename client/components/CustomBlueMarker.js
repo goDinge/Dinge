@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, Pressable, StyleSheet } from 'react-native';
 import { Marker } from 'react-native-maps';
 
-const CustomMarker = (props) => {
+const CustomBlueMarker = (props) => {
   const getCenterOffsetForAnchor = (anchor, markerWidth, markerHeight) => ({
     x: markerWidth * 0.5 - markerWidth * anchor.x,
     y: markerHeight * 0.5 - markerHeight * anchor.y,
@@ -25,8 +25,8 @@ const CustomMarker = (props) => {
     <Pressable style={styles.markerContainer}>
       <Marker
         coordinate={{
-          latitude: props.data.location.latitude,
-          longitude: props.data.location.longitude,
+          latitude: props.data.coords.latitude,
+          longitude: props.data.coords.longitude,
         }}
         centerOffset={CENTEROFFSET} //iOS
         anchor={ANCHOR} //google maps
@@ -35,8 +35,8 @@ const CustomMarker = (props) => {
         tracksViewChanges={true}
         onPress={props.onSelect}
       >
-        <Image style={styles.pic} source={{ uri: props.data.thumbUrl }} />
-        <Image style={styles.pin} source={require('../assets/pin.png')} />
+        <Image style={styles.pic} source={{ uri: props.user.avatar }} />
+        <Image style={styles.pin} source={require('../assets/blue-pin.png')} />
       </Marker>
     </Pressable>
   );
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    borderColor: 'red',
+    borderColor: '#1A3Af0',
     borderWidth: 2,
     top: 42,
     zIndex: 1,
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomMarker;
+export default CustomBlueMarker;
