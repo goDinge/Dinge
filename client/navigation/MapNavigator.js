@@ -194,7 +194,7 @@ const bottomTabOptions = ({ route }) => ({
       iconName = focused ? 'account' : 'account-outline';
     }
 
-    return <MaterialCommunityIcons name={iconName} size={32} color={color} />;
+    return <MaterialCommunityIcons name={iconName} size={30} color={color} />;
   },
 });
 
@@ -208,8 +208,11 @@ export const BottomTabNavigator = () => {
         labelPosition: 'below-icon',
         style:
           Platform.OS === 'android'
-            ? { paddingBottom: 4, paddingTop: 3 }
-            : { paddingTop: 6 },
+            ? { paddingBottom: 3, paddingTop: 4, height: 48 }
+            : { paddingTop: 6, height: 48 },
+        tabStyle: {
+          height: 42,
+        },
       }}
     >
       <MapBottomTabNavigator.Screen name="Map" component={MapNavigator} />

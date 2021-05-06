@@ -32,8 +32,7 @@ export const setAuthUser = (resData) => {
 export const getAuthUser = () => {
   return async (dispatch) => {
     try {
-      console.log('getAuthUser action - IP used:', HOME_IP);
-      const response = await axios.get(`http://${HOME_IP}/api/auth/me`);
+      const response = await axios.get(`${HOME_IP}/api/auth/me`);
       if (!response) {
         throw new Error('You are not logged in');
       }
@@ -72,7 +71,7 @@ export const updateAuthAvatar = (avatar) => {
         },
       };
       const response = await axios.put(
-        `http://${HOME_IP}/api/users/me`,
+        `${HOME_IP}/api/users/me`,
         formData,
         config
       );
@@ -96,11 +95,7 @@ export const register = (name, email, password) => {
     const body = JSON.stringify({ name, email, password });
 
     try {
-      const response = await axios.post(
-        `http://${HOME_IP}/api/auth/`,
-        body,
-        config
-      );
+      const response = await axios.post(`${HOME_IP}/api/auth/`, body, config);
 
       const resData = response.data;
       await dispatch(
@@ -131,7 +126,7 @@ export const login = (email, password) => {
 
     try {
       const response = await axios.post(
-        `http://${HOME_IP}/api/auth/login`,
+        `${HOME_IP}/api/auth/login`,
         body,
         config
       );

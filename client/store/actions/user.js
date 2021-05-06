@@ -5,7 +5,7 @@ import { HOME_IP } from '@env';
 export const getUser = (userId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(`http://${HOME_IP}/api/users/${userId}`);
+      const response = await axios.get(`${HOME_IP}/api/users/${userId}`);
       const user = response.data.data;
 
       dispatch({

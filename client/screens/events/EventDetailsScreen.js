@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  Image,
+  Pressable,
   ScrollView,
   ActivityIndicator,
   StyleSheet,
@@ -81,6 +81,13 @@ const EventDetailsScreen = (props) => {
     setIsLoading(false);
   };
 
+  const toUserNameHandler = (user) => {
+    props.navigation.navigate('Map', {
+      screen: 'Public',
+      params: user,
+    });
+  };
+
   if (isLoading || !location) {
     return (
       <View style={styles.indicatorContainer}>
@@ -101,15 +108,17 @@ const EventDetailsScreen = (props) => {
             <Text style={[styles.eventInfo, { marginBottom: 8 }]}>
               {convertAMPM(event.date)} - {convertAMPM(event.endDate)}
             </Text>
-            <Text style={styles.eventInfo}>Organizer: {user.name}</Text>
+            <Pressable onPress={() => toUserNameHandler(user)}>
+              <Text style={styles.eventInfo}>Organizer: {user.name}</Text>
+            </Pressable>
           </View>
-          <View style={styles.avatarContainer}>
+          {/* <View style={styles.avatarContainer}>
             <Image
               style={styles.avatar}
               source={{ uri: authUser.avatar }}
               defaultSource={require('../../assets/avatar.png')}
             />
-          </View>
+          </View> */}
         </View>
         <ScrollView>
           <View style={styles.lowerInfoContainer}>

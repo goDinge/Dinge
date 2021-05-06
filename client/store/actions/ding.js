@@ -11,7 +11,7 @@ import { HOME_IP } from '@env';
 export const getDing = (dingId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(`http://${HOME_IP}/api/dinge/${dingId}`);
+      const response = await axios.get(`${HOME_IP}/api/dinge/${dingId}`);
       const ding = response.data.data;
 
       dispatch({
@@ -27,9 +27,7 @@ export const getDing = (dingId) => {
 export const likeDing = (dingId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.put(
-        `http://${HOME_IP}/api/ding/likes/${dingId}`
-      );
+      const response = await axios.put(`${HOME_IP}/api/ding/likes/${dingId}`);
       const ding = response.data.data;
 
       dispatch({
@@ -47,7 +45,7 @@ export const unlikeDing = (dingId) => {
   return async (dispatch) => {
     try {
       const response = await axios.delete(
-        `http://${HOME_IP}/api/ding/likes/${dingId}`
+        `${HOME_IP}/api/ding/likes/${dingId}`
       );
       const ding = response.data.data;
 
@@ -65,9 +63,7 @@ export const unlikeDing = (dingId) => {
 export const reportDingById = (dingId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.put(
-        `http://${HOME_IP}/api/ding/reports/${dingId}`
-      );
+      const response = await axios.put(`${HOME_IP}/api/ding/reports/${dingId}`);
       const ding = response.data.data;
 
       dispatch({
@@ -93,7 +89,7 @@ export const postComment = (text, dingId) => {
       const body = JSON.stringify({ text });
 
       const response = await axios.post(
-        `http://${HOME_IP}/api/comments/${dingId}`,
+        `${HOME_IP}/api/comments/${dingId}`,
         body,
         config
       );

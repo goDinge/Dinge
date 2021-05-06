@@ -6,6 +6,7 @@ import {
   FlatList,
   ActivityIndicator,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -133,26 +134,31 @@ const EventsScreen = (props) => {
     <View style={styles.container}>
       <View style={styles.innerContainer}>
         <View style={styles.datesContainer}>
-          {nextSevenDaysArray.map((item, index) => {
-            return (
-              <Pressable
-                key={index}
-                style={
-                  index !== dateChosen
-                    ? styles.dateContainer
-                    : styles.chosenDateContainer
-                }
-                onPress={() => pickDateHandler(item.date, index)}
-              >
-                <Text
-                  style={[styles.dateText, { fontSize: 12, paddingBottom: 9 }]}
+          <ScrollView horizontal={true}>
+            {nextSevenDaysArray.map((item, index) => {
+              return (
+                <Pressable
+                  key={index}
+                  style={
+                    index !== dateChosen
+                      ? styles.dateContainer
+                      : styles.chosenDateContainer
+                  }
+                  onPress={() => pickDateHandler(item.date, index)}
                 >
-                  {item.date}
-                </Text>
-                <Text style={styles.dateText}>{item.day}</Text>
-              </Pressable>
-            );
-          })}
+                  <Text
+                    style={[
+                      styles.dateText,
+                      { fontSize: 12, paddingBottom: 9 },
+                    ]}
+                  >
+                    {item.date}
+                  </Text>
+                  <Text style={styles.dateText}>{item.day}</Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
         </View>
         <View style={styles.eventsList}>
           <FlatList
@@ -192,10 +198,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   datesContainer: {
-    flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-around',
     marginBottom: 10,
+    flexDirection: 'row',
   },
   dateContainer: {
     paddingVertical: 10,
@@ -253,14 +259,12 @@ const styles = StyleSheet.create({
   },
   eventsList: {
     width: '100%',
-    height: '80%',
-    paddingVertical: 4,
+    height: '72%',
+    paddingTop: 4,
+    paddingBottom: 8,
   },
   buttonContainer: {
-    position: 'absolute',
     alignItems: 'center',
-    bottom: -12,
-    alignSelf: 'center',
   },
   createEventButton: {
     height: 40,
@@ -277,14 +281,17 @@ const styles = StyleSheet.create({
 });
 
 //DATE FUNCTIONS
+const day = 1000 * 60 * 60 * 24;
 const currentDateInMilli = Date.now();
-const datePlusOneInMilli = currentDateInMilli + 1000 * 60 * 60 * 24;
-const datePlusTwoInMilli = currentDateInMilli + 1000 * 60 * 60 * 24 * 2;
-const datePlusThreeInMilli = currentDateInMilli + 1000 * 60 * 60 * 24 * 3;
-const datePlusFourInMilli = currentDateInMilli + 1000 * 60 * 60 * 24 * 4;
-const datePlusFiveInMilli = currentDateInMilli + 1000 * 60 * 60 * 24 * 5;
-const datePlusSixInMilli = currentDateInMilli + 1000 * 60 * 60 * 24 * 6;
-const datePlusSevenInMilli = currentDateInMilli + 1000 * 60 * 60 * 24 * 7;
+const datePlusOneInMilli = currentDateInMilli + day;
+const datePlusTwoInMilli = currentDateInMilli + day * 2;
+const datePlusThreeInMilli = currentDateInMilli + day * 3;
+const datePlusFourInMilli = currentDateInMilli + day * 4;
+const datePlusFiveInMilli = currentDateInMilli + day * 5;
+const datePlusSixInMilli = currentDateInMilli + day * 6;
+const datePlusSevenInMilli = currentDateInMilli + day * 7;
+const datePlusEightInMilli = currentDateInMilli + day * 8;
+const datePlusNineInMilli = currentDateInMilli + day * 9;
 
 const currentDate = new Date(currentDateInMilli).toLocaleDateString();
 const datePlusOne = new Date(datePlusOneInMilli).toLocaleDateString();
@@ -294,6 +301,8 @@ const datePlusFour = new Date(datePlusFourInMilli).toLocaleDateString();
 const datePlusFive = new Date(datePlusFiveInMilli).toLocaleDateString();
 const datePlusSix = new Date(datePlusSixInMilli).toLocaleDateString();
 const datePlusSeven = new Date(datePlusSevenInMilli).toLocaleDateString();
+const datePlusEight = new Date(datePlusEightInMilli).toLocaleDateString();
+const datePlusNine = new Date(datePlusNineInMilli).toLocaleDateString();
 
 const convertWeekDay = (num) => {
   const day = {
@@ -345,5 +354,13 @@ const nextSevenDaysArray = [
   {
     date: convertDate(datePlusSeven),
     day: convertWeekDay(new Date(datePlusSevenInMilli).getDay()),
+  },
+  {
+    date: convertDate(datePlusEight),
+    day: convertWeekDay(new Date(datePlusEightInMilli).getDay()),
+  },
+  {
+    date: convertDate(datePlusNine),
+    day: convertWeekDay(new Date(datePlusNineInMilli).getDay()),
   },
 ];

@@ -88,6 +88,7 @@ const CameraScreen = (props) => {
             onPress={async () => {
               if (cameraRef) {
                 const image = await cameraRef.takePictureAsync({
+                  quality: 8,
                   skipProcessing: true,
                 });
                 await dispatch(imageActions.setImage(image));

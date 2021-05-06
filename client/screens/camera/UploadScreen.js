@@ -62,18 +62,19 @@ const UploadScreen = (props) => {
       setIsFetching(true);
       const location = await Location.getCurrentPositionAsync({
         timeout: 5000,
+        accuracy: 5,
       });
 
       const awsImage = await ImageManipulator.manipulateAsync(
         image.uri,
-        [{ resize: { width: 600, height: 600 } }],
-        { compress: 0.7 }
+        [{ resize: { width: 800, height: 800 } }],
+        { compress: 0.8 }
       );
 
       const awsThumb = await ImageManipulator.manipulateAsync(
         image.uri,
         [{ resize: { width: 140, height: 140 } }],
-        { compress: 0.5 }
+        { compress: 0.4 }
       );
 
       const lat = location.coords.latitude;

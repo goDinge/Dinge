@@ -6,7 +6,7 @@ export const getDinge = () => {
   return async (dispatch) => {
     try {
       console.log('getDinge action - IP used:', HOME_IP);
-      const response = await axios.get(`http://${HOME_IP}/api/dinge`);
+      const response = await axios.get(`${HOME_IP}/api/dinge`);
       const dingeAll = response.data.data;
 
       dispatch({
@@ -48,7 +48,7 @@ export const postDing = (description, lat, long, img, thumb) => {
       };
 
       const response = await axios.post(
-        `http://${HOME_IP}/api/dinge/`,
+        `${HOME_IP}/api/dinge/`,
         formData,
         config
       );
@@ -69,9 +69,7 @@ export const postDing = (description, lat, long, img, thumb) => {
 export const likeDing = (dingId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.put(
-        `http://${HOME_IP}/api/ding/likes/${dingId}`
-      );
+      const response = await axios.put(`${HOME_IP}/api/ding/likes/${dingId}`);
       const likesList = response.data.data.likes;
 
       dispatch({
@@ -89,7 +87,7 @@ export const unlikeDing = (dingId) => {
   return async (dispatch) => {
     try {
       const response = await axios.delete(
-        `http://${HOME_IP}/api/ding/likes/${dingId}`
+        `${HOME_IP}/api/ding/likes/${dingId}`
       );
       const likesList = response.data.data.likes;
 
@@ -107,9 +105,7 @@ export const unlikeDing = (dingId) => {
 export const deleteDingById = (dingId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.delete(
-        `http://${HOME_IP}/api/ding/${dingId}`
-      );
+      const response = await axios.delete(`${HOME_IP}/api/ding/${dingId}`);
       const dinge = response.data.data;
 
       dispatch({

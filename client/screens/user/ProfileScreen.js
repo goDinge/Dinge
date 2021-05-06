@@ -96,37 +96,35 @@ const ProfileScreen = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
-        <View style={styles.idContainer}>
-          <View style={styles.leftContainer}>
-            <View style={styles.nameEmailContainer}>
-              <Text style={styles.userName}>{authUser.name}</Text>
-              <Text style={styles.userEmail}>{authUser.email}</Text>
-            </View>
+        <ScrollView style={{ width: '100%' }}>
+          <View style={styles.avatarContainer}>
+            <Pressable onPressIn={imagePickerHandler}>
+              <Image
+                style={styles.avatar}
+                source={{ uri: authUser.avatar }}
+                defaultSource={require('../../assets/avatar.png')}
+              />
+            </Pressable>
+          </View>
+          <View style={styles.idContainer}>
+            <Text style={[styles.userName, { marginBottom: 5 }]}>
+              {authUser.name}
+            </Text>
+            <Text style={styles.userEmail}>{authUser.email}</Text>
             <Text style={styles.text}>
               Joined: {month} {year}
             </Text>
           </View>
-          <Pressable onPressIn={imagePickerHandler}>
-            <Image
-              style={styles.avatar}
-              source={{ uri: authUser.avatar }}
-              defaultSource={require('../../assets/avatar.png')}
-            />
-          </Pressable>
-        </View>
-        <ScrollView style={styles.statsContainer}>
-          <Text style={styles.title}>Statistics</Text>
-          <View style={styles.rowStat}>
+          <View style={styles.statsContainer}>
+            <Text style={styles.title}>Statistics</Text>
             <View style={styles.statBox}>
               <Text style={styles.statsTitle}>Rank</Text>
               <Text style={styles.stats}>{authUser.level}</Text>
             </View>
             <View style={styles.statBox}>
-              <Text style={styles.statsTitle}>Rep</Text>
+              <Text style={styles.statsTitle}>Reputation</Text>
               <Text style={styles.stats}>{authUser.reputation}</Text>
             </View>
-          </View>
-          <View style={styles.rowStat}>
             <View style={styles.statBox}>
               <Text style={styles.statsTitle}>Followers</Text>
               <Text style={styles.stats}>{authUser.followers.length}</Text>
@@ -135,8 +133,6 @@ const ProfileScreen = (props) => {
               <Text style={styles.statsTitle}>Following</Text>
               <Text style={styles.stats}>{authUser.following.length}</Text>
             </View>
-          </View>
-          <View style={styles.rowStat}>
             <View style={styles.statBox}>
               <Text style={styles.statsTitle}>Likes / Ding</Text>
               <Text style={styles.stats}>3.2</Text>
@@ -146,14 +142,14 @@ const ProfileScreen = (props) => {
               <Text style={styles.stats}>2.8</Text>
             </View>
           </View>
-        </ScrollView>
-        <View style={styles.bottomContainer}>
-          <View style={styles.buttonContainer}>
-            <CustomButton style={styles.button} onSelect={logout}>
-              <Text style={styles.buttonText}>Log out</Text>
-            </CustomButton>
+          <View style={styles.bottomContainer}>
+            <View style={styles.buttonContainer}>
+              <CustomButton style={styles.button} onSelect={logout}>
+                <Text style={styles.buttonText}>Log out</Text>
+              </CustomButton>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </View>
     </View>
   );
@@ -183,21 +179,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
   },
-  idContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  leftContainer: {
-    justifyContent: 'space-between',
+  avatarContainer: {
+    alignItems: 'center',
   },
   avatar: {
-    height: 120,
-    width: 120,
-    borderRadius: 60,
+    height: 160,
+    width: 160,
+    borderRadius: 80,
+  },
+  idContainer: {
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   userName: {
     fontFamily: 'cereal-medium',
@@ -210,7 +205,6 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   statsContainer: {
-    height: 300,
     width: '100%',
   },
   title: {
@@ -225,12 +219,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#999',
   },
-  rowStat: {
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
   statBox: {
-    width: '50%',
+    marginBottom: 10,
   },
   statsTitle: {
     textAlign: 'left',

@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
   },
   idContainer: {
     width: '100%',
-    flexDirection: 'row',
     justifyContent: 'space-between',
     paddingBottom: 15,
     borderBottomWidth: 1,
@@ -93,6 +92,7 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-medium',
     fontSize: 24,
     color: '#444',
+    marginBottom: 15,
   },
   userLevel: {
     fontFamily: 'cereal-book',

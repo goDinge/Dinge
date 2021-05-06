@@ -321,31 +321,40 @@ const CreateEventScreen = (props) => {
               />
             </View>
             <View style={styles.eventTypeContainer}>
-              <Text style={[styles.instructionText, { marginRight: 15 }]}>
+              <Text style={[styles.instructionText, { marginBottom: 15 }]}>
                 Event Type:
               </Text>
-              <View style={{ flexDirection: 'row' }}>
+              <View style={styles.eventTypeIconContainer}>
                 <Text style={styles.chosenEventTypeText}>{eventType}</Text>
                 <Entypo
                   name="triangle-down"
-                  size={18}
+                  size={22}
                   onPress={eventTypeHandler}
                   style={{ paddingHorizontal: 2 }}
                 />
+                <View>
+                  <Image
+                    style={styles.pic}
+                    source={{
+                      uri: `${AWS_EVENT_TYPES}${eventType}.png`,
+                    }}
+                  />
+                </View>
               </View>
-              <Image
-                style={styles.pic}
-                source={{
-                  uri: `${AWS_EVENT_TYPES}${eventType}.png`,
-                }}
-              />
             </View>
 
             <View style={styles.dateContainer}>
               <View style={styles.pickDateContainer}>
-                <Text style={[styles.instructionText, { marginRight: 20 }]}>
-                  Select date and time
+                <Text style={[styles.instructionText, { marginBottom: 5 }]}>
+                  Select date and time:
                 </Text>
+              </View>
+              <View
+                style={[
+                  styles.eventTypeIconContainer,
+                  { marginBottom: 15, justifyContent: 'space-evenly' },
+                ]}
+              >
                 <Ionicons
                   name="calendar-outline"
                   size={30}
@@ -356,7 +365,6 @@ const CreateEventScreen = (props) => {
                   name="clock"
                   size={30}
                   onPress={showTimepicker}
-                  style={{ marginRight: 20 }}
                 />
               </View>
               <Text style={[styles.instructionText, styles.chosenDateText]}>
@@ -388,7 +396,7 @@ const CreateEventScreen = (props) => {
             <View style={styles.durationContainer}>
               <Text style={styles.instructionText}>Event Location:</Text>
               <TextInput
-                placeholder="enter street address & city name"
+                placeholder="street address, city"
                 style={styles.tempInput}
                 value={formState.inputValues.address}
                 onChangeText={(text) => inputChangeHandler('address', text)}
@@ -586,13 +594,16 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   eventTypeContainer: {
-    flexDirection: 'row',
     justifyContent: 'flex-start',
     marginVertical: 15,
   },
+  eventTypeIconContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
   chosenEventTypeText: {
-    width: 120,
-    height: 22,
+    width: 170,
+    height: 30,
     fontSize: 16,
     fontFamily: 'cereal-medium',
     textAlign: 'center',
