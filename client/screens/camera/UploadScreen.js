@@ -61,8 +61,9 @@ const UploadScreen = (props) => {
     try {
       setIsFetching(true);
       const location = await Location.getCurrentPositionAsync({
+        enableHighAccuracy: true,
         timeout: 5000,
-        accuracy: 5,
+        accuracy: 6,
       });
 
       const awsImage = await ImageManipulator.manipulateAsync(

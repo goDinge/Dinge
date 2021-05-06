@@ -40,7 +40,11 @@ const MapScreen = (props) => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
+      let location = await Location.getCurrentPositionAsync({
+        enableHighAccuracy: true,
+        timeout: 5000,
+        accuracy: 6,
+      });
       setLocation(location);
       setRegion({
         latitude: location.coords.latitude,
@@ -50,6 +54,8 @@ const MapScreen = (props) => {
       });
     })();
   }, []);
+
+  console.log(location);
 
   useEffect(() => {
     loadData();
@@ -96,8 +102,7 @@ const MapScreen = (props) => {
 
   const now = new Date(Date.now()).getTime();
 
-  console.log(location);
-  //console.log(dinge[0]);
+  //console.log(location);
 
   if (!mapLoaded || !location || !authUser) {
     return (
