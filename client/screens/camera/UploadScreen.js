@@ -31,7 +31,7 @@ const UploadScreen = (props) => {
   const dispatch = useDispatch();
 
   const verifyPermissions = async () => {
-    const results = await Permissions.askAsync(Permissions.LOCATION);
+    const results = await Location.getForegroundPermissionsAsync();
     if (results.status !== 'granted') {
       Alert.alert(
         'Insufficent permissions!',

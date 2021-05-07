@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import MapView, { Marker } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import { useIsFocused } from '@react-navigation/native';
 import * as Location from 'expo-location';
 
@@ -34,23 +34,56 @@ const MapScreen = (props) => {
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestPermissionsAsync();
+      let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
         return;
       }
 
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Highest,
-      });
-      setLocation(location);
+      //await Location.enableNetworkProviderAsync();
+      // const location = await Location.getCurrentPositionAsync({
+      //   accuracy: Location.Accuracy.Highest,
+      // });
+      // Location.installWebGeolocationPolyfill();
+      // if (navigator.geolocation) {
+      //   navigator.geolocation.getCurrentPosition(
+      //     (location) => console.log(location),
+      //     (error) => console.log(error),
+      //     {
+      //       enableHighAccuracy: true,
+      //       timeout: 5000,
+      //       maximumAge: 0,
+      //     }
+      //   );
+      // }
 
-      setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.03,
-        longitudeDelta: 0.03,
-      });
+      const getLocation = async () => {
+        let location;
+        try {
+          location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Highest,
+          });
+          if ((location != null && location.coords.accuracy) > 40) {
+            console.log('rerun');
+            getLocation();
+            console.log('reran', location.coords.accuracy);
+          } else {
+            setLocation(location);
+            console.log(location);
+
+            setRegion({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.025,
+              longitudeDelta: 0.025,
+            });
+            return;
+          }
+        } catch (err) {
+          console.log(err.message);
+        }
+      };
+      getLocation();
     })();
   }, []);
 
@@ -113,7 +146,7 @@ const MapScreen = (props) => {
         style={styles.map}
         region={region}
         minZoomLevel={13}
-        maxZoomLevel={17}
+        maxZoomLevel={18}
       >
         {isFocused &&
           dinge.map((item, index) => (
