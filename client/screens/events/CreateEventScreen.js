@@ -288,8 +288,6 @@ const CreateEventScreen = (props) => {
       setError(err.message);
       console.log(err.message);
     }
-    //props.navigation.navigate('Map');
-    //props.navigation.navigate('Event Details', eventToPass);
     setConfirmVisible(true);
   };
 

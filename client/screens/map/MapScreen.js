@@ -40,22 +40,19 @@ const MapScreen = (props) => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({
-        enableHighAccuracy: true,
-        timeout: 5000,
-        accuracy: 6,
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Highest,
       });
       setLocation(location);
+
       setRegion({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.04,
-        longitudeDelta: 0.04,
+        latitudeDelta: 0.03,
+        longitudeDelta: 0.03,
       });
     })();
   }, []);
-
-  console.log(location);
 
   useEffect(() => {
     loadData();
@@ -101,8 +98,6 @@ const MapScreen = (props) => {
   };
 
   const now = new Date(Date.now()).getTime();
-
-  //console.log(location);
 
   if (!mapLoaded || !location || !authUser) {
     return (
