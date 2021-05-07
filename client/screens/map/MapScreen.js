@@ -56,6 +56,7 @@ const MapScreen = (props) => {
       //     }
       //   );
       // }
+      let count = 0;
 
       const getLocation = async () => {
         let location;
@@ -63,11 +64,10 @@ const MapScreen = (props) => {
           location = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.Highest,
           });
-          if ((location != null && location.coords.accuracy) > 40) {
-            console.log('rerun');
-            getLocation();
-            console.log('reran', location.coords.accuracy);
-          } else {
+          if (
+            (location != null && location.coords.accuracy) < 50 ||
+            count > 12
+          ) {
             setLocation(location);
             console.log(location);
 
@@ -78,6 +78,11 @@ const MapScreen = (props) => {
               longitudeDelta: 0.025,
             });
             return;
+          } else {
+            getLocation();
+            count = count + 1;
+            console.log('reran', location.coords.accuracy);
+            console.log('count', count);
           }
         } catch (err) {
           console.log(err.message);
