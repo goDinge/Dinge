@@ -7,13 +7,13 @@ import {
   ScrollView,
   Dimensions,
   Image,
-  StyleSheet,
   Alert,
+  Modal,
+  StyleSheet,
   ActivityIndicator,
 } from 'react-native';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Location from 'expo-location';
-import * as Permissions from 'expo-permissions';
 
 import * as dingeActions from '../../store/actions/dinge';
 import * as imageActions from '../../store/actions/image';
@@ -27,6 +27,10 @@ const UploadScreen = (props) => {
   const image = useSelector((state) => state.image.image);
   const [isFetching, setIsFetching] = useState(false);
   const [text, onChangeText] = useState('');
+  //const [locationHook, setLocationHook] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [lat, setLat] = useState(null);
+  const [lng, setLng] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -60,9 +64,43 @@ const UploadScreen = (props) => {
 
     try {
       setIsFetching(true);
+      // let count = 0;
+      // const getLocation = async () => {
+      //   try {
+      //     const location = await Location.getCurrentPositionAsync({
+      //       accuracy: Location.Accuracy.Highest,
+      //     });
+      //     if (count > 6) {
+      //       setLat(location.coords.lat);
+      //       setLng(location.coords.lng);
+      //       console.log('count over 9', location);
+      //       setModalVisible(true);
+      //       return;
+      //     } else if ((location != null && location.coords.accuracy) > 30) {
+      //       //if accuracy is over 30, rerun
+      //       getLocation();
+      //       count = count + 1;
+      //       console.log('reran', location.coords.accuracy);
+      //       console.log('count', count);
+      //     } else {
+      //       //if not too many attempts and accuracy at or below 30
+      //       setLat(location.coords.lat);
+      //       setLng(location.coords.lng);
+      //       console.log(location);
+      //       return;
+      //     }
+      //   } catch (err) {
+      //     console.log(err.message);
+      //   }
+      // };
+      // getLocation();
+
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Highest,
       });
+
+      // setLat(location.coords.latitude);
+      // setLng(location.coords.longitude);
 
       const awsImage = await ImageManipulator.manipulateAsync(
         image.uri,
@@ -77,11 +115,9 @@ const UploadScreen = (props) => {
       );
 
       const lat = location.coords.latitude;
-      const long = location.coords.longitude;
+      const lng = location.coords.longitude;
 
-      await dispatch(
-        dingeActions.postDing(text, lat, long, awsImage, awsThumb)
-      );
+      await dispatch(dingeActions.postDing(text, lat, lng, awsImage, awsThumb));
       await dispatch(dingeActions.getDinge());
       await dispatch(imageActions.resetImage(''));
     } catch (err) {
@@ -92,6 +128,10 @@ const UploadScreen = (props) => {
     }
     setIsFetching(false);
     props.navigation.navigate('Map');
+  };
+
+  const closeModalHandler = () => {
+    setModalVisible(false);
   };
 
   return (
@@ -151,6 +191,30 @@ const UploadScreen = (props) => {
               </CustomButton>
             )}
           </View>
+        </View>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              seConfirmVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>
+                  Dinge is not able to find an accurate location for you. If you
+                  are in a large open space, try turning your WIFI off.
+                </Text>
+                <View style={styles.modalButtonContainer}>
+                  <CustomButton onSelect={() => closeModalHandler()}>
+                    <Text style={styles.locateOnMapText}>Okay</Text>
+                  </CustomButton>
+                </View>
+              </View>
+            </View>
+          </Modal>
         </View>
       </View>
     </ScrollView>
@@ -232,6 +296,46 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-light',
     fontSize: 16,
     color: Colors.gray,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  modalView: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    paddingTop: 20,
+    paddingHorizontal: 25,
+    paddingBottom: 20,
+    marginHorizontal: 25,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    fontFamily: 'cereal-medium',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  locateOnMapText: {
+    color: 'white',
+    fontFamily: 'cereal-bold',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    fontSize: 16,
+  },
+  right: {
+    width: '100%',
+    alignSelf: 'flex-end',
   },
 });
 
