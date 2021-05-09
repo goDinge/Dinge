@@ -35,8 +35,11 @@ const CustomBlueMarker = (props) => {
         tracksViewChanges={true}
         onPress={props.onSelect}
       >
-        <Image style={styles.pic} source={{ uri: props.user.avatar }} />
-        <Image style={styles.pin} source={require('../assets/blue-pin.png')} />
+        {/* <Image style={styles.pic} source={{ uri: props.user.avatar }} /> */}
+        <Image
+          style={styles.pin}
+          source={require('../assets/blue-circle.png')}
+        />
       </Marker>
     </Pressable>
   );
@@ -51,11 +54,10 @@ const styles = StyleSheet.create({
     borderColor: '#1A3Af0',
     borderWidth: 2,
     top: 42,
-    zIndex: 1,
   },
   pin: {
-    width: 50,
-    height: 50,
+    width: 60,
+    height: 60,
   },
 });
 

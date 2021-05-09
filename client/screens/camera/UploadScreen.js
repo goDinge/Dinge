@@ -62,46 +62,7 @@ const UploadScreen = (props) => {
       return;
     }
 
-    try {
-      setIsFetching(true);
-      // let count = 0;
-      // const getLocation = async () => {
-      //   try {
-      //     const location = await Location.getCurrentPositionAsync({
-      //       accuracy: Location.Accuracy.Highest,
-      //     });
-      //     if (count > 6) {
-      //       setLat(location.coords.lat);
-      //       setLng(location.coords.lng);
-      //       console.log('count over 9', location);
-      //       setModalVisible(true);
-      //       return;
-      //     } else if ((location != null && location.coords.accuracy) > 30) {
-      //       //if accuracy is over 30, rerun
-      //       getLocation();
-      //       count = count + 1;
-      //       console.log('reran', location.coords.accuracy);
-      //       console.log('count', count);
-      //     } else {
-      //       //if not too many attempts and accuracy at or below 30
-      //       setLat(location.coords.lat);
-      //       setLng(location.coords.lng);
-      //       console.log(location);
-      //       return;
-      //     }
-      //   } catch (err) {
-      //     console.log(err.message);
-      //   }
-      // };
-      // getLocation();
-
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Highest,
-      });
-
-      // setLat(location.coords.latitude);
-      // setLng(location.coords.longitude);
-
+    const awsUpload = async (location) => {
       const awsImage = await ImageManipulator.manipulateAsync(
         image.uri,
         [{ resize: { width: 800, height: 800 } }],
@@ -120,14 +81,40 @@ const UploadScreen = (props) => {
       await dispatch(dingeActions.postDing(text, lat, lng, awsImage, awsThumb));
       await dispatch(dingeActions.getDinge());
       await dispatch(imageActions.resetImage(''));
+    };
+
+    const toMap = () => {
+      setIsFetching(false);
+      props.navigation.navigate('Map');
+    };
+
+    try {
+      let count = 0;
+
+      const getLocation = async () => {
+        const location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Highest,
+        });
+        if (count > 6) {
+          await awsUpload(location);
+          toMap();
+        } else if (location.coords.accuracy > 30) {
+          getLocation();
+          count = count + 1;
+          console.log('count: ', count);
+        } else {
+          await awsUpload(location);
+          toMap();
+        }
+      };
+      setIsFetching(true);
+      await getLocation();
     } catch (err) {
       Alert.alert('Could not fetch location!', 'Please try again later.', [
         { text: 'Okay' },
       ]);
       console.log(err.message);
     }
-    setIsFetching(false);
-    props.navigation.navigate('Map');
   };
 
   const closeModalHandler = () => {

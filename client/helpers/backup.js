@@ -23,7 +23,7 @@ import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
 import * as eventsActions from '../../store/actions/events';
 
-import { getLocationFn, recursiveLast } from '../../helpers/locations';
+import { getLocationFn } from '../../helpers/locations';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -51,46 +51,54 @@ const MapScreen = (props) => {
         return;
       }
 
-      const regionData = (location) => {
-        return {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
-        };
-      };
-
       let count = 0;
-
       const getLocation = async () => {
-        setMapLoaded(false);
+        let location;
         try {
-          const location = await Location.getCurrentPositionAsync({
+          location = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.Highest,
           });
-          setLocation(location);
-          setRegion(regionData(location));
-          if (count > 6) {
+          if (count > 9) {
             //after too many attempts, just set location and launch app anyways
+            setLocation(location);
             //console.log('count over 9', location);
-            setRegion(regionData(location));
-            setMapLoaded(true);
+            setRegion({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.025,
+              longitudeDelta: 0.025,
+            });
             setModalVisible(true);
-          } else if (location.coords.accuracy > 30) {
+            return;
+          } else if ((location != null && location.coords.accuracy) > 30) {
             //if accuracy is over 30, rerun
             getLocation();
             count = count + 1;
-            console.log('count: ', count);
+            // console.log('reran', location.coords.accuracy);
+            // console.log('count', count);
           } else {
             //if not too many attempts and accuracy at or below 30
-            setRegion(regionData(location));
-            setMapLoaded(true);
+            setLocation(location);
+            // console.log(location);
+            setRegion({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.025,
+              longitudeDelta: 0.025,
+            });
+            return;
           }
         } catch (err) {
           console.log(err.message);
         }
       };
       getLocation();
+      try {
+        //const x = getLocationFn();
+        getLocationFn().then((resp) => console.log(resp));
+      } catch (err) {
+        console.log(err.message);
+      }
     })();
   }, []);
 
@@ -284,7 +292,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MapScreen;
+//export default MapScreen;
 
 // Location.installWebGeolocationPolyfill();
 // if (navigator.geolocation) {
