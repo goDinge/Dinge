@@ -26,11 +26,10 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const UploadScreen = (props) => {
   const image = useSelector((state) => state.image.image);
   const [isFetching, setIsFetching] = useState(false);
+  const [fetchAnyways, setFetchAnyways] = useState(false);
   const [text, onChangeText] = useState('');
-  //const [locationHook, setLocationHook] = useState({});
+  const [location, setLocation] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
-  const [lat, setLat] = useState(null);
-  const [lng, setLng] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -51,7 +50,44 @@ const UploadScreen = (props) => {
     props.navigation.navigate('Camera');
   };
 
-  const uploadToDingeHandler = async () => {
+  const awsUpload = async (location) => {
+    const awsImage = await ImageManipulator.manipulateAsync(
+      image.uri,
+      [{ resize: { width: 800, height: 800 } }],
+      { compress: 0.8 }
+    );
+
+    const awsThumb = await ImageManipulator.manipulateAsync(
+      image.uri,
+      [{ resize: { width: 140, height: 140 } }],
+      { compress: 0.4 }
+    );
+
+    const lat = location.coords.latitude;
+    const lng = location.coords.longitude;
+
+    await dispatch(dingeActions.postDing(text, lat, lng, awsImage, awsThumb));
+    await dispatch(dingeActions.getDinge());
+    await dispatch(imageActions.resetImage(''));
+  };
+
+  const goToMap = () => {
+    setIsFetching(false);
+    props.navigation.navigate('Map');
+  };
+
+  const closeModalHandler = () => {
+    setModalVisible(false);
+  };
+
+  const uploadAnyways = async () => {
+    setFetchAnyways(true);
+    await awsUpload(location);
+    setModalVisible(false);
+    goToMap();
+  };
+
+  const uploadGPSHandler = async () => {
     const hasPermissions = await verifyPermissions();
     if (!hasPermissions) {
       return;
@@ -62,32 +98,6 @@ const UploadScreen = (props) => {
       return;
     }
 
-    const awsUpload = async (location) => {
-      const awsImage = await ImageManipulator.manipulateAsync(
-        image.uri,
-        [{ resize: { width: 800, height: 800 } }],
-        { compress: 0.8 }
-      );
-
-      const awsThumb = await ImageManipulator.manipulateAsync(
-        image.uri,
-        [{ resize: { width: 140, height: 140 } }],
-        { compress: 0.4 }
-      );
-
-      const lat = location.coords.latitude;
-      const lng = location.coords.longitude;
-
-      await dispatch(dingeActions.postDing(text, lat, lng, awsImage, awsThumb));
-      await dispatch(dingeActions.getDinge());
-      await dispatch(imageActions.resetImage(''));
-    };
-
-    const toMap = () => {
-      setIsFetching(false);
-      props.navigation.navigate('Map');
-    };
-
     try {
       let count = 0;
 
@@ -95,16 +105,17 @@ const UploadScreen = (props) => {
         const location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Highest,
         });
+        setLocation(location);
+
         if (count > 6) {
-          await awsUpload(location);
-          toMap();
-        } else if (location.coords.accuracy > 30) {
+          setModalVisible(true);
+        } else if (location.coords.accuracy > 10) {
           getLocation();
           count = count + 1;
           console.log('count: ', count);
         } else {
           await awsUpload(location);
-          toMap();
+          goToMap();
         }
       };
       setIsFetching(true);
@@ -117,8 +128,8 @@ const UploadScreen = (props) => {
     }
   };
 
-  const closeModalHandler = () => {
-    setModalVisible(false);
+  const uploadAddressHandler = () => {
+    console.log('address upload');
   };
 
   return (
@@ -162,21 +173,35 @@ const UploadScreen = (props) => {
               placeholder="write description here"
             />
           </View>
-          <View style={styles.buttonContainer}>
-            {isFetching ? (
-              <CustomButton color={Colors.primary} style={styles.buttonLoading}>
-                <Text style={styles.buttonTextLoading}>Uploading...</Text>
-                <ActivityIndicator color="white" size="small" />
-              </CustomButton>
-            ) : (
+          <View styles={styles.buttonsContainer}>
+            <View style={styles.buttonContainer}>
+              {isFetching ? (
+                <CustomButton
+                  color={Colors.primary}
+                  style={styles.buttonLoading}
+                >
+                  <Text style={styles.buttonTextLoading}>Uploading...</Text>
+                  <ActivityIndicator color="white" size="small" />
+                </CustomButton>
+              ) : (
+                <CustomButton
+                  onSelect={uploadGPSHandler}
+                  color={Colors.primary}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>GPS Upload</Text>
+                </CustomButton>
+              )}
+            </View>
+            <View style={styles.buttonContainer}>
               <CustomButton
-                onSelect={uploadToDingeHandler}
+                onSelect={uploadAddressHandler}
                 color={Colors.primary}
                 style={styles.button}
               >
-                <Text style={styles.buttonText}>Upload Pic</Text>
+                <Text style={styles.buttonText}>Address Upload</Text>
               </CustomButton>
-            )}
+            </View>
           </View>
         </View>
         <View style={styles.centeredView}>
@@ -185,7 +210,7 @@ const UploadScreen = (props) => {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              seConfirmVisible(!modalVisible);
+              setModalVisible(!modalVisible);
             }}
           >
             <View style={styles.centeredView}>
@@ -194,10 +219,38 @@ const UploadScreen = (props) => {
                   Dinge is not able to find an accurate location for you. If you
                   are in a large open space, try turning your WIFI off.
                 </Text>
-                <View style={styles.modalButtonContainer}>
-                  <CustomButton onSelect={() => closeModalHandler()}>
-                    <Text style={styles.locateOnMapText}>Okay</Text>
-                  </CustomButton>
+                <View>
+                  <View
+                    style={[
+                      styles.buttonContainer,
+                      { marginTop: 15, justifyContent: 'center' },
+                    ]}
+                  >
+                    {fetchAnyways ? (
+                      <CustomButton
+                        style={{ flexDirection: 'row' }}
+                        onSelect={uploadAnyways}
+                      >
+                        <Text style={styles.locateOnMapText}>Uploading...</Text>
+                        <ActivityIndicator
+                          color="white"
+                          size="small"
+                          style={{ paddingRight: 15 }}
+                        />
+                      </CustomButton>
+                    ) : (
+                      <CustomButton onSelect={uploadAnyways}>
+                        <Text style={styles.locateOnMapText}>
+                          Upload anyways
+                        </Text>
+                      </CustomButton>
+                    )}
+                  </View>
+                  <View style={styles.buttonContainer}>
+                    <CustomButton onSelect={closeModalHandler}>
+                      <Text style={styles.locateOnMapText}>Stop upload</Text>
+                    </CustomButton>
+                  </View>
                 </View>
               </View>
             </View>
@@ -236,8 +289,10 @@ const styles = StyleSheet.create({
   textRegular: {
     fontFamily: 'cereal-light',
   },
+  buttonsContainer: {},
   buttonContainer: {
     marginVertical: 8,
+    marginBottom: 12,
   },
   button: {
     width: 200,
@@ -316,9 +371,10 @@ const styles = StyleSheet.create({
   locateOnMapText: {
     color: 'white',
     fontFamily: 'cereal-bold',
+    textAlign: 'center',
     paddingVertical: 8,
     paddingHorizontal: 20,
-    fontSize: 16,
+    fontSize: 19,
   },
   right: {
     width: '100%',

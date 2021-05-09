@@ -23,8 +23,6 @@ import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
 import * as eventsActions from '../../store/actions/events';
 
-import { getLocationFn, recursiveLast } from '../../helpers/locations';
-
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
@@ -55,8 +53,8 @@ const MapScreen = (props) => {
         return {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          latitudeDelta: 0.02,
-          longitudeDelta: 0.02,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.015,
         };
       };
 
@@ -208,7 +206,7 @@ const MapScreen = (props) => {
                 are in a large open space, try turning your WIFI off.
               </Text>
               <View style={styles.modalButtonContainer}>
-                <CustomButton onSelect={() => closeModalHandler()}>
+                <CustomButton onSelect={closeModalHandler}>
                   <Text style={styles.locateOnMapText}>Okay</Text>
                 </CustomButton>
               </View>

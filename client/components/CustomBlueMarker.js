@@ -11,15 +11,13 @@ const CustomBlueMarker = (props) => {
   const MARKER_WIDTH = 50;
   const MARKER_HEIGHT = 50;
 
-  const ANCHOR = { x: 0.5, y: 1 + 3 / MARKER_HEIGHT };
+  const ANCHOR = { x: 0.5, y: 0.7 };
   const iOSANCHOR = { x: 0.5, y: 1.7 };
   const CENTEROFFSET = getCenterOffsetForAnchor(
     iOSANCHOR,
     MARKER_WIDTH,
     MARKER_HEIGHT
   );
-
-  //console.log(props);
 
   return (
     <Pressable style={styles.markerContainer}>
@@ -56,8 +54,8 @@ const styles = StyleSheet.create({
     top: 42,
   },
   pin: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
   },
 });
 
