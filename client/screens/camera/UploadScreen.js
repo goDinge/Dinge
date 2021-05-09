@@ -78,6 +78,7 @@ const UploadScreen = (props) => {
 
   const closeModalHandler = () => {
     setModalVisible(false);
+    setIsFetching(false);
   };
 
   const uploadAnyways = async () => {
@@ -109,7 +110,7 @@ const UploadScreen = (props) => {
 
         if (count > 6) {
           setModalVisible(true);
-        } else if (location.coords.accuracy > 10) {
+        } else if (location.coords.accuracy > 30) {
           getLocation();
           count = count + 1;
           console.log('count: ', count);
