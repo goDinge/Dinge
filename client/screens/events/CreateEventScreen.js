@@ -394,7 +394,7 @@ const CreateEventScreen = (props) => {
             <View style={styles.durationContainer}>
               <Text style={styles.instructionText}>Event Location:</Text>
               <TextInput
-                placeholder="street address, city"
+                placeholder="123 main street, mycity..."
                 style={styles.tempInput}
                 value={formState.inputValues.address}
                 onChangeText={(text) => inputChangeHandler('address', text)}

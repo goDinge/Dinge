@@ -12,14 +12,19 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import Geocoder from 'react-native-geocoding';
+
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Location from 'expo-location';
-
 import * as dingeActions from '../../store/actions/dinge';
 import * as imageActions from '../../store/actions/image';
 
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
+
+import { GOOGLE_MAPS } from '@env';
+
+Geocoder.init(GOOGLE_MAPS);
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -30,6 +35,8 @@ const UploadScreen = (props) => {
   const [text, onChangeText] = useState('');
   const [location, setLocation] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
+  const [addressModalVisible, setAddressModalVisible] = useState(false);
+  const [address, setAddress] = useState('');
 
   const dispatch = useDispatch();
 
@@ -88,6 +95,33 @@ const UploadScreen = (props) => {
     goToMap();
   };
 
+  const uploadAddressHandler = () => {
+    setAddressModalVisible(true);
+  };
+
+  const addressUpload = async () => {
+    let location = {
+      coords: {
+        latitude: null,
+        longitude: null,
+      },
+    };
+    try {
+      setFetchAnyways(true);
+      const json = await Geocoder.from(address);
+      const coordsGoogle = json.results[0].geometry.location;
+      if (coordsGoogle) {
+        location.coords.latitude = coordsGoogle.lat;
+        location.coords.longitude = coordsGoogle.lng;
+        await awsUpload(location);
+        setAddressModalVisible(false);
+        goToMap();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const uploadGPSHandler = async () => {
     const hasPermissions = await verifyPermissions();
     if (!hasPermissions) {
@@ -127,10 +161,6 @@ const UploadScreen = (props) => {
       ]);
       console.log(err.message);
     }
-  };
-
-  const uploadAddressHandler = () => {
-    console.log('address upload');
   };
 
   return (
@@ -218,7 +248,8 @@ const UploadScreen = (props) => {
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>
                   Dinge is not able to find an accurate location for you. If you
-                  are in a large open space, try turning your WIFI off.
+                  are in a large open space, try turning your WIFI off and
+                  restart your phone.
                 </Text>
                 <View>
                   <View
@@ -251,6 +282,56 @@ const UploadScreen = (props) => {
                     <CustomButton onSelect={closeModalHandler}>
                       <Text style={styles.locateOnMapText}>Stop upload</Text>
                     </CustomButton>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </View>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={addressModalVisible}
+            onRequestClose={() => {
+              setModalVisible(!addressModalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Enter address</Text>
+                <TextInput
+                  style={styles.descriptionInput}
+                  onChangeText={(text) => setAddress(text)}
+                  value={address}
+                  placeholder="123 main street, mycity..."
+                />
+                <View>
+                  <View
+                    style={[
+                      styles.buttonContainer,
+                      { marginTop: 15, justifyContent: 'center' },
+                    ]}
+                  >
+                    {fetchAnyways ? (
+                      <CustomButton
+                        style={{ flexDirection: 'row' }}
+                        onSelect={addressUpload}
+                      >
+                        <Text style={styles.locateOnMapText}>Uploading...</Text>
+                        <ActivityIndicator
+                          color="white"
+                          size="small"
+                          style={{ paddingRight: 15 }}
+                        />
+                      </CustomButton>
+                    ) : (
+                      <CustomButton onSelect={addressUpload}>
+                        <Text style={styles.locateOnMapText}>
+                          Address Upload
+                        </Text>
+                      </CustomButton>
+                    )}
                   </View>
                 </View>
               </View>
@@ -347,6 +428,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   modalView: {
+    width: '80%',
     backgroundColor: 'white',
     borderRadius: 20,
     paddingTop: 20,
