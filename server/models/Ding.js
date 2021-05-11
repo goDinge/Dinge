@@ -68,5 +68,6 @@ const DingSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+DingSchema.index({ location: '2dsphere' });
 
 module.exports = Ding = mongoose.model('Ding', DingSchema);

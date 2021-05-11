@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const {
   getDinge,
+  getLocalDinge,
   getDing,
   createDing,
   reportDing,
@@ -17,6 +18,7 @@ const multerMultiple = multer({
 const router = express.Router();
 
 router.get('/', getDinge);
+router.get('/local/:distance/:location', protect, getLocalDinge);
 router.get('/:id', getDing);
 router.post('/', protect, multerMultiple, createDing);
 router.put('/reports/:id', protect, reportDing);

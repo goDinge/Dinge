@@ -13,7 +13,7 @@ export const getUser = (userId) => {
         user: user,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error('Cannot connect with server. Please try again. ');
     }
   };
 };

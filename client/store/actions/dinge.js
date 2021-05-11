@@ -1,17 +1,46 @@
 import axios from 'axios';
-import { GET_DINGE, POST_DING, LIKE_DING, UNLIKE_DING } from '../types';
+import {
+  GET_DINGE,
+  POST_DING,
+  LIKE_DING,
+  UNLIKE_DING,
+  GET_LOCAL_DINGE,
+} from '../types';
 import { HOME_IP } from '@env';
 
 export const getDinge = () => {
   return async (dispatch) => {
     try {
       console.log('getDinge action - IP used:', HOME_IP);
+
       const response = await axios.get(`${HOME_IP}/api/dinge`);
-      const dingeAll = response.data.data;
+      const dinge = response.data.data;
 
       dispatch({
         type: GET_DINGE,
-        dinge: dingeAll,
+        dinge: dinge,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const getLocalDinge = (location) => {
+  return async (dispatch) => {
+    try {
+      console.log('getLocalDinge action - IP used: ', HOME_IP);
+      const distance = 3;
+
+      const response = await axios.get(
+        `${HOME_IP}/api/dinge/local/${distance}/location?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}`
+      );
+      const dinge = response.data.data;
+      console.log(dinge.length);
+
+      dispatch({
+        type: GET_LOCAL_DINGE,
+        dinge: dinge,
       });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');

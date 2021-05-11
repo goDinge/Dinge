@@ -72,6 +72,7 @@ const MapScreen = (props) => {
             //after too many attempts, just set location and launch app anyways
             //console.log('count over 9', location);
             setRegion(regionData(location));
+            loadData(location);
             setMapLoaded(true);
             setModalVisible(true);
           } else if (location.coords.accuracy > 30) {
@@ -82,6 +83,7 @@ const MapScreen = (props) => {
           } else {
             //if not too many attempts and accuracy at or below 30
             setRegion(regionData(location));
+            loadData(location);
             setMapLoaded(true);
           }
         } catch (err) {
@@ -92,15 +94,16 @@ const MapScreen = (props) => {
     })();
   }, []);
 
-  useEffect(() => {
-    loadData();
-    setMapLoaded(true);
-  }, [setMapLoaded]);
+  // useEffect(() => {
+  //   //loadData();
+  //   setMapLoaded(true);
+  // }, [setMapLoaded]);
 
-  const loadData = async () => {
+  const loadData = async (location) => {
     setError(null);
+    //console.log('map screen: ', location);
     try {
-      await dispatch(dingeActions.getDinge());
+      await dispatch(dingeActions.getLocalDinge(location));
       await dispatch(eventsActions.getEvents());
       await dispatch(authActions.getAuthUser());
     } catch (err) {
@@ -134,8 +137,8 @@ const MapScreen = (props) => {
     setModalVisible(false);
   };
 
-  const reloadHandler = () => {
-    loadData();
+  const reloadHandler = (location) => {
+    loadData(location);
     setMapLoaded(true);
   };
 
@@ -188,7 +191,7 @@ const MapScreen = (props) => {
         <CustomCameraIcon onSelect={selectCameraHandler} />
       </View>
       <View style={styles.reloadContainer}>
-        <CustomReloadIcon onSelect={reloadHandler} />
+        <CustomReloadIcon onSelect={() => reloadHandler(location)} />
       </View>
       <View style={styles.centeredView}>
         <Modal
@@ -203,7 +206,8 @@ const MapScreen = (props) => {
             <View style={styles.modalView}>
               <Text style={styles.modalText}>
                 Dinge is not able to find an accurate location for you. If you
-                are in a large open space, try turning your WIFI off.
+                are in a large open space, try turning your WIFI off and
+                restarting your phone.
               </Text>
               <View style={styles.modalButtonContainer}>
                 <CustomButton onSelect={closeModalHandler}>
