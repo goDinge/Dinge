@@ -112,6 +112,10 @@ const MapScreen = (props) => {
     props.navigation.navigate('Upload');
   };
 
+  //need to fix lack of back button when going to a specific event from Map Screen
+  //immediately after the app loads
+  //maybe this bug occurs because there is no screen to go 'back' to
+  //when Event Details Screen is called first
   const selectEventHandler = (item) => {
     props.navigation.navigate('Events', {
       screen: 'Event Details',

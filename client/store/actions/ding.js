@@ -12,6 +12,7 @@ import { HOME_IP } from '@env';
 export const getDing = (dingId) => {
   return async (dispatch) => {
     try {
+      console.log('ding action - IP used:', HOME_IP);
       const response = await axios.get(`${HOME_IP}/api/dinge/${dingId}`);
       const ding = response.data.data;
 
@@ -20,7 +21,7 @@ export const getDing = (dingId) => {
         ding: ding,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error('Cannot connect with server. Please try again. ');
     }
   };
 };
@@ -56,7 +57,7 @@ export const unlikeDing = (dingId) => {
       });
     } catch (err) {
       console.log(err.message);
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error('Cannot connect with server. Please try again. ');
     }
   };
 };
@@ -64,6 +65,8 @@ export const unlikeDing = (dingId) => {
 export const updateDingLocation = (dingId, location) => {
   return async (dispatch) => {
     try {
+      console.log('ding action - IP used:', HOME_IP);
+
       const response = await axios.put(
         `${HOME_IP}/api/ding/${dingId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
       );

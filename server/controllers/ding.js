@@ -158,7 +158,7 @@ exports.deleteDingById = asyncHandler(async (req, res, next) => {
 });
 
 //desc    UPDATE Ding's location by ID
-//route   PUT /api/ding/:id/location
+//route   PUT /api/ding/:id/:location
 //access  private
 exports.updateDingLocation = asyncHandler(async (req, res, next) => {
   const ding = await Ding.findById(req.params.id);
