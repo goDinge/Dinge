@@ -127,20 +127,15 @@ exports.getDinge = asyncHandler(async (req, res, next) => {
 //route   GET /api/dinge/local/:location/:distance --- if location is in req.params
 //access  private
 exports.getLocalDinge = asyncHandler(async (req, res, next) => {
-  //Ding.index({ location: '2dsphere' });
-
   const { distance } = req.params;
   const latitude = req.query.latitude;
   const longitude = req.query.longitude;
-
-  console.log(distance);
-  console.log(latitude, longitude);
 
   //radius of earth: 3963 miles or 6378 kilometers
   const radius = distance / 6378;
   const dinge = await Ding.find({
     location: {
-      $geoWithin: { $centerSphere: [[latitude, longitude], radius] },
+      $geoWithin: { $centerSphere: [[longitude, latitude], radius] },
     },
     // location: {
     //   $near: {
@@ -152,9 +147,6 @@ exports.getLocalDinge = asyncHandler(async (req, res, next) => {
     //   },
     // },
   });
-
-  //   var METERS_PER_MILE = 1609.34
-  // db.restaurants.find({ location: { $nearSphere: { $geometry: { type: "Point", coordinates: [ -73.93414657, 40.82302903 ] }, $maxDistance: 5 * METERS_PER_MILE } } })
 
   if (!dinge) {
     return next(ErrorResponse('No near by dinge found', 400));

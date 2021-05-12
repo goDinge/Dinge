@@ -1,22 +1,22 @@
 import React from 'react';
 import { Pressable, StyleSheet, Image } from 'react-native';
 
-const CustomReloadIcon = (props) => {
+const CustomCompassIcon = (props) => {
   return (
     <Pressable onPress={props.onSelect}>
       <Image
-        style={styles.reloadIcon}
-        source={require('../assets/reload.png')}
+        style={styles.compassIcon}
+        source={require('../assets/compass.png')}
       />
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  reloadIcon: {
+  compassIcon: {
     height: 40,
     width: 40,
   },
 });
 
-export default CustomReloadIcon;
+export default CustomCompassIcon;

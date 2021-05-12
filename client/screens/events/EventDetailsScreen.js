@@ -32,8 +32,6 @@ const EventDetailsScreen = (props) => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
-  console.log('details', event);
-
   useEffect(() => {
     loadUser(event.user);
     loadEvent(event._id);

@@ -11,7 +11,7 @@ import { HOME_IP } from '@env';
 export const getDinge = () => {
   return async (dispatch) => {
     try {
-      console.log('getDinge action - IP used:', HOME_IP);
+      //console.log('getDinge action - IP used:', HOME_IP);
 
       const response = await axios.get(`${HOME_IP}/api/dinge`);
       const dinge = response.data.data;
@@ -33,7 +33,7 @@ export const getLocalDinge = (location) => {
       const distance = 3;
 
       const response = await axios.get(
-        `${HOME_IP}/api/dinge/local/${distance}/location?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}`
+        `${HOME_IP}/api/dinge/local/${distance}/location?longitude=${location.coords.longitude}&latitude=${location.coords.latitude}`
       );
       const dinge = response.data.data;
       console.log(dinge.length);
@@ -56,8 +56,8 @@ export const postDing = (description, lat, long, img, thumb) => {
 
       let formData = new FormData();
       formData.append('description', JSON.stringify(description));
-      formData.append('location[latitude]', JSON.stringify(lat));
       formData.append('location[longitude]', JSON.stringify(long));
+      formData.append('location[latitude]', JSON.stringify(lat));
       formData.append('img', {
         uri: `file://${img.uri}`,
         type: 'image/jpg',

@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
@@ -86,22 +87,22 @@ const CreateEventScreen = (props) => {
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   const newEvent = useSelector((state) => state.events.newEvent);
-  if (newEvent) {
-    console.log('newEvent', newEvent.eventName);
-  }
+  // if (newEvent) {
+  //   console.log('newEvent', newEvent.eventName);
+  // }
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
   useEffect(() => {
     {
-      newEvent ? setEventToPass(newEvent) : console.log('no new event');
+      newEvent ? setEventToPass(newEvent) : null;
     }
   }, [newEvent]);
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestPermissionsAsync();
+      let { status } = await Location.getForegroundPermissionsAsync();
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied');
         return;
@@ -123,17 +124,18 @@ const CreateEventScreen = (props) => {
       eventName: '',
       date: '',
       eventType: 'community',
-      thumbUrl: '',
+      thumbUrl:
+        'https://dinge.s3.us-east-2.amazonaws.com/event-types/community.png',
       address: '',
       location: '',
       description: '',
-      hours: null,
+      hours: '',
     },
     inputValidities: {
       eventName: false,
       date: false,
       eventType: true,
-      thumbUrl: false,
+      thumbUrl: true,
       location: false,
       description: false,
       hours: false,
@@ -141,7 +143,7 @@ const CreateEventScreen = (props) => {
     formIsValid: false,
   });
 
-  //console.log(formState);
+  console.log(formState);
 
   //Date and Time picker functions
   const onDateChange = (event, selectedDate) => {
@@ -176,13 +178,34 @@ const CreateEventScreen = (props) => {
   };
 
   //Text input
+  //If one of the validities is false, there is no message warning the user to complete the form properly
+  //and instead goes straight to event details and the app crashes.
   const inputChangeHandler = (inputType, text) => {
-    let isValid = false;
-    if (text.trim().length > 0) {
-      isValid = true;
+    let isValid = true;
+    if (text.trim().length === 0) {
+      isValid = false;
     }
-    if (inputType === 'hours' && text === Number) {
-      isValid = true;
+    if (inputType === 'hours') {
+      if (text > 8) {
+        isValid = false;
+        Alert.alert(
+          'Duration too long',
+          'The maximum length of event allowed is 8 hours',
+          [
+            {
+              text: 'Ok',
+              onPress: () => {
+                dispatchFormState({
+                  type: FORM_INPUT,
+                  value: '',
+                  isValid: isValid,
+                  input: inputType,
+                });
+              },
+            },
+          ]
+        );
+      }
     }
     dispatchFormState({
       type: FORM_INPUT,
@@ -251,6 +274,7 @@ const CreateEventScreen = (props) => {
     'party',
     'political',
     'sports',
+    'volunteer',
     'other',
   ];
 
@@ -281,6 +305,14 @@ const CreateEventScreen = (props) => {
 
   const createEventHandler = async () => {
     setError(null);
+    for (const key in formState.inputValidities) {
+      if (formState.inputValidities[key] == false) {
+        Alert.alert('Form not complete.', 'Please complete all parts of form', [
+          { text: 'Okay' },
+        ]);
+        return;
+      }
+    }
     try {
       await dispatch(eventsActions.createEvent(formState));
       await dispatch(eventsActions.getEvents());
@@ -653,9 +685,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'flex-end',
   },
-  iconClose: {
-    alignItems: 'flex-end',
-  },
+  iconClose: {},
   extraSpace: {
     height: 100,
   },

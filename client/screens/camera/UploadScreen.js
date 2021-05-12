@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Geocoder from 'react-native-geocoding';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Location from 'expo-location';
@@ -106,6 +107,10 @@ const UploadScreen = (props) => {
         longitude: null,
       },
     };
+    if (!address) {
+      Alert.alert('No address', 'Please enter address.', [{ text: 'Ok' }]);
+      return;
+    }
     try {
       setFetchAnyways(true);
       const json = await Geocoder.from(address);
@@ -294,7 +299,7 @@ const UploadScreen = (props) => {
             transparent={true}
             visible={addressModalVisible}
             onRequestClose={() => {
-              setModalVisible(!addressModalVisible);
+              setAddressModalVisible(!addressModalVisible);
             }}
           >
             <View style={styles.centeredView}>
@@ -306,33 +311,37 @@ const UploadScreen = (props) => {
                   value={address}
                   placeholder="123 main street, mycity..."
                 />
-                <View>
-                  <View
-                    style={[
-                      styles.buttonContainer,
-                      { marginTop: 15, justifyContent: 'center' },
-                    ]}
-                  >
-                    {fetchAnyways ? (
-                      <CustomButton
-                        style={{ flexDirection: 'row' }}
-                        onSelect={addressUpload}
-                      >
-                        <Text style={styles.locateOnMapText}>Uploading...</Text>
-                        <ActivityIndicator
-                          color="white"
-                          size="small"
-                          style={{ paddingRight: 15 }}
-                        />
-                      </CustomButton>
-                    ) : (
-                      <CustomButton onSelect={addressUpload}>
-                        <Text style={styles.locateOnMapText}>
-                          Address Upload
-                        </Text>
-                      </CustomButton>
-                    )}
-                  </View>
+                <View
+                  style={[
+                    styles.buttonContainer,
+                    { marginTop: 15, justifyContent: 'center' },
+                  ]}
+                >
+                  {fetchAnyways ? (
+                    <CustomButton
+                      style={{ flexDirection: 'row' }}
+                      onSelect={addressUpload}
+                    >
+                      <Text style={styles.locateOnMapText}>Uploading...</Text>
+                      <ActivityIndicator
+                        color="white"
+                        size="small"
+                        style={{ paddingRight: 15 }}
+                      />
+                    </CustomButton>
+                  ) : (
+                    <CustomButton onSelect={addressUpload}>
+                      <Text style={styles.locateOnMapText}>Address Upload</Text>
+                    </CustomButton>
+                  )}
+                </View>
+                <View style={styles.right}>
+                  <MaterialCommunityIcons
+                    name="close"
+                    size={30}
+                    style={styles.iconClose}
+                    onPress={() => setAddressModalVisible(!addressModalVisible)}
+                  />
                 </View>
               </View>
             </View>
@@ -460,9 +469,9 @@ const styles = StyleSheet.create({
     fontSize: 19,
   },
   right: {
-    width: '100%',
     alignSelf: 'flex-end',
   },
+  iconClose: {},
 });
 
 export default UploadScreen;

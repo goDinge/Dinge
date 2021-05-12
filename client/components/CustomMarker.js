@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, Pressable, StyleSheet } from 'react-native';
 import { Marker } from 'react-native-maps';
 
 const CustomMarker = (props) => {
+  const [picOpacity, setPicOpacity] = useState(1);
+
   const getCenterOffsetForAnchor = (anchor, markerWidth, markerHeight) => ({
     x: markerWidth * 0.5 - markerWidth * anchor.x,
     y: markerHeight * 0.5 - markerHeight * anchor.y,
@@ -19,11 +21,18 @@ const CustomMarker = (props) => {
     MARKER_HEIGHT
   );
 
-  //console.log(props);
+  //write function to update ding/event onDragEnd
+  const dragEndHandler = (e) => {
+    console.log(e.nativeEvent);
+    setPicOpacity(1);
+  };
 
   return (
     <Pressable style={styles.markerContainer}>
       <Marker
+        draggable
+        onDrag={() => setPicOpacity(0.2)}
+        onDragEnd={(e) => dragEndHandler(e)}
         coordinate={{
           latitude: props.data.location.latitude,
           longitude: props.data.location.longitude,
@@ -36,14 +45,16 @@ const CustomMarker = (props) => {
         onPress={props.onSelect}
       >
         <Image style={styles.pic} source={{ uri: props.data.thumbUrl }} />
-        <Image style={styles.pin} source={require('../assets/pin.png')} />
+        <Image
+          style={[styles.pin, { opacity: picOpacity }]}
+          source={require('../assets/pin.png')}
+        />
       </Marker>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  markerContainer: {},
   pic: {
     width: 50,
     height: 50,

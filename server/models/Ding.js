@@ -18,11 +18,11 @@ const DingSchema = new mongoose.Schema({
     default: 'ding',
   },
   location: {
-    latitude: {
+    longitude: {
       type: Number,
       required: true,
     },
-    longitude: {
+    latitude: {
       type: Number,
       required: true,
     },
