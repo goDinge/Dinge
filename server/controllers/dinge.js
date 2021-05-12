@@ -137,19 +137,10 @@ exports.getLocalDinge = asyncHandler(async (req, res, next) => {
     location: {
       $geoWithin: { $centerSphere: [[longitude, latitude], radius] },
     },
-    // location: {
-    //   $near: {
-    //     $geometry: {
-    //       type: 'Point',
-    //       coordinates: [latitude, longitude],
-    //     },
-    //     $maxDistance: distance,
-    //   },
-    // },
   });
 
   if (!dinge) {
-    return next(ErrorResponse('No near by dinge found', 400));
+    return next(ErrorResponse('No nearby dinge found', 400));
   }
 
   res.status(200).json({ success: true, number: dinge.length, data: dinge });

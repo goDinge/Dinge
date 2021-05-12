@@ -1,9 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, Pressable, StyleSheet } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { Marker } from 'react-native-maps';
+
+import * as dingActions from '../store/actions/ding';
 
 const CustomMarker = (props) => {
   const [picOpacity, setPicOpacity] = useState(1);
+  const [draggable, setDraggable] = useState(false);
+
+  const authUser = useSelector((state) => state.auth.authUser);
+  const dingId = props.data._id;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (authUser._id == props.data.user) {
+      setDraggable(true);
+    }
+  }, [authUser]);
 
   const getCenterOffsetForAnchor = (anchor, markerWidth, markerHeight) => ({
     x: markerWidth * 0.5 - markerWidth * anchor.x,
@@ -21,16 +36,26 @@ const CustomMarker = (props) => {
     MARKER_HEIGHT
   );
 
+  // console.log(props.data.user);
+  // console.log(authUser);
+
   //write function to update ding/event onDragEnd
-  const dragEndHandler = (e) => {
+  const dragEndHandler = async (e) => {
     console.log(e.nativeEvent);
+    try {
+      await dispatch(
+        dingActions.updateDingLocation(dingId, e.nativeEvent.coordinate)
+      );
+    } catch (err) {
+      console.log(err.message);
+    }
     setPicOpacity(1);
   };
 
   return (
     <Pressable style={styles.markerContainer}>
       <Marker
-        draggable
+        draggable={draggable}
         onDrag={() => setPicOpacity(0.2)}
         onDragEnd={(e) => dragEndHandler(e)}
         coordinate={{

@@ -27,15 +27,9 @@ exports.likeDing = asyncHandler(async (req, res, next) => {
   if (dingUser.id !== user.id) {
     dingUser.reputation =
       dingUser.reputation + repScores.repScores.likeReceived;
-    // if (dingUser.reputation >= 5) {
-    //   dingUser.level = 'Citizen';
-    // }
     await dingUser.save();
 
     user.reputation = user.reputation + repScores.repScores.likeGiven;
-    // if (user.reputation >= 5) {
-    //   user.level = 'Citizen';
-    // }
     await user.save();
   }
 
@@ -163,21 +157,25 @@ exports.deleteDingById = asyncHandler(async (req, res, next) => {
   });
 });
 
-//Helper functions
-//Reputation and Level calculation
-const repLevelCalc = async (dingUser, user) => {
-  if (dingUser.id !== user.id) {
-    dingUser.reputation =
-      dingUser.reputation - repScores.repScores.likeReceived;
-    if (dingUser.reputation >= 5) {
-      dingUser.level = 'Citizen';
-    }
-    await dingUser.save();
+//desc    UPDATE Ding's location by ID
+//route   PUT /api/ding/:id/location
+//access  private
+exports.updateDingLocation = asyncHandler(async (req, res, next) => {
+  const ding = await Ding.findById(req.params.id);
+  const userId = req.user.id;
+  const latitude = req.query.latitude;
+  const longitude = req.query.longitude;
 
-    user.reputation = user.reputation - repScores.repScores.likeGiven;
-    if (user.reputation >= 5) {
-      user.level = 'Citizen';
-    }
-    await user.save();
+  await Ding.updateOne(
+    { _id: req.params.id },
+    { $set: { location: { longitude: longitude, latitude: latitude } } }
+  );
+
+  if (userId != ding.user) {
+    return next(new ErrorResponse('You are not authorized.', 400));
   }
-};
+
+  await ding.save();
+
+  res.status(200).json({ success: true, data: ding });
+});

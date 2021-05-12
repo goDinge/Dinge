@@ -2,6 +2,7 @@ export const GET_DINGE = 'GET_DINGE';
 export const GET_LOCAL_DINGE = 'GET_LOCAL_DINGE';
 export const GET_DING = 'GET_DING';
 export const POST_DING = 'POST_DING';
+export const UPDATE_DING_LOCATION = 'UPDATE_DING_LOCATION';
 export const LIKE_DING = 'LIKE_DING';
 export const UNLIKE_DING = 'UNLIKE_DING';
 export const REPORT_DING = 'REPORT_DING';

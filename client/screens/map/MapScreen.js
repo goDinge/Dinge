@@ -35,7 +35,6 @@ const MapScreen = (props) => {
   const [region, setRegion] = useState(location);
   const [modalVisible, setModalVisible] = useState(false);
   const [count, setCount] = useState(0);
-  const [mapMargin, setMapMargin] = useState(1); //workaround
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();

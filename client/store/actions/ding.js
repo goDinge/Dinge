@@ -5,6 +5,7 @@ import {
   GET_DING,
   REPORT_DING,
   POST_COMMENT,
+  UPDATE_DING_LOCATION,
 } from '../types';
 import { HOME_IP } from '@env';
 
@@ -52,6 +53,26 @@ export const unlikeDing = (dingId) => {
       dispatch({
         type: UNLIKE_DING,
         ding: ding,
+      });
+    } catch (err) {
+      console.log(err.message);
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const updateDingLocation = (dingId, location) => {
+  return async (dispatch) => {
+    console.log(location);
+    try {
+      const response = await axios.put(
+        `${HOME_IP}/api/ding/${dingId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
+      );
+
+      const newLocation = response.data.data.location;
+      dispatch({
+        type: UPDATE_DING_LOCATION,
+        ding: newLocation,
       });
     } catch (err) {
       console.log(err.message);
