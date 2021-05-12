@@ -45,6 +45,7 @@ const EventSchema = new mongoose.Schema({
   description: {
     type: String,
     required: true,
+    default: 'No description provided.',
   },
   thumbUrl: {
     type: String,

@@ -63,7 +63,6 @@ export const unlikeDing = (dingId) => {
 
 export const updateDingLocation = (dingId, location) => {
   return async (dispatch) => {
-    console.log(location);
     try {
       const response = await axios.put(
         `${HOME_IP}/api/ding/${dingId}/location?longitude=${location.longitude}&latitude=${location.latitude}`

@@ -73,7 +73,6 @@ const MapScreen = (props) => {
       setRegion(regionData(location));
       if (count > 6) {
         //after too many attempts, just set location and launch app anyways
-        //console.log('count over 9', location);
         setRegion(regionData(location));
         loadData(location);
         setMapLoaded(true);
@@ -104,13 +103,6 @@ const MapScreen = (props) => {
       setError(err.message);
     }
   };
-
-  let text = 'Waiting..';
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
 
   const selectDingHandler = (item) => {
     props.navigation.navigate('Ding', item);
@@ -158,8 +150,6 @@ const MapScreen = (props) => {
       <MapView
         style={styles.map}
         region={region}
-        showsMyLocationButton={true}
-        showsCompass={true}
         minZoomLevel={13}
         maxZoomLevel={18}
       >
@@ -299,16 +289,3 @@ const styles = StyleSheet.create({
 });
 
 export default MapScreen;
-
-// Location.installWebGeolocationPolyfill();
-// if (navigator.geolocation) {
-//   navigator.geolocation.getCurrentPosition(
-//     (location) => console.log(location),
-//     (error) => console.log(error),
-//     {
-//       enableHighAccuracy: true,
-//       timeout: 5000,
-//       maximumAge: 0,
-//     }
-//   );
-// }

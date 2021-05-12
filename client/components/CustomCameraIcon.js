@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Pressable, StyleSheet, Image } from 'react-native';
+import { Pressable, StyleSheet, Image } from 'react-native';
 
 const CustomCameraIcon = (props) => {
   return (
@@ -14,8 +14,8 @@ const CustomCameraIcon = (props) => {
 
 const styles = StyleSheet.create({
   cameraIcon: {
-    height: 80,
-    width: 80,
+    height: 70,
+    width: 70,
   },
 });
 

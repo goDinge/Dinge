@@ -246,8 +246,8 @@ const CreateEventScreen = (props) => {
           setRegion({
             latitude: coordsGoogle.lat,
             longitude: coordsGoogle.lng,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+            latitudeDelta: 0.04,
+            longitudeDelta: 0.04,
           }),
           (isValid = true),
           dispatchFormState({

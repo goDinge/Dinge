@@ -30,7 +30,7 @@ export const getLocalDinge = (location) => {
   return async (dispatch) => {
     try {
       console.log('getLocalDinge action - IP used: ', HOME_IP);
-      const distance = 4;
+      const distance = 3;
 
       const response = await axios.get(
         `${HOME_IP}/api/dinge/local/${distance}/location?longitude=${location.coords.longitude}&latitude=${location.coords.latitude}`

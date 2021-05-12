@@ -36,12 +36,7 @@ const CustomMarker = (props) => {
     MARKER_HEIGHT
   );
 
-  // console.log(props.data.user);
-  // console.log(authUser);
-
-  //write function to update ding/event onDragEnd
   const dragEndHandler = async (e) => {
-    console.log(e.nativeEvent);
     try {
       await dispatch(
         dingActions.updateDingLocation(dingId, e.nativeEvent.coordinate)
