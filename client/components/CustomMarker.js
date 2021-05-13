@@ -4,13 +4,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Marker } from 'react-native-maps';
 
 import * as dingActions from '../store/actions/ding';
+import * as eventActions from '../store/actions/event';
 
 const CustomMarker = (props) => {
-  const [picOpacity, setPicOpacity] = useState(1);
+  const [pointOpacity, setPointOpacity] = useState(1);
   const [draggable, setDraggable] = useState(false);
 
   const authUser = useSelector((state) => state.auth.authUser);
-  const dingId = props.data._id;
+  const marker = props.data;
+  const id = props.data._id;
 
   const dispatch = useDispatch();
 
@@ -38,20 +40,26 @@ const CustomMarker = (props) => {
 
   const dragEndHandler = async (e) => {
     try {
-      await dispatch(
-        dingActions.updateDingLocation(dingId, e.nativeEvent.coordinate)
-      );
+      if (marker.dingType) {
+        await dispatch(
+          dingActions.updateDingLocation(id, e.nativeEvent.coordinate)
+        );
+      } else {
+        await dispatch(
+          eventActions.updateEventLocation(id, e.nativeEvent.coordinate)
+        );
+      }
     } catch (err) {
       console.log(err.message);
     }
-    setPicOpacity(1);
+    setPointOpacity(1);
   };
 
   return (
     <Pressable style={styles.markerContainer}>
       <Marker
         draggable={draggable}
-        onDrag={() => setPicOpacity(0.2)}
+        onDrag={() => setPointOpacity(0.2)}
         onDragEnd={(e) => dragEndHandler(e)}
         coordinate={{
           latitude: props.data.location.latitude,
@@ -66,7 +74,7 @@ const CustomMarker = (props) => {
       >
         <Image style={styles.pic} source={{ uri: props.data.thumbUrl }} />
         <Image
-          style={[styles.pin, { opacity: picOpacity }]}
+          style={[styles.pin, { opacity: pointOpacity }]}
           source={require('../assets/pin.png')}
         />
       </Marker>

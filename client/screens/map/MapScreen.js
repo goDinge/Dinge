@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import MapView from 'react-native-maps';
+import MapView, { Circle } from 'react-native-maps';
 import { useIsFocused } from '@react-navigation/native';
 import * as Location from 'expo-location';
 
@@ -24,6 +24,8 @@ import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
 import * as eventsActions from '../../store/actions/events';
 
+const mapStyle = require('../../helpers/mapStyle.json');
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
@@ -35,6 +37,7 @@ const MapScreen = (props) => {
   const [region, setRegion] = useState(location);
   const [modalVisible, setModalVisible] = useState(false);
   const [count, setCount] = useState(0);
+  const [target, setTarget] = useState(30);
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -47,7 +50,7 @@ const MapScreen = (props) => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+        setErrorMsg('Permission to access location was denied. ');
         return;
       }
       getLocation();
@@ -77,13 +80,14 @@ const MapScreen = (props) => {
         loadData(location);
         setMapLoaded(true);
         setModalVisible(true);
-      } else if (location.coords.accuracy > 30) {
-        //if accuracy is over 30, rerun
+      } else if (location.coords.accuracy > target) {
+        //if accuracy is over dynamic target, rerun
         getLocation();
         setCount(count + 1);
-        console.log('count: ', count);
+        setTarget(target + 10);
+        //console.log('target: ', target);
       } else {
-        //if not too many attempts and accuracy at or below 30
+        //if not too many attempts and accuracy at or below target
         setRegion(regionData(location));
         loadData(location);
         setMapLoaded(true);
@@ -112,15 +116,8 @@ const MapScreen = (props) => {
     props.navigation.navigate('Upload');
   };
 
-  //need to fix lack of back button when going to a specific event from Map Screen
-  //immediately after the app loads
-  //maybe this bug occurs because there is no screen to go 'back' to
-  //when Event Details Screen is called first
   const selectEventHandler = (item) => {
-    props.navigation.navigate('Events', {
-      screen: 'Event Details',
-      params: item,
-    });
+    props.navigation.navigate('Event Details', item);
   };
 
   const closeModalHandler = () => {
@@ -149,6 +146,7 @@ const MapScreen = (props) => {
     );
   }
 
+  //current mapStyle - retro eco
   return (
     <View style={{ flex: 1, justifyContent: 'center' }}>
       <MapView
@@ -156,6 +154,7 @@ const MapScreen = (props) => {
         region={region}
         minZoomLevel={13}
         maxZoomLevel={18}
+        customMapStyle={mapStyle}
       >
         {isFocused &&
           dinge.map((item, index) => (
@@ -183,6 +182,15 @@ const MapScreen = (props) => {
         {isFocused && location ? (
           <CustomBlueMarker data={location} user={authUser} />
         ) : null}
+        <Circle
+          center={{
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          }}
+          radius={3000}
+          strokeColor={Colors.primary}
+          fillColor={'rgba(0, 166, 153, 0.05)'}
+        />
       </MapView>
       <View style={styles.buttonContainer}>
         <CustomCameraIcon onSelect={selectCameraHandler} />

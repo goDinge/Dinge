@@ -14,7 +14,6 @@ export const getDinge = () => {
       console.log('getDinge action - IP used:', HOME_IP);
 
       const response = await axios.get(`${HOME_IP}/api/dinge`);
-      console.log('get dinge after data retrieved');
       const dinge = response.data.data;
 
       dispatch({
@@ -37,15 +36,13 @@ export const getLocalDinge = (location) => {
         `${HOME_IP}/api/dinge/local/${distance}/location?longitude=${location.coords.longitude}&latitude=${location.coords.latitude}`
       );
       const dinge = response.data.data;
-      console.log('local dinge action after data retrieved');
-      //console.log(dinge);
 
       dispatch({
         type: GET_LOCAL_DINGE,
         dinge: dinge,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error('Cannot connect with server. Please try again. ');
     }
   };
 };

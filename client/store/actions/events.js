@@ -15,7 +15,7 @@ export const getEvents = () => {
         events: events,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error('Cannot connect with server. Please try again. ');
     }
   };
 };

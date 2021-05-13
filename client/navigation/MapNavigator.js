@@ -81,6 +81,11 @@ export const MapNavigator = () => {
         options={{ headerTitle: 'Ding' }}
       />
       <MapStackNavigator.Screen
+        name="Event Details"
+        component={EventDetailsScreen}
+        options={{ headerTitle: 'Event Details' }}
+      />
+      <MapStackNavigator.Screen
         name="Upload"
         component={UploadScreen}
         options={{ headerTitle: 'Dinge!' }}

@@ -38,6 +38,8 @@ const UploadScreen = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [addressModalVisible, setAddressModalVisible] = useState(false);
   const [address, setAddress] = useState('');
+  const [count, setCount] = useState(0);
+  const [target, setTarget] = useState(30);
 
   const dispatch = useDispatch();
 
@@ -139,8 +141,6 @@ const UploadScreen = (props) => {
     }
 
     try {
-      let count = 0;
-
       const getLocation = async () => {
         const location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Highest,
@@ -149,10 +149,11 @@ const UploadScreen = (props) => {
 
         if (count > 6) {
           setModalVisible(true);
-        } else if (location.coords.accuracy > 30) {
+        } else if (location.coords.accuracy > target) {
           getLocation();
-          count = count + 1;
-          console.log('count: ', count);
+          setCount(count + 1);
+          setTarget(target + 10);
+          //console.log('target: ', target);
         } else {
           await awsUpload(location);
           goToMap();
@@ -254,7 +255,8 @@ const UploadScreen = (props) => {
                 <Text style={styles.modalText}>
                   Dinge is not able to find an accurate location for you. If you
                   are in a large open space, try turning your WIFI off and
-                  restart your phone.
+                  restart your phone. Or upload anyways, and move the marker to
+                  where you wanted.
                 </Text>
                 <View>
                   <View
