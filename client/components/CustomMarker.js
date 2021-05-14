@@ -3,9 +3,8 @@ import { Image, Pressable, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Marker } from 'react-native-maps';
 
-import * as dingActions from '../store/actions/ding';
 import * as dingeActions from '../store/actions/dinge';
-import * as eventActions from '../store/actions/event';
+import * as eventsActions from '../store/actions/events';
 
 const settingConfigs = require('../settingConfigs.json');
 
@@ -51,11 +50,11 @@ const CustomMarker = (props) => {
     try {
       if (marker.dingType) {
         await dispatch(
-          dingActions.updateDingLocation(id, e.nativeEvent.coordinate)
+          dingeActions.updateDingLocation(id, e.nativeEvent.coordinate)
         );
       } else {
         await dispatch(
-          eventActions.updateEventLocation(id, e.nativeEvent.coordinate)
+          eventsActions.updateEventLocation(id, e.nativeEvent.coordinate)
         );
       }
     } catch (err) {

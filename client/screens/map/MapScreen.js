@@ -154,8 +154,6 @@ const MapScreen = (props) => {
 
   const now = new Date(Date.now()).getTime();
 
-  //console.log('map screen events: ', events);
-
   if (!mapLoaded || !location || !authUser) {
     return (
       <View style={styles.indicatorContainer}>

@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { GET_EVENTS, GET_LOCAL_EVENTS, CREATE_EVENT } from '../types';
+import {
+  GET_EVENTS,
+  GET_LOCAL_EVENTS,
+  CREATE_EVENT,
+  UPDATE_EVENT_LOCATION,
+} from '../types';
 import { HOME_IP } from '@env';
 
 const settingConfigs = require('../../settingConfigs.json');
@@ -39,6 +44,27 @@ export const getLocalEvents = (location) => {
       });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again. ');
+    }
+  };
+};
+
+export const updateEventLocation = (eventId, location) => {
+  return async (dispatch) => {
+    try {
+      console.log('event action - IP used:', HOME_IP);
+
+      const response = await axios.put(
+        `${HOME_IP}/api/event/${eventId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
+      );
+
+      const updatedEvent = response.data.data;
+      dispatch({
+        type: UPDATE_EVENT_LOCATION,
+        payload: updatedEvent,
+      });
+    } catch (err) {
+      console.log(err.message);
+      throw new Error('Cannot connect with server. Please try again');
     }
   };
 };

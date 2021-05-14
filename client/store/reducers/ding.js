@@ -2,7 +2,6 @@ import {
   GET_DING,
   LIKE_DING,
   UNLIKE_DING,
-  UPDATE_DING_LOCATION,
   REPORT_DING,
   POST_COMMENT,
 } from '../types';
@@ -34,11 +33,6 @@ export default (state = initialState, action) => {
           likes: action.ding.likes,
         },
       };
-    case UPDATE_DING_LOCATION:
-      return {
-        ...state,
-        ding: action.ding,
-      };
     case REPORT_DING:
       return {
         ...state,
@@ -55,3 +49,9 @@ export default (state = initialState, action) => {
   }
   return state;
 };
+
+// case UPDATE_DING_LOCATION:
+//   return {
+//     ...state,
+//     ding: action.ding,
+//   };

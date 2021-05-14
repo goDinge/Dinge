@@ -9,8 +9,6 @@ const repScores = require('../utils/repScores');
 //route   PUT /api/event/:id/:location
 //access  private
 exports.updateEventLocation = asyncHandler(async (req, res, next) => {
-  const event = await Event.findById(req.params.id);
-  const userId = req.user.id;
   const latitude = req.query.latitude;
   const longitude = req.query.longitude;
 
@@ -19,11 +17,13 @@ exports.updateEventLocation = asyncHandler(async (req, res, next) => {
     { $set: { location: { longitude: longitude, latitude: latitude } } }
   );
 
-  if (userId != event.user) {
-    return next(new ErrorResponse('You are not authorized.', 400));
-  }
+  const event = await Event.findById(req.params.id);
 
   await event.save();
 
   res.status(200).json({ success: true, data: event });
+
+  // if (userId != event.user) {
+  //   return next(new ErrorResponse('You are not authorized.', 400));
+  // }
 });

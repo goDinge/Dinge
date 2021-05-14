@@ -18,23 +18,23 @@ export const getEvent = (id) => {
   };
 };
 
-export const updateEventLocation = (eventId, location) => {
-  return async (dispatch) => {
-    try {
-      console.log('event action - IP used:', HOME_IP);
+// export const updateEventLocation = (eventId, location) => {
+//   return async (dispatch) => {
+//     try {
+//       console.log('event action - IP used:', HOME_IP);
 
-      const response = await axios.put(
-        `${HOME_IP}/api/event/${eventId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
-      );
+//       const response = await axios.put(
+//         `${HOME_IP}/api/event/${eventId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
+//       );
 
-      const newLocation = response.data.data.location;
-      dispatch({
-        type: UPDATE_EVENT_LOCATION,
-        event: newLocation,
-      });
-    } catch (err) {
-      console.log(err.message);
-      throw new Error('Cannot connect with server. Please try again');
-    }
-  };
-};
+//       const newLocation = response.data.data.location;
+//       dispatch({
+//         type: UPDATE_EVENT_LOCATION,
+//         event: newLocation,
+//       });
+//     } catch (err) {
+//       console.log(err.message);
+//       throw new Error('Cannot connect with server. Please try again');
+//     }
+//   };
+// };

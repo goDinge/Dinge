@@ -1,4 +1,9 @@
-import { GET_EVENTS, GET_LOCAL_EVENTS, CREATE_EVENT } from '../types';
+import {
+  GET_EVENTS,
+  GET_LOCAL_EVENTS,
+  CREATE_EVENT,
+  UPDATE_EVENT_LOCATION,
+} from '../types';
 
 const initialState = {
   events: [],
@@ -25,6 +30,22 @@ export default (state = initialState, action) => {
         newEvent: action.event,
       };
     }
+    case UPDATE_EVENT_LOCATION:
+      return {
+        ...state,
+        events: state.events.map((event, index) => {
+          if (event._id === action.payload._id) {
+            return {
+              ...event,
+              location: {
+                latitude: action.payload.location.latitude,
+                longitude: action.payload.location.longitude,
+              },
+            };
+          }
+          return event;
+        }),
+      };
   }
   return state;
 };

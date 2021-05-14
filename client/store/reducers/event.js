@@ -11,18 +11,6 @@ export default (state = initialState, action) => {
         ...state,
         event: action.event,
       };
-    case UPDATE_EVENT_LOCATION:
-      return {
-        ...state,
-        event: {
-          ...state.event,
-          location: {
-            ...state.event.location,
-            latitide: action.event.latitude,
-            longitude: action.event.longitude,
-          },
-        },
-      };
   }
   return state;
 };

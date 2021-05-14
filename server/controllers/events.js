@@ -99,7 +99,7 @@ exports.getLocalEvents = asyncHandler(async (req, res, next) => {
     },
   });
 
-  console.log('local events: ', events);
+  //console.log('local events: ', events);
 
   if (!events) {
     return next(ErrorResponse('No nearby events found', 400));

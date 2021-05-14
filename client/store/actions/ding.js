@@ -5,7 +5,6 @@ import {
   GET_DING,
   REPORT_DING,
   POST_COMMENT,
-  UPDATE_DING_LOCATION,
 } from '../types';
 import { HOME_IP } from '@env';
 
@@ -62,28 +61,6 @@ export const unlikeDing = (dingId) => {
   };
 };
 
-export const updateDingLocation = (dingId, location) => {
-  return async (dispatch) => {
-    try {
-      console.log('ding action - IP used:', HOME_IP);
-
-      const response = await axios.put(
-        `${HOME_IP}/api/ding/${dingId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
-      );
-
-      const ding = response.data.data;
-      //console.log('response: ', response.data.data);
-      dispatch({
-        type: UPDATE_DING_LOCATION,
-        ding: ding,
-      });
-    } catch (err) {
-      console.log(err.message);
-      throw new Error('Cannot connect with server. Please try again.');
-    }
-  };
-};
-
 export const reportDingById = (dingId) => {
   return async (dispatch) => {
     try {
@@ -129,3 +106,25 @@ export const postComment = (text, dingId) => {
     }
   };
 };
+
+//export const updateDingLocation = (dingId, location) => {
+//   return async (dispatch) => {
+//     try {
+//       console.log('ding action - IP used:', HOME_IP);
+
+//       const response = await axios.put(
+//         `${HOME_IP}/api/ding/${dingId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
+//       );
+
+//       const ding = response.data.data;
+//       //console.log('response: ', response.data.data);
+//       dispatch({
+//         type: UPDATE_DING_LOCATION,
+//         ding: ding,
+//       });
+//     } catch (err) {
+//       console.log(err.message);
+//       throw new Error('Cannot connect with server. Please try again.');
+//     }
+//   };
+// };

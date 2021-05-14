@@ -161,8 +161,6 @@ exports.deleteDingById = asyncHandler(async (req, res, next) => {
 //route   PUT /api/ding/:id/:location
 //access  private
 exports.updateDingLocation = asyncHandler(async (req, res, next) => {
-  const ding = await Ding.findById(req.params.id);
-  const userId = req.user.id;
   const latitude = req.query.latitude;
   const longitude = req.query.longitude;
 
@@ -171,11 +169,13 @@ exports.updateDingLocation = asyncHandler(async (req, res, next) => {
     { $set: { location: { longitude: longitude, latitude: latitude } } }
   );
 
-  if (userId != ding.user) {
-    return next(new ErrorResponse('You are not authorized.', 400));
-  }
+  const ding = await Ding.findById(req.params.id);
 
   await ding.save();
 
   res.status(200).json({ success: true, data: ding });
+
+  // if (userId != ding.user) {
+  //   return next(new ErrorResponse('You are not authorized.', 400));
+  // }
 });
