@@ -1,4 +1,4 @@
-import { GET_EVENTS, CREATE_EVENT } from '../types';
+import { GET_EVENTS, GET_LOCAL_EVENTS, CREATE_EVENT } from '../types';
 
 const initialState = {
   events: [],
@@ -13,6 +13,12 @@ export default (state = initialState, action) => {
         ...state,
         events: action.events,
       };
+    case GET_LOCAL_EVENTS: {
+      return {
+        ...state,
+        events: action.events,
+      };
+    }
     case CREATE_EVENT: {
       return {
         ...state,

@@ -9,6 +9,7 @@ export const REPORT_DING = 'REPORT_DING';
 export const POST_COMMENT = 'POST_COMMENT';
 
 export const GET_EVENTS = 'GET_EVENTS';
+export const GET_LOCAL_EVENTS = 'GET_LOCAL_EVENTS';
 export const GET_EVENT = 'GET_EVENT';
 export const UPDATE_EVENT_LOCATION = 'UPDATE_EVENT_LOCATION';
 export const CREATE_EVENT = 'CREATE_EVENT';

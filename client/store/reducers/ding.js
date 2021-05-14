@@ -37,13 +37,7 @@ export default (state = initialState, action) => {
     case UPDATE_DING_LOCATION:
       return {
         ...state,
-        ding: {
-          ...state.ding,
-          location: {
-            latitide: action.ding.latitude,
-            longitude: action.ding.longitude,
-          },
-        },
+        ding: action.ding,
       };
     case REPORT_DING:
       return {

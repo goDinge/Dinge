@@ -14,6 +14,8 @@ import * as eventsActions from '../../store/actions/events';
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
 
+const settingConfigs = require('../../settingConfigs.json');
+
 const todayEventsDefault = (events) => {
   let defaultEvents = [];
   for (const event of events) {
@@ -57,11 +59,14 @@ const EventsScreen = (props) => {
     }
   }, [events]);
 
+  //location needs to be a global redux state, using defaultLocation for now
   const loadEvents = async () => {
     setError[null];
     setLoading(true);
     try {
-      await dispatch(eventsActions.getEvents());
+      await dispatch(
+        eventsActions.getLocalEvents(settingConfigs[2].defaultLocation.coords)
+      );
     } catch (err) {
       setError(err.message);
     }

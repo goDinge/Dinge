@@ -71,10 +71,11 @@ export const updateDingLocation = (dingId, location) => {
         `${HOME_IP}/api/ding/${dingId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
       );
 
-      const newLocation = response.data.data.location;
+      const ding = response.data.data;
+      //console.log('response: ', response.data.data);
       dispatch({
         type: UPDATE_DING_LOCATION,
-        ding: newLocation,
+        ding: ding,
       });
     } catch (err) {
       console.log(err.message);

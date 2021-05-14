@@ -1,0 +1,21 @@
+[
+  {
+    "radius": 5
+  },
+  {
+    "count": 6
+  },
+  {
+    "defaultLocation": {
+      "coords": {
+        "latitude": 43.67021932683228,
+        "longitude": -79.38660706744459,
+        "accuracy": 10,
+        "altitude": 55,
+        "altitudeAccuracy": 3,
+        "heading": 0,
+        "speed": 0.01
+      }
+    }
+  }
+]

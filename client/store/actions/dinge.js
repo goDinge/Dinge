@@ -8,6 +8,8 @@ import {
 } from '../types';
 import { HOME_IP } from '@env';
 
+const settingConfigs = require('../../settingConfigs.json');
+
 export const getDinge = () => {
   return async (dispatch) => {
     try {
@@ -30,7 +32,7 @@ export const getLocalDinge = (location) => {
   return async (dispatch) => {
     try {
       console.log('getLocalDinge action - IP used: ', HOME_IP);
-      const distance = 3;
+      const distance = settingConfigs[0].radius;
 
       const response = await axios.get(
         `${HOME_IP}/api/dinge/local/${distance}/location?longitude=${location.coords.longitude}&latitude=${location.coords.latitude}`

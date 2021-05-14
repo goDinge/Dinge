@@ -17,6 +17,7 @@ export default (state = initialState, action) => {
         event: {
           ...state.event,
           location: {
+            ...state.event.location,
             latitide: action.event.latitude,
             longitude: action.event.longitude,
           },

@@ -33,11 +33,11 @@ const EventSchema = new mongoose.Schema({
     required: false,
   },
   location: {
-    latitude: {
+    longitude: {
       type: Number,
       required: true,
     },
-    longitude: {
+    latitude: {
       type: Number,
       required: true,
     },

@@ -83,6 +83,31 @@ exports.getEvents = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: events });
 });
 
+//desc    GET local events
+//route   GET /api/events/local/:location/:distance
+//access  private
+exports.getLocalEvents = asyncHandler(async (req, res, next) => {
+  const { distance } = req.params;
+  const latitude = req.query.latitude;
+  const longitude = req.query.longitude;
+
+  //radius of earth: 3963 miles or 6378 kilometers
+  const radius = distance / 6378;
+  const events = await Event.find({
+    location: {
+      $geoWithin: { $centerSphere: [[longitude, latitude], radius] },
+    },
+  });
+
+  console.log('local events: ', events);
+
+  if (!events) {
+    return next(ErrorResponse('No nearby events found', 400));
+  }
+
+  res.status(200).json({ success: true, number: events.length, data: events });
+});
+
 //desc    GET Event by ID
 //route   GET /api/events/:id
 //access  private

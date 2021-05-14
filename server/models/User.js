@@ -48,6 +48,9 @@ const UserSchema = new mongoose.Schema({
     enum: ['active', 'inactive', 'suspended'],
     default: 'active',
   },
+  website: {
+    type: String,
+  },
   following: {
     type: [
       {

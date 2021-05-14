@@ -123,8 +123,7 @@ exports.getDinge = asyncHandler(async (req, res, next) => {
 });
 
 //desc    GET local Dinge
-//route   GET /api/dinge/local/:distance
-//route   GET /api/dinge/local/:location/:distance --- if location is in req.params
+//route   GET /api/dinge/local/:location/:distance
 //access  private
 exports.getLocalDinge = asyncHandler(async (req, res, next) => {
   const { distance } = req.params;

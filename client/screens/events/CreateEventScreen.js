@@ -178,8 +178,6 @@ const CreateEventScreen = (props) => {
   };
 
   //Text input
-  //If one of the validities is false, there is no message warning the user to complete the form properly
-  //and instead goes straight to event details and the app crashes.
   const inputChangeHandler = (inputType, text) => {
     let isValid = true;
     if (text.trim().length === 0) {

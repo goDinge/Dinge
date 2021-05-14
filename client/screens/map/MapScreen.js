@@ -6,6 +6,7 @@ import {
   Modal,
   Dimensions,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import MapView, { Circle } from 'react-native-maps';
@@ -25,19 +26,20 @@ import * as authActions from '../../store/actions/auth';
 import * as eventsActions from '../../store/actions/events';
 
 const mapStyle = require('../../helpers/mapStyle.json');
+const settingConfigs = require('../../settingConfigs.json');
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
+//location needs to be a global redux state
+
 const MapScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState({});
   const [errorMsg, setErrorMsg] = useState(null);
   const [region, setRegion] = useState(location);
   const [modalVisible, setModalVisible] = useState(false);
-  const [count, setCount] = useState(0);
-  const [target, setTarget] = useState(30);
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -66,15 +68,28 @@ const MapScreen = (props) => {
     };
   };
 
+  let count = 0;
+  let target = 15;
+
   const getLocation = async () => {
     setMapLoaded(false);
     try {
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Highest,
       });
+      if (!location) {
+        //if can't find any location, defaultLocation is Yonge and Bloor...
+        setLocation(settingConfigs[2].defaultLocation.coords);
+        setRegion(regionData(settingConfigs[2].defaultLocation.coords));
+        setMapLoaded(true);
+        Alert.alert(
+          'Location not found.',
+          'Please either turn off your WIFI and restart your phone, or do not use any GPS functionalities. Our apologies.',
+          [{ text: 'Okay' }]
+        );
+      }
       setLocation(location);
-      setRegion(regionData(location));
-      if (count > 6) {
+      if (count > settingConfigs[1]) {
         //after too many attempts, just set location and launch app anyways
         setRegion(regionData(location));
         loadData(location);
@@ -82,10 +97,11 @@ const MapScreen = (props) => {
         setModalVisible(true);
       } else if (location.coords.accuracy > target) {
         //if accuracy is over dynamic target, rerun
+        count = count + 1;
+        target = target + 5;
         getLocation();
-        setCount(count + 1);
-        setTarget(target + 10);
-        //console.log('target: ', target);
+        // console.log('count: ', count);
+        // console.log('target: ', target);
       } else {
         //if not too many attempts and accuracy at or below target
         setRegion(regionData(location));
@@ -101,7 +117,7 @@ const MapScreen = (props) => {
     setError(null);
     try {
       await dispatch(dingeActions.getLocalDinge(location));
-      await dispatch(eventsActions.getEvents());
+      await dispatch(eventsActions.getLocalEvents(location));
       await dispatch(authActions.getAuthUser());
     } catch (err) {
       setError(err.message);
@@ -137,6 +153,8 @@ const MapScreen = (props) => {
   };
 
   const now = new Date(Date.now()).getTime();
+
+  //console.log('map screen events: ', events);
 
   if (!mapLoaded || !location || !authUser) {
     return (
@@ -187,7 +205,7 @@ const MapScreen = (props) => {
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
           }}
-          radius={3000}
+          radius={settingConfigs[0].radius * 1000}
           strokeColor={Colors.primary}
           fillColor={'rgba(0, 166, 153, 0.05)'}
         />
