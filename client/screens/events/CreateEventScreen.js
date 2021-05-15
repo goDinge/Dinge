@@ -67,6 +67,8 @@ const CreateEventScreen = (props) => {
 
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingMarker, setIsFetchingMarker] = useState(false);
+  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const [eventToPass, setEventToPass] = useState(null);
   const [date, setDate] = useState(new Date(Date.now()));
   const [mode, setMode] = useState('date');
@@ -87,6 +89,7 @@ const CreateEventScreen = (props) => {
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   const newEvent = useSelector((state) => state.events.newEvent);
+  const userLocation = useSelector((state) => state.location.location);
   // if (newEvent) {
   //   console.log('newEvent', newEvent.eventName);
   // }
@@ -215,7 +218,9 @@ const CreateEventScreen = (props) => {
 
   //Map and marker
   const loadMapHandler = async (region, address) => {
+    setIsFetchingMarker(true);
     await coordLookUp(address);
+    setIsFetchingMarker(false);
     setMapLoaded(true);
   };
 
@@ -311,13 +316,15 @@ const CreateEventScreen = (props) => {
         return;
       }
     }
+    setIsCreatingEvent(true);
     try {
       await dispatch(eventsActions.createEvent(formState));
-      await dispatch(eventsActions.getEvents());
+      await dispatch(eventsActions.getLocalEvents(userLocation));
     } catch (err) {
       setError(err.message);
       console.log(err.message);
     }
+    setIsCreatingEvent(false);
     setConfirmVisible(true);
   };
 
@@ -430,13 +437,29 @@ const CreateEventScreen = (props) => {
                 onChangeText={(text) => inputChangeHandler('address', text)}
               />
               <View style={styles.buttonContainer}>
-                <CustomButton
-                  onSelect={() =>
-                    loadMapHandler(region, formState.inputValues.address)
-                  }
-                >
-                  <Text style={styles.locateOnMapText}>Add Map Marker</Text>
-                </CustomButton>
+                {isFetchingMarker ? (
+                  <CustomButton
+                    onSelect={() =>
+                      loadMapHandler(region, formState.inputValues.address)
+                    }
+                    style={{ flexDirection: 'row' }}
+                  >
+                    <Text style={styles.locateOnMapText}>Loading... </Text>
+                    <ActivityIndicator
+                      color="white"
+                      size="small"
+                      style={{ paddingRight: 15 }}
+                    />
+                  </CustomButton>
+                ) : (
+                  <CustomButton
+                    onSelect={() =>
+                      loadMapHandler(region, formState.inputValues.address)
+                    }
+                  >
+                    <Text style={styles.locateOnMapText}>Add Map Marker</Text>
+                  </CustomButton>
+                )}
               </View>
             </View>
             <View style={styles.mapContainer}>
@@ -462,9 +485,23 @@ const CreateEventScreen = (props) => {
               />
             </View>
             <View style={styles.buttonContainer}>
-              <CustomButton onSelect={createEventHandler}>
-                <Text style={styles.locateOnMapText}>Create Event</Text>
-              </CustomButton>
+              {isCreatingEvent ? (
+                <CustomButton
+                  onSelect={createEventHandler}
+                  style={{ flexDirection: 'row' }}
+                >
+                  <Text style={styles.locateOnMapText}>Creating Event</Text>
+                  <ActivityIndicator
+                    color="white"
+                    size="small"
+                    style={{ paddingRight: 15 }}
+                  />
+                </CustomButton>
+              ) : (
+                <CustomButton onSelect={createEventHandler}>
+                  <Text style={styles.locateOnMapText}>Create Event</Text>
+                </CustomButton>
+              )}
             </View>
             <View style={styles.extraSpace}></View>
           </ScrollView>

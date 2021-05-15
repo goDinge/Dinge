@@ -6,15 +6,11 @@ import { Marker } from 'react-native-maps';
 import * as dingeActions from '../store/actions/dinge';
 import * as eventsActions from '../store/actions/events';
 
-const settingConfigs = require('../settingConfigs.json');
-
 const CustomMarker = (props) => {
   const [pointOpacity, setPointOpacity] = useState(1);
   const [draggable, setDraggable] = useState(false);
 
   const authUser = useSelector((state) => state.auth.authUser);
-  const dinge = useSelector((state) => state.dinge.dinge);
-  const ding = useSelector((state) => state.ding.ding);
 
   const marker = props.data;
   const id = props.data._id;
@@ -43,9 +39,6 @@ const CustomMarker = (props) => {
     MARKER_HEIGHT
   );
 
-  //Will need to update dinge and events state as well,
-  //because MapScreen works off of those
-  //probably easier to move the update*Location functions to dinge/events
   const dragEndHandler = async (e) => {
     try {
       if (marker.dingType) {

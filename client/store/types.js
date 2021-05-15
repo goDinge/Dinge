@@ -24,6 +24,8 @@ export const GET_AUTH_USER = 'GET_AUTH_USER';
 export const UPDATE_USER_AVATAR = 'UPDATE_USER_AVATAR';
 export const UPDATE_AUTH_USER = 'UPDATE_AUTH_USER';
 
+export const SET_LOCATION = 'SET_LOCATION';
+
 export const AUTHENTICATE = 'AUTHENTICATE';
 export const LOGOUT = 'LOGOUT';
 export const FORGOT_PASSWORD = 'FORGOT_PASSWORD';

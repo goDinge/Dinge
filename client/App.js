@@ -12,6 +12,8 @@ import userReducer from './store/reducers/user';
 import authReducer from './store/reducers/auth';
 import dingReducer from './store/reducers/ding';
 import eventsReducer from './store/reducers/events';
+import eventReducer from './store/reducers/event';
+import locationReducer from './store/reducers/location';
 
 import AppNavigator from './navigation/AppNavigator';
 
@@ -32,6 +34,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   ding: dingReducer,
   events: eventsReducer,
+  event: eventReducer,
+  location: locationReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

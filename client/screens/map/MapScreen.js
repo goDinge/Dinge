@@ -24,6 +24,7 @@ import Colors from '../../constants/Colors';
 import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
 import * as eventsActions from '../../store/actions/events';
+import * as locationActions from '../../store/actions/location';
 
 const mapStyle = require('../../helpers/mapStyle.json');
 const settingConfigs = require('../../settingConfigs.json');
@@ -47,6 +48,7 @@ const MapScreen = (props) => {
   const dinge = useSelector((state) => state.dinge.dinge);
   const events = useSelector((state) => state.events.events);
   const authUser = useSelector((state) => state.auth.authUser);
+  //const location = useSelector((state) => state.location.location);
 
   useEffect(() => {
     (async () => {
@@ -70,7 +72,7 @@ const MapScreen = (props) => {
 
   let count = 0;
   let target = 15;
-
+  //remember: useEffect calls getLocation(), loadData() gets called inside getLocation
   const getLocation = async () => {
     setMapLoaded(false);
     try {
@@ -78,8 +80,11 @@ const MapScreen = (props) => {
         accuracy: Location.Accuracy.Highest,
       });
       if (!location) {
-        //if can't find any location, defaultLocation is Yonge and Bloor...
+        //if can't find any location, defaultLocation will be Yonge and Bloor...
         setLocation(settingConfigs[2].defaultLocation.coords);
+        await dispatch(
+          locationActions.setLocation(settingConfigs[2].defaultLocation.coords)
+        );
         setRegion(regionData(settingConfigs[2].defaultLocation.coords));
         setMapLoaded(true);
         Alert.alert(
@@ -89,8 +94,10 @@ const MapScreen = (props) => {
         );
       }
       setLocation(location);
+      //await dispatch(locationActions.setLocation(location));
       if (count > settingConfigs[1]) {
         //after too many attempts, just set location and launch app anyways
+        await dispatch(locationActions.setLocation(location));
         setRegion(regionData(location));
         loadData(location);
         setMapLoaded(true);
@@ -104,6 +111,7 @@ const MapScreen = (props) => {
         // console.log('target: ', target);
       } else {
         //if not too many attempts and accuracy at or below target
+        await dispatch(locationActions.setLocation(location));
         setRegion(regionData(location));
         loadData(location);
         setMapLoaded(true);
