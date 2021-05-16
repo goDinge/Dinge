@@ -81,17 +81,6 @@ exports.getEvents = asyncHandler(async (req, res, next) => {
   }
 
   res.status(200).json({ success: true, data: events });
-
-  // const userId = req.user.id;
-  // console.log(userId);
-
-  // if (!userId) {
-  //   return next(ErrorResponse('No user with this ID found', 400));
-  // }
-
-  // const events = await Event.find({ user: userId });
-
-  // res.status(200).json({ success: true, data: events });
 });
 
 //desc    GET local events
@@ -109,8 +98,6 @@ exports.getLocalEvents = asyncHandler(async (req, res, next) => {
       $geoWithin: { $centerSphere: [[longitude, latitude], radius] },
     },
   });
-
-  //console.log('local events: ', events);
 
   if (!events) {
     return next(ErrorResponse('No nearby events found', 400));
@@ -135,71 +122,71 @@ exports.getEventById = asyncHandler(async (req, res, next) => {
 //desc    GET All Events under User ID
 //route   GET /api/events/user/:id
 //access  private
-exports.getEventsByUserId = asyncHandler(async (req, res, next) => {
-  const userId = req.params.id;
+// exports.getEventsByUserId = asyncHandler(async (req, res, next) => {
+//   const userId = req.params.id;
 
-  if (!userId) {
-    return next(ErrorResponse('No user with this ID found', 400));
-  }
+//   if (!userId) {
+//     return next(ErrorResponse('No user with this ID found', 400));
+//   }
 
-  const events = await Event.find({ user: userId });
+//   const events = await Event.find({ user: userId });
 
-  res.status(200).json({ success: true, data: events });
-});
+//   res.status(200).json({ success: true, data: events });
+// });
 
 //desc    GET All Active Events under User ID //events that haven't ended
 //route   GET /api/events/user/active/:id
 //access  private
-exports.getActiveEventsByUserId = asyncHandler(async (req, res, next) => {
-  const userId = req.params.id;
+// exports.getActiveEventsByUserId = asyncHandler(async (req, res, next) => {
+//   const userId = req.params.id;
 
-  if (!userId) {
-    return next(ErrorResponse('No user with this ID found', 400));
-  }
+//   if (!userId) {
+//     return next(ErrorResponse('No user with this ID found', 400));
+//   }
 
-  const currentTime = Date.now();
+//   const currentTime = Date.now();
 
-  const events = await Event.find({ user: userId });
+//   const events = await Event.find({ user: userId });
 
-  const activeEvents = events.filter(
-    (event) => currentTime < Date.parse(event.endDate)
-  );
+//   const activeEvents = events.filter(
+//     (event) => currentTime < Date.parse(event.endDate)
+//   );
 
-  res.status(200).json({ success: true, data: activeEvents });
-});
+//   res.status(200).json({ success: true, data: activeEvents });
+// });
 
 //desc    GET authUser events
 //route   GET /api/events/authuser
 //access  private
-exports.getEventsByAuthUser = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
+// exports.getEventsByAuthUser = asyncHandler(async (req, res, next) => {
+//   const userId = req.user.id;
 
-  if (!userId) {
-    return next(ErrorResponse('No user with this ID found', 400));
-  }
+//   if (!userId) {
+//     return next(ErrorResponse('No user with this ID found', 400));
+//   }
 
-  const events = await Event.find({ user: userId });
+//   const events = await Event.find({ user: userId });
 
-  res.status(200).json({ success: true, data: events });
-});
+//   res.status(200).json({ success: true, data: events });
+// });
 
 //desc    GET all active authUser events //events that haven't ended
 //route   GET /api/events/authuser/active
 //access  private
-exports.getActiveEventsByAuthUser = asyncHandler(async (req, res, next) => {
-  const userId = req.user.id;
+// exports.getActiveEventsByAuthUser = asyncHandler(async (req, res, next) => {
+//   const userId = req.user.id;
 
-  if (!userId) {
-    return next(ErrorResponse('No user with this ID found', 400));
-  }
+//   if (!userId) {
+//     return next(ErrorResponse('No user with this ID found', 400));
+//   }
 
-  const currentTime = Date.now();
+//   const currentTime = Date.now();
 
-  const events = await Event.find({ user: userId });
+//   const events = await Event.find({ user: userId });
 
-  const activeEvents = events.filter(
-    (event) => currentTime < Date.parse(event.endDate)
-  );
+//   const activeEvents = events.filter(
+//     (event) => currentTime < Date.parse(event.endDate)
+//   );
 
-  res.status(200).json({ success: true, data: activeEvents });
-});
+//   res.status(200).json({ success: true, data: activeEvents });
+// });

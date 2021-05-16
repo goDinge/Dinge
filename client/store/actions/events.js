@@ -48,16 +48,6 @@ export const getLocalEvents = (location) => {
   };
 };
 
-// export const getAuthUserActiveEvents = () => {
-//   return async (dispatch) => {
-//     try {
-
-//     } catch (err) {
-
-//     }
-//   }
-// }
-
 export const updateEventLocation = (eventId, location) => {
   return async (dispatch) => {
     try {
