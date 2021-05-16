@@ -48,6 +48,16 @@ export const getLocalEvents = (location) => {
   };
 };
 
+// export const getAuthUserActiveEvents = () => {
+//   return async (dispatch) => {
+//     try {
+
+//     } catch (err) {
+
+//     }
+//   }
+// }
+
 export const updateEventLocation = (eventId, location) => {
   return async (dispatch) => {
     try {
@@ -106,8 +116,6 @@ export const createEvent = (formState) => {
     try {
       const response = await axios.post(`${HOME_IP}/api/events`, body, config);
       const event = response.data.data;
-
-      //console.log(event);
 
       dispatch({
         type: CREATE_EVENT,

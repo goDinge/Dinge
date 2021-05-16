@@ -177,6 +177,11 @@ export const ProfileNavigator = () => {
         component={ProfileScreen}
         options={{ headerTitle: 'Profile' }}
       />
+      <ProfileStackNavigator.Screen
+        name="Event Details"
+        component={EventDetailsScreen}
+        options={{ headerTitle: 'Event Details' }}
+      />
     </ProfileStackNavigator.Navigator>
   );
 };

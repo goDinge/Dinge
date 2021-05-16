@@ -32,8 +32,6 @@ const settingConfigs = require('../../settingConfigs.json');
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-//location needs to be a global redux state
-
 const MapScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [mapLoaded, setMapLoaded] = useState(false);

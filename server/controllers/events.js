@@ -51,7 +51,7 @@ exports.createEvent = asyncHandler(async (req, res, next) => {
 });
 
 //desc    DELETE Event by ID
-//route   DELETE /api/event/:id
+//route   DELETE /api/events/:id
 //access  private
 exports.deleteEventById = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
@@ -71,7 +71,7 @@ exports.deleteEventById = asyncHandler(async (req, res, next) => {
 });
 
 //desc    GET all Events
-//route   GET /api/event
+//route   GET /api/events
 //access  public
 exports.getEvents = asyncHandler(async (req, res, next) => {
   const events = await Event.find();
@@ -81,6 +81,17 @@ exports.getEvents = asyncHandler(async (req, res, next) => {
   }
 
   res.status(200).json({ success: true, data: events });
+
+  // const userId = req.user.id;
+  // console.log(userId);
+
+  // if (!userId) {
+  //   return next(ErrorResponse('No user with this ID found', 400));
+  // }
+
+  // const events = await Event.find({ user: userId });
+
+  // res.status(200).json({ success: true, data: events });
 });
 
 //desc    GET local events
@@ -119,4 +130,76 @@ exports.getEventById = asyncHandler(async (req, res, next) => {
   }
 
   res.status(200).json({ success: true, data: event });
+});
+
+//desc    GET All Events under User ID
+//route   GET /api/events/user/:id
+//access  private
+exports.getEventsByUserId = asyncHandler(async (req, res, next) => {
+  const userId = req.params.id;
+
+  if (!userId) {
+    return next(ErrorResponse('No user with this ID found', 400));
+  }
+
+  const events = await Event.find({ user: userId });
+
+  res.status(200).json({ success: true, data: events });
+});
+
+//desc    GET All Active Events under User ID //events that haven't ended
+//route   GET /api/events/user/active/:id
+//access  private
+exports.getActiveEventsByUserId = asyncHandler(async (req, res, next) => {
+  const userId = req.params.id;
+
+  if (!userId) {
+    return next(ErrorResponse('No user with this ID found', 400));
+  }
+
+  const currentTime = Date.now();
+
+  const events = await Event.find({ user: userId });
+
+  const activeEvents = events.filter(
+    (event) => currentTime < Date.parse(event.endDate)
+  );
+
+  res.status(200).json({ success: true, data: activeEvents });
+});
+
+//desc    GET authUser events
+//route   GET /api/events/authuser
+//access  private
+exports.getEventsByAuthUser = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+
+  if (!userId) {
+    return next(ErrorResponse('No user with this ID found', 400));
+  }
+
+  const events = await Event.find({ user: userId });
+
+  res.status(200).json({ success: true, data: events });
+});
+
+//desc    GET all active authUser events //events that haven't ended
+//route   GET /api/events/authuser/active
+//access  private
+exports.getActiveEventsByAuthUser = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+
+  if (!userId) {
+    return next(ErrorResponse('No user with this ID found', 400));
+  }
+
+  const currentTime = Date.now();
+
+  const events = await Event.find({ user: userId });
+
+  const activeEvents = events.filter(
+    (event) => currentTime < Date.parse(event.endDate)
+  );
+
+  res.status(200).json({ success: true, data: activeEvents });
 });

@@ -14,20 +14,21 @@ import * as ImagePicker from 'expo-image-picker';
 
 import * as authActions from '../../store/actions/auth';
 import CustomButton from '../../components/CustomButton';
+import CustomEvent from '../../components/CustomEvent';
 import Colors from '../../constants/Colors';
 import getMonthName from '../../helpers/getMonth';
+
+import { sortEvents } from '../../helpers/sort';
 
 const ProfileScreen = (props) => {
   const [image, setImage] = useState(null);
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [showEvents, setShowEvents] = useState(null);
+
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.authUser);
-
-  const date = new Date(authUser.createdAt);
-  const monthNumber = date.getMonth() + 1;
-  const month = getMonthName(monthNumber);
-  const year = date.getFullYear();
+  const events = useSelector((state) => state.events.events);
 
   useEffect(() => {
     loadAuthUser();
@@ -47,9 +48,8 @@ const ProfileScreen = (props) => {
   useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
-        const {
-          status,
-        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
           alert('Sorry, we need camera roll permissions to make this work!');
         }
@@ -57,6 +57,22 @@ const ProfileScreen = (props) => {
     })();
   }, []);
 
+  //Calculate 'joined: (date)'
+  const date = new Date(authUser.createdAt);
+  const monthNumber = date.getMonth() + 1;
+  const month = getMonthName(monthNumber);
+  const year = date.getFullYear();
+
+  //Show user's active events
+  const currentTime = Date.now();
+
+  const activeAuthUserEvents = events
+    .filter((event) => currentTime < Date.parse(event.endDate))
+    .filter((event) => authUser._id === event.user);
+
+  activeAuthUserEvents.sort(sortEvents);
+
+  //update profile avatar
   const imagePickerHandler = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -77,6 +93,10 @@ const ProfileScreen = (props) => {
       ]);
       console.log(err.message);
     }
+  };
+
+  const eventDetailsHandler = (event) => {
+    props.navigation.navigate('Event Details', event);
   };
 
   const logout = async () => {
@@ -133,13 +153,17 @@ const ProfileScreen = (props) => {
               <Text style={styles.statsTitle}>Following</Text>
               <Text style={styles.stats}>{authUser.following.length}</Text>
             </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statsTitle}>Likes / Ding</Text>
-              <Text style={styles.stats}>3.2</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statsTitle}>Ding / Day</Text>
-              <Text style={styles.stats}>2.8</Text>
+          </View>
+          <View style={styles.eventsContainer}>
+            <Text style={styles.title}>Active Events</Text>
+            <View style={styles.eventsList}>
+              {activeAuthUserEvents.map((item, index) => (
+                <CustomEvent
+                  item={item}
+                  key={index}
+                  onSelect={() => eventDetailsHandler(item)}
+                />
+              ))}
             </View>
           </View>
           <View style={styles.bottomContainer}>
@@ -206,6 +230,11 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     width: '100%',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  eventsContainer: {
+    width: '100%',
   },
   title: {
     textAlign: 'left',
@@ -235,6 +264,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#777',
   },
+  eventContainer: {
+    width: '100%',
+    marginBottom: 5,
+    marginTop: 2,
+    paddingHorizontal: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#eeeeee',
+  },
+  eventTimeContainer: {
+    width: '100%',
+    marginBottom: 7,
+  },
+  eventInfoContainer: {
+    width: '80%',
+    alignSelf: 'flex-end',
+    padding: 10,
+    backgroundColor: Colors.lightBlue,
+    borderRadius: 20,
+    marginBottom: 12,
+  },
+  eventTextTitle: {
+    fontFamily: 'cereal-bold',
+    fontSize: 18,
+    paddingLeft: 10,
+  },
+  eventText: {
+    fontFamily: 'cereal-medium',
+    paddingLeft: 10,
+  },
+  eventsList: {
+    width: '100%',
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
   bottomContainer: {
     width: '100%',
     borderColor: '#ccc',
@@ -256,3 +319,14 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 });
+
+{
+  /* <View style={styles.statBox}>
+              <Text style={styles.statsTitle}>Likes / Ding</Text>
+              <Text style={styles.stats}>3.2</Text>
+            </View>
+            <View style={styles.statBox}>
+              <Text style={styles.statsTitle}>Ding / Day</Text>
+              <Text style={styles.stats}>2.8</Text>
+            </View> */
+}

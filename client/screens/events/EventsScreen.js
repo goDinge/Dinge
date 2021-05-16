@@ -14,6 +14,8 @@ import * as eventsActions from '../../store/actions/events';
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
 
+import { sortEvents } from '../../helpers/sort';
+
 const todayEventsDefault = (events) => {
   let defaultEvents = [];
   for (const event of events) {
@@ -22,16 +24,6 @@ const todayEventsDefault = (events) => {
     }
   }
   return defaultEvents;
-};
-
-const sortEvents = (a, b) => {
-  if (a.date < b.date) {
-    return -1;
-  }
-  if (a.date > b.date) {
-    return 1;
-  }
-  return 0;
 };
 
 const EventsScreen = (props) => {
