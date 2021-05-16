@@ -20,7 +20,7 @@ export const getDing = (dingId) => {
         ding: ding,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error('Cannot connect with server. Please try again. ');
     }
   };
 };

@@ -144,7 +144,7 @@ export const login = (email, password) => {
       );
       await dispatch(setAuthUser(resData.user));
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error('Cannot connect with server. Please try again. ');
     }
   };
 };
