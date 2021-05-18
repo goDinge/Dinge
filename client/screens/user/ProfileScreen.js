@@ -7,12 +7,15 @@ import {
   ScrollView,
   Image,
   Pressable,
+  Linking,
   Alert,
   ActivityIndicator,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as WebBrowser from 'expo-web-browser';
 
 import * as authActions from '../../store/actions/auth';
+import * as eventsActions from '../../store/actions/events';
 import CustomButton from '../../components/CustomButton';
 import CustomEvent from '../../components/CustomEvent';
 import Colors from '../../constants/Colors';
@@ -28,7 +31,7 @@ const ProfileScreen = (props) => {
 
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.authUser);
-  const events = useSelector((state) => state.events.events);
+  const authEvents = useSelector((state) => state.events.authEvents);
 
   useEffect(() => {
     loadAuthUser();
@@ -39,6 +42,7 @@ const ProfileScreen = (props) => {
     setIsLoading(true);
     try {
       await dispatch(authActions.getAuthUser());
+      await dispatch(eventsActions.getEventsByAuth());
     } catch (err) {
       setError(err.message);
     }
@@ -66,9 +70,9 @@ const ProfileScreen = (props) => {
   //Show user's active events
   const currentTime = Date.now();
 
-  const activeAuthUserEvents = events
-    .filter((event) => currentTime < Date.parse(event.endDate))
-    .filter((event) => authUser._id === event.user);
+  const activeAuthUserEvents = authEvents.filter(
+    (event) => currentTime < Date.parse(event.endDate)
+  );
 
   activeAuthUserEvents.sort(sortEvents);
 
@@ -97,6 +101,10 @@ const ProfileScreen = (props) => {
 
   const eventDetailsHandler = (event) => {
     props.navigation.navigate('Event Details', event);
+  };
+
+  const browserHandler = (url) => {
+    WebBrowser.openBrowserAsync(url);
   };
 
   const logout = async () => {
@@ -152,6 +160,29 @@ const ProfileScreen = (props) => {
             <View style={styles.statBox}>
               <Text style={styles.statsTitle}>Following</Text>
               <Text style={styles.stats}>{authUser.following.length}</Text>
+            </View>
+          </View>
+          <View style={styles.statsContainer}>
+            <Text style={styles.title}>Socials</Text>
+            <View style={styles.statBox}>
+              <Text style={styles.statsTitle}>Website:</Text>
+              {authUser.website ? (
+                <Pressable onPressIn={() => browserHandler(authUser.website)}>
+                  <Text style={styles.stats}>{authUser.website}</Text>
+                </Pressable>
+              ) : (
+                <Text style={styles.stats}>no website</Text>
+              )}
+            </View>
+            <View style={styles.statBox}>
+              <Text style={styles.statsTitle}>Facebook:</Text>
+              {authUser.facebook ? (
+                <Pressable onPressIn={() => browserHandler(authUser.facebook)}>
+                  <Text style={styles.stats}>{authUser.facebook}</Text>
+                </Pressable>
+              ) : (
+                <Text style={styles.stats}>no facebook</Text>
+              )}
             </View>
           </View>
           <View style={styles.eventsContainer}>
@@ -230,6 +261,7 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     width: '100%',
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },

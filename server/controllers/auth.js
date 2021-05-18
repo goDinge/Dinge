@@ -77,6 +77,33 @@ exports.getAuthUser = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: user });
 });
 
+//desc     EDIT auth user
+//route    PUT /api/auth/me
+//access   Private
+exports.editAuthUser = asyncHandler(async (req, res, next) => {
+  // if (!user) {
+  //   return next(new ErrorResponse(`No user found.`));
+  // }
+
+  const { email, name, website, facebook } = req.body;
+
+  await User.updateOne(
+    { _id: req.user.id },
+    {
+      $set: {
+        email,
+        name,
+        website,
+        facebook,
+      },
+    }
+  );
+
+  const user = await User.findById(req.user.id);
+
+  res.status(200).json({ success: true, data: user });
+});
+
 /*** HELPER ***/
 const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();

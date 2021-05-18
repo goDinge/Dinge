@@ -6,7 +6,7 @@ const {
   getEventById,
   // getEventsByUserId,
   // getActiveEventsByUserId,
-  // getEventsByAuthUser,
+  getEventsByAuthUser,
   // getActiveEventsByAuthUser,
   getLocalEvents,
 } = require('../controllers/events');
@@ -16,7 +16,7 @@ const { protect } = require('../middleware/auth');
 const router = express.Router();
 
 router.get('/', protect, getEvents);
-// router.get('/authuser', protect, getEventsByAuthUser);
+router.get('/authuser', protect, getEventsByAuthUser);
 // router.get('/authuser/active', protect, getActiveEventsByAuthUser);
 router.get('/local/:distance/:location', protect, getLocalEvents);
 router.get('/:id', getEventById);

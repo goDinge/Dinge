@@ -4,6 +4,7 @@ import {
   View,
   Text,
   StyleSheet,
+  Pressable,
   ScrollView,
   Image,
   ActivityIndicator,
@@ -50,6 +51,10 @@ const PublicScreen = (props) => {
 
   activeUserEvents.sort(sortEvents);
 
+  const eventDetailsHandler = (event) => {
+    props.navigation.navigate('Event Details', event);
+  };
+
   if (isLoading) {
     return (
       <View style={styles.indicatorContainer}>
@@ -75,6 +80,29 @@ const PublicScreen = (props) => {
               source={{ uri: userState.avatar }}
               defaultSource={require('../../assets/avatar.png')}
             />
+          </View>
+          <View style={styles.statsContainer}>
+            <Text style={styles.title}>Socials</Text>
+            <View style={styles.statBox}>
+              <Text style={styles.statsTitle}>Website:</Text>
+              {userState.website ? (
+                <Pressable onPressIn={() => browserHandler(userState.website)}>
+                  <Text style={styles.stats}>{userState.website}</Text>
+                </Pressable>
+              ) : (
+                <Text style={styles.stats}>no website</Text>
+              )}
+            </View>
+            <View style={styles.statBox}>
+              <Text style={styles.statsTitle}>Facebook:</Text>
+              {userState.facebook ? (
+                <Pressable onPressIn={() => browserHandler(userState.facebook)}>
+                  <Text style={styles.stats}>{userState.facebook}</Text>
+                </Pressable>
+              ) : (
+                <Text style={styles.stats}>no facebook</Text>
+              )}
+            </View>
           </View>
           <View style={styles.eventsContainer}>
             <Text style={styles.title}>Active Events</Text>
@@ -153,6 +181,15 @@ const styles = StyleSheet.create({
     width: 240,
     borderRadius: 120,
   },
+  statsContainer: {
+    width: '100%',
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  statBox: {
+    marginBottom: 10,
+  },
   eventsContainer: {
     width: '100%',
   },
@@ -167,5 +204,18 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingTop: 4,
     paddingBottom: 8,
+  },
+  statsTitle: {
+    textAlign: 'left',
+    fontFamily: 'cereal-medium',
+    fontSize: 18,
+    color: '#777',
+    paddingVertical: 5,
+  },
+  stats: {
+    textAlign: 'left',
+    fontFamily: 'cereal-book',
+    fontSize: 16,
+    color: '#777',
   },
 });

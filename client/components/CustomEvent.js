@@ -13,7 +13,7 @@ const CustomEvent = (props) => (
         {convertAMPM(props.item.date)} - {convertAMPM(props.item.endDate)}
       </Text>
     </View>
-    <Pressable style={styles.eventInfoContainer} onPress={props.item.onSelect}>
+    <Pressable style={styles.eventInfoContainer} onPress={props.onSelect}>
       <Text style={styles.eventTextTitle}>{props.item.eventName}</Text>
       <Text style={styles.eventText}>
         {props.item.description.split(' ').slice(0, 9).join(' ') + '...'}

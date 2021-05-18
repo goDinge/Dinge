@@ -24,7 +24,7 @@ export const getDinge = () => {
         dinge: dinge,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again. ');
+      throw new Error('Cannot connect with server. Please try again.');
     }
   };
 };

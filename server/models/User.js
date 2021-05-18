@@ -48,6 +48,10 @@ const UserSchema = new mongoose.Schema({
     enum: ['active', 'inactive', 'suspended'],
     default: 'active',
   },
+  facebook: {
+    type: String,
+    default: 'https://www.facebook.com',
+  },
   website: {
     type: String,
   },

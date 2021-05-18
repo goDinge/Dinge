@@ -155,20 +155,19 @@ exports.getEventById = asyncHandler(async (req, res, next) => {
 //   res.status(200).json({ success: true, data: activeEvents });
 // });
 
-//desc    GET authUser events
-//route   GET /api/events/authuser
-//access  private
-// exports.getEventsByAuthUser = asyncHandler(async (req, res, next) => {
-//   const userId = req.user.id;
+// desc    GET authUser events
+// route   GET /api/events/authuser
+// access  private
+exports.getEventsByAuthUser = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+  if (!userId) {
+    return next(ErrorResponse('No user with this ID found', 400));
+  }
 
-//   if (!userId) {
-//     return next(ErrorResponse('No user with this ID found', 400));
-//   }
+  const events = await Event.find({ user: userId });
 
-//   const events = await Event.find({ user: userId });
-
-//   res.status(200).json({ success: true, data: events });
-// });
+  res.status(200).json({ success: true, data: events });
+});
 
 //desc    GET all active authUser events //events that haven't ended
 //route   GET /api/events/authuser/active

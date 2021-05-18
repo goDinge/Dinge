@@ -80,9 +80,9 @@ const EventDetailsScreen = (props) => {
   };
 
   const toUserNameHandler = (user) => {
-    props.navigation.navigate('Map', {
+    props.navigation.navigate('Public', {
       screen: 'Public',
-      params: user,
+      params: { user },
     });
   };
 

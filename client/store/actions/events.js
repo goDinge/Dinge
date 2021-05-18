@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-  GET_EVENTS,
+  GET_AUTH_EVENTS,
   GET_LOCAL_EVENTS,
   CREATE_EVENT,
   UPDATE_EVENT_LOCATION,
@@ -9,16 +9,16 @@ import { HOME_IP } from '@env';
 
 const settingConfigs = require('../../settingConfigs.json');
 
-export const getEvents = () => {
+export const getEventsByAuth = () => {
   return async (dispatch) => {
     try {
       console.log('events action - IP used:', HOME_IP);
 
-      const response = await axios.get(`${HOME_IP}/api/events`);
+      const response = await axios.get(`${HOME_IP}/api/events/authUser`);
       const events = response.data.data;
 
       dispatch({
-        type: GET_EVENTS,
+        type: GET_AUTH_EVENTS,
         events: events,
       });
     } catch (err) {

@@ -1,5 +1,5 @@
 import {
-  GET_EVENTS,
+  GET_AUTH_EVENTS,
   GET_LOCAL_EVENTS,
   CREATE_EVENT,
   UPDATE_EVENT_LOCATION,
@@ -7,16 +7,17 @@ import {
 
 const initialState = {
   events: [],
+  authEvents: [],
   newEvent: null,
   event: {},
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case GET_EVENTS:
+    case GET_AUTH_EVENTS:
       return {
         ...state,
-        events: action.events,
+        authEvents: action.events,
       };
     case GET_LOCAL_EVENTS: {
       return {
