@@ -59,6 +59,12 @@ const MapScreen = (props) => {
     })();
   }, []);
 
+  useEffect(() => {
+    if (error) {
+      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+    }
+  }, [error]);
+
   const regionData = (location) => {
     return {
       latitude: location.coords.latitude,
@@ -72,6 +78,7 @@ const MapScreen = (props) => {
   let target = 15;
   //remember: useEffect calls getLocation(), loadData() gets called inside getLocation
   const getLocation = async () => {
+    setError(null);
     setMapLoaded(false);
     try {
       const location = await Location.getCurrentPositionAsync({
@@ -115,6 +122,7 @@ const MapScreen = (props) => {
         setMapLoaded(true);
       }
     } catch (err) {
+      setError(err.message);
       console.log(err.message);
     }
   };

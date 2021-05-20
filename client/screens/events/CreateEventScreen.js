@@ -276,6 +276,7 @@ const CreateEventScreen = (props) => {
     'music',
     'party',
     'political',
+    'religious',
     'sports',
     'volunteer',
     'other',
@@ -433,6 +434,7 @@ const CreateEventScreen = (props) => {
               <TextInput
                 placeholder="123 main street, mycity..."
                 style={styles.tempInput}
+                autoCapitalize="words"
                 value={formState.inputValues.address}
                 onChangeText={(text) => inputChangeHandler('address', text)}
               />

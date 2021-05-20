@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Pressable,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -44,11 +45,10 @@ const formReducer = (state, action) => {
 };
 
 const ProfileEditScreen = (props) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(undefined);
 
   const authUser = props.route.params.authUser;
-  console.log(authUser);
 
   const dispatch = useDispatch();
 
@@ -80,6 +80,12 @@ const ProfileEditScreen = (props) => {
     })();
   }, []);
 
+  useEffect(() => {
+    if (error) {
+      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+    }
+  }, [error]);
+
   //update profile avatar
   const imagePickerHandler = async () => {
     try {
@@ -104,8 +110,28 @@ const ProfileEditScreen = (props) => {
   };
 
   const updateHandler = async () => {
-    console.log('update');
+    setError(null);
+    setIsUpdating(true);
+    if (!formState.formIsValid) {
+      Alert.alert(
+        'Error.',
+        'Please make sure name and email fields are completed.',
+        [{ text: 'Okay' }]
+      );
+      return;
+    }
+
+    try {
+      await dispatch(authActions.updateProfile(formState.inputValues));
+      Alert.alert('Profile updated.', 'Thanks.', [{ text: 'Okay' }]);
+    } catch (err) {
+      setError(err.message);
+      console.log(err);
+    }
+    setIsUpdating(false);
   };
+
+  console.log(formState);
 
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {
@@ -118,16 +144,6 @@ const ProfileEditScreen = (props) => {
     },
     [dispatchFormState]
   );
-
-  if (isLoading) {
-    return (
-      <ActivityIndicator
-        color={Colors.primary}
-        size="large"
-        style={styles.actIndicator}
-      />
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -152,6 +168,7 @@ const ProfileEditScreen = (props) => {
               errorText="Please update your name"
               onInputChange={inputChangeHandler}
               initialValue={authUser.name}
+              initiallyValid="true"
               required
               style={styles.textInput}
             />
@@ -163,32 +180,60 @@ const ProfileEditScreen = (props) => {
               errorText="Please update your email"
               onInputChange={inputChangeHandler}
               initialValue={authUser.email}
+              initiallyValid="true"
               required
+              email
               style={styles.textInput}
             />
             <CustomInput
               id="website"
               label="Website:"
               keyboardType="default"
+              placeholder={
+                authUser.website ? null : 'example: www.mywebsite.com'
+              }
               autoCapitalize="none"
               onInputChange={inputChangeHandler}
               initialValue={authUser.website ? authUser.website : null}
+              initiallyValid="true"
               style={styles.textInput}
             />
             <CustomInput
               id="facebook"
               label="Facebook:"
               keyboardType="default"
+              placeholder={
+                authUser.facebook ? null : 'find link in your facebook app'
+              }
               autoCapitalize="none"
               onInputChange={inputChangeHandler}
               initialValue={authUser.facebook ? authUser.facebook : null}
+              initiallyValid="true"
+              facebook
               style={styles.textInput}
             />
           </View>
           <View style={styles.buttonContainer}>
-            <CustomButton style={styles.button} onSelect={updateHandler}>
-              <Text style={styles.buttonText}>Update Profile</Text>
-            </CustomButton>
+            {isUpdating ? (
+              <CustomButton
+                style={{ flexDirection: 'row' }}
+                onSelect={updateHandler}
+              >
+                <Text style={styles.buttonText}>Updating Profile...</Text>
+                <ActivityIndicator
+                  color="white"
+                  size="small"
+                  style={{ paddingRight: 10 }}
+                />
+              </CustomButton>
+            ) : (
+              <CustomButton
+                style={{ flexDirection: 'row' }}
+                onSelect={updateHandler}
+              >
+                <Text style={styles.buttonText}>Update Profile</Text>
+              </CustomButton>
+            )}
           </View>
         </ScrollView>
       </View>
@@ -233,6 +278,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingVertical: 5,
+    paddingBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
@@ -291,5 +337,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'cereal-bold',
     color: 'white',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
   },
 });

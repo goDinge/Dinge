@@ -7,7 +7,7 @@ const asyncHandler = require('../middleware/async');
 //route   POST /api/auth
 //access  public
 exports.registerUser = asyncHandler(async (req, res, next) => {
-  const { name, email, password, role, website } = req.body;
+  const { name, email, password, role } = req.body;
 
   let user = await User.findOne({ email });
 
@@ -30,7 +30,6 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
     email,
     password,
     role,
-    website,
   });
 
   sendTokenResponse(user, 200, res);
@@ -86,6 +85,8 @@ exports.editAuthUser = asyncHandler(async (req, res, next) => {
   // }
 
   const { email, name, website, facebook } = req.body;
+
+  console.log(req.body.email);
 
   await User.updateOne(
     { _id: req.user.id },

@@ -103,7 +103,13 @@ const ProfileScreen = (props) => {
   };
 
   const browserHandler = (url) => {
-    WebBrowser.openBrowserAsync(url);
+    if (url.length > 8 && url.slice(0, 8) === 'https://') {
+      WebBrowser.openBrowserAsync(url);
+    }
+    if (url.length > 7 && url.slice(0, 7) === 'http://') {
+      WebBrowser.openBrowserAsync(url);
+    }
+    WebBrowser.openBrowserAsync('https://' + url);
   };
 
   const logout = async () => {
@@ -166,7 +172,7 @@ const ProfileScreen = (props) => {
             <View style={styles.statBox}>
               <Text style={styles.statsTitle}>Website:</Text>
               {authUser.website ? (
-                <Pressable onPressIn={() => browserHandler(authUser.website)}>
+                <Pressable onLongPress={() => browserHandler(authUser.website)}>
                   <Text style={styles.stats}>{authUser.website}</Text>
                 </Pressable>
               ) : (
@@ -176,7 +182,9 @@ const ProfileScreen = (props) => {
             <View style={styles.statBox}>
               <Text style={styles.statsTitle}>Facebook:</Text>
               {authUser.facebook ? (
-                <Pressable onPressIn={() => browserHandler(authUser.facebook)}>
+                <Pressable
+                  onLongPress={() => browserHandler(authUser.facebook)}
+                >
                   <Text style={styles.stats}>{authUser.facebook}</Text>
                 </Pressable>
               ) : (

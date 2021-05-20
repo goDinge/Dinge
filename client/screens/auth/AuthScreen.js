@@ -94,7 +94,6 @@ const Auth = (props) => {
       console.log(formState);
     }
     setError(null);
-    setIsLoading(true);
     try {
       await dispatch(action);
     } catch (err) {

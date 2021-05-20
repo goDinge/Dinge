@@ -55,6 +55,8 @@ export const updateProfile = (profile) => {
   return async (dispatch) => {
     const { name, email, website, facebook } = profile;
 
+    console.log('action / profile: ', profile);
+
     try {
       const body = {
         name,

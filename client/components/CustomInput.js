@@ -38,6 +38,7 @@ const CustomInput = (props) => {
   }, [inputState, onInputChange, id]);
 
   const textChangeHandler = (text) => {
+    const facebookRegex = /www.facebook.com/;
     const emailRegex =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     let isValid = true;
@@ -46,6 +47,11 @@ const CustomInput = (props) => {
     }
     if (props.email && !emailRegex.test(text.toLowerCase())) {
       isValid = false;
+    }
+    if (props.facebook) {
+      if (text !== '' && !facebookRegex.test(text.toLowerCase())) {
+        isValid = false;
+      }
     }
     if (props.min != null && +text < props.min) {
       isValid = false;
@@ -78,11 +84,11 @@ const CustomInput = (props) => {
         onBlur={lostFocusHandler}
         returnKeyType="next"
       />
-      {!inputState.isValid && inputState.touched && (
+      {/* {!inputState.isValid && inputState.touched && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{props.errorText}</Text>
         </View>
-      )}
+      )} */}
     </View>
   );
 };
@@ -90,7 +96,7 @@ const CustomInput = (props) => {
 const styles = StyleSheet.create({
   formControl: {
     width: '100%',
-    marginVertical: 2,
+    marginVertical: 8,
   },
   label: {
     fontFamily: 'cereal-book',
@@ -114,7 +120,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontFamily: 'cereal-book',
-    color: '#fff',
+    color: 'blue',
     fontSize: 12,
   },
 });

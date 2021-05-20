@@ -57,7 +57,13 @@ const PublicScreen = (props) => {
   };
 
   const browserHandler = (url) => {
-    WebBrowser.openBrowserAsync(url);
+    if (url.length > 8 && url.slice(0, 8) === 'https://') {
+      WebBrowser.openBrowserAsync(url);
+    }
+    if (url.length > 7 && url.slice(0, 7) === 'http://') {
+      WebBrowser.openBrowserAsync(url);
+    }
+    WebBrowser.openBrowserAsync('https://' + url);
   };
 
   if (isLoading) {
