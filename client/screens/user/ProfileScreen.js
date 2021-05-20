@@ -7,7 +7,6 @@ import {
   ScrollView,
   Image,
   Pressable,
-  Linking,
   Alert,
   ActivityIndicator,
 } from 'react-native';
@@ -351,14 +350,3 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 });
-
-{
-  /* <View style={styles.statBox}>
-              <Text style={styles.statsTitle}>Likes / Ding</Text>
-              <Text style={styles.stats}>3.2</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statsTitle}>Ding / Day</Text>
-              <Text style={styles.stats}>2.8</Text>
-            </View> */
-}

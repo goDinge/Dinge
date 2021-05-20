@@ -122,7 +122,9 @@ const Auth = (props) => {
       style={styles.screen}
     >
       {isLoading ? (
-        <ActivityIndicator />
+        <View style={styles.indicatorContainer}>
+          <ActivityIndicator color={Colors.primary} size="large" />
+        </View>
       ) : (
         <ScrollView contentContainerStyle={styles.outerContainer}>
           <View style={styles.container}>
@@ -232,6 +234,12 @@ const styles = StyleSheet.create({
     width: '80%',
     paddingTop: 20,
     paddingBottom: 30,
+  },
+  indicatorContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   titleText: {
     alignSelf: 'flex-start',

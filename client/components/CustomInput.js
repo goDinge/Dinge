@@ -38,7 +38,8 @@ const CustomInput = (props) => {
   }, [inputState, onInputChange, id]);
 
   const textChangeHandler = (text) => {
-    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailRegex =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     let isValid = true;
     if (props.required && text.trim().length === 0) {
       isValid = false;
@@ -68,7 +69,7 @@ const CustomInput = (props) => {
 
   return (
     <View style={styles.formControl}>
-      {/* <Text style={styles.label}>{props.label}</Text> */}
+      <Text style={styles.label}>{props.label}</Text>
       <TextInput
         {...props}
         style={styles.input}
@@ -89,17 +90,19 @@ const CustomInput = (props) => {
 const styles = StyleSheet.create({
   formControl: {
     width: '100%',
-    marginVertical: 7,
-  },
-  label: {
-    fontFamily: 'cereal-bold',
     marginVertical: 2,
   },
+  label: {
+    fontFamily: 'cereal-book',
+    fontSize: 18,
+    color: '#999',
+    alignSelf: 'flex-start',
+  },
   input: {
-    fontSize: 22,
+    fontSize: 16,
     fontFamily: 'cereal-book',
     paddingHorizontal: 5,
-    paddingVertical: 5,
+    paddingVertical: 3,
     borderColor: '#ccc',
     borderRadius: 10,
     borderWidth: 1,
@@ -112,7 +115,7 @@ const styles = StyleSheet.create({
   errorText: {
     fontFamily: 'cereal-book',
     color: '#fff',
-    fontSize: 13,
+    fontSize: 12,
   },
 });
 

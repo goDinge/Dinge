@@ -9,6 +9,7 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 
 import * as userActions from '../../store/actions/user';
 
@@ -53,6 +54,10 @@ const PublicScreen = (props) => {
 
   const eventDetailsHandler = (event) => {
     props.navigation.navigate('Event Details', event);
+  };
+
+  const browserHandler = (url) => {
+    WebBrowser.openBrowserAsync(url);
   };
 
   if (isLoading) {

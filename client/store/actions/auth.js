@@ -5,6 +5,7 @@ import {
   SET_AUTH_USER,
   GET_AUTH_USER,
   SET_DID_TRY_AL,
+  PROFILE_UPDATE_REDUX,
   LOGOUT,
 } from '../types';
 import { HOME_IP } from '@env';
@@ -50,6 +51,36 @@ export const getAuthUser = () => {
   };
 };
 
+export const updateProfile = (profile) => {
+  return async (dispatch) => {
+    const { name, email, website, facebook } = profile;
+
+    try {
+      const body = {
+        name,
+        email,
+        website,
+        facebook,
+      };
+
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+      const response = await axios.put(`${HOME_IP}/api/auth/me`, body, config);
+      const profile = response.data.data;
+
+      dispatch({
+        type: PROFILE_UPDATE_REDUX,
+        authUser: profile,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
 export const setDidTryAL = () => {
   return { type: SET_DID_TRY_AL };
 };
@@ -78,7 +109,7 @@ export const updateAuthAvatar = (avatar) => {
       );
 
       const newAvatar = response.data.data;
-      console.log('newAvatar', newAvatar.avatar);
+      //console.log('newAvatar', newAvatar.avatar);
       await dispatch(setAuthUser(newAvatar));
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');

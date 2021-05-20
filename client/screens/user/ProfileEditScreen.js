@@ -1,0 +1,295 @@
+import React, { useState, useEffect, useReducer, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+
+import * as authActions from '../../store/actions/auth';
+
+import CustomInput from '../../components/CustomInput';
+import CustomButton from '../../components/CustomButton';
+
+import Colors from '../../constants/Colors';
+
+const PROFILE_UPDATE = 'PROFILE_UPDATE';
+
+const formReducer = (state, action) => {
+  if (action.type === PROFILE_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value,
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid,
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
+      formIsValid: updatedFormIsValid,
+      inputValues: updatedValues,
+      inputValidities: updatedValidities,
+    };
+  }
+  return state;
+};
+
+const ProfileEditScreen = (props) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(undefined);
+
+  const authUser = props.route.params.authUser;
+  console.log(authUser);
+
+  const dispatch = useDispatch();
+
+  const [formState, dispatchFormState] = useReducer(formReducer, {
+    inputValues: {
+      name: authUser.name,
+      email: authUser.email,
+      website: authUser.website,
+      facebook: authUser.facebook,
+    },
+    inputValidities: {
+      name: false,
+      email: false,
+      website: false,
+      facebook: false,
+    },
+    formIsValid: false,
+  });
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
+
+  //update profile avatar
+  const imagePickerHandler = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.2,
+      });
+
+      if (!result.cancelled) {
+        setImage(result);
+      }
+
+      await dispatch(authActions.updateAuthAvatar(result));
+    } catch (err) {
+      Alert.alert('Could not upload avatar!', 'Please try again later.', [
+        { text: 'Okay' },
+      ]);
+      console.log(err.message);
+    }
+  };
+
+  const updateHandler = async () => {
+    console.log('update');
+  };
+
+  const inputChangeHandler = useCallback(
+    (inputIdentifier, inputValue, inputValidity) => {
+      dispatchFormState({
+        type: PROFILE_UPDATE,
+        value: inputValue,
+        isValid: inputValidity,
+        input: inputIdentifier,
+      });
+    },
+    [dispatchFormState]
+  );
+
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        color={Colors.primary}
+        size="large"
+        style={styles.actIndicator}
+      />
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.profileContainer}>
+        <ScrollView style={{ width: '100%' }}>
+          <Text style={styles.title}>Your Profile</Text>
+          <View style={styles.avatarContainer}>
+            <Pressable onPressIn={imagePickerHandler}>
+              <Image
+                style={styles.avatar}
+                source={{ uri: authUser.avatar }}
+                defaultSource={require('../../assets/avatar.png')}
+              />
+            </Pressable>
+          </View>
+          <View style={styles.fieldContainer}>
+            <CustomInput
+              id="name"
+              label="Name:"
+              keyboardType="default"
+              autoCapitalize="none"
+              errorText="Please update your name"
+              onInputChange={inputChangeHandler}
+              initialValue={authUser.name}
+              required
+              style={styles.textInput}
+            />
+            <CustomInput
+              id="email"
+              label="Email:"
+              keyboardType="default"
+              autoCapitalize="none"
+              errorText="Please update your email"
+              onInputChange={inputChangeHandler}
+              initialValue={authUser.email}
+              required
+              style={styles.textInput}
+            />
+            <CustomInput
+              id="website"
+              label="Website:"
+              keyboardType="default"
+              autoCapitalize="none"
+              onInputChange={inputChangeHandler}
+              initialValue={authUser.website ? authUser.website : null}
+              style={styles.textInput}
+            />
+            <CustomInput
+              id="facebook"
+              label="Facebook:"
+              keyboardType="default"
+              autoCapitalize="none"
+              onInputChange={inputChangeHandler}
+              initialValue={authUser.facebook ? authUser.facebook : null}
+              style={styles.textInput}
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <CustomButton style={styles.button} onSelect={updateHandler}>
+              <Text style={styles.buttonText}>Update Profile</Text>
+            </CustomButton>
+          </View>
+        </ScrollView>
+      </View>
+    </View>
+  );
+};
+
+export default ProfileEditScreen;
+
+const styles = StyleSheet.create({
+  actIndicator: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileContainer: {
+    width: '90%',
+    height: '93%',
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+  },
+  avatarContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  avatar: {
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+  },
+  fieldContainer: {
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  userName: {
+    fontFamily: 'cereal-medium',
+    fontSize: 24,
+    color: '#444',
+  },
+  userEmail: {
+    fontFamily: 'cereal-book',
+    fontSize: 16,
+    color: '#999',
+  },
+  eventsContainer: {
+    width: '100%',
+  },
+  title: {
+    textAlign: 'left',
+    fontFamily: 'cereal-medium',
+    fontSize: 22,
+    color: Colors.primary,
+    paddingVertical: 10,
+  },
+  textInput: {
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
+    fontSize: 14,
+  },
+  text: {
+    fontFamily: 'cereal-book',
+    fontSize: 18,
+    color: '#999',
+    alignSelf: 'flex-start',
+  },
+  eventsList: {
+    width: '100%',
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
+  bottomContainer: {
+    width: '100%',
+    borderColor: '#ccc',
+    borderTopWidth: 1,
+  },
+  buttonContainer: {
+    marginVertical: 15,
+    alignItems: 'center',
+  },
+  button: {
+    width: 200,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 20,
+    fontFamily: 'cereal-bold',
+    color: 'white',
+  },
+});

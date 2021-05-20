@@ -1,8 +1,9 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Platform } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 
 import MapScreen from '../screens/map/MapScreen';
 import DingScreen from '../screens/map/DingScreen';
@@ -12,6 +13,7 @@ import CameraScreen from '../screens/camera/CameraScreen';
 import AuthScreen from '../screens/auth/AuthScreen';
 import SocialScreen from '../screens/SocialScreen';
 import ProfileScreen from '../screens/user/ProfileScreen';
+import ProfileEditScreen from '../screens/user/ProfileEditScreen';
 import EventsScreen from '../screens/events/EventsScreen';
 import EventDetailsScreen from '../screens/events/EventDetailsScreen';
 import CreateEventScreen from '../screens/events/CreateEventScreen';
@@ -170,17 +172,47 @@ export const SocialNavigator = () => {
 const ProfileStackNavigator = createStackNavigator();
 
 export const ProfileNavigator = () => {
+  const authUser = useSelector((state) => state.auth.authUser);
   return (
     <ProfileStackNavigator.Navigator screenOptions={defaultNavOptionsAuth}>
       <ProfileStackNavigator.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ headerTitle: 'Profile' }}
+        options={({ navigation }) => ({
+          headerTitle: 'Profile',
+          headerStyle: {
+            backgroundColor: '#fff',
+          },
+          headerTitleStyle: {
+            fontFamily: 'cereal-bold',
+            fontSize: 20,
+          },
+          headerBackTitleStyle: {
+            fontFamily: 'cereal-medium',
+            fontSize: 20,
+          },
+          headerBackTitle: '',
+          headerRight: () => (
+            <Feather
+              name="settings"
+              size={30}
+              onPress={() => navigation.navigate('Profile Edit', { authUser })}
+              color={Colors.primary}
+              style={{ marginRight: 15 }}
+            />
+          ),
+          headerTintColor: Colors.primary,
+        })}
       />
       <ProfileStackNavigator.Screen
         name="Event Details"
         component={EventDetailsScreen}
         options={{ headerTitle: 'Event Details' }}
+      />
+      <ProfileStackNavigator.Screen
+        name="Profile Edit"
+        component={ProfileEditScreen}
+        options={{ headerTitle: 'Profile Edit' }}
       />
     </ProfileStackNavigator.Navigator>
   );
@@ -227,7 +259,6 @@ export const BottomTabNavigator = () => {
     >
       <MapBottomTabNavigator.Screen name="Map" component={MapNavigator} />
       <MapBottomTabNavigator.Screen name="Events" component={EventsNavigator} />
-
       <MapBottomTabNavigator.Screen name="Social" component={SocialNavigator} />
       <MapBottomTabNavigator.Screen
         name="Profile"

@@ -1,3 +1,4 @@
+import ProfileScreen from '../../screens/user/ProfileScreen';
 import {
   AUTHENTICATE,
   SET_AUTH_USER,
@@ -5,6 +6,7 @@ import {
   SET_DID_TRY_AL,
   UPDATE_AUTH_AVATAR,
   GET_AUTH_USER,
+  PROFILE_UPDATE_REDUX,
 } from '../types';
 
 const initialState = {
@@ -45,6 +47,11 @@ export default (state = initialState, action) => {
           ...state,
           avatar: action.authUser,
         },
+      };
+    case PROFILE_UPDATE_REDUX:
+      return {
+        ...state,
+        authUser: action.authUser,
       };
     case LOGOUT:
       return {

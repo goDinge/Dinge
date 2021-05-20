@@ -187,11 +187,11 @@ const CreateEventScreen = (props) => {
       isValid = false;
     }
     if (inputType === 'hours') {
-      if (text > 8) {
+      if (text > 8 || text < 1) {
         isValid = false;
         Alert.alert(
-          'Duration too long',
-          'The maximum length of event allowed is 8 hours',
+          'Duration invalid',
+          'Duration of event needs to be between 1 to 8 hours.',
           [
             {
               text: 'Ok',
@@ -308,14 +308,14 @@ const CreateEventScreen = (props) => {
 
   const createEventHandler = async () => {
     setError(null);
-    for (const key in formState.inputValidities) {
-      if (formState.inputValidities[key] == false) {
-        Alert.alert('Form not complete.', 'Please complete all parts of form', [
-          { text: 'Okay' },
-        ]);
-        return;
-      }
+
+    if (!formState.formIsValid) {
+      Alert.alert('Form not complete.', 'Please complete all parts of form', [
+        { text: 'Okay' },
+      ]);
+      return;
     }
+
     setIsCreatingEvent(true);
     try {
       await dispatch(eventsActions.createEvent(formState));

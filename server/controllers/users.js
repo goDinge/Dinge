@@ -32,7 +32,7 @@ exports.getUserById = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: user });
 });
 
-//desc     UPDATE loggedin user
+//desc     UPDATE loggedin user Avatar
 //route    PUT /api/users/me
 //access   Private
 exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
