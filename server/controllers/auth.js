@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const ErrorResponse = require('../utils/errorResponse');
+const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const asyncHandler = require('../middleware/async');
 
@@ -80,13 +81,7 @@ exports.getAuthUser = asyncHandler(async (req, res, next) => {
 //route    PUT /api/auth/me
 //access   Private
 exports.editAuthUser = asyncHandler(async (req, res, next) => {
-  // if (!user) {
-  //   return next(new ErrorResponse(`No user found.`));
-  // }
-
   const { email, name, website, facebook } = req.body;
-
-  console.log(req.body.email);
 
   await User.updateOne(
     { _id: req.user.id },
@@ -103,6 +98,36 @@ exports.editAuthUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
 
   res.status(200).json({ success: true, data: user });
+});
+
+//desc     CHANGE password
+//route    PUT /api/auth/password
+//access   Private
+exports.changeAuthPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('+password');
+
+  const { oldPassword, newPassword } = req.body;
+
+  //Check if password matches
+  const isMatch = await user.matchPassword(oldPassword);
+
+  if (!isMatch) {
+    return next(new ErrorResponse('Invalid password', 401));
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const encrypted = await bcrypt.hash(newPassword, salt);
+
+  await User.updateOne(
+    { _id: req.user.id },
+    {
+      $set: {
+        password: encrypted,
+      },
+    }
+  );
+
+  res.status(200).json({ success: true });
 });
 
 /*** HELPER ***/
@@ -125,3 +150,8 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie('token', token, options)
     .json({ token, user, options });
 };
+
+//Check if password matches IF pw is not encrypted in DB
+// if (password !== user.password) {
+//   return next(new ErrorResponse('Invalid password', 401));
+// }

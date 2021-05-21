@@ -135,7 +135,8 @@ const Auth = (props) => {
               {isSignup ? (
                 <CustomInput
                   id="name"
-                  placeholder="profile name"
+                  label="Name:"
+                  labelColor="white"
                   keyboardType="default"
                   autoCapitalize="none"
                   errorText="Please enter your name"
@@ -147,7 +148,8 @@ const Auth = (props) => {
               ) : null}
               <CustomInput
                 id="email"
-                placeholder="e-mail"
+                label="Email:"
+                labelColor="white"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 errorText="Please enter a valid email"
@@ -158,7 +160,8 @@ const Auth = (props) => {
               />
               <CustomInput
                 id="password"
-                placeholder="password"
+                label="Password:"
+                labelColor="white"
                 keyboardType="default"
                 secureTextEntry
                 autoCapitalize="none"
@@ -172,7 +175,8 @@ const Auth = (props) => {
               {isSignup ? (
                 <CustomInput
                   id="password2"
-                  placeholder="confirm password"
+                  label="Confirm Password:"
+                  labelColor="white"
                   keyboardType="default"
                   secureTextEntry
                   autoCapitalize="none"

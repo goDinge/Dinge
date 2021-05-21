@@ -38,8 +38,8 @@ const UploadScreen = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [addressModalVisible, setAddressModalVisible] = useState(false);
   const [address, setAddress] = useState('');
-  const [count, setCount] = useState(0);
-  const [target, setTarget] = useState(30);
+  // const [count, setCount] = useState(0);
+  // const [target, setTarget] = useState(30);
 
   const dispatch = useDispatch();
 
@@ -140,7 +140,10 @@ const UploadScreen = (props) => {
       return;
     }
 
+    let count = 0;
+    let target = 5;
     try {
+      setIsFetching(true);
       const getLocation = async () => {
         const location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Highest,
@@ -150,18 +153,20 @@ const UploadScreen = (props) => {
         if (count > 6) {
           setModalVisible(true);
         } else if (location.coords.accuracy > target) {
+          count = count + 1;
+          target = target + 5;
+          // console.log('count: ', count);
+          // console.log('target: ', target);
           getLocation();
-          setCount(count + 1);
-          setTarget(target + 10);
-          //console.log('target: ', target);
         } else {
           await awsUpload(location);
+          setIsFetching(false);
           goToMap();
         }
       };
-      setIsFetching(true);
       await getLocation();
     } catch (err) {
+      setIsFetching(false);
       Alert.alert('Could not fetch location!', 'Please try again later.', [
         { text: 'Okay' },
       ]);
@@ -308,10 +313,11 @@ const UploadScreen = (props) => {
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>Enter address</Text>
                 <TextInput
+                  placeholder="123 main street, mycity..."
                   style={styles.descriptionInput}
                   onChangeText={(text) => setAddress(text)}
                   value={address}
-                  placeholder="123 main street, mycity..."
+                  autoCapitaliz="words"
                 />
                 <View
                   style={[

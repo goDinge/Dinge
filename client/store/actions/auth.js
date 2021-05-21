@@ -55,21 +55,20 @@ export const updateProfile = (profile) => {
   return async (dispatch) => {
     const { name, email, website, facebook } = profile;
 
-    console.log('action / profile: ', profile);
+    const body = JSON.stringify({
+      name,
+      email,
+      website,
+      facebook,
+    });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
 
     try {
-      const body = {
-        name,
-        email,
-        website,
-        facebook,
-      };
-
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
       const response = await axios.put(`${HOME_IP}/api/auth/me`, body, config);
       const profile = response.data.data;
 
@@ -77,6 +76,37 @@ export const updateProfile = (profile) => {
         type: PROFILE_UPDATE_REDUX,
         authUser: profile,
       });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const changePassword = (password) => {
+  return async (dispatch) => {
+    const { oldPassword, newPassword, confirmNewPassword } = password;
+
+    if (newPassword != confirmNewPassword) {
+      return new Error(
+        'Please check your new password fields to make sure they are the same.'
+      );
+    }
+
+    const body = JSON.stringify({ oldPassword, newPassword });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const response = await axios.put(
+        `${HOME_IP}/api/auth/password`,
+        body,
+        config
+      );
+      console.log('response: ', response.data);
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }
@@ -111,7 +141,6 @@ export const updateAuthAvatar = (avatar) => {
       );
 
       const newAvatar = response.data.data;
-      //console.log('newAvatar', newAvatar.avatar);
       await dispatch(setAuthUser(newAvatar));
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');

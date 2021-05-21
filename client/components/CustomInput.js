@@ -38,6 +38,7 @@ const CustomInput = (props) => {
   }, [inputState, onInputChange, id]);
 
   const textChangeHandler = (text) => {
+    console.log('text change handler used');
     const facebookRegex = /www.facebook.com/;
     const emailRegex =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -75,7 +76,9 @@ const CustomInput = (props) => {
 
   return (
     <View style={styles.formControl}>
-      <Text style={styles.label}>{props.label}</Text>
+      <Text style={[styles.label, { color: props.labelColor }]}>
+        {props.label}
+      </Text>
       <TextInput
         {...props}
         style={styles.input}

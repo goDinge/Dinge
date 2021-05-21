@@ -20,9 +20,33 @@ import CustomButton from '../../components/CustomButton';
 import Colors from '../../constants/Colors';
 
 const PROFILE_UPDATE = 'PROFILE_UPDATE';
+const PASSWORD_UPDATE = 'PASSWORD_UPDATE';
 
 const formReducer = (state, action) => {
   if (action.type === PROFILE_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value,
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid,
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
+      formIsValid: updatedFormIsValid,
+      inputValues: updatedValues,
+      inputValidities: updatedValidities,
+    };
+  }
+  return state;
+};
+
+const passwordReducer = (state, action) => {
+  if (action.type === PASSWORD_UPDATE) {
     const updatedValues = {
       ...state.inputValues,
       [action.input]: action.value,
@@ -68,6 +92,20 @@ const ProfileEditScreen = (props) => {
     formIsValid: false,
   });
 
+  const [passwordState, dispatchPasswordState] = useReducer(passwordReducer, {
+    inputValues: {
+      oldPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    },
+    inputValidities: {
+      oldPassword: false,
+      newPassword: false,
+      confirmNewPassword: false,
+    },
+    formIsValid: false,
+  });
+
   useEffect(() => {
     (async () => {
       if (Platform.OS !== 'web') {
@@ -109,13 +147,13 @@ const ProfileEditScreen = (props) => {
     }
   };
 
-  const updateHandler = async () => {
+  const updateProfileHandler = async () => {
     setError(null);
     setIsUpdating(true);
     if (!formState.formIsValid) {
       Alert.alert(
         'Error.',
-        'Please make sure name and email fields are completed.',
+        'Please make sure name and email fields are completed. Website and Facebook are not necessarily, but if you wish to list them, please make sure they are correct.',
         [{ text: 'Okay' }]
       );
       return;
@@ -131,7 +169,20 @@ const ProfileEditScreen = (props) => {
     setIsUpdating(false);
   };
 
-  console.log(formState);
+  const changePasswordHandler = async () => {
+    console.log('password state: ', passwordState);
+    setError(null);
+    try {
+      await dispatch(authActions.changePassword(passwordState.inputValues));
+      Alert.alert('Password changed.', 'Thanks.', [{ text: 'Okay' }]);
+    } catch (err) {
+      setError(err.message);
+      console.log(err);
+    }
+  };
+
+  //console.log(formState);
+  console.log(passwordState);
 
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {
@@ -145,95 +196,176 @@ const ProfileEditScreen = (props) => {
     [dispatchFormState]
   );
 
+  const passwordTextChangeHandler = useCallback(
+    (inputIdentifier, inputValue, inputValidity) => {
+      dispatchPasswordState({
+        type: PASSWORD_UPDATE,
+        value: inputValue,
+        isValid: inputValidity,
+        input: inputIdentifier,
+      });
+    },
+    [dispatchPasswordState]
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <ScrollView style={{ width: '100%' }}>
-          <Text style={styles.title}>Your Profile</Text>
-          <View style={styles.avatarContainer}>
-            <Pressable onPressIn={imagePickerHandler}>
-              <Image
-                style={styles.avatar}
-                source={{ uri: authUser.avatar }}
-                defaultSource={require('../../assets/avatar.png')}
-              />
-            </Pressable>
-          </View>
-          <View style={styles.fieldContainer}>
-            <CustomInput
-              id="name"
-              label="Name:"
-              keyboardType="default"
-              autoCapitalize="none"
-              errorText="Please update your name"
-              onInputChange={inputChangeHandler}
-              initialValue={authUser.name}
-              initiallyValid="true"
-              required
-              style={styles.textInput}
-            />
-            <CustomInput
-              id="email"
-              label="Email:"
-              keyboardType="default"
-              autoCapitalize="none"
-              errorText="Please update your email"
-              onInputChange={inputChangeHandler}
-              initialValue={authUser.email}
-              initiallyValid="true"
-              required
-              email
-              style={styles.textInput}
-            />
-            <CustomInput
-              id="website"
-              label="Website:"
-              keyboardType="default"
-              placeholder={
-                authUser.website ? null : 'example: www.mywebsite.com'
-              }
-              autoCapitalize="none"
-              onInputChange={inputChangeHandler}
-              initialValue={authUser.website ? authUser.website : null}
-              initiallyValid="true"
-              style={styles.textInput}
-            />
-            <CustomInput
-              id="facebook"
-              label="Facebook:"
-              keyboardType="default"
-              placeholder={
-                authUser.facebook ? null : 'find link in your facebook app'
-              }
-              autoCapitalize="none"
-              onInputChange={inputChangeHandler}
-              initialValue={authUser.facebook ? authUser.facebook : null}
-              initiallyValid="true"
-              facebook
-              style={styles.textInput}
-            />
-          </View>
-          <View style={styles.buttonContainer}>
-            {isUpdating ? (
-              <CustomButton
-                style={{ flexDirection: 'row' }}
-                onSelect={updateHandler}
-              >
-                <Text style={styles.buttonText}>Updating Profile...</Text>
-                <ActivityIndicator
-                  color="white"
-                  size="small"
-                  style={{ paddingRight: 10 }}
+          <View style={styles.editProfileContainer}>
+            <Text style={styles.title}>Your Profile</Text>
+            <View style={styles.avatarContainer}>
+              <Pressable onPressIn={imagePickerHandler}>
+                <Image
+                  style={styles.avatar}
+                  source={{ uri: authUser.avatar }}
+                  defaultSource={require('../../assets/avatar.png')}
                 />
-              </CustomButton>
-            ) : (
-              <CustomButton
-                style={{ flexDirection: 'row' }}
-                onSelect={updateHandler}
-              >
-                <Text style={styles.buttonText}>Update Profile</Text>
-              </CustomButton>
-            )}
+              </Pressable>
+            </View>
+            <View style={styles.fieldContainer}>
+              <CustomInput
+                id="name"
+                label="Name:"
+                labelColor="#999"
+                keyboardType="default"
+                autoCapitalize="none"
+                errorText="Please update your name"
+                onInputChange={inputChangeHandler}
+                initialValue={authUser.name}
+                initiallyValid="true"
+                required
+                style={styles.textInput}
+              />
+              <CustomInput
+                id="email"
+                label="Email:"
+                labelColor="#999"
+                keyboardType="default"
+                autoCapitalize="none"
+                errorText="Please update your email"
+                onInputChange={inputChangeHandler}
+                initialValue={authUser.email}
+                initiallyValid="true"
+                required
+                email
+                style={styles.textInput}
+              />
+              <CustomInput
+                id="website"
+                label="Website:"
+                labelColor="#999"
+                keyboardType="default"
+                placeholder={
+                  authUser.website ? null : 'example: www.mywebsite.com'
+                }
+                autoCapitalize="none"
+                onInputChange={inputChangeHandler}
+                initialValue={authUser.website ? authUser.website : null}
+                initiallyValid="true"
+                style={styles.textInput}
+              />
+              <CustomInput
+                id="facebook"
+                label="Facebook:"
+                labelColor="#999"
+                keyboardType="default"
+                placeholder={
+                  authUser.facebook ? null : 'find link in your facebook app'
+                }
+                autoCapitalize="none"
+                onInputChange={inputChangeHandler}
+                initialValue={authUser.facebook ? authUser.facebook : null}
+                initiallyValid="true"
+                facebook
+                style={styles.textInput}
+              />
+            </View>
+            <View style={styles.buttonContainer}>
+              {isUpdating ? (
+                <CustomButton
+                  style={{ flexDirection: 'row' }}
+                  onSelect={updateProfileHandler}
+                >
+                  <Text style={styles.buttonText}>Updating Profile...</Text>
+                  <ActivityIndicator
+                    color="white"
+                    size="small"
+                    style={{ paddingRight: 10 }}
+                  />
+                </CustomButton>
+              ) : (
+                <CustomButton
+                  style={{ flexDirection: 'row' }}
+                  onSelect={updateProfileHandler}
+                >
+                  <Text style={styles.buttonText}>Update Profile</Text>
+                </CustomButton>
+              )}
+            </View>
+          </View>
+          <View style={styles.changePasswordContainer}>
+            <Text style={styles.title}>Your Password</Text>
+            <View style={styles.fieldContainer}>
+              <CustomInput
+                id="oldPassword"
+                label="Current Password:"
+                labelColor="#999"
+                keyboardType="default"
+                autoCapitalize="none"
+                onInputChange={passwordTextChangeHandler}
+                secureTextEntry
+                initiallyValid="false"
+                required
+                style={styles.textInput}
+              />
+              <CustomInput
+                id="newPassword"
+                label="New Password:"
+                labelColor="#999"
+                keyboardType="default"
+                autoCapitalize="none"
+                onInputChange={passwordTextChangeHandler}
+                secureTextEntry
+                initiallyValid="false"
+                required
+                style={styles.textInput}
+              />
+              <CustomInput
+                id="confirmNewPassword"
+                label="Confirm New Password:"
+                labelColor="#999"
+                keyboardType="default"
+                autoCapitalize="none"
+                onInputChange={passwordTextChangeHandler}
+                secureTextEntry
+                initiallyValid="false"
+                required
+                style={styles.textInput}
+              />
+            </View>
+            <View style={styles.buttonContainer}>
+              {isUpdating ? (
+                <CustomButton
+                  style={{ flexDirection: 'row' }}
+                  onSelect={changePasswordHandler}
+                >
+                  <Text style={styles.buttonText}>Changing Password...</Text>
+                  <ActivityIndicator
+                    color="white"
+                    size="small"
+                    style={{ paddingRight: 10 }}
+                  />
+                </CustomButton>
+              ) : (
+                <CustomButton
+                  style={{ flexDirection: 'row' }}
+                  onSelect={changePasswordHandler}
+                >
+                  <Text style={styles.buttonText}>Change Password</Text>
+                </CustomButton>
+              )}
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -274,13 +406,21 @@ const styles = StyleSheet.create({
     width: 100,
     borderRadius: 50,
   },
+  editProfileContainer: {
+    width: '100%',
+    paddingBottom: 20,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ccc',
+  },
+  changePasswordContainer: {
+    paddingTop: 15,
+    width: '100%',
+  },
   fieldContainer: {
     width: '100%',
     alignItems: 'center',
     paddingVertical: 5,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    paddingBottom: 5,
   },
   userName: {
     fontFamily: 'cereal-medium',
@@ -291,9 +431,6 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-book',
     fontSize: 16,
     color: '#999',
-  },
-  eventsContainer: {
-    width: '100%',
   },
   title: {
     textAlign: 'left',
