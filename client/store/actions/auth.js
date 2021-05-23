@@ -8,6 +8,7 @@ import {
   PROFILE_UPDATE_REDUX,
   GET_VERIFICATION_CODE,
   CODE_VERIFIED,
+  SET_NEW_PASSWORD,
   LOGOUT,
 } from '../types';
 import { HOME_IP } from '@env';
@@ -108,7 +109,6 @@ export const changePassword = (password) => {
         body,
         config
       );
-      console.log('response: ', response.data);
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }
@@ -133,7 +133,6 @@ export const forgotPassword = (email) => {
       );
 
       const veriCode = response.data.data;
-      console.log('veriCode: ', veriCode);
 
       dispatch({
         type: GET_VERIFICATION_CODE,
@@ -167,6 +166,41 @@ export const verifyCode = (code) => {
       dispatch({
         type: CODE_VERIFIED,
         verified: verified,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const setNewPassword = (password, passwordConfirm, veriCode) => {
+  return async (dispatch) => {
+    if (password != passwordConfirm) {
+      return new Error(
+        'Please check your new password fields to make sure they are the same.'
+      );
+    }
+
+    const body = JSON.stringify({ password });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const response = await axios.put(
+        `${HOME_IP}/api/auth/forgotpassword/${veriCode}`,
+        body,
+        config
+      );
+
+      const success = response.data.success;
+
+      dispatch({
+        type: SET_NEW_PASSWORD,
+        newPassword: success,
       });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');

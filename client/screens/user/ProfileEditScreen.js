@@ -17,56 +17,56 @@ import * as authActions from '../../store/actions/auth';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 
+import { PROFILE_UPDATE, PASSWORD_UPDATE } from '../../store/types';
+import { profileReducer, passwordReducer } from '../../helpers/formReducer';
+
 import Colors from '../../constants/Colors';
 
-const PROFILE_UPDATE = 'PROFILE_UPDATE';
-const PASSWORD_UPDATE = 'PASSWORD_UPDATE';
+// const profileReducer = (state, action) => {
+//   if (action.type === PROFILE_UPDATE) {
+//     const updatedValues = {
+//       ...state.inputValues,
+//       [action.input]: action.value,
+//     };
+//     const updatedValidities = {
+//       ...state.inputValidities,
+//       [action.input]: action.isValid,
+//     };
+//     let updatedFormIsValid = true;
+//     for (const key in updatedValidities) {
+//       updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+//     }
+//     return {
+//       formIsValid: updatedFormIsValid,
+//       inputValues: updatedValues,
+//       inputValidities: updatedValidities,
+//     };
+//   }
+//   return state;
+// };
 
-const formReducer = (state, action) => {
-  if (action.type === PROFILE_UPDATE) {
-    const updatedValues = {
-      ...state.inputValues,
-      [action.input]: action.value,
-    };
-    const updatedValidities = {
-      ...state.inputValidities,
-      [action.input]: action.isValid,
-    };
-    let updatedFormIsValid = true;
-    for (const key in updatedValidities) {
-      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-    }
-    return {
-      formIsValid: updatedFormIsValid,
-      inputValues: updatedValues,
-      inputValidities: updatedValidities,
-    };
-  }
-  return state;
-};
-
-const passwordReducer = (state, action) => {
-  if (action.type === PASSWORD_UPDATE) {
-    const updatedValues = {
-      ...state.inputValues,
-      [action.input]: action.value,
-    };
-    const updatedValidities = {
-      ...state.inputValidities,
-      [action.input]: action.isValid,
-    };
-    let updatedFormIsValid = true;
-    for (const key in updatedValidities) {
-      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-    }
-    return {
-      formIsValid: updatedFormIsValid,
-      inputValues: updatedValues,
-      inputValidities: updatedValidities,
-    };
-  }
-  return state;
-};
+// const passwordReducer = (state, action) => {
+//   if (action.type === PASSWORD_UPDATE) {
+//     const updatedValues = {
+//       ...state.inputValues,
+//       [action.input]: action.value,
+//     };
+//     const updatedValidities = {
+//       ...state.inputValidities,
+//       [action.input]: action.isValid,
+//     };
+//     let updatedFormIsValid = true;
+//     for (const key in updatedValidities) {
+//       updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+//     }
+//     return {
+//       formIsValid: updatedFormIsValid,
+//       inputValues: updatedValues,
+//       inputValidities: updatedValidities,
+//     };
+//   }
+//   return state;
+// };
 
 const ProfileEditScreen = (props) => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -76,7 +76,7 @@ const ProfileEditScreen = (props) => {
 
   const dispatch = useDispatch();
 
-  const [formState, dispatchFormState] = useReducer(formReducer, {
+  const [formState, dispatchFormState] = useReducer(profileReducer, {
     inputValues: {
       name: authUser.name,
       email: authUser.email,
@@ -112,7 +112,7 @@ const ProfileEditScreen = (props) => {
         const { status } =
           await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
+          alert('Sorry, we need camera permission to make this work!');
         }
       }
     })();

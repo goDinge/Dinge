@@ -209,6 +209,7 @@ exports.verificationCode = asyncHandler(async (req, res, next) => {
 //route   PUT /api/auth/forgotpassword/:vericode/
 //access  public
 exports.updatePassword = asyncHandler(async (req, res, next) => {
+  console.log('update pw 1');
   const verificationCode = crypto
     .createHash('sha256')
     .update(req.params.vericode)
@@ -222,7 +223,7 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
   if (!user) {
     return next(new ErrorResponse('Invalid verification code', 400));
   }
-
+  console.log('update pw 2');
   //mongoose syntax has an User.pre function to encrypt password before saving to DB
   //so no need to bcrypt password here
   const password = req.body.password;
@@ -232,10 +233,9 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
   user.verificationCode = undefined;
   user.verificationCodeExpire = undefined;
   await user.save();
-
+  console.log('update pw 3');
   res.status(200).json({
     success: true,
-    data: user,
   });
 });
 

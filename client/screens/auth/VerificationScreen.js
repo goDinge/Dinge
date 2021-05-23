@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   KeyboardAvoidingView,
+  ActivityIndicator,
   StyleSheet,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,30 +15,9 @@ import CustomButton from '../../components/CustomButton';
 import * as authActions from '../../store/actions/auth';
 
 import { FORM_INPUT_UPDATE } from '../../store/types';
-import Colors from '../../constants/Colors';
+import { formReducer } from '../../helpers/formReducer';
 
-const formReducer = (state, action) => {
-  if (action.type === FORM_INPUT_UPDATE) {
-    const updatedValues = {
-      ...state.inputValues,
-      [action.input]: action.value,
-    };
-    const updatedValidities = {
-      ...state.inputValidities,
-      [action.input]: action.isValid,
-    };
-    let updatedFormIsValid = true;
-    for (const key in updatedValidities) {
-      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-    }
-    return {
-      formIsValid: updatedFormIsValid,
-      inputValues: updatedValues,
-      inputValidities: updatedValidities,
-    };
-  }
-  return state;
-};
+import Colors from '../../constants/Colors';
 
 const ForgotPasswordScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +42,7 @@ const ForgotPasswordScreen = (props) => {
     formIsValid: false,
   });
 
-  console.log(formState);
+  //console.log(formState);
 
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {
@@ -77,8 +57,13 @@ const ForgotPasswordScreen = (props) => {
   );
 
   const verificationCodeHandler = async (code) => {
-    console.log('code: ', code);
-    await dispatch(authActions.verifyCode(code));
+    setIsLoading(true);
+    try {
+      await dispatch(authActions.verifyCode(code));
+    } catch (err) {
+      console.log(err.messsage);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -109,15 +94,28 @@ const ForgotPasswordScreen = (props) => {
             />
           </View>
           <View style={styles.buttonContainer}>
-            <CustomButton
-              style={styles.mainButton}
-              onSelect={() =>
-                verificationCodeHandler(formState.inputValues.code)
-              }
-              //onSelect={() => props.navigation.navigate('Reset Password')}
-            >
-              <Text style={styles.mainButtonText}>Verify My Code</Text>
-            </CustomButton>
+            {isLoading ? (
+              <CustomButton
+                style={styles.loadingMainButton}
+                onSelect={() =>
+                  verificationCodeHandler(formState.inputValues.code)
+                }
+                secureTextEntry
+              >
+                <Text style={styles.mainButtonText}>Verifying My Code...</Text>
+                <ActivityIndicator color="white" size="small" />
+              </CustomButton>
+            ) : (
+              <CustomButton
+                style={styles.mainButton}
+                onSelect={() =>
+                  verificationCodeHandler(formState.inputValues.code)
+                }
+                //onSelect={() => props.navigation.navigate('Reset Password')}
+              >
+                <Text style={styles.mainButtonText}>Verify My Code</Text>
+              </CustomButton>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -199,5 +197,12 @@ const styles = StyleSheet.create({
     width: 280,
     backgroundColor: Colors.secondary,
     borderRadius: 12,
+  },
+  loadingMainButton: {
+    width: 280,
+    backgroundColor: Colors.secondary,
+    borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
 });

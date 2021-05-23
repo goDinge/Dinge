@@ -1,5 +1,3 @@
-import { FA5Style } from '@expo/vector-icons/build/FontAwesome5';
-import ProfileScreen from '../../screens/user/ProfileScreen';
 import {
   AUTHENTICATE,
   SET_AUTH_USER,
@@ -10,6 +8,7 @@ import {
   PROFILE_UPDATE_REDUX,
   GET_VERIFICATION_CODE,
   CODE_VERIFIED,
+  SET_NEW_PASSWORD,
 } from '../types';
 
 const initialState = {
@@ -19,6 +18,7 @@ const initialState = {
   authUser: {},
   veriCode: '',
   verified: false,
+  newPassword: false,
 };
 
 export default (state = initialState, action) => {
@@ -67,6 +67,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         verified: action.verified,
+      };
+    case SET_NEW_PASSWORD:
+      return {
+        ...state,
+        newPassword: action.newPassword,
       };
     case LOGOUT:
       return {
