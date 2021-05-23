@@ -30,6 +30,8 @@ export const SET_LOCATION = 'SET_LOCATION';
 export const AUTHENTICATE = 'AUTHENTICATE';
 export const LOGOUT = 'LOGOUT';
 export const FORGOT_PASSWORD = 'FORGOT_PASSWORD';
+export const GET_VERIFICATION_CODE = 'GET_VERIFICATION_CODE';
+export const CODE_VERIFIED = 'CODE_VERIFIED';
 export const SET_DID_TRY_AL = 'SET_DID_TRY_AL';
 
 export const INPUT_CHANGE = 'INPUT_CHANGE';

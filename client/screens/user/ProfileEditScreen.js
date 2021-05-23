@@ -170,7 +170,18 @@ const ProfileEditScreen = (props) => {
   };
 
   const changePasswordHandler = async () => {
-    console.log('password state: ', passwordState);
+    if (
+      passwordState.inputValues.newPassword !==
+      passwordState.inputValues.confirmNewPassword
+    ) {
+      Alert.alert(
+        'Error.',
+        'Please make sure your new password inputs are identical.',
+        [{ text: 'Okay' }]
+      );
+      return;
+    }
+
     setError(null);
     try {
       await dispatch(authActions.changePassword(passwordState.inputValues));

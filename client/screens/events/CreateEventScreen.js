@@ -351,7 +351,7 @@ const CreateEventScreen = (props) => {
               <Text style={styles.instructionText}>Event Name:</Text>
               <TextInput
                 placeholder="enter event name"
-                style={styles.tempInput}
+                style={styles.textInput}
                 value={formState.inputValues.eventName}
                 onChangeText={(text) => inputChangeHandler('eventName', text)}
               />
@@ -423,7 +423,7 @@ const CreateEventScreen = (props) => {
                 <TextInput
                   placeholder="hours"
                   keyboardType="numeric"
-                  style={[styles.tempInput]}
+                  style={[styles.textInput]}
                   value={formState.inputValues.hours}
                   onChangeText={(text) => inputChangeHandler('hours', text)}
                 />
@@ -433,7 +433,7 @@ const CreateEventScreen = (props) => {
               <Text style={styles.instructionText}>Event Location:</Text>
               <TextInput
                 placeholder="123 main street, mycity..."
-                style={styles.tempInput}
+                style={styles.textInput}
                 autoCapitalize="words"
                 value={formState.inputValues.address}
                 onChangeText={(text) => inputChangeHandler('address', text)}
@@ -479,7 +479,7 @@ const CreateEventScreen = (props) => {
             <View style={styles.descriptionContainer}>
               <Text style={styles.instructionText}>Description:</Text>
               <TextInput
-                style={styles.tempInput}
+                style={styles.textInput}
                 value={formState.inputValues.description}
                 multiline={true}
                 returnKeyType="done"
@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
     marginBottom: 15,
   },
-  tempInput: {
+  textInput: {
     borderColor: '#dddddd',
     borderRadius: 10,
     borderWidth: 0.5,

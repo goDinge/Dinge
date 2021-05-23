@@ -209,7 +209,7 @@ const Auth = (props) => {
               <CustomButton
                 title="Forgot Password"
                 style={styles.buttonContainer}
-                onSelect={() => props.navigation.navigate('ForgotPassword')}
+                onSelect={() => props.navigation.navigate('Forgot Password')}
               >
                 <Text style={styles.buttonText}>Forgot Password</Text>
               </CustomButton>
@@ -229,6 +229,7 @@ const styles = StyleSheet.create({
   },
   outerContainer: {
     flex: 1,
+
     alignItems: 'center',
   },
   container: {

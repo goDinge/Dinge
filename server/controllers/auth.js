@@ -3,6 +3,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const asyncHandler = require('../middleware/async');
+const sgMail = require('@sendgrid/mail');
 
 //desc    REGISTER user
 //route   POST /api/auth
@@ -91,6 +92,7 @@ exports.editAuthUser = asyncHandler(async (req, res, next) => {
         name,
         website,
         facebook,
+        lastModifiedAt: Date.now(),
       },
     }
   );
@@ -115,6 +117,7 @@ exports.changeAuthPassword = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Invalid password', 401));
   }
 
+  //mongoDB syntax requires bcrypting the password
   const salt = await bcrypt.genSalt(10);
   const encrypted = await bcrypt.hash(newPassword, salt);
 
@@ -123,11 +126,117 @@ exports.changeAuthPassword = asyncHandler(async (req, res, next) => {
     {
       $set: {
         password: encrypted,
+        lastModifiedAt: Date.now(),
       },
     }
   );
 
   res.status(200).json({ success: true });
+});
+
+//desc    GENERATE verification code
+//route   POST /api/auth/forgotpassword
+//access  public
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ErrorResponse('There is no user with that email', 404));
+  }
+
+  //get reset token
+  const veriCode = user.getVerificationCode();
+
+  await user.save({ validateBeforeSave: false });
+
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+  const mailText = `Here is your 4 digit verification code: <strong>${veriCode}</strong>`;
+
+  try {
+    await sgMail.send({
+      to: user.email,
+      from: 'info@uvstudio.ca',
+      subject: 'Dinge - reset',
+      html: `<p>Hello ${user.name}, <br><br>
+        ${mailText}<br>
+        <br>
+        Thanks, <br><br>
+        Leonard, Dinge<br>
+        leonard.shen@gmail.com
+        </p>`,
+    });
+    console.log('server veriCode: ', veriCode);
+    res.status(200).json({
+      success: true,
+      data: veriCode,
+    });
+  } catch (err) {
+    user.verificationCode = undefined;
+    user.verificationCodeExpire = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(new ErrorResponse('Email could not be sent', 500));
+  }
+});
+
+//desc    POST verification code
+//route   POST /api/auth/forgotpassword/:vericode
+//access  public
+exports.verificationCode = asyncHandler(async (req, res, next) => {
+  //get hashed token
+  const verificationCode = crypto
+    .createHash('sha256')
+    .update(req.params.vericode)
+    .digest('hex');
+
+  const user = await User.findOne({
+    verificationCode,
+    verificationCodeExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid verification code', 400));
+  }
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+//desc    UPDATE password
+//route   PUT /api/auth/forgotpassword/:vericode/
+//access  public
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+  const verificationCode = crypto
+    .createHash('sha256')
+    .update(req.params.vericode)
+    .digest('hex');
+
+  const user = await User.findOne({
+    verificationCode,
+    verificationCodeExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid verification code', 400));
+  }
+
+  //mongoose syntax has an User.pre function to encrypt password before saving to DB
+  //so no need to bcrypt password here
+  const password = req.body.password;
+
+  user.password = password;
+  user.lastModifiedAt = Date.now();
+  user.verificationCode = undefined;
+  user.verificationCodeExpire = undefined;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
 });
 
 /*** HELPER ***/

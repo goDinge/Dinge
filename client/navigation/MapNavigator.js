@@ -11,6 +11,9 @@ import PublicScreen from '../screens/map/PublicScreen';
 import UploadScreen from '../screens/camera/UploadScreen';
 import CameraScreen from '../screens/camera/CameraScreen';
 import AuthScreen from '../screens/auth/AuthScreen';
+import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
+import VerificationScreen from '../screens/auth/VerificationScreen';
+import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen';
 import SocialScreen from '../screens/SocialScreen';
 import ProfileScreen from '../screens/user/ProfileScreen';
 import ProfileEditScreen from '../screens/user/ProfileEditScreen';
@@ -61,6 +64,21 @@ export const AuthNavigator = () => {
         name="Auth"
         component={AuthScreen}
         options={{ headerTitle: 'Login / Sign-up' }}
+      />
+      <AuthStackNavigator.Screen
+        name="Forgot Password"
+        component={ForgotPasswordScreen}
+        options={{ headerTitle: 'Forgot Password' }}
+      />
+      <AuthStackNavigator.Screen
+        name="Verification"
+        component={VerificationScreen}
+        options={{ headerTitle: 'Verification' }}
+      />
+      <AuthStackNavigator.Screen
+        name="Reset Password"
+        component={ResetPasswordScreen}
+        options={{ headerTitle: 'Reset Password' }}
       />
       <AuthStackNavigator.Screen name="Profile" component={ProfileScreen} />
     </AuthStackNavigator.Navigator>

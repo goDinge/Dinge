@@ -6,6 +6,8 @@ import {
   GET_AUTH_USER,
   SET_DID_TRY_AL,
   PROFILE_UPDATE_REDUX,
+  GET_VERIFICATION_CODE,
+  CODE_VERIFIED,
   LOGOUT,
 } from '../types';
 import { HOME_IP } from '@env';
@@ -83,7 +85,7 @@ export const updateProfile = (profile) => {
 };
 
 export const changePassword = (password) => {
-  return async (dispatch) => {
+  return async () => {
     const { oldPassword, newPassword, confirmNewPassword } = password;
 
     if (newPassword != confirmNewPassword) {
@@ -107,6 +109,65 @@ export const changePassword = (password) => {
         config
       );
       console.log('response: ', response.data);
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const forgotPassword = (email) => {
+  return async (dispatch) => {
+    const body = JSON.stringify({ email });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const response = await axios.post(
+        `${HOME_IP}/api/auth/forgotpassword`,
+        body,
+        config
+      );
+
+      const veriCode = response.data.data;
+      console.log('veriCode: ', veriCode);
+
+      dispatch({
+        type: GET_VERIFICATION_CODE,
+        veriCode: veriCode,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const verifyCode = (code) => {
+  return async (dispatch) => {
+    const body = JSON.stringify({ code });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const response = await axios.post(
+        `${HOME_IP}/api/auth/forgotpassword/${code}`,
+        body,
+        config
+      );
+
+      const verified = response.data.success;
+
+      dispatch({
+        type: CODE_VERIFIED,
+        verified: verified,
+      });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }

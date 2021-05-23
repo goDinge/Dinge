@@ -38,7 +38,6 @@ const CustomInput = (props) => {
   }, [inputState, onInputChange, id]);
 
   const textChangeHandler = (text) => {
-    console.log('text change handler used');
     const facebookRegex = /www.facebook.com/;
     const emailRegex =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -110,7 +109,7 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 16,
     fontFamily: 'cereal-book',
-    paddingHorizontal: 5,
+    paddingHorizontal: 9,
     paddingVertical: 3,
     borderColor: '#ccc',
     borderRadius: 10,
