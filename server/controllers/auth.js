@@ -1,4 +1,7 @@
 const User = require('../models/User');
+const Event = require('../models/Event');
+const Comment = require('../models/Comment');
+const Ding = require('../models/Ding');
 const ErrorResponse = require('../utils/errorResponse');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -209,7 +212,6 @@ exports.verificationCode = asyncHandler(async (req, res, next) => {
 //route   PUT /api/auth/forgotpassword/:vericode/
 //access  public
 exports.updatePassword = asyncHandler(async (req, res, next) => {
-  console.log('update pw 1');
   const verificationCode = crypto
     .createHash('sha256')
     .update(req.params.vericode)
@@ -223,7 +225,6 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
   if (!user) {
     return next(new ErrorResponse('Invalid verification code', 400));
   }
-  console.log('update pw 2');
   //mongoose syntax has an User.pre function to encrypt password before saving to DB
   //so no need to bcrypt password here
   const password = req.body.password;
@@ -232,10 +233,44 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
   user.lastModifiedAt = Date.now();
   user.verificationCode = undefined;
   user.verificationCodeExpire = undefined;
+
   await user.save();
-  console.log('update pw 3');
+
   res.status(200).json({
     success: true,
+  });
+});
+
+//desc    DELETE authUser
+//route   DELETE /api/auth/me
+//access  private
+exports.deleteAuthUser = asyncHandler(async (req, res, next) => {
+  const eventResult = await Event.deleteMany({
+    user: req.user.id,
+  });
+
+  const commentResult = await Comment.deleteMany({
+    userId: req.user.id,
+  });
+
+  const dingResult = await Ding.deleteMany({
+    user: req.user.id,
+  });
+
+  const userResult = await User.deleteOne({ _id: req.user.id });
+
+  if (userResult.deleteCount === 0) {
+    return next(new ErrorResponse('User not deleted', 400));
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      eventResult,
+      commentResult,
+      dingResult,
+      userResult,
+    },
   });
 });
 

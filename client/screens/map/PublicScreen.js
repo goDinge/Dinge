@@ -59,9 +59,11 @@ const PublicScreen = (props) => {
   const browserHandler = (url) => {
     if (url.length > 8 && url.slice(0, 8) === 'https://') {
       WebBrowser.openBrowserAsync(url);
+      return;
     }
     if (url.length > 7 && url.slice(0, 7) === 'http://') {
       WebBrowser.openBrowserAsync(url);
+      return;
     }
     WebBrowser.openBrowserAsync('https://' + url);
   };
@@ -94,25 +96,37 @@ const PublicScreen = (props) => {
           </View>
           <View style={styles.statsContainer}>
             <Text style={styles.title}>Socials</Text>
-            <View style={styles.statBox}>
-              <Text style={styles.statsTitle}>Website:</Text>
-              {userState.website ? (
-                <Pressable onPressIn={() => browserHandler(userState.website)}>
-                  <Text style={styles.stats}>{userState.website}</Text>
-                </Pressable>
-              ) : (
-                <Text style={styles.stats}>no website</Text>
-              )}
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statsTitle}>Facebook:</Text>
-              {userState.facebook ? (
-                <Pressable onPressIn={() => browserHandler(userState.facebook)}>
-                  <Text style={styles.stats}>{userState.facebook}</Text>
-                </Pressable>
-              ) : (
-                <Text style={styles.stats}>no facebook</Text>
-              )}
+            <View style={styles.socialsContainer}>
+              <View style={styles.socialBox}>
+                <Text style={styles.statsTitle}>Website:</Text>
+                {userState.website ? (
+                  <Pressable
+                    onLongPress={() => browserHandler(userState.website)}
+                  >
+                    <Image
+                      style={styles.socials}
+                      source={require('../../assets/website.png')}
+                    />
+                  </Pressable>
+                ) : (
+                  <Text style={styles.socialText}>no website</Text>
+                )}
+              </View>
+              <View style={styles.socialBox}>
+                <Text style={styles.statsTitle}>Facebook:</Text>
+                {userState.facebook ? (
+                  <Pressable
+                    onLongPress={() => browserHandler(userState.facebook)}
+                  >
+                    <Image
+                      style={styles.socials}
+                      source={require('../../assets/facebook.png')}
+                    />
+                  </Pressable>
+                ) : (
+                  <Text style={styles.socialText}>no facebook</Text>
+                )}
+              </View>
             </View>
           </View>
           <View style={styles.eventsContainer}>
@@ -181,7 +195,6 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   avatarContainer: {
-    marginVertical: 10,
     paddingVertical: 20,
     alignItems: 'center',
     borderBottomWidth: 1,
@@ -198,8 +211,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
-  statBox: {
+  socialsContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  socialBox: {
     marginBottom: 10,
+    alignItems: 'center',
+  },
+  socials: {
+    width: 90,
+    height: 90,
   },
   eventsContainer: {
     width: '100%',
@@ -222,11 +245,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#777',
     paddingVertical: 5,
+    paddingBottom: 10,
   },
-  stats: {
+  socialText: {
     textAlign: 'left',
     fontFamily: 'cereal-book',
     fontSize: 16,
     color: '#777',
+    top: 30,
   },
 });

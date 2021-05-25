@@ -141,7 +141,7 @@ const UploadScreen = (props) => {
     }
 
     let count = 0;
-    let target = 5;
+    let target = 10;
     try {
       setIsFetching(true);
       const getLocation = async () => {
