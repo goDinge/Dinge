@@ -5,6 +5,7 @@ import {
   Text,
   ScrollView,
   Image,
+  Modal,
   ActivityIndicator,
   Pressable,
   StyleSheet,
@@ -22,55 +23,10 @@ import { profileReducer, passwordReducer } from '../../helpers/formReducer';
 
 import Colors from '../../constants/Colors';
 
-// const profileReducer = (state, action) => {
-//   if (action.type === PROFILE_UPDATE) {
-//     const updatedValues = {
-//       ...state.inputValues,
-//       [action.input]: action.value,
-//     };
-//     const updatedValidities = {
-//       ...state.inputValidities,
-//       [action.input]: action.isValid,
-//     };
-//     let updatedFormIsValid = true;
-//     for (const key in updatedValidities) {
-//       updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-//     }
-//     return {
-//       formIsValid: updatedFormIsValid,
-//       inputValues: updatedValues,
-//       inputValidities: updatedValidities,
-//     };
-//   }
-//   return state;
-// };
-
-// const passwordReducer = (state, action) => {
-//   if (action.type === PASSWORD_UPDATE) {
-//     const updatedValues = {
-//       ...state.inputValues,
-//       [action.input]: action.value,
-//     };
-//     const updatedValidities = {
-//       ...state.inputValidities,
-//       [action.input]: action.isValid,
-//     };
-//     let updatedFormIsValid = true;
-//     for (const key in updatedValidities) {
-//       updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-//     }
-//     return {
-//       formIsValid: updatedFormIsValid,
-//       inputValues: updatedValues,
-//       inputValidities: updatedValidities,
-//     };
-//   }
-//   return state;
-// };
-
 const ProfileEditScreen = (props) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState(undefined);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const authUser = props.route.params.authUser;
 
@@ -193,7 +149,22 @@ const ProfileEditScreen = (props) => {
   };
 
   //console.log(formState);
-  console.log(passwordState);
+  //console.log(passwordState);
+
+  const deleteAccountModalHandler = () => {
+    setModalVisible(true);
+  };
+
+  const deleteAccountHandler = async () => {
+    console.log('delete account');
+    setModalVisible(false);
+    try {
+      await dispatch(authActions.logout());
+      await dispatch(authActions.deleteAccount());
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {
@@ -378,7 +349,44 @@ const ProfileEditScreen = (props) => {
               )}
             </View>
           </View>
+          <View style={styles.accountContainer}>
+            <Text style={styles.title}>Your Account</Text>
+            <View style={styles.buttonContainer}>
+              <CustomButton
+                style={{ flexDirection: 'row' }}
+                onSelect={deleteAccountModalHandler}
+              >
+                <Text style={styles.buttonText}>Delete Account</Text>
+              </CustomButton>
+            </View>
+          </View>
         </ScrollView>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>
+                  Are you sure you want to permanently delete your account?
+                </Text>
+                <View style={styles.buttonsContainer}>
+                  <CustomButton onSelect={deleteAccountHandler}>
+                    <Text style={styles.buttonText}>Yes</Text>
+                  </CustomButton>
+                  <CustomButton onSelect={() => setModalVisible(!modalVisible)}>
+                    <Text style={styles.buttonText}>No</Text>
+                  </CustomButton>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </View>
       </View>
     </View>
   );
@@ -426,6 +434,14 @@ const styles = StyleSheet.create({
   changePasswordContainer: {
     paddingTop: 15,
     width: '100%',
+    paddingBottom: 20,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ccc',
+  },
+  accountContainer: {
+    paddingTop: 15,
+    width: '100%',
+    paddingBottom: 20,
   },
   fieldContainer: {
     width: '100%',
@@ -487,5 +503,43 @@ const styles = StyleSheet.create({
     color: 'white',
     paddingVertical: 8,
     paddingHorizontal: 20,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  modalView: {
+    width: '96%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    paddingTop: 20,
+    paddingHorizontal: 25,
+    paddingBottom: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    fontFamily: 'cereal-medium',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  right: {
+    width: '100%',
+    alignSelf: 'flex-end',
+  },
+  buttonsContainer: {
+    width: '80%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
 });

@@ -19,6 +19,14 @@ const CommentSchema = new mongoose.Schema({
     ref: 'Ding',
     required: true,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  lastModifiedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = Comment = mongoose.model('Comment', CommentSchema);

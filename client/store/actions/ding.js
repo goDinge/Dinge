@@ -5,6 +5,7 @@ import {
   GET_DING,
   REPORT_DING,
   POST_COMMENT,
+  EDIT_COMMENT,
 } from '../types';
 import { HOME_IP } from '@env';
 
@@ -107,24 +108,31 @@ export const postComment = (text, dingId) => {
   };
 };
 
-//export const updateDingLocation = (dingId, location) => {
-//   return async (dispatch) => {
-//     try {
-//       console.log('ding action - IP used:', HOME_IP);
+export const editComment = (text, commentId) => {
+  return async (dispatch) => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
 
-//       const response = await axios.put(
-//         `${HOME_IP}/api/ding/${dingId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
-//       );
+      const body = JSON.stringify({ text });
 
-//       const ding = response.data.data;
-//       //console.log('response: ', response.data.data);
-//       dispatch({
-//         type: UPDATE_DING_LOCATION,
-//         ding: ding,
-//       });
-//     } catch (err) {
-//       console.log(err.message);
-//       throw new Error('Cannot connect with server. Please try again.');
-//     }
-//   };
-// };
+      const response = await axios.put(
+        `${HOME_IP}/api/comments/${commentId}`,
+        body,
+        config
+      );
+      const editedComment = response.data.data;
+
+      dispatch({
+        type: EDIT_COMMENT,
+        editedComment: editedComment,
+      });
+    } catch (err) {
+      console.log(err.message);
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};

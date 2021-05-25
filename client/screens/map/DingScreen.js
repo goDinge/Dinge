@@ -48,10 +48,14 @@ const DingScreen = (props) => {
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [text, onChangeText] = useState(null);
+  const [editModal, setEditModal] = useState(false);
+  const [editCommentId, setEditCommentId] = useState(null);
+  const [editInitialText, setEditInitialText] = useState('');
 
   const description = JSON.parse(ding.description);
 
   const comments = dingState.comments;
+  //console.log(comments);
 
   const timeConverter = (dateISO) => {
     const dateDing = new Date(dateISO); //dateISO is time of ding creation that got passed in
@@ -170,6 +174,30 @@ const DingScreen = (props) => {
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const editCommentHandler = async (id) => {
+    console.log('edit: ', id);
+    try {
+      await dispatch(dingActions.editComment(text, id));
+      onChangeText(null);
+    } catch (err) {
+      setError(err.message);
+      console.log(err);
+    }
+    setEditModal(false);
+    setEditInitialText('');
+  };
+
+  const openEditorHandler = async (id, text) => {
+    console.log('open: ', id);
+    setEditModal(true);
+    setEditCommentId(id);
+    setEditInitialText(text);
+  };
+
+  const deleteCommentHandler = async (id) => {
+    console.log('delete: ', id);
   };
 
   if (isLoading) {
@@ -302,21 +330,83 @@ const DingScreen = (props) => {
             {comments &&
               comments.map((item, index) => {
                 return (
-                  <View key={index} style={styles.commentContainer}>
-                    <View style={styles.textContainer}>
-                      <Text
-                        style={styles.commentsUserName}
-                        onPress={() => publicProfileHandler(item.userId)}
-                      >
-                        {item.userName}
-                      </Text>
-                      <Text style={styles.description}>{item.text}</Text>
+                  <View key={index} style={styles.outerCommentContainer}>
+                    <View style={styles.commentContainer}>
+                      <View style={styles.textContainer}>
+                        <Text
+                          style={styles.commentsUserName}
+                          onPress={() => publicProfileHandler(item.userId)}
+                        >
+                          {item.userName}
+                        </Text>
+                        <Text style={styles.description}>{item.text}</Text>
+                      </View>
                     </View>
+                    <Feather
+                      name="edit"
+                      size={22}
+                      style={styles.icon}
+                      onPress={() => openEditorHandler(item._id, item.text)}
+                    />
+                    <Feather
+                      name="delete"
+                      size={24}
+                      style={styles.icon}
+                      onPress={() => deleteCommentHandler(item._id)}
+                    />
                   </View>
                 );
               })}
           </View>
         </ScrollView>
+        <View style={styles.centeredView}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={editModal}
+            onRequestClose={() => {
+              setEditModal(false);
+            }}
+          >
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <Text style={styles.modalText}>Edit comment</Text>
+                <TextInput
+                  style={[
+                    styles.commentsInput,
+                    { marginVertical: 10 },
+                    { width: '100%' },
+                  ]}
+                  onChangeText={onChangeText}
+                  value={text}
+                  multiline={true}
+                  placeholder="write comment"
+                  defaultValue={editInitialText}
+                />
+                <View style={styles.buttonContainer}>
+                  <CustomButton
+                    onSelect={() => editCommentHandler(editCommentId)}
+                  >
+                    <Text
+                      style={[styles.postButtonText, { paddingHorizontal: 15 }]}
+                    >
+                      Confirm Edit
+                    </Text>
+                  </CustomButton>
+                </View>
+                <View style={styles.buttonContainer}>
+                  <CustomButton onSelect={() => setEditModal(false)}>
+                    <Text
+                      style={[styles.postButtonText, { paddingHorizontal: 15 }]}
+                    >
+                      Cancel
+                    </Text>
+                  </CustomButton>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </View>
       </View>
     </View>
   );
@@ -415,6 +505,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalView: {
+    width: '80%',
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 20,
@@ -454,6 +545,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     justifyContent: 'center',
   },
+  buttonContainer: {
+    marginVertical: 5,
+  },
   postButton: {
     width: '100%',
     backgroundColor: Colors.secondary,
@@ -467,12 +561,20 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 4,
     fontSize: 16,
+    alignSelf: 'center',
   },
   commentsContainer: {
-    marginHorizontal: 20,
+    marginHorizontal: 16,
+  },
+  outerCommentContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
   commentContainer: {
+    width: '75%',
     marginBottom: 15,
+    marginRight: 15,
     backgroundColor: Colors.lightBlue,
     borderRadius: 14,
     borderColor: '#ddd',
@@ -484,9 +586,12 @@ const styles = StyleSheet.create({
   },
   commentsUserName: {
     fontFamily: 'cereal-bold',
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 2,
     alignSelf: 'flex-start',
+  },
+  verticalMargin: {
+    marginVertical: 10,
   },
 });
 

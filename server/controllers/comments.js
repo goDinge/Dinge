@@ -4,7 +4,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 
 //desc    CREATE Comment by Ding ID
-//route   POST /api/comments/:id/
+//route   POST /api/comments/:dingid/
 //access  private
 exports.createComment = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
@@ -34,6 +34,42 @@ exports.createComment = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: ding,
+  });
+});
+
+//desc    EDIT Comment by Ding ID
+//route   PUT /api/comments/:commentid/
+//access  private
+exports.editComment = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+  const text = req.body.text;
+  const comment = await Comment.findById(req.params.id);
+
+  const commentUser = comment.userId;
+
+  if (commentUser != userId) {
+    return next(
+      new ErrorResponse(`You are not authorized to edit this comment.`, 400)
+    );
+  }
+
+  const updateResult = await Comment.updateOne(
+    {
+      _id: req.params.id,
+    },
+    {
+      $set: {
+        text,
+        lastModifiedAt: Date.now(),
+      },
+    }
+  );
+
+  const editedComment = await Comment.findById(req.params.id);
+
+  res.status(200).json({
+    success: true,
+    data: editedComment,
   });
 });
 

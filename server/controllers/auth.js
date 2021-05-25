@@ -87,7 +87,7 @@ exports.getAuthUser = asyncHandler(async (req, res, next) => {
 exports.editAuthUser = asyncHandler(async (req, res, next) => {
   const { email, name, website, facebook } = req.body;
 
-  await User.updateOne(
+  const updateResult = await User.updateOne(
     { _id: req.user.id },
     {
       $set: {
@@ -102,7 +102,7 @@ exports.editAuthUser = asyncHandler(async (req, res, next) => {
 
   const user = await User.findById(req.user.id);
 
-  res.status(200).json({ success: true, data: user });
+  res.status(200).json({ success: true, data: { user, updateResult } });
 });
 
 //desc     CHANGE password
@@ -120,11 +120,11 @@ exports.changeAuthPassword = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Invalid password', 401));
   }
 
-  //mongoDB syntax requires bcrypting the password
+  //mongoDB syntax requires bcrypting the password as Model pre save function doesn't apply
   const salt = await bcrypt.genSalt(10);
   const encrypted = await bcrypt.hash(newPassword, salt);
 
-  await User.updateOne(
+  const updateResult = await User.updateOne(
     { _id: req.user.id },
     {
       $set: {
@@ -134,7 +134,7 @@ exports.changeAuthPassword = asyncHandler(async (req, res, next) => {
     }
   );
 
-  res.status(200).json({ success: true });
+  res.status(200).json({ success: true, data: updateResult });
 });
 
 //desc    GENERATE verification code
@@ -245,17 +245,36 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 //route   DELETE /api/auth/me
 //access  private
 exports.deleteAuthUser = asyncHandler(async (req, res, next) => {
+  const eventCount = await Event.countDocuments({
+    user: req.user.id,
+  });
   const eventResult = await Event.deleteMany({
     user: req.user.id,
   });
 
+  if (eventCount !== eventResult.deletedCount) {
+    return next(new ErrorResponse('Not all events are deleted', 400));
+  }
+
+  const commentCount = await Comment.countDocuments({
+    userId: req.user.id,
+  });
   const commentResult = await Comment.deleteMany({
     userId: req.user.id,
   });
+  if (commentCount !== commentResult.deletedCount) {
+    return next(new ErrorResponse('Not all comments are deleted', 400));
+  }
 
+  const dingCount = await Ding.countDocuments({
+    user: req.user.id,
+  });
   const dingResult = await Ding.deleteMany({
     user: req.user.id,
   });
+  if (dingCount !== dingResult.deletedCount) {
+    return next(new ErrorResponse('Not all dinge are deleted', 400));
+  }
 
   const userResult = await User.deleteOne({ _id: req.user.id });
 
@@ -265,12 +284,6 @@ exports.deleteAuthUser = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: {
-      eventResult,
-      commentResult,
-      dingResult,
-      userResult,
-    },
   });
 });
 

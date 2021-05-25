@@ -208,10 +208,6 @@ export const setNewPassword = (password, passwordConfirm, veriCode) => {
   };
 };
 
-export const setDidTryAL = () => {
-  return { type: SET_DID_TRY_AL };
-};
-
 export const updateAuthAvatar = (avatar) => {
   return async (dispatch) => {
     try {
@@ -237,6 +233,16 @@ export const updateAuthAvatar = (avatar) => {
 
       const newAvatar = response.data.data;
       await dispatch(setAuthUser(newAvatar));
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const deleteAccount = () => {
+  return async () => {
+    try {
+      await axios.delete(`${HOME_IP}/api/auth/me`);
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }
@@ -304,6 +310,10 @@ export const login = (email, password) => {
       throw new Error('Cannot connect with server. Please try again. ');
     }
   };
+};
+
+export const setDidTryAL = () => {
+  return { type: SET_DID_TRY_AL };
 };
 
 export const logout = () => {

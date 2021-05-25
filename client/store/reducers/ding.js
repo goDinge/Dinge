@@ -4,6 +4,7 @@ import {
   UNLIKE_DING,
   REPORT_DING,
   POST_COMMENT,
+  EDIT_COMMENT,
 } from '../types';
 
 const initialState = {
@@ -46,12 +47,21 @@ export default (state = initialState, action) => {
         ...state,
         ding: action.ding,
       };
+    case EDIT_COMMENT: {
+      const index = state.ding.comments.findIndex(
+        (comment) => comment._id === action.editedComment._id
+      );
+      const newComments = [...state.ding.comments];
+      newComments[index] = action.editedComment;
+
+      return {
+        ...state,
+        ding: {
+          ...state.ding,
+          comments: newComments,
+        },
+      };
+    }
   }
   return state;
 };
-
-// case UPDATE_DING_LOCATION:
-//   return {
-//     ...state,
-//     ding: action.ding,
-//   };
