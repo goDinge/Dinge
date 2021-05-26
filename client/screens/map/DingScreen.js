@@ -18,6 +18,7 @@ import {
   MaterialIcons,
   FontAwesome,
   Feather,
+  AntDesign,
 } from '@expo/vector-icons';
 
 import * as userActions from '../../store/actions/user';
@@ -26,6 +27,7 @@ import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
 
 import CustomButton from '../../components/CustomButton';
+import { timeConverter } from '../../helpers/timeConverter';
 import Colors from '../../constants/Colors';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -46,7 +48,7 @@ const DingScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [dingReportModal, setDingReportModal] = useState(false);
   const [text, onChangeText] = useState(null);
   const [editModal, setEditModal] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
@@ -55,22 +57,6 @@ const DingScreen = (props) => {
   const description = JSON.parse(ding.description);
 
   const comments = dingState.comments;
-  //console.log(comments);
-
-  const timeConverter = (dateISO) => {
-    const dateDing = new Date(dateISO); //dateISO is time of ding creation that got passed in
-    const dateMilli = dateDing.getTime();
-    const dateNow = Date.now();
-    const timeSinceUpload = dateNow - dateMilli;
-    const minutesSinceUpload = Math.ceil(timeSinceUpload / 1000 / 60);
-    const hoursSinceUpload = Math.ceil(timeSinceUpload / 1000 / 60 / 60);
-
-    if (minutesSinceUpload < 60) {
-      return `${minutesSinceUpload}m`;
-    } else {
-      return `${hoursSinceUpload}h`;
-    }
-  };
 
   const dispatch = useDispatch();
 
@@ -79,6 +65,12 @@ const DingScreen = (props) => {
     loadDing(ding._id);
     loadAuthUser();
   }, [loadUser, loadDing]);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+    }
+  }, [error]);
 
   const loadUser = async (user) => {
     setError(null);
@@ -152,8 +144,8 @@ const DingScreen = (props) => {
     props.navigation.navigate('Map');
   };
 
-  const openModelHandler = () => {
-    setModalVisible(true);
+  const openDingReportModelHandler = () => {
+    setDingReportModalVisible(true);
   };
 
   const reportDingHandler = async (dingId) => {
@@ -177,7 +169,6 @@ const DingScreen = (props) => {
   };
 
   const editCommentHandler = async (id) => {
-    console.log('edit: ', id);
     try {
       await dispatch(dingActions.editComment(text, id));
       onChangeText(null);
@@ -190,7 +181,6 @@ const DingScreen = (props) => {
   };
 
   const openEditorHandler = async (id, text) => {
-    console.log('open: ', id);
     setEditModal(true);
     setEditCommentId(id);
     setEditInitialText(text);
@@ -210,8 +200,149 @@ const DingScreen = (props) => {
 
   return (
     <View style={styles.container}>
+      <ScrollView>
+        <View style={styles.imageContainer}>
+          <Image style={styles.image} source={{ uri: ding.imgUrl }} />
+        </View>
+        <View style={styles.infoContainer}>
+          <View style={styles.iconContainer}>
+            <View style={styles.iconLeftContainer}>
+              {isLikeLoading ? (
+                <View style={styles.iconActInd}>
+                  <ActivityIndicator color={Colors.primary} size="small" />
+                </View>
+              ) : (
+                <FontAwesome
+                  name={initLike ? 'thumbs-up' : 'thumbs-o-up'}
+                  color={initLike ? Colors.primary : 'black'}
+                  size={28}
+                  style={
+                    initLike ? styles.icon : [styles.icon, { paddingRight: 5 }]
+                  }
+                  onPress={() => likeDingHandler(ding._id, user._id)}
+                />
+              )}
+              <Text style={styles.likesCount}>
+                {dingState.likes && dingState.likes.length}
+              </Text>
+            </View>
+            <View style={styles.iconRightContainer}>
+              <Feather
+                name="flag"
+                size={28}
+                style={styles.icon}
+                onPress={openDingReportModelHandler}
+              />
+              {ding.user === authUser._id ? (
+                <AntDesign
+                  name="delete"
+                  size={28}
+                  style={[styles.icon, { marginRight: 0 }]}
+                  onPress={() => deleteDingHandler(ding._id)}
+                />
+              ) : null}
+            </View>
+          </View>
+          <View style={styles.socialContainer}>
+            <Text
+              style={styles.userName}
+              onPress={() => publicProfileHandler(user._id)}
+            >
+              {user.name}
+            </Text>
+            <View style={styles.timeContainer}>
+              <Text style={styles.timeText}>
+                {timeConverter(ding.createdAt)}
+              </Text>
+            </View>
+            <Text style={styles.description}>{description}</Text>
+          </View>
+        </View>
+        <View style={styles.commentsInputContainer}>
+          <TextInput
+            style={styles.commentsInput}
+            onChangeText={onChangeText}
+            value={text}
+            multiline={true}
+            placeholder="write comment"
+          />
+          <View style={styles.postButtonContainer}>
+            {text ? (
+              <CustomButton
+                style={styles.postButton}
+                onSelect={() => postCommentHandler(text, ding._id)}
+              >
+                <Text style={styles.postButtonText}>Post</Text>
+              </CustomButton>
+            ) : (
+              <CustomButton
+                style={styles.postButton}
+                onSelect={() => Alert.alert('Please type something')}
+              >
+                <Text style={styles.postButtonText}>Post</Text>
+              </CustomButton>
+            )}
+          </View>
+        </View>
+        <View style={styles.commentsContainer}>
+          {comments &&
+            comments.map((item, index) => {
+              return (
+                <View key={index} style={styles.outerCommentContainer}>
+                  <View style={styles.commentContainer}>
+                    <View style={styles.textContainer}>
+                      <Text
+                        style={styles.commentsUserName}
+                        onPress={() => publicProfileHandler(item.userId)}
+                      >
+                        {item.userName}
+                      </Text>
+                      <Text style={styles.description}>{item.text}</Text>
+                    </View>
+                  </View>
+                  {item.userId === authUser._id ? (
+                    <View style={styles.commentsIconContainer}>
+                      <Feather
+                        name="edit"
+                        size={22}
+                        style={styles.icon}
+                        onPress={() => openEditorHandler(item._id, item.text)}
+                      />
+                      <Feather
+                        name="delete"
+                        size={22}
+                        style={[styles.icon, { left: -4 }]}
+                        onPress={() => deleteCommentHandler(item._id)}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.commentsIconContainer}>
+                      <FontAwesome
+                        name="thumbs-o-up"
+                        size={22}
+                        style={styles.icon}
+                        onPress={() => console.log('like')}
+                      />
+                      <Feather
+                        name="flag"
+                        size={24}
+                        style={styles.icon}
+                        onPress={() => console.log('flag')}
+                      />
+                    </View>
+                  )}
+                </View>
+              );
+            })}
+        </View>
+      </ScrollView>
+      {/*    **** MODALS ****     */}
       <View style={styles.centeredView}>
-        <Modal animationType="fade" transparent={true} visible={modalVisible}>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={dingReportModal}
+        >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>
@@ -222,7 +353,7 @@ const DingScreen = (props) => {
                 onPress={() => {
                   reportDingHandler(ding._id);
                   Alert.alert('Ding reported!');
-                  setModalVisible(!modalVisible);
+                  setDingReportModal(!dingReportModal);
                 }}
               >
                 <Text style={styles.reportText}>Report Ding!</Text>
@@ -232,181 +363,66 @@ const DingScreen = (props) => {
                   name="close"
                   size={30}
                   style={styles.iconClose}
-                  onPress={() => setModalVisible(!modalVisible)}
+                  onPress={() => setDingReportModal(!dingReportModal)}
                 />
               </View>
             </View>
           </View>
         </Modal>
       </View>
-      <View>
-        <ScrollView>
-          <View style={styles.imageContainer}>
-            <Image style={styles.image} source={{ uri: ding.imgUrl }} />
-          </View>
-          <View style={styles.infoContainer}>
-            <View style={styles.iconContainer}>
-              <View style={styles.iconLeftContainer}>
-                {isLikeLoading ? (
-                  <View style={styles.iconActInd}>
-                    <ActivityIndicator color={Colors.primary} size="small" />
-                  </View>
-                ) : (
-                  <FontAwesome
-                    name={initLike ? 'thumbs-up' : 'thumbs-o-up'}
-                    color={initLike ? Colors.primary : 'black'}
-                    size={28}
-                    style={
-                      initLike
-                        ? styles.icon
-                        : [styles.icon, { paddingRight: 5 }]
-                    }
-                    onPress={() => likeDingHandler(ding._id, user._id)}
-                  />
-                )}
-                <Text style={styles.likesCount}>
-                  {dingState.likes && dingState.likes.length}
-                </Text>
-              </View>
-              <View style={styles.iconRightContainer}>
-                <Feather
-                  name="flag"
-                  size={28}
-                  style={styles.icon}
-                  onPress={openModelHandler}
-                />
-                {ding.user === authUser._id ? (
-                  <MaterialIcons
-                    name="highlight-remove"
-                    size={30}
-                    style={[styles.icon, { marginRight: 0 }]}
-                    onPress={() => deleteDingHandler(ding._id)}
-                  />
-                ) : null}
-              </View>
-            </View>
-            <View style={styles.socialContainer}>
-              <Text
-                style={styles.userName}
-                onPress={() => publicProfileHandler(user._id)}
-              >
-                {user.name}
-              </Text>
-              <View style={styles.timeContainer}>
-                <Text style={styles.timeText}>
-                  {timeConverter(ding.createdAt)}
-                </Text>
-              </View>
-              <Text style={styles.description}>{description}</Text>
-            </View>
-          </View>
-          <View style={styles.commentsInputContainer}>
-            <TextInput
-              style={styles.commentsInput}
-              onChangeText={onChangeText}
-              value={text}
-              multiline={true}
-              placeholder="write comment"
-            />
-            <View style={styles.postButtonContainer}>
-              {text ? (
+      <View style={styles.centeredView}>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={editModal}
+          onRequestClose={() => {
+            setEditModal(false);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Edit comment:</Text>
+              <TextInput
+                style={[
+                  styles.commentsInput,
+                  { marginVertical: 10 },
+                  { width: '100%' },
+                ]}
+                onChangeText={onChangeText}
+                value={text}
+                multiline={true}
+                placeholder="write comment"
+                defaultValue={editInitialText}
+              />
+              <View style={styles.buttonContainer}>
                 <CustomButton
-                  style={styles.postButton}
-                  onSelect={() => postCommentHandler(text, ding._id)}
+                  onSelect={() => editCommentHandler(editCommentId)}
                 >
-                  <Text style={styles.postButtonText}>Post</Text>
-                </CustomButton>
-              ) : (
-                <CustomButton
-                  style={styles.postButton}
-                  onSelect={() => Alert.alert('Please type something')}
-                >
-                  <Text style={styles.postButtonText}>Post</Text>
-                </CustomButton>
-              )}
-            </View>
-          </View>
-          <View style={styles.commentsContainer}>
-            {comments &&
-              comments.map((item, index) => {
-                return (
-                  <View key={index} style={styles.outerCommentContainer}>
-                    <View style={styles.commentContainer}>
-                      <View style={styles.textContainer}>
-                        <Text
-                          style={styles.commentsUserName}
-                          onPress={() => publicProfileHandler(item.userId)}
-                        >
-                          {item.userName}
-                        </Text>
-                        <Text style={styles.description}>{item.text}</Text>
-                      </View>
-                    </View>
-                    <Feather
-                      name="edit"
-                      size={22}
-                      style={styles.icon}
-                      onPress={() => openEditorHandler(item._id, item.text)}
-                    />
-                    <Feather
-                      name="delete"
-                      size={24}
-                      style={styles.icon}
-                      onPress={() => deleteCommentHandler(item._id)}
-                    />
-                  </View>
-                );
-              })}
-          </View>
-        </ScrollView>
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={editModal}
-            onRequestClose={() => {
-              setEditModal(false);
-            }}
-          >
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-                <Text style={styles.modalText}>Edit comment</Text>
-                <TextInput
-                  style={[
-                    styles.commentsInput,
-                    { marginVertical: 10 },
-                    { width: '100%' },
-                  ]}
-                  onChangeText={onChangeText}
-                  value={text}
-                  multiline={true}
-                  placeholder="write comment"
-                  defaultValue={editInitialText}
-                />
-                <View style={styles.buttonContainer}>
-                  <CustomButton
-                    onSelect={() => editCommentHandler(editCommentId)}
+                  <Text
+                    style={[
+                      styles.postButtonText,
+                      { paddingHorizontal: 15, paddingVertical: 8 },
+                    ]}
                   >
-                    <Text
-                      style={[styles.postButtonText, { paddingHorizontal: 15 }]}
-                    >
-                      Confirm Edit
-                    </Text>
-                  </CustomButton>
-                </View>
-                <View style={styles.buttonContainer}>
-                  <CustomButton onSelect={() => setEditModal(false)}>
-                    <Text
-                      style={[styles.postButtonText, { paddingHorizontal: 15 }]}
-                    >
-                      Cancel
-                    </Text>
-                  </CustomButton>
-                </View>
+                    Confirm Edit
+                  </Text>
+                </CustomButton>
+              </View>
+              <View style={styles.buttonContainer}>
+                <CustomButton onSelect={() => setEditModal(false)}>
+                  <Text
+                    style={[
+                      styles.postButtonText,
+                      { paddingHorizontal: 15, paddingVertical: 8 },
+                    ]}
+                  >
+                    Cancel
+                  </Text>
+                </CustomButton>
               </View>
             </View>
-          </Modal>
-        </View>
+          </View>
+        </Modal>
       </View>
     </View>
   );
@@ -433,7 +449,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     marginVertical: 10,
-    marginHorizontal: 20,
+    marginHorizontal: 16,
   },
   iconContainer: {
     flexDirection: 'row',
@@ -457,7 +473,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconClose: {
-    alignItems: 'flex-end',
+    alignSelf: 'flex-end',
     padding: 5,
   },
   likesCount: {
@@ -487,7 +503,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     fontFamily: 'cereal-medium',
-    fontSize: 15,
+    fontSize: 16,
     color: 'black',
   },
   reportText: {
@@ -522,11 +538,11 @@ const styles = StyleSheet.create({
   },
   right: {
     width: '100%',
-    alignSelf: 'flex-end',
   },
   commentsInputContainer: {
     flexDirection: 'row',
-    marginHorizontal: 18,
+    justifyContent: 'space-around',
+    marginHorizontal: 16,
     marginBottom: 20,
   },
   commentsInput: {
@@ -543,28 +559,27 @@ const styles = StyleSheet.create({
   postButtonContainer: {
     width: 50,
     marginLeft: 10,
-    justifyContent: 'center',
   },
   buttonContainer: {
+    width: 170,
     marginVertical: 5,
   },
   postButton: {
     width: '100%',
     backgroundColor: Colors.secondary,
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   postButtonText: {
     color: 'white',
     fontFamily: 'cereal-bold',
-    paddingVertical: 5,
-    paddingHorizontal: 4,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
     fontSize: 16,
     alignSelf: 'center',
   },
   commentsContainer: {
     marginHorizontal: 16,
+    alignItems: 'center',
   },
   outerCommentContainer: {
     width: '100%',
@@ -572,13 +587,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   commentContainer: {
-    width: '75%',
+    width: '80%',
     marginBottom: 15,
-    marginRight: 15,
+    marginHorizontal: 20,
     backgroundColor: Colors.lightBlue,
     borderRadius: 14,
     borderColor: '#ddd',
     borderWidth: 1,
+  },
+  commentsIconContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
   textContainer: {
     paddingHorizontal: 9,
