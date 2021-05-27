@@ -1,11 +1,4 @@
-import {
-  GET_DING,
-  LIKE_DING,
-  UNLIKE_DING,
-  REPORT_DING,
-  POST_COMMENT,
-  EDIT_COMMENT,
-} from '../types';
+import { GET_DING, LIKE_DING, UNLIKE_DING, REPORT_DING } from '../types';
 
 const initialState = {
   ding: {},
@@ -42,26 +35,27 @@ export default (state = initialState, action) => {
           reports: action.ding.reports,
         },
       };
-    case POST_COMMENT:
-      return {
-        ...state,
-        ding: action.ding,
-      };
-    case EDIT_COMMENT: {
-      const index = state.ding.comments.findIndex(
-        (comment) => comment._id === action.editedComment._id
-      );
-      const newComments = [...state.ding.comments];
-      newComments[index] = action.editedComment;
-
-      return {
-        ...state,
-        ding: {
-          ...state.ding,
-          comments: newComments,
-        },
-      };
-    }
   }
   return state;
 };
+
+// case POST_COMMENT:
+//   return {
+//     ...state,
+//     ding: action.ding,
+//   };
+// case EDIT_COMMENT: {
+//   const index = state.ding.comments.findIndex(
+//     (comment) => comment._id === action.editedComment._id
+//   );
+//   const newComments = [...state.ding.comments];
+//   newComments[index] = action.editedComment;
+
+//   return {
+//     ...state,
+//     ding: {
+//       ...state.ding,
+//       comments: newComments,
+//     },
+//   };
+// }

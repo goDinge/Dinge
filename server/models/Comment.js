@@ -19,6 +19,22 @@ const CommentSchema = new mongoose.Schema({
     ref: 'Ding',
     required: true,
   },
+  likes: {
+    type: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
+  },
+  reports: {
+    type: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
+  },
   createdAt: {
     type: Date,
     default: Date.now,

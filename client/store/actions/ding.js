@@ -1,18 +1,12 @@
 import axios from 'axios';
-import {
-  LIKE_DING,
-  UNLIKE_DING,
-  GET_DING,
-  REPORT_DING,
-  POST_COMMENT,
-  EDIT_COMMENT,
-} from '../types';
+import { LIKE_DING, UNLIKE_DING, GET_DING, REPORT_DING } from '../types';
 import { HOME_IP } from '@env';
 
 export const getDing = (dingId) => {
   return async (dispatch) => {
     try {
       console.log('ding action - IP used:', HOME_IP);
+
       const response = await axios.get(`${HOME_IP}/api/dinge/${dingId}`);
       const ding = response.data.data;
 
@@ -79,60 +73,60 @@ export const reportDingById = (dingId) => {
   };
 };
 
-export const postComment = (text, dingId) => {
-  return async (dispatch) => {
-    try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
+// export const postComment = (text, dingId) => {
+//   return async (dispatch) => {
+//     try {
+//       const config = {
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//       };
 
-      const body = JSON.stringify({ text });
+//       const body = JSON.stringify({ text });
 
-      const response = await axios.post(
-        `${HOME_IP}/api/comments/${dingId}`,
-        body,
-        config
-      );
-      const ding = response.data.data;
+//       const response = await axios.post(
+//         `${HOME_IP}/api/comments/${dingId}`,
+//         body,
+//         config
+//       );
+//       const ding = response.data.data;
 
-      dispatch({
-        type: POST_COMMENT,
-        ding: ding,
-      });
-    } catch (err) {
-      console.log(err.message);
-      throw new Error('Cannot connect with server. Please try again.');
-    }
-  };
-};
+//       dispatch({
+//         type: POST_COMMENT,
+//         ding: ding,
+//       });
+//     } catch (err) {
+//       console.log(err.message);
+//       throw new Error('Cannot connect with server. Please try again.');
+//     }
+//   };
+// };
 
-export const editComment = (text, commentId) => {
-  return async (dispatch) => {
-    try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
+// export const editComment = (text, commentId) => {
+//   return async (dispatch) => {
+//     try {
+//       const config = {
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//       };
 
-      const body = JSON.stringify({ text });
+//       const body = JSON.stringify({ text });
 
-      const response = await axios.put(
-        `${HOME_IP}/api/comments/${commentId}`,
-        body,
-        config
-      );
-      const editedComment = response.data.data;
+//       const response = await axios.put(
+//         `${HOME_IP}/api/comments/${commentId}`,
+//         body,
+//         config
+//       );
+//       const editedComment = response.data.data;
 
-      dispatch({
-        type: EDIT_COMMENT,
-        editedComment: editedComment,
-      });
-    } catch (err) {
-      console.log(err.message);
-      throw new Error('Cannot connect with server. Please try again.');
-    }
-  };
-};
+//       dispatch({
+//         type: EDIT_COMMENT,
+//         editedComment: editedComment,
+//       });
+//     } catch (err) {
+//       console.log(err.message);
+//       throw new Error('Cannot connect with server. Please try again.');
+//     }
+//   };
+// };

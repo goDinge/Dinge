@@ -7,13 +7,14 @@ import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 
 import dingeReducer from './store/reducers/dinge';
+import dingReducer from './store/reducers/ding';
 import imageReducer from './store/reducers/image';
 import userReducer from './store/reducers/user';
 import authReducer from './store/reducers/auth';
-import dingReducer from './store/reducers/ding';
 import eventsReducer from './store/reducers/events';
 import eventReducer from './store/reducers/event';
 import locationReducer from './store/reducers/location';
+import commentReducer from './store/reducers/comment';
 
 import AppNavigator from './navigation/AppNavigator';
 
@@ -29,13 +30,14 @@ const fetchFonts = () => {
 
 const rootReducer = combineReducers({
   dinge: dingeReducer,
+  ding: dingReducer,
   image: imageReducer,
   user: userReducer,
   auth: authReducer,
-  ding: dingReducer,
   events: eventsReducer,
   event: eventReducer,
   location: locationReducer,
+  comment: commentReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
@@ -65,12 +67,3 @@ const App = () => {
 };
 
 export default App;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

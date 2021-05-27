@@ -15,7 +15,6 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import {
   MaterialCommunityIcons,
-  MaterialIcons,
   FontAwesome,
   Feather,
   AntDesign,
@@ -25,6 +24,7 @@ import * as userActions from '../../store/actions/user';
 import * as dingActions from '../../store/actions/ding';
 import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
+import * as commentActions from '../../store/actions/comment';
 
 import CustomButton from '../../components/CustomButton';
 import { timeConverter } from '../../helpers/timeConverter';
@@ -36,12 +36,15 @@ const DingScreen = (props) => {
   const ding = props.route.params;
   const authUser = useSelector((state) => state.auth.authUser);
   const dingState = useSelector((state) => state.ding.ding);
+  //const commentState = useSelector((state) => state.comment.comment);
   const user = useSelector((state) => state.user.user);
 
-  let initLike = false;
+  //console.log('commentState: ', commentState);
+
+  let initLikeDing = false;
   if (dingState.likes) {
     if (dingState.likes.includes(authUser._id)) {
-      initLike = true;
+      initLikeDing = true;
     }
   }
 
@@ -57,6 +60,7 @@ const DingScreen = (props) => {
   const description = JSON.parse(ding.description);
 
   const comments = dingState.comments;
+  console.log(comments);
 
   const dispatch = useDispatch();
 
@@ -115,13 +119,13 @@ const DingScreen = (props) => {
     //many Actions are dispatched here for the purpose of updating reputation in real time
     //should refactor to improve performance
     try {
-      if (initLike) {
-        initLike = false;
+      if (initLikeDing) {
+        initLikeDing = false;
         await dispatch(dingActions.unlikeDing(dingId));
         await dispatch(authActions.getAuthUser());
         await dispatch(userActions.getUser(userId));
       } else {
-        initLike = true;
+        initLikeDing = true;
         await dispatch(dingActions.likeDing(dingId));
         await dispatch(authActions.getAuthUser());
         await dispatch(userActions.getUser(userId));
@@ -160,7 +164,7 @@ const DingScreen = (props) => {
   const postCommentHandler = async (text, dingId) => {
     setError(null);
     try {
-      await dispatch(dingActions.postComment(text, dingId));
+      await dispatch(commentActions.postComment(text, dingId));
       onChangeText(null);
       await dispatch(dingActions.getDing(dingId));
     } catch (err) {
@@ -168,16 +172,16 @@ const DingScreen = (props) => {
     }
   };
 
-  const editCommentHandler = async (id) => {
+  const editCommentHandler = async (id, dingId) => {
     try {
-      await dispatch(dingActions.editComment(text, id));
-      onChangeText(null);
+      await dispatch(commentActions.editComment(text, id));
+      await dispatch(dingActions.getDing(dingId));
     } catch (err) {
       setError(err.message);
       console.log(err);
     }
     setEditModal(false);
-    setEditInitialText('');
+    cancelEditHandler();
   };
 
   const openEditorHandler = async (id, text) => {
@@ -186,8 +190,28 @@ const DingScreen = (props) => {
     setEditInitialText(text);
   };
 
-  const deleteCommentHandler = async (id) => {
-    console.log('delete: ', id);
+  const cancelEditHandler = () => {
+    setEditModal(false);
+    setEditInitialText('');
+  };
+
+  const deleteCommentHandler = async (id, dingId) => {
+    try {
+      await dispatch(commentActions.deleteComment(id));
+      await dispatch(dingActions.getDing(dingId));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const likeCommentHandler = async (id) => {
+    console.log('comment id: ', id);
+    try {
+      await dispatch(commentActions.likeComment(id));
+      await dispatch(dingActions.getDing(dingId));
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   if (isLoading) {
@@ -213,11 +237,13 @@ const DingScreen = (props) => {
                 </View>
               ) : (
                 <FontAwesome
-                  name={initLike ? 'thumbs-up' : 'thumbs-o-up'}
-                  color={initLike ? Colors.primary : 'black'}
+                  name={initLikeDing ? 'thumbs-up' : 'thumbs-o-up'}
+                  color={initLikeDing ? Colors.primary : 'black'}
                   size={28}
                   style={
-                    initLike ? styles.icon : [styles.icon, { paddingRight: 5 }]
+                    initLikeDing
+                      ? styles.iconDingThumb
+                      : [styles.iconDingThumb, { paddingRight: 5 }]
                   }
                   onPress={() => likeDingHandler(ding._id, user._id)}
                 />
@@ -299,7 +325,18 @@ const DingScreen = (props) => {
                       </Text>
                       <Text style={styles.description}>{item.text}</Text>
                     </View>
+                    <View style={styles.likesCountContainer}>
+                      <FontAwesome
+                        name="thumbs-o-up"
+                        size={14}
+                        style={styles.icon}
+                      />
+                      <Text style={styles.miniLikesCount}>
+                        {item.likes.length}
+                      </Text>
+                    </View>
                   </View>
+
                   {item.userId === authUser._id ? (
                     <View style={styles.commentsIconContainer}>
                       <Feather
@@ -312,7 +349,7 @@ const DingScreen = (props) => {
                         name="delete"
                         size={22}
                         style={[styles.icon, { left: -4 }]}
-                        onPress={() => deleteCommentHandler(item._id)}
+                        onPress={() => deleteCommentHandler(item._id, ding._id)}
                       />
                     </View>
                   ) : (
@@ -321,7 +358,7 @@ const DingScreen = (props) => {
                         name="thumbs-o-up"
                         size={22}
                         style={styles.icon}
-                        onPress={() => console.log('like')}
+                        onPress={() => likeCommentHandler(item._id)}
                       />
                       <Feather
                         name="flag"
@@ -396,7 +433,7 @@ const DingScreen = (props) => {
               />
               <View style={styles.buttonContainer}>
                 <CustomButton
-                  onSelect={() => editCommentHandler(editCommentId)}
+                  onSelect={() => editCommentHandler(editCommentId, ding._id)}
                 >
                   <Text
                     style={[
@@ -409,7 +446,7 @@ const DingScreen = (props) => {
                 </CustomButton>
               </View>
               <View style={styles.buttonContainer}>
-                <CustomButton onSelect={() => setEditModal(false)}>
+                <CustomButton onSelect={cancelEditHandler}>
                   <Text
                     style={[
                       styles.postButtonText,
@@ -461,8 +498,12 @@ const styles = StyleSheet.create({
   iconRightContainer: {
     flexDirection: 'row',
   },
-  icon: {
+  iconDingThumb: {
     marginRight: 12,
+    padding: 3,
+  },
+  icon: {
+    marginRight: 4,
     padding: 3,
   },
   iconActInd: {
@@ -608,6 +649,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 2,
     alignSelf: 'flex-start',
+  },
+  likesCountContainer: {
+    position: 'absolute',
+    zIndex: 1,
+    right: 5,
+    bottom: -9,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: '#777',
+  },
+  miniLikesCount: {
+    fontSize: 14,
+    top: 1,
+    marginRight: 3,
+    fontFamily: 'cereal-book',
   },
   verticalMargin: {
     marginVertical: 10,

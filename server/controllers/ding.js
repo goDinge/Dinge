@@ -37,7 +37,7 @@ exports.likeDing = asyncHandler(async (req, res, next) => {
 });
 
 //desc    UNLIKE Ding
-//route   DELETE /api/ding/:id
+//route   DELETE /api/ding/likes/:id
 //access  private
 exports.unlikeDing = asyncHandler(async (req, res, next) => {
   await Ding.updateOne(

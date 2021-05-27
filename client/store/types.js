@@ -9,6 +9,9 @@ export const UNLIKE_DING = 'UNLIKE_DING';
 export const REPORT_DING = 'REPORT_DING';
 export const POST_COMMENT = 'POST_COMMENT';
 export const EDIT_COMMENT = 'EDIT_COMMENT';
+export const LIKE_COMMENT = 'LIKE_COMMENT';
+export const UNLIKE_COMMENT = 'UNLIKE_COMMENT';
+export const REPORT_COMMENT = 'REPORT_COMMENT';
 
 export const GET_AUTH_EVENTS = 'GET_AUTH_EVENTS';
 export const GET_LOCAL_EVENTS = 'GET_LOCAL_EVENTS';
