@@ -27,6 +27,9 @@ import * as authActions from '../../store/actions/auth';
 import * as commentActions from '../../store/actions/comment';
 
 import CustomButton from '../../components/CustomButton';
+import CustomComment from '../../components/CustomComment';
+import CustomCommentInput from '../../components/CustomCommentInput';
+
 import { timeConverter } from '../../helpers/timeConverter';
 import Colors from '../../constants/Colors';
 
@@ -36,10 +39,7 @@ const DingScreen = (props) => {
   const ding = props.route.params;
   const authUser = useSelector((state) => state.auth.authUser);
   const dingState = useSelector((state) => state.ding.ding);
-  //const commentState = useSelector((state) => state.comment.comment);
   const user = useSelector((state) => state.user.user);
-
-  //console.log('commentState: ', commentState);
 
   let initLikeDing = false;
   if (dingState.likes) {
@@ -51,6 +51,7 @@ const DingScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
+  const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
   const [dingReportModal, setDingReportModal] = useState(false);
   const [text, onChangeText] = useState(null);
   const [editModal, setEditModal] = useState(false);
@@ -60,7 +61,6 @@ const DingScreen = (props) => {
   const description = JSON.parse(ding.description);
 
   const comments = dingState.comments;
-  console.log(comments);
 
   const dispatch = useDispatch();
 
@@ -122,13 +122,13 @@ const DingScreen = (props) => {
       if (initLikeDing) {
         initLikeDing = false;
         await dispatch(dingActions.unlikeDing(dingId));
-        await dispatch(authActions.getAuthUser());
-        await dispatch(userActions.getUser(userId));
+        //await dispatch(authActions.getAuthUser());
+        //await dispatch(userActions.getUser(userId));
       } else {
         initLikeDing = true;
         await dispatch(dingActions.likeDing(dingId));
-        await dispatch(authActions.getAuthUser());
-        await dispatch(userActions.getUser(userId));
+        //await dispatch(authActions.getAuthUser());
+        //await dispatch(userActions.getUser(userId));
       }
     } catch (err) {
       setError(err.message);
@@ -173,8 +173,10 @@ const DingScreen = (props) => {
   };
 
   const editCommentHandler = async (id, dingId) => {
+    setError(null);
     try {
       await dispatch(commentActions.editComment(text, id));
+      onChangeText(null);
       await dispatch(dingActions.getDing(dingId));
     } catch (err) {
       setError(err.message);
@@ -196,6 +198,7 @@ const DingScreen = (props) => {
   };
 
   const deleteCommentHandler = async (id, dingId) => {
+    setError(null);
     try {
       await dispatch(commentActions.deleteComment(id));
       await dispatch(dingActions.getDing(dingId));
@@ -204,14 +207,26 @@ const DingScreen = (props) => {
     }
   };
 
-  const likeCommentHandler = async (id) => {
-    console.log('comment id: ', id);
+  const likeCommentHandler = async (id, dingId) => {
+    setIsCommentLikeLoading(true);
+    const comment = comments.find((comment) => comment._id === id);
+
     try {
-      await dispatch(commentActions.likeComment(id));
-      await dispatch(dingActions.getDing(dingId));
+      if (!comment.likes.includes(authUser._id)) {
+        await dispatch(commentActions.likeComment(id));
+        await dispatch(dingActions.getDing(dingId));
+      } else {
+        await dispatch(commentActions.unlikeComment(id));
+        await dispatch(dingActions.getDing(dingId));
+      }
+      setIsCommentLikeLoading(false);
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const reportCommentHandler = async (id) => {
+    console.log('flag - comment Id: ', id);
   };
 
   if (isLoading) {
@@ -233,12 +248,12 @@ const DingScreen = (props) => {
             <View style={styles.iconLeftContainer}>
               {isLikeLoading ? (
                 <View style={styles.iconActInd}>
-                  <ActivityIndicator color={Colors.primary} size="small" />
+                  <ActivityIndicator color={Colors.red} size="small" />
                 </View>
               ) : (
                 <FontAwesome
                   name={initLikeDing ? 'thumbs-up' : 'thumbs-o-up'}
-                  color={initLikeDing ? Colors.primary : 'black'}
+                  color={initLikeDing ? Colors.red : 'black'}
                   size={28}
                   style={
                     initLikeDing
@@ -255,6 +270,7 @@ const DingScreen = (props) => {
             <View style={styles.iconRightContainer}>
               <Feather
                 name="flag"
+                color="black"
                 size={28}
                 style={styles.icon}
                 onPress={openDingReportModelHandler}
@@ -262,6 +278,7 @@ const DingScreen = (props) => {
               {ding.user === authUser._id ? (
                 <AntDesign
                   name="delete"
+                  color="black"
                   size={28}
                   style={[styles.icon, { marginRight: 0 }]}
                   onPress={() => deleteDingHandler(ding._id)}
@@ -284,91 +301,28 @@ const DingScreen = (props) => {
             <Text style={styles.description}>{description}</Text>
           </View>
         </View>
-        <View style={styles.commentsInputContainer}>
-          <TextInput
-            style={styles.commentsInput}
-            onChangeText={onChangeText}
-            value={text}
-            multiline={true}
-            placeholder="write comment"
-          />
-          <View style={styles.postButtonContainer}>
-            {text ? (
-              <CustomButton
-                style={styles.postButton}
-                onSelect={() => postCommentHandler(text, ding._id)}
-              >
-                <Text style={styles.postButtonText}>Post</Text>
-              </CustomButton>
-            ) : (
-              <CustomButton
-                style={styles.postButton}
-                onSelect={() => Alert.alert('Please type something')}
-              >
-                <Text style={styles.postButtonText}>Post</Text>
-              </CustomButton>
-            )}
-          </View>
-        </View>
+        <CustomCommentInput
+          ding={ding}
+          text={text}
+          onText={onChangeText}
+          onComment={postCommentHandler}
+        />
         <View style={styles.commentsContainer}>
           {comments &&
             comments.map((item, index) => {
               return (
-                <View key={index} style={styles.outerCommentContainer}>
-                  <View style={styles.commentContainer}>
-                    <View style={styles.textContainer}>
-                      <Text
-                        style={styles.commentsUserName}
-                        onPress={() => publicProfileHandler(item.userId)}
-                      >
-                        {item.userName}
-                      </Text>
-                      <Text style={styles.description}>{item.text}</Text>
-                    </View>
-                    <View style={styles.likesCountContainer}>
-                      <FontAwesome
-                        name="thumbs-o-up"
-                        size={14}
-                        style={styles.icon}
-                      />
-                      <Text style={styles.miniLikesCount}>
-                        {item.likes.length}
-                      </Text>
-                    </View>
-                  </View>
-
-                  {item.userId === authUser._id ? (
-                    <View style={styles.commentsIconContainer}>
-                      <Feather
-                        name="edit"
-                        size={22}
-                        style={styles.icon}
-                        onPress={() => openEditorHandler(item._id, item.text)}
-                      />
-                      <Feather
-                        name="delete"
-                        size={22}
-                        style={[styles.icon, { left: -4 }]}
-                        onPress={() => deleteCommentHandler(item._id, ding._id)}
-                      />
-                    </View>
-                  ) : (
-                    <View style={styles.commentsIconContainer}>
-                      <FontAwesome
-                        name="thumbs-o-up"
-                        size={22}
-                        style={styles.icon}
-                        onPress={() => likeCommentHandler(item._id)}
-                      />
-                      <Feather
-                        name="flag"
-                        size={24}
-                        style={styles.icon}
-                        onPress={() => console.log('flag')}
-                      />
-                    </View>
-                  )}
-                </View>
+                <CustomComment
+                  key={index}
+                  item={item}
+                  authUser={authUser}
+                  ding={ding}
+                  isLoading={isCommentLikeLoading}
+                  onProfile={publicProfileHandler}
+                  onEditor={openEditorHandler}
+                  onDelete={deleteCommentHandler}
+                  onLike={likeCommentHandler}
+                  onFlag={reportCommentHandler}
+                />
               );
             })}
         </View>
@@ -519,6 +473,7 @@ const styles = StyleSheet.create({
   },
   likesCount: {
     fontFamily: 'cereal-bold',
+    color: 'black',
     fontSize: 20,
     marginRight: 12,
     padding: 3,
@@ -580,12 +535,6 @@ const styles = StyleSheet.create({
   right: {
     width: '100%',
   },
-  commentsInputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginHorizontal: 16,
-    marginBottom: 20,
-  },
   commentsInput: {
     width: '80%',
     backgroundColor: Colors.lightBlue,
@@ -597,18 +546,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'cereal-light',
   },
-  postButtonContainer: {
-    width: 50,
-    marginLeft: 10,
-  },
   buttonContainer: {
     width: 170,
     marginVertical: 5,
-  },
-  postButton: {
-    width: '100%',
-    backgroundColor: Colors.secondary,
-    borderRadius: 8,
   },
   postButtonText: {
     color: 'white',
@@ -619,58 +559,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   commentsContainer: {
-    marginHorizontal: 16,
     alignItems: 'center',
-  },
-  outerCommentContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-  },
-  commentContainer: {
-    width: '80%',
-    marginBottom: 15,
-    marginHorizontal: 20,
-    backgroundColor: Colors.lightBlue,
-    borderRadius: 14,
-    borderColor: '#ddd',
-    borderWidth: 1,
-  },
-  commentsIconContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-  },
-  textContainer: {
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-  },
-  commentsUserName: {
-    fontFamily: 'cereal-bold',
-    fontSize: 14,
-    marginBottom: 2,
-    alignSelf: 'flex-start',
-  },
-  likesCountContainer: {
-    position: 'absolute',
-    zIndex: 1,
-    right: 5,
-    bottom: -9,
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    paddingHorizontal: 5,
-    paddingVertical: 3,
-    borderRadius: 10,
-    borderWidth: 0.5,
-    borderColor: '#777',
-  },
-  miniLikesCount: {
-    fontSize: 14,
-    top: 1,
-    marginRight: 3,
-    fontFamily: 'cereal-book',
-  },
-  verticalMargin: {
-    marginVertical: 10,
+    marginHorizontal: 16,
   },
 });
 

@@ -30,7 +30,6 @@ const CustomInput = (props) => {
   const { onInputChange, id } = props;
 
   useEffect(() => {
-    // **onInputChange is only triggered when onBlur - this is problematic**
     // if (inputState.touched) {
     //   onInputChange(id, inputState.value, inputState.isValid);
     // }

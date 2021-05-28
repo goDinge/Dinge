@@ -72,7 +72,6 @@ const Auth = (props) => {
   const authHandler = async () => {
     let action;
     if (isSignup) {
-      console.log(formState);
       if (formState.inputValues.password !== formState.inputValues.password2) {
         Alert.alert(
           'Password Invalid',
