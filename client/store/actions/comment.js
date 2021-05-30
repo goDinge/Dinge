@@ -68,10 +68,10 @@ export const editComment = (text, commentId) => {
     }
   };
 };
-export const deleteComment = (commentId) => {
+export const deleteComment = (commentId, dingId) => {
   return async () => {
     try {
-      await axios.delete(`${HOME_IP}/api/comments/${commentId}`);
+      await axios.delete(`${HOME_IP}/api/comments/${commentId}/${dingId}`);
     } catch (err) {
       console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');

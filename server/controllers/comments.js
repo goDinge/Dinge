@@ -215,7 +215,7 @@ exports.unReportCommentById = asyncHandler(async (req, res, next) => {
 //access  private
 exports.deleteCommentById = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
-  const comment = await Comment.findById(req.params.id);
+  const comment = await Comment.findById(req.params.commentid);
 
   const commentUser = comment.userId;
 
@@ -225,7 +225,11 @@ exports.deleteCommentById = asyncHandler(async (req, res, next) => {
     );
   }
 
-  await Comment.findByIdAndRemove(req.params.id);
+  await Comment.findByIdAndRemove(req.params.commentid);
+  await Ding.updateOne(
+    { _id: req.params.dingid },
+    { $pull: { comments: req.params.commentid } }
+  );
 
   res.status(200).json({
     success: true,

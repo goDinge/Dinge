@@ -27,6 +27,7 @@ import * as authActions from '../../store/actions/auth';
 import * as commentActions from '../../store/actions/comment';
 
 import CustomButton from '../../components/CustomButton';
+import CustomSocials from '../../components/CustomSocials';
 import CustomComment from '../../components/CustomComment';
 import CustomCommentInput from '../../components/CustomCommentInput';
 
@@ -149,7 +150,7 @@ const DingScreen = (props) => {
   };
 
   const openDingReportModelHandler = () => {
-    setDingReportModalVisible(true);
+    setDingReportModal(true);
   };
 
   const reportDingHandler = async (dingId) => {
@@ -200,7 +201,7 @@ const DingScreen = (props) => {
   const deleteCommentHandler = async (id, dingId) => {
     setError(null);
     try {
-      await dispatch(commentActions.deleteComment(id));
+      await dispatch(commentActions.deleteComment(id, dingId));
       await dispatch(dingActions.getDing(dingId));
     } catch (err) {
       setError(err.message);
@@ -222,6 +223,7 @@ const DingScreen = (props) => {
       setIsCommentLikeLoading(false);
     } catch (err) {
       setError(err.message);
+      setIsCommentLikeLoading(false);
     }
   };
 
@@ -243,7 +245,19 @@ const DingScreen = (props) => {
         <View style={styles.imageContainer}>
           <Image style={styles.image} source={{ uri: ding.imgUrl }} />
         </View>
-        <View style={styles.infoContainer}>
+        <CustomSocials
+          isLikeLoading={isLikeLoading}
+          initLikeDing={initLikeDing}
+          dingState={dingState}
+          ding={ding}
+          authUser={authUser}
+          user={user}
+          onLike={likeDingHandler}
+          onFlag={openDingReportModelHandler}
+          onDelete={deleteDingHandler}
+          onProfile={publicProfileHandler}
+        />
+        {/* <View style={styles.socialIconsContainer}>
           <View style={styles.iconContainer}>
             <View style={styles.iconLeftContainer}>
               {isLikeLoading ? (
@@ -300,7 +314,7 @@ const DingScreen = (props) => {
             </View>
             <Text style={styles.description}>{description}</Text>
           </View>
-        </View>
+        </View> */}
         <CustomCommentInput
           ding={ding}
           text={text}
@@ -438,7 +452,7 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: SCREEN_WIDTH,
   },
-  infoContainer: {
+  socialIconsContainer: {
     marginVertical: 10,
     marginHorizontal: 16,
   },
