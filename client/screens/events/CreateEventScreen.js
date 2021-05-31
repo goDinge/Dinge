@@ -508,6 +508,7 @@ const CreateEventScreen = (props) => {
             <View style={styles.extraSpace}></View>
           </ScrollView>
         </View>
+        {/* *****Modals***** */}
         <View style={styles.centeredView}>
           <Modal
             animationType="fade"

@@ -83,7 +83,9 @@ exports.reportDing = asyncHandler(async (req, res, next) => {
   if (!dingReports.includes(user.id)) {
     dingReports.push(user.id);
   } else {
-    return next(new ErrorResponse('User has already reported this Ding', 400));
+    return next(
+      new ErrorResponse('You have previously reported this Ding. Thanks.', 400)
+    );
   }
 
   dingUser.reputation =
@@ -143,7 +145,7 @@ exports.deleteDingById = asyncHandler(async (req, res, next) => {
     await dingUser.save();
   } else {
     return next(
-      new ErrorResponse('User not authorized to delete this Ding', 400)
+      new ErrorResponse('You are not authorized to delete this Ding.', 400)
     );
   }
 

@@ -163,7 +163,10 @@ exports.reportCommentById = asyncHandler(async (req, res, next) => {
     commentReports.push(user.id);
   } else {
     return next(
-      new ErrorResponse('User has already reported this Comment', 400)
+      new ErrorResponse(
+        'You have previously reported this Comment. Thanks.',
+        400
+      )
     );
   }
 

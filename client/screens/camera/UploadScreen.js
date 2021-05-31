@@ -38,8 +38,6 @@ const UploadScreen = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [addressModalVisible, setAddressModalVisible] = useState(false);
   const [address, setAddress] = useState('');
-  // const [count, setCount] = useState(0);
-  // const [target, setTarget] = useState(30);
 
   const dispatch = useDispatch();
 

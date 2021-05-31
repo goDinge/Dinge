@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Alert, StyleSheet } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
 
 import CustomButton from '../components/CustomButton';
 import Colors from '../constants/Colors';
 
 const CustomCommentInput = (props) => {
-  const { ding, text, onText, onComment } = props;
+  const { ding, text, isCommentLoading, onText, onComment } = props;
 
   return (
     <View style={styles.commentsInputContainer}>
@@ -17,17 +24,25 @@ const CustomCommentInput = (props) => {
         placeholder="write comment"
       />
       <View style={styles.postButtonContainer}>
-        {text ? (
+        {!text ? (
           <CustomButton
             style={styles.postButton}
-            onSelect={() => onComment(text, ding._id)}
+            onSelect={() => Alert.alert('Please type something')}
           >
             <Text style={styles.postButtonText}>Post</Text>
+          </CustomButton>
+        ) : isCommentLoading ? (
+          <CustomButton style={styles.postButton}>
+            <ActivityIndicator
+              color="white"
+              size="small"
+              style={styles.postButtonText}
+            />
           </CustomButton>
         ) : (
           <CustomButton
             style={styles.postButton}
-            onSelect={() => Alert.alert('Please type something')}
+            onSelect={() => onComment(text, ding._id)}
           >
             <Text style={styles.postButtonText}>Post</Text>
           </CustomButton>
