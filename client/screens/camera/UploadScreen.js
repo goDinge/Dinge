@@ -22,6 +22,7 @@ import * as imageActions from '../../store/actions/image';
 
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
+import CustomAddressModal from '../../components/CustomAddressModal';
 
 import { GOOGLE_MAPS } from '@env';
 
@@ -298,6 +299,15 @@ const UploadScreen = (props) => {
             </View>
           </Modal>
         </View>
+        {/* <CustomAddressModal
+          address={address}
+          fetchAnyways={fetchAnyways}
+          addressModalVisible={addressModalVisible}
+          onText={onChangeText}
+          setAddress={setAddress}
+          onAddressUpload={addressUpload}
+          setAddressModalVisible={setAddressModalVisible}
+        /> */}
         <View style={styles.centeredView}>
           <Modal
             animationType="fade"

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
+  TextInput,
   ActivityIndicator,
   Modal,
   Dimensions,
@@ -19,6 +20,8 @@ import CustomBlueMarker from '../../components/CustomBlueMarker';
 import CustomCameraIcon from '../../components/CustomCameraIcon';
 import CustomReloadIcon from '../../components/CustomReloadIcon';
 import CustomCompassIcon from '../../components/CustomCompassIcon';
+import CustomAddressModal from '../../components/CustomAddressModal';
+import CustomMessageModal from '../../components/CustomMessageModal';
 import Colors from '../../constants/Colors';
 
 import * as dingeActions from '../../store/actions/dinge';
@@ -36,9 +39,11 @@ const MapScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [location, setLocation] = useState({});
-  const [errorMsg, setErrorMsg] = useState(null);
   const [region, setRegion] = useState(location);
   const [modalVisible, setModalVisible] = useState(false);
+  const [addressModal, setAddressModal] = useState(false);
+  const [address, setAddress] = useState('');
+  const [isAddressLoading, setIsAddressLoading] = useState(false);
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -46,13 +51,12 @@ const MapScreen = (props) => {
   const dinge = useSelector((state) => state.dinge.dinge);
   const events = useSelector((state) => state.events.events);
   const authUser = useSelector((state) => state.auth.authUser);
-  //const location = useSelector((state) => state.location.location);
 
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied. ');
+        setError('Permission to access location was denied. ');
         return;
       }
       getLocation();
@@ -64,6 +68,27 @@ const MapScreen = (props) => {
       Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
     }
   }, [error]);
+
+  const addressLocation = () => {
+    setAddressModal(true);
+  };
+
+  const addressSearch = async (address) => {
+    setIsAddressLoading(true);
+    try {
+      const location = await Location.geocodeAsync(address); //returns array (of 1 element)
+      location.coords = location[0];
+      setLocation(location);
+      setRegion(regionData(location));
+      setIsAddressLoading(false);
+      setAddressModal(false);
+    } catch (err) {
+      console.log(err);
+    }
+    setAddress('');
+    setIsAddressLoading(false);
+    setAddressModal(false);
+  };
 
   const regionData = (location) => {
     return {
@@ -80,40 +105,31 @@ const MapScreen = (props) => {
   const getLocation = async () => {
     setError(null);
     setMapLoaded(false);
+
     try {
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Highest,
       });
       if (!location) {
-        //if can't find any location, defaultLocation will be Yonge and Bloor...
-        setLocation(settingConfigs[2].defaultLocation.coords);
-        await dispatch(
-          locationActions.setLocation(settingConfigs[2].defaultLocation.coords)
-        );
-        setRegion(regionData(settingConfigs[2].defaultLocation.coords));
+        //if can't find any location, ask user to enter address
+        addressLocation();
         setMapLoaded(true);
-        Alert.alert(
-          'Location not found.',
-          'Please either turn off your WIFI and restart your phone, or do not use any GPS functionalities. Our apologies.',
-          [{ text: 'Okay' }]
-        );
       }
       setLocation(location);
       //await dispatch(locationActions.setLocation(location));
-      if (count > settingConfigs[1]) {
-        //after too many attempts, just set location and launch app anyways
+      if (count > settingConfigs[1].count) {
+        //after too many attempts for accurate location, just set location and launch app anyways
         await dispatch(locationActions.setLocation(location));
         setRegion(regionData(location));
         loadData(location);
         setMapLoaded(true);
         setModalVisible(true);
+        return;
       } else if (location.coords.accuracy > target) {
         //if accuracy is over dynamic target, rerun
         count = count + 1;
         target = target + 5;
         getLocation();
-        // console.log('count: ', count);
-        // console.log('target: ', target);
       } else {
         //if not too many attempts and accuracy at or below target
         await dispatch(locationActions.setLocation(location));
@@ -152,6 +168,7 @@ const MapScreen = (props) => {
 
   const closeModalHandler = () => {
     setModalVisible(false);
+    setAddressModal(false);
   };
 
   const reloadHandler = async (location) => {
@@ -231,26 +248,50 @@ const MapScreen = (props) => {
       <View style={styles.reloadContainer}>
         <CustomReloadIcon onSelect={() => reloadHandler(location)} />
       </View>
+      {/* MODALS */}
+      <CustomMessageModal
+        message={
+          'Dinge is not able to find an accurate location for you. If you are in a large open space, try turning your WIFI off and restarting your phone.'
+        }
+        messageModal={modalVisible}
+        onClose={closeModalHandler}
+      />
       <View style={styles.centeredView}>
         <Modal
           animationType="fade"
           transparent={true}
-          visible={modalVisible}
+          visible={addressModal}
           onRequestClose={() => {
-            seConfirmVisible(!modalVisible);
+            setAddressModal(!addressModal);
           }}
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>
-                Dinge is not able to find an accurate location for you. If you
-                are in a large open space, try turning your WIFI off and
-                restarting your phone.
+                Dinge is not able to find an accurate location for you with GPS.
+                Please enter your location or address here.
               </Text>
+              <TextInput
+                placeholder="123 main street, mycity..."
+                style={styles.textInput}
+                onChangeText={(text) => setAddress(text)}
+                value={address}
+                autoCapitaliz="words"
+              />
               <View style={styles.modalButtonContainer}>
-                <CustomButton onSelect={closeModalHandler}>
-                  <Text style={styles.locateOnMapText}>Okay</Text>
-                </CustomButton>
+                {isAddressLoading ? (
+                  <CustomButton
+                    style={styles.buttonFlexRow}
+                    onSelect={() => addressSearch(address)}
+                  >
+                    <Text style={styles.buttonText}>Loading...</Text>
+                    <ActivityIndicator color="white" size="small" />
+                  </CustomButton>
+                ) : (
+                  <CustomButton onSelect={() => addressSearch(address)}>
+                    <Text style={styles.buttonText}>Search</Text>
+                  </CustomButton>
+                )}
               </View>
             </View>
           </View>
@@ -317,12 +358,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
-  locateOnMapText: {
+  textInput: {
+    borderColor: '#dddddd',
+    borderRadius: 10,
+    borderWidth: 0.5,
+    fontSize: 16,
+    fontFamily: 'cereal-light',
+    paddingLeft: 15,
+    paddingRight: 15,
+    marginBottom: 10,
+  },
+  buttonText: {
+    alignSelf: 'center',
     color: 'white',
     fontFamily: 'cereal-bold',
     paddingVertical: 8,
-    paddingHorizontal: 20,
     fontSize: 16,
+  },
+  modalButtonContainer: {
+    width: 170,
+    marginVertical: 5,
+  },
+  buttonFlexRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
   right: {
     width: '100%',
@@ -331,3 +390,15 @@ const styles = StyleSheet.create({
 });
 
 export default MapScreen;
+
+// backup code for using a default location to open mapscreen, instead of asking user for address
+// setLocation(settingConfigs[2].defaultLocation.coords);
+// await dispatch(
+//   locationActions.setLocation(settingConfigs[2].defaultLocation.coords)
+// );
+// setRegion(regionData(settingConfigs[2].defaultLocation.coords));
+// Alert.alert(
+//   'Location not found.',
+//   'Please either turn off your WIFI and restart your phone, or do not use any GPS functionalities. Our apologies.',
+//   [{ text: 'Okay' }]
+// );

@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: 170,
-    marginVertical: 8,
+    marginVertical: 12,
   },
   postButtonText: {
     color: 'white',
