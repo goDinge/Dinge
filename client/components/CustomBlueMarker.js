@@ -11,7 +11,7 @@ const CustomBlueMarker = (props) => {
   const MARKER_WIDTH = 50;
   const MARKER_HEIGHT = 50;
 
-  const ANCHOR = { x: 0.5, y: 0.7 };
+  const ANCHOR = { x: 0.6, y: 0.9 };
   const iOSANCHOR = { x: 0.5, y: 1.7 };
   const CENTEROFFSET = getCenterOffsetForAnchor(
     iOSANCHOR,
@@ -45,17 +45,9 @@ const CustomBlueMarker = (props) => {
 
 const styles = StyleSheet.create({
   markerContainer: {},
-  pic: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    borderColor: '#1A3Af0',
-    borderWidth: 2,
-    top: 42,
-  },
   pin: {
-    width: 50,
-    height: 50,
+    width: 30,
+    height: 30,
   },
 });
 

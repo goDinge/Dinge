@@ -28,6 +28,7 @@ import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
 import * as eventsActions from '../../store/actions/events';
 import * as locationActions from '../../store/actions/location';
+import * as messageActions from '../../store/actions/message';
 
 const mapStyle = require('../../helpers/mapStyle.json');
 const settingConfigs = require('../../settingConfigs.json');
@@ -44,6 +45,7 @@ const MapScreen = (props) => {
   const [addressModal, setAddressModal] = useState(false);
   const [address, setAddress] = useState('');
   const [isAddressLoading, setIsAddressLoading] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -51,6 +53,7 @@ const MapScreen = (props) => {
   const dinge = useSelector((state) => state.dinge.dinge);
   const events = useSelector((state) => state.events.events);
   const authUser = useSelector((state) => state.auth.authUser);
+  const messageState = useSelector((state) => state.message.message);
 
   useEffect(() => {
     (async () => {
@@ -68,6 +71,14 @@ const MapScreen = (props) => {
       Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (messageState) {
+      console.log(messageState);
+      setModalVisible(true);
+      setModalMessage(messageState);
+    }
+  }, [messageState]);
 
   const addressLocation = () => {
     setAddressModal(true);
@@ -124,6 +135,9 @@ const MapScreen = (props) => {
         loadData(location);
         setMapLoaded(true);
         setModalVisible(true);
+        setModalMessage(
+          'Dinge is not able to find an accurate location for you. If you are in a large open space, try turning your WIFI off and restarting your phone.'
+        );
         return;
       } else if (location.coords.accuracy > target) {
         //if accuracy is over dynamic target, rerun
@@ -166,9 +180,15 @@ const MapScreen = (props) => {
     props.navigation.navigate('Event Details', item);
   };
 
-  const closeModalHandler = () => {
+  const closeModalHandler = async () => {
+    setError(null);
+    try {
+      await dispatch(messageActions.resetMessage());
+    } catch (err) {
+      setError(err.message);
+    }
+    setModalMessage('');
     setModalVisible(false);
-    setAddressModal(false);
   };
 
   const reloadHandler = async (location) => {
@@ -250,9 +270,7 @@ const MapScreen = (props) => {
       </View>
       {/* MODALS */}
       <CustomMessageModal
-        message={
-          'Dinge is not able to find an accurate location for you. If you are in a large open space, try turning your WIFI off and restarting your phone.'
-        }
+        message={modalMessage}
         messageModal={modalVisible}
         onClose={closeModalHandler}
       />

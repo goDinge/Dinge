@@ -15,6 +15,7 @@ import eventsReducer from './store/reducers/events';
 import eventReducer from './store/reducers/event';
 import locationReducer from './store/reducers/location';
 import commentReducer from './store/reducers/comment';
+import messageReducer from './store/reducers/message';
 
 import AppNavigator from './navigation/AppNavigator';
 
@@ -38,6 +39,7 @@ const rootReducer = combineReducers({
   event: eventReducer,
   location: locationReducer,
   comment: commentReducer,
+  message: messageReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));

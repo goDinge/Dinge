@@ -35,6 +35,9 @@ export const PASSWORD_UPDATE = 'PASSWORD_UPDATE';
 
 export const SET_LOCATION = 'SET_LOCATION';
 
+export const SET_MESSAGE = 'SET_MESSAGE';
+export const RESET_MESSAGE = 'RESET_MESSAGE';
+
 export const AUTHENTICATE = 'AUTHENTICATE';
 export const LOGOUT = 'LOGOUT';
 export const FORGOT_PASSWORD = 'FORGOT_PASSWORD';

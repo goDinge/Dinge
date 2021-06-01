@@ -15,6 +15,7 @@ import * as dingActions from '../../store/actions/ding';
 import * as dingeActions from '../../store/actions/dinge';
 import * as authActions from '../../store/actions/auth';
 import * as commentActions from '../../store/actions/comment';
+import * as messageActions from '../../store/actions/message';
 
 import CustomSocials from '../../components/CustomSocials';
 import CustomComment from '../../components/CustomComment';
@@ -24,6 +25,7 @@ import CustomEditModal from '../../components/CustomEditModal';
 import CustomMessageModal from '../../components/CustomMessageModal';
 
 import Colors from '../../constants/Colors';
+import CustomDeleteModal from '../../components/CustomDeleteModal';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -53,6 +55,8 @@ const DingScreen = (props) => {
   const [editCommentId, setEditCommentId] = useState(null);
   const [editInitialText, setEditInitialText] = useState('');
   const [modalMessage, setModalMessage] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const comments = dingState.comments;
 
@@ -133,17 +137,26 @@ const DingScreen = (props) => {
 
   const deleteDingHandler = async (dingId) => {
     setError(null);
+    setIsDeleting(true);
     try {
       await dispatch(dingeActions.deleteDingById(dingId));
       await dispatch(dingeActions.getDinge());
+      await setConfirmDelete(false);
+      await dispatch(messageActions.setMessage('Ding Deleted'));
     } catch (err) {
       setError(err.message);
     }
+    setIsDeleting(false);
     props.navigation.navigate('Map');
   };
 
-  const openDingReportModelHandler = () => {
+  const openDingReportModalHandler = () => {
     setDingReportModal(true);
+  };
+
+  const openDingDeleteModalHandler = () => {
+    setModalMessage('ding');
+    setConfirmDelete(true);
   };
 
   const reportDingHandler = async (dingId) => {
@@ -257,8 +270,8 @@ const DingScreen = (props) => {
           authUser={authUser}
           user={user}
           onLike={likeDingHandler}
-          onFlag={openDingReportModelHandler}
-          onDelete={deleteDingHandler}
+          onFlag={openDingReportModalHandler}
+          onDelete={openDingDeleteModalHandler}
           onProfile={publicProfileHandler}
         />
         <CustomCommentInput
@@ -312,6 +325,14 @@ const DingScreen = (props) => {
         messageModal={messageModal}
         onClose={setMessageModal}
       />
+      <CustomDeleteModal
+        ding={ding}
+        confirmDelete={confirmDelete}
+        isDeleting={isDeleting}
+        message={modalMessage}
+        setConfirmDelete={setConfirmDelete}
+        onDelete={deleteDingHandler}
+      />
     </View>
   );
 };
@@ -342,6 +363,69 @@ const styles = StyleSheet.create({
   commentsContainer: {
     alignItems: 'center',
     marginHorizontal: 16,
+  },
+  //modal styles
+  modalText: {
+    fontFamily: 'cereal-medium',
+    fontSize: 16,
+    color: 'black',
+  },
+  reportText: {
+    fontFamily: 'cereal-bold',
+    fontSize: 20,
+    color: Colors.primary,
+    padding: 20,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    paddingBottom: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  right: {
+    width: '100%',
+  },
+  commentsInput: {
+    width: '80%',
+    backgroundColor: Colors.lightBlue,
+    borderRadius: 10,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    fontFamily: 'cereal-light',
+  },
+  buttonContainer: {
+    width: 170,
+    marginVertical: 5,
+  },
+  buttonFlexRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  postButtonText: {
+    color: 'white',
+    fontFamily: 'cereal-bold',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    fontSize: 16,
+    alignSelf: 'center',
   },
 });
 
