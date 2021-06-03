@@ -13,32 +13,30 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 
 const CustomReportModal = (props) => {
-  const { ding, onModalVisible, onReport, dingReportModal } = props;
+  const { item, onModalVisible, onReport, itemReportModal } = props;
 
   return (
     <View style={styles.centeredView}>
-      <Modal animationType="fade" transparent={true} visible={dingReportModal}>
+      <Modal animationType="fade" transparent={true} visible={itemReportModal}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              Do you want to report this Ding?
-            </Text>
+            <Text style={styles.modalText}>Do you want to report this?</Text>
             <Pressable
               style={styles.openButton}
               onPress={() => {
-                onReport(ding._id);
+                onReport(item._id);
                 Alert.alert('Ding reported!');
-                onModalVisible(!dingReportModal);
+                onModalVisible(!itemReportModal);
               }}
             >
-              <Text style={styles.reportText}>Report Ding!</Text>
+              <Text style={styles.reportText}>Report!</Text>
             </Pressable>
             <View style={styles.right}>
               <MaterialCommunityIcons
                 name="close"
                 size={30}
                 style={styles.iconClose}
-                onPress={() => onModalVisible(!dingReportModal)}
+                onPress={() => onModalVisible(!itemReportModal)}
               />
             </View>
           </View>

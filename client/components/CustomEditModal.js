@@ -15,7 +15,7 @@ const CustomEditModal = (props) => {
   const {
     editModal,
     text,
-    ding,
+    item,
     isEditLoading,
     editInitialText,
     editCommentId,
@@ -54,7 +54,7 @@ const CustomEditModal = (props) => {
               {isEditLoading ? (
                 <CustomButton
                   style={styles.buttonFlexRow}
-                  onSelect={() => onEdit(editCommentId, ding._id)}
+                  onSelect={() => onEdit(editCommentId, item._id)}
                 >
                   <Text
                     style={[
@@ -67,7 +67,7 @@ const CustomEditModal = (props) => {
                   <ActivityIndicator color="white" size="small" />
                 </CustomButton>
               ) : (
-                <CustomButton onSelect={() => onEdit(editCommentId, ding._id)}>
+                <CustomButton onSelect={() => onEdit(editCommentId, item._id)}>
                   <Text
                     style={[
                       styles.postButtonText,

@@ -29,7 +29,7 @@ const PublicScreen = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    loadUser(user);
+    loadUser(user.params.user._id);
   }, []);
 
   const loadUser = async (user) => {

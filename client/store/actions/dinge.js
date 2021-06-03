@@ -2,8 +2,6 @@ import axios from 'axios';
 import {
   GET_DINGE,
   POST_DING,
-  LIKE_DING,
-  UNLIKE_DING,
   GET_LOCAL_DINGE,
   UPDATE_DING_LOCATION,
 } from '../types';
@@ -11,6 +9,7 @@ import { HOME_IP } from '@env';
 
 const settingConfigs = require('../../settingConfigs.json');
 
+//this should only be used by admin
 export const getDinge = () => {
   return async (dispatch) => {
     try {
@@ -29,6 +28,7 @@ export const getDinge = () => {
   };
 };
 
+//this should be used by users
 export const getLocalDinge = (location) => {
   return async (dispatch) => {
     try {

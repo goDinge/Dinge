@@ -3,7 +3,9 @@ import {
   View,
   Text,
   Pressable,
+  Alert,
   ScrollView,
+  Dimensions,
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
@@ -11,23 +13,59 @@ import { useSelector, useDispatch } from 'react-redux';
 import MapView from 'react-native-maps';
 import { useIsFocused } from '@react-navigation/native';
 
-import * as eventActions from '../../store/actions/events';
 import * as userActions from '../../store/actions/user';
-import Colors from '../../constants/Colors';
+import * as eventActions from '../../store/actions/event';
+import * as eventsActions from '../../store/actions/events';
+import * as authActions from '../../store/actions/auth';
+import * as commentActions from '../../store/actions/comment';
+import * as messageActions from '../../store/actions/message';
+
 import CustomMarker from '../../components/CustomMarker';
+import CustomSocials from '../../components/CustomSocials';
+import CustomComment from '../../components/CustomComment';
+import CustomCommentInput from '../../components/CustomCommentInput';
+import CustomReportModal from '../../components/CustomReportModal';
+import CustomEditModal from '../../components/CustomEditModal';
+import CustomMessageModal from '../../components/CustomMessageModal';
+import CustomDeleteModal from '../../components/CustomDeleteModal';
+
+import Colors from '../../constants/Colors';
 
 import { convertAMPM, properDate } from '../../helpers/dateConversions';
 
 const EventDetailsScreen = (props) => {
   const event = props.route.params;
   const authUser = useSelector((state) => state.auth.authUser);
-  const eventState = useSelector((state) => state.ding.ding);
+  const eventState = useSelector((state) => state.event.event);
   const user = useSelector((state) => state.user.user);
+  const userLocation = useSelector((state) => state.location.location);
+
+  let initLikeEvent = false;
+  if (eventState.likes) {
+    if (eventState.likes.includes(authUser._id)) {
+      initLikeEvent = true;
+    }
+  }
 
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [location, setLocation] = useState(null);
   const [region, setRegion] = useState(location);
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
+  const [isEditLoading, setIsEditLoading] = useState(false);
+  const [isCommentLoading, setIsCommentLoading] = useState(false);
+  const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
+  const [eventReportModal, setEventReportModal] = useState(false);
+  const [messageModal, setMessageModal] = useState(false);
+  const [text, onChangeText] = useState(null);
+  const [editModal, setEditModal] = useState(false);
+  const [editCommentId, setEditCommentId] = useState(null);
+  const [editInitialText, setEditInitialText] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const comments = eventState.comments;
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -45,6 +83,12 @@ const EventDetailsScreen = (props) => {
       longitudeDelta: 0.0421,
     });
   }, [loadUser, loadEvent, loadAuthUser, setIsLoading, setRegion]);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+    }
+  }, [error]);
 
   const loadUser = async (user) => {
     setError(null);
@@ -68,11 +112,11 @@ const EventDetailsScreen = (props) => {
     setIsLoading(false);
   };
 
-  const loadEvent = async (dingId) => {
+  const loadEvent = async (eventId) => {
     setError(null);
     setIsLoading(true);
     try {
-      await dispatch(eventActions.getEvent(dingId));
+      await dispatch(eventActions.getEvent(eventId));
     } catch (err) {
       setError(err.message);
     }
@@ -86,6 +130,149 @@ const EventDetailsScreen = (props) => {
     });
   };
 
+  const publicProfileHandler = (userId) => {
+    props.navigation.navigate('Public', userId);
+  };
+
+  //Like and Unlike
+
+  const likeEventHandler = async (eventId, userId) => {
+    setError(null);
+    setIsLikeLoading(true);
+    try {
+      if (initLikeEvent) {
+        initLikeEvent = false;
+        await dispatch(eventActions.unlikeEvent(eventId));
+      } else {
+        initLikeEvent = true;
+        await dispatch(eventActions.likeEvent(eventId));
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsLikeLoading(false);
+    await dispatch(eventActions.getEvent(eventId));
+  };
+
+  //Delete
+
+  const openEventDeleteModalHandler = () => {
+    setModalMessage('event');
+    setConfirmDelete(true);
+  };
+
+  const deleteEventHandler = async (eventId) => {
+    setError(null);
+    setIsDeleting(true);
+    try {
+      await dispatch(eventsActions.deleteEventById(eventId));
+      await dispatch(eventsActions.getLocalEvents(userLocation));
+      await setConfirmDelete(false);
+      await dispatch(messageActions.setMessage('Event Deleted'));
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsDeleting(false);
+    props.navigation.navigate('Map');
+  };
+
+  //Report
+
+  const openEventReportModalHandler = () => {
+    setEventReportModal(true);
+  };
+
+  const reportEventHandler = async (eventId) => {
+    setError(null);
+    try {
+      await dispatch(eventActions.reportEventById(eventId));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  //Comment
+
+  const postCommentHandler = async (text, eventId) => {
+    setError(null);
+    setIsCommentLoading(true);
+    try {
+      await dispatch(commentActions.postComment(text, eventId));
+      onChangeText(null);
+      await dispatch(eventActions.getEvent(eventId));
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsCommentLoading(false);
+  };
+
+  const editCommentHandler = async (id, eventId) => {
+    setError(null);
+    setIsEditLoading(true);
+    try {
+      await dispatch(commentActions.editComment(text, id));
+      onChangeText(null);
+      setEditInitialText('');
+      await dispatch(eventActions.getEvent(eventId));
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsEditLoading(false);
+    setEditModal(false);
+    cancelEditHandler();
+  };
+
+  const openEditorHandler = async (id, text) => {
+    setEditModal(true);
+    setEditCommentId(id);
+    setEditInitialText(text);
+  };
+
+  const cancelEditHandler = () => {
+    setEditModal(false);
+    setEditInitialText('');
+  };
+
+  const deleteCommentHandler = async (id, eventId) => {
+    setError(null);
+    try {
+      await dispatch(commentActions.deleteComment(id, eventId));
+      await dispatch(eventActions.getDing(eventId));
+      setModalMessage('Comment Deleted');
+      setMessageModal(true);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const likeCommentHandler = async (id, eventId) => {
+    setIsCommentLikeLoading(true);
+    const comment = comments.find((comment) => comment._id === id);
+
+    try {
+      if (!comment.likes.includes(authUser._id)) {
+        await dispatch(commentActions.likeComment(id));
+        await dispatch(eventActions.getDing(eventId));
+      } else {
+        await dispatch(commentActions.unlikeComment(id));
+        await dispatch(eventActions.getDing(eventId));
+      }
+      setIsCommentLikeLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setIsCommentLikeLoading(false);
+    }
+  };
+
+  const reportCommentHandler = async (id) => {
+    setError(null);
+    try {
+      await dispatch(commentActions.reportComment(id));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   if (isLoading || !location) {
     return (
       <View style={styles.indicatorContainer}>
@@ -96,7 +283,7 @@ const EventDetailsScreen = (props) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.innerContainer}>
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.topInfoContainer}>
           <View style={styles.leftContainer}>
             <Text style={styles.eventTitle}>{event.eventName}</Text>
@@ -110,15 +297,8 @@ const EventDetailsScreen = (props) => {
               <Text style={styles.eventInfo}>Organizer: {user.name}</Text>
             </Pressable>
           </View>
-          {/* <View style={styles.avatarContainer}>
-            <Image
-              style={styles.avatar}
-              source={{ uri: authUser.avatar }}
-              defaultSource={require('../../assets/avatar.png')}
-            />
-          </View> */}
         </View>
-        <ScrollView>
+        <View>
           <View style={styles.lowerInfoContainer}>
             <View style={styles.mapContainer}>
               <MapView
@@ -139,9 +319,80 @@ const EventDetailsScreen = (props) => {
               </Text>
               <Text style={styles.eventText}>{event.description}</Text>
             </View>
+            <CustomSocials
+              type="event"
+              isLikeLoading={isLikeLoading}
+              initLikeItem={initLikeEvent}
+              itemState={eventState}
+              item={event}
+              authUser={authUser}
+              user={user}
+              onLike={likeEventHandler}
+              onFlag={openEventReportModalHandler}
+              onDelete={openEventDeleteModalHandler}
+              onProfile={publicProfileHandler}
+            />
+            <CustomCommentInput
+              item={event}
+              text={text}
+              isCommentLoading={isCommentLoading}
+              onText={onChangeText}
+              onComment={postCommentHandler}
+            />
+            <View style={styles.commentsContainer}>
+              {comments &&
+                comments.map((item, index) => {
+                  return (
+                    <CustomComment
+                      key={index}
+                      item={item}
+                      authUser={authUser}
+                      itemType={event}
+                      isLoading={isCommentLikeLoading}
+                      onProfile={publicProfileHandler}
+                      onEditor={openEditorHandler}
+                      onDelete={deleteCommentHandler}
+                      onLike={likeCommentHandler}
+                      onFlag={reportCommentHandler}
+                    />
+                  );
+                })}
+            </View>
           </View>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
+      {/*    **** MODALS ****     */}
+      <CustomReportModal
+        item={event}
+        itemReportModal={eventReportModal}
+        onModalVisible={setEventReportModal}
+        onReport={reportEventHandler}
+      />
+      <CustomEditModal
+        editModal={editModal}
+        text={text}
+        item={event}
+        isEditLoading={isEditLoading}
+        editInitialText={editInitialText}
+        editCommentId={editCommentId}
+        onEditModal={setEditModal}
+        onText={onChangeText}
+        onEdit={editCommentHandler}
+        onCancel={cancelEditHandler}
+      />
+      <CustomMessageModal
+        message={modalMessage}
+        messageModal={messageModal}
+        onClose={setMessageModal}
+      />
+      <CustomDeleteModal
+        item={event}
+        confirmDelete={confirmDelete}
+        isDeleting={isDeleting}
+        message={modalMessage}
+        setConfirmDelete={setConfirmDelete}
+        onDelete={deleteEventHandler}
+      />
     </View>
   );
 };
@@ -151,17 +402,14 @@ export default EventDetailsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    backgroundColor: 'white',
   },
-  innerContainer: {
-    margin: 10,
-    width: '94%',
+  scrollViewContainer: {
+    width: '96%',
+    alignSelf: 'center',
   },
   topInfoContainer: {
-    flexDirection: 'row',
     width: '100%',
-    justifyContent: 'space-between',
     marginTop: 6,
     marginBottom: 20,
   },
@@ -180,7 +428,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.gray,
   },
-  avatarContainer: {},
   avatar: {
     height: 100,
     width: 100,
@@ -190,14 +437,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   mapContainer: {
-    flex: 1,
     justifyContent: 'center',
   },
   map: {
     height: 200,
   },
   aboutInfoContainer: {
-    height: 500,
     marginTop: 16,
   },
   indicatorContainer: {
@@ -209,5 +454,72 @@ const styles = StyleSheet.create({
   pin: {
     width: 50,
     height: 50,
+  },
+  commentsContainer: {
+    alignItems: 'center',
+    marginHorizontal: 16,
+  },
+  //modal styles
+  modalText: {
+    fontFamily: 'cereal-medium',
+    fontSize: 16,
+    color: 'black',
+  },
+  reportText: {
+    fontFamily: 'cereal-bold',
+    fontSize: 20,
+    color: Colors.primary,
+    padding: 20,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    paddingBottom: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  right: {
+    width: '100%',
+  },
+  commentsInput: {
+    width: '80%',
+    backgroundColor: Colors.lightBlue,
+    borderRadius: 10,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    fontFamily: 'cereal-light',
+  },
+  buttonContainer: {
+    width: 170,
+    marginVertical: 5,
+  },
+  buttonFlexRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
+  postButtonText: {
+    color: 'white',
+    fontFamily: 'cereal-bold',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    fontSize: 16,
+    alignSelf: 'center',
   },
 });

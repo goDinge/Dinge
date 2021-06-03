@@ -19,7 +19,7 @@ export const getDing = (dingId) => {
     }
   };
 };
-//need to be more specific about updating the proper slice of ding
+
 export const likeDing = (dingId) => {
   return async (dispatch) => {
     try {

@@ -8,7 +8,7 @@ const CustomComment = (props) => {
   const {
     index,
     item,
-    ding,
+    itemType,
     authUser,
     isLoading,
     onProfile,
@@ -54,7 +54,7 @@ const CustomComment = (props) => {
             color={Colors.gray}
             size={22}
             style={[styles.icon, { left: -4 }]}
-            onPress={() => onDelete(item._id, ding._id)}
+            onPress={() => onDelete(item._id, itemType._id)}
           />
         </View>
       ) : item.likes.includes(authUser._id) ? (
@@ -69,7 +69,7 @@ const CustomComment = (props) => {
               color={Colors.red}
               size={23.2}
               style={styles.icon}
-              onPress={() => onLike(item._id, ding._id)}
+              onPress={() => onLike(item._id, itemType._id)}
             />
           )}
           <Feather
@@ -92,7 +92,7 @@ const CustomComment = (props) => {
               color={Colors.gray}
               size={23.2}
               style={styles.icon}
-              onPress={() => onLike(item._id, ding._id)}
+              onPress={() => onLike(item._id, itemType._id)}
             />
           )}
           <Feather

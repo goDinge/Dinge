@@ -4,6 +4,7 @@ import {
   GET_LOCAL_EVENTS,
   CREATE_EVENT,
   UPDATE_EVENT_LOCATION,
+  DELETE_EVENT,
 } from '../types';
 import { HOME_IP } from '@env';
 
@@ -43,7 +44,9 @@ export const getLocalEvents = (location) => {
         events: events,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error(
+        'Local events - Cannot connect with server. Please try again.'
+      );
     }
   };
 };
@@ -113,6 +116,25 @@ export const createEvent = (formState) => {
       });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const deleteEventById = (eventId) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.delete(`${HOME_IP}/api/events/${eventId}`);
+      const events = response.data.data;
+
+      dispatch({
+        type: GET_LOCAL_EVENTS,
+        events: events,
+      });
+    } catch (err) {
+      console.log(err.message);
+      throw new Error(
+        'Delete event - Cannot connect with server. Please try again.'
+      );
     }
   };
 };

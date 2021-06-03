@@ -8,10 +8,11 @@ import Colors from '../constants/Colors';
 
 const CustomSocials = (props) => {
   const {
+    type,
     isLikeLoading,
-    initLikeDing,
-    dingState,
-    ding,
+    initLikeItem,
+    itemState,
+    item,
     authUser,
     user,
     onLike,
@@ -20,7 +21,7 @@ const CustomSocials = (props) => {
     onProfile,
   } = props;
 
-  const description = JSON.parse(ding.description);
+  const description = JSON.parse(item.description);
 
   return (
     <View style={styles.socialIconsContainer}>
@@ -32,19 +33,19 @@ const CustomSocials = (props) => {
             </View>
           ) : (
             <FontAwesome
-              name={initLikeDing ? 'thumbs-up' : 'thumbs-o-up'}
-              color={initLikeDing ? Colors.red : 'black'}
+              name={initLikeItem ? 'thumbs-up' : 'thumbs-o-up'}
+              color={initLikeItem ? Colors.red : 'black'}
               size={28}
               style={
-                initLikeDing
+                initLikeItem
                   ? styles.iconDingThumb
                   : [styles.iconDingThumb, { paddingRight: 5 }]
               }
-              onPress={() => onLike(ding._id, user._id)}
+              onPress={() => onLike(item._id, user._id)}
             />
           )}
           <Text style={styles.likesCount}>
-            {dingState.likes && dingState.likes.length}
+            {itemState.likes && itemState.likes.length}
           </Text>
         </View>
         <View style={styles.iconRightContainer}>
@@ -55,26 +56,28 @@ const CustomSocials = (props) => {
             style={styles.icon}
             onPress={onFlag}
           />
-          {ding.user === authUser._id ? (
+          {item.user === authUser._id ? (
             <AntDesign
               name="delete"
               color="black"
               size={28}
               style={[styles.icon, { marginRight: 0 }]}
-              onPress={() => onDelete(ding._id)}
+              onPress={() => onDelete(item._id)}
             />
           ) : null}
         </View>
       </View>
-      <View style={styles.socialContainer}>
-        <Text style={styles.userName} onPress={() => onProfile(user._id)}>
-          {user.name}
-        </Text>
-        <View style={styles.timeContainer}>
-          <Text style={styles.timeText}>{timeConverter(ding.createdAt)}</Text>
+      {type === 'ding' ? (
+        <View style={styles.socialContainer}>
+          <Text style={styles.userName} onPress={() => onProfile(user._id)}>
+            {user.name}
+          </Text>
+          <View style={styles.timeContainer}>
+            <Text style={styles.timeText}>{timeConverter(item.createdAt)}</Text>
+          </View>
+          <Text style={styles.description}>{description}</Text>
         </View>
-        <Text style={styles.description}>{description}</Text>
-      </View>
+      ) : null}
     </View>
   );
 };

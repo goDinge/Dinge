@@ -104,11 +104,7 @@ export const changePassword = (password) => {
     };
 
     try {
-      const response = await axios.put(
-        `${HOME_IP}/api/auth/password`,
-        body,
-        config
-      );
+      await axios.put(`${HOME_IP}/api/auth/password`, body, config);
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }

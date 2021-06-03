@@ -6,7 +6,7 @@ import Colors from '../constants/Colors';
 
 const CustomDeleteModal = (props) => {
   const {
-    ding,
+    item,
     confirmDelete,
     setConfirmDelete,
     isDeleting,
@@ -33,13 +33,13 @@ const CustomDeleteModal = (props) => {
               {isDeleting ? (
                 <CustomButton
                   style={styles.buttonFlexRow}
-                  onSelect={() => onDelete(ding._id)}
+                  onSelect={() => onDelete(item._id)}
                 >
                   <Text style={styles.postButtonText}>Deleting...</Text>
                   <ActivityIndicator color="white" size="small" />
                 </CustomButton>
               ) : (
-                <CustomButton onSelect={() => onDelete(ding._id)}>
+                <CustomButton onSelect={() => onDelete(item._id)}>
                   <Text style={styles.postButtonText}>Yes</Text>
                 </CustomButton>
               )}

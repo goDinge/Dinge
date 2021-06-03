@@ -12,7 +12,7 @@ import CustomButton from '../components/CustomButton';
 import Colors from '../constants/Colors';
 
 const CustomCommentInput = (props) => {
-  const { ding, text, isCommentLoading, onText, onComment } = props;
+  const { item, text, isCommentLoading, onText, onComment } = props;
 
   return (
     <View style={styles.commentsInputContainer}>
@@ -42,7 +42,7 @@ const CustomCommentInput = (props) => {
         ) : (
           <CustomButton
             style={styles.postButton}
-            onSelect={() => onComment(text, ding._id)}
+            onSelect={() => onComment(text, item._id)}
           >
             <Text style={styles.postButtonText}>Post</Text>
           </CustomButton>

@@ -45,7 +45,7 @@ const EventsScreen = (props) => {
   }, []);
 
   useEffect(() => {
-    if (events) {
+    if (events.length > 0) {
       setShowEvents(todayEventsDefault(events.sort(sortEvents)));
     }
   }, [events]);

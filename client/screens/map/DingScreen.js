@@ -23,9 +23,9 @@ import CustomCommentInput from '../../components/CustomCommentInput';
 import CustomReportModal from '../../components/CustomReportModal';
 import CustomEditModal from '../../components/CustomEditModal';
 import CustomMessageModal from '../../components/CustomMessageModal';
+import CustomDeleteModal from '../../components/CustomDeleteModal';
 
 import Colors from '../../constants/Colors';
-import CustomDeleteModal from '../../components/CustomDeleteModal';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -34,6 +34,7 @@ const DingScreen = (props) => {
   const authUser = useSelector((state) => state.auth.authUser);
   const dingState = useSelector((state) => state.ding.ding);
   const user = useSelector((state) => state.user.user);
+  const userLocation = useSelector((state) => state.location.location);
 
   let initLikeDing = false;
   if (dingState.likes) {
@@ -111,6 +112,7 @@ const DingScreen = (props) => {
     props.navigation.navigate('Public', userId);
   };
 
+  //Like and Unlike
   const likeDingHandler = async (dingId, userId) => {
     setError(null);
     setIsLikeLoading(true);
@@ -135,12 +137,18 @@ const DingScreen = (props) => {
     await dispatch(dingActions.getDing(dingId));
   };
 
+  //Delete
+  const openDingDeleteModalHandler = () => {
+    setModalMessage('ding');
+    setConfirmDelete(true);
+  };
+
   const deleteDingHandler = async (dingId) => {
     setError(null);
     setIsDeleting(true);
     try {
       await dispatch(dingeActions.deleteDingById(dingId));
-      await dispatch(dingeActions.getDinge());
+      await dispatch(dingeActions.getLocalDinge(userLocation));
       await setConfirmDelete(false);
       await dispatch(messageActions.setMessage('Ding Deleted'));
     } catch (err) {
@@ -150,13 +158,9 @@ const DingScreen = (props) => {
     props.navigation.navigate('Map');
   };
 
+  //Report
   const openDingReportModalHandler = () => {
     setDingReportModal(true);
-  };
-
-  const openDingDeleteModalHandler = () => {
-    setModalMessage('ding');
-    setConfirmDelete(true);
   };
 
   const reportDingHandler = async (dingId) => {
@@ -168,16 +172,17 @@ const DingScreen = (props) => {
     }
   };
 
+  //Comment
   const postCommentHandler = async (text, dingId) => {
     setError(null);
     setIsCommentLoading(true);
     try {
       await dispatch(commentActions.postComment(text, dingId));
-      onChangeText(null);
       await dispatch(dingActions.getDing(dingId));
     } catch (err) {
       setError(err.message);
     }
+    onChangeText(null);
     setIsCommentLoading(false);
   };
 
@@ -186,12 +191,12 @@ const DingScreen = (props) => {
     setIsEditLoading(true);
     try {
       await dispatch(commentActions.editComment(text, id));
-      onChangeText(null);
-      setEditInitialText('');
       await dispatch(dingActions.getDing(dingId));
     } catch (err) {
       setError(err.message);
     }
+    onChangeText(null);
+    setEditInitialText('');
     setIsEditLoading(false);
     setEditModal(false);
     cancelEditHandler();
@@ -263,10 +268,11 @@ const DingScreen = (props) => {
           <Image style={styles.image} source={{ uri: ding.imgUrl }} />
         </View>
         <CustomSocials
+          type="ding"
           isLikeLoading={isLikeLoading}
-          initLikeDing={initLikeDing}
-          dingState={dingState}
-          ding={ding}
+          initLikeItem={initLikeDing}
+          itemState={dingState}
+          item={ding}
           authUser={authUser}
           user={user}
           onLike={likeDingHandler}
@@ -275,7 +281,7 @@ const DingScreen = (props) => {
           onProfile={publicProfileHandler}
         />
         <CustomCommentInput
-          ding={ding}
+          item={ding}
           text={text}
           isCommentLoading={isCommentLoading}
           onText={onChangeText}
@@ -289,7 +295,7 @@ const DingScreen = (props) => {
                   key={index}
                   item={item}
                   authUser={authUser}
-                  ding={ding}
+                  itemType={ding}
                   isLoading={isCommentLikeLoading}
                   onProfile={publicProfileHandler}
                   onEditor={openEditorHandler}
@@ -303,15 +309,15 @@ const DingScreen = (props) => {
       </ScrollView>
       {/*    **** MODALS ****     */}
       <CustomReportModal
-        ding={ding}
-        dingReportModal={dingReportModal}
+        item={ding}
+        itemReportModal={dingReportModal}
         onModalVisible={setDingReportModal}
         onReport={reportDingHandler}
       />
       <CustomEditModal
         editModal={editModal}
         text={text}
-        ding={ding}
+        item={ding}
         isEditLoading={isEditLoading}
         editInitialText={editInitialText}
         editCommentId={editCommentId}
@@ -326,7 +332,7 @@ const DingScreen = (props) => {
         onClose={setMessageModal}
       />
       <CustomDeleteModal
-        ding={ding}
+        item={ding}
         confirmDelete={confirmDelete}
         isDeleting={isDeleting}
         message={modalMessage}

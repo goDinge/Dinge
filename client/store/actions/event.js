@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { GET_EVENT, UPDATE_EVENT_LOCATION } from '../types';
+import { GET_EVENT, LIKE_EVENT, UNLIKE_EVENT, REPORT_EVENT } from '../types';
 import { HOME_IP } from '@env';
 
 export const getEvent = (id) => {
   return async (dispatch) => {
     try {
-      const response = await axios.get(`http://${HOME_IP}/api/events/${id}`);
+      const response = await axios.get(`${HOME_IP}/api/events/${id}`);
       const event = response.data.data;
 
       dispatch({
@@ -18,23 +18,57 @@ export const getEvent = (id) => {
   };
 };
 
-// export const updateEventLocation = (eventId, location) => {
-//   return async (dispatch) => {
-//     try {
-//       console.log('event action - IP used:', HOME_IP);
+export const likeEvent = (eventId) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.put(`${HOME_IP}/api/event/likes/${eventId}`);
+      const event = response.data.data;
 
-//       const response = await axios.put(
-//         `${HOME_IP}/api/event/${eventId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
-//       );
+      dispatch({
+        type: LIKE_EVENT,
+        event: event,
+      });
+    } catch (err) {
+      console.log(err.message);
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
 
-//       const newLocation = response.data.data.location;
-//       dispatch({
-//         type: UPDATE_EVENT_LOCATION,
-//         event: newLocation,
-//       });
-//     } catch (err) {
-//       console.log(err.message);
-//       throw new Error('Cannot connect with server. Please try again');
-//     }
-//   };
-// };
+export const unlikeEvent = (eventId) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.delete(
+        `${HOME_IP}/api/event/likes/${eventId}`
+      );
+      const event = response.data.data;
+
+      dispatch({
+        type: UNLIKE_EVENT,
+        event: event,
+      });
+    } catch (err) {
+      console.log(err.message);
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const reportEventById = (eventId) => {
+  return async (dispatch) => {
+    try {
+      const response = await axios.put(
+        `${HOME_IP}/api/event/reports/${eventId}`
+      );
+      const event = response.data.data;
+
+      dispatch({
+        type: REPORT_EVENT,
+        event: event,
+      });
+    } catch (err) {
+      console.log(err.message);
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
