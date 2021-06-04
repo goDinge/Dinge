@@ -7,8 +7,8 @@ import Colors from '../constants/Colors';
 const CustomComment = (props) => {
   const {
     index,
+    comment,
     item,
-    itemType,
     authUser,
     isLoading,
     onProfile,
@@ -24,11 +24,11 @@ const CustomComment = (props) => {
         <View style={styles.textContainer}>
           <Text
             style={styles.commentsUserName}
-            onPress={() => onProfile(item.userId)}
+            onPress={() => onProfile(comment.userId)}
           >
-            {item.userName}
+            {comment.userName}
           </Text>
-          <Text style={styles.description}>{item.text}</Text>
+          <Text style={styles.description}>{comment.text}</Text>
         </View>
         <View style={styles.likesCountContainer}>
           <FontAwesome
@@ -37,27 +37,27 @@ const CustomComment = (props) => {
             size={14}
             style={styles.icon}
           />
-          <Text style={styles.miniLikesCount}>{item.likes.length}</Text>
+          <Text style={styles.miniLikesCount}>{comment.likes.length}</Text>
         </View>
       </View>
-      {item.userId === authUser._id ? (
+      {comment.userId === authUser._id ? (
         <View style={styles.commentsIconContainer}>
           <Feather
             name="edit"
             color={Colors.gray}
             size={22}
             style={styles.icon}
-            onPress={() => onEditor(item._id, item.text)}
+            onPress={() => onEditor(comment._id, comment.text)}
           />
           <Feather
             name="delete"
             color={Colors.gray}
             size={22}
             style={[styles.icon, { left: -4 }]}
-            onPress={() => onDelete(item._id, itemType._id)}
+            onPress={() => onDelete(comment._id, item._id)}
           />
         </View>
-      ) : item.likes.includes(authUser._id) ? (
+      ) : comment.likes.includes(authUser._id) ? (
         <View style={styles.commentsIconContainer}>
           {isLoading ? (
             <View style={styles.commentLikeActInd}>
@@ -69,7 +69,7 @@ const CustomComment = (props) => {
               color={Colors.red}
               size={23.2}
               style={styles.icon}
-              onPress={() => onLike(item._id, itemType._id)}
+              onPress={() => onLike(comment._id, item._id)}
             />
           )}
           <Feather
@@ -77,7 +77,7 @@ const CustomComment = (props) => {
             color={Colors.gray}
             size={24}
             style={styles.icon}
-            onPress={() => onFlag(item._id)}
+            onPress={() => onFlag(comment._id)}
           />
         </View>
       ) : (
@@ -92,7 +92,7 @@ const CustomComment = (props) => {
               color={Colors.gray}
               size={23.2}
               style={styles.icon}
-              onPress={() => onLike(item._id, itemType._id)}
+              onPress={() => onLike(comment._id, item._id)}
             />
           )}
           <Feather
@@ -100,7 +100,7 @@ const CustomComment = (props) => {
             size={24}
             color={Colors.gray}
             style={styles.icon}
-            onPress={() => onFlag(item._id)}
+            onPress={() => onFlag(comment._id)}
           />
         </View>
       )}
@@ -110,8 +110,8 @@ const CustomComment = (props) => {
 
 const styles = StyleSheet.create({
   icon: {
-    marginRight: 4,
-    padding: 3,
+    marginRight: 5,
+    paddingLeft: 6,
   },
   description: {
     fontFamily: 'cereal-light',
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
   outerCommentContainer: {
     width: '100%',
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   commentContainer: {
     width: '80%',

@@ -71,7 +71,7 @@ const EventSchema = new mongoose.Schema({
     type: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: 'Comment',
+        ref: 'EventComment',
       },
     ],
   },

@@ -23,6 +23,7 @@ const users = require('./routes/users');
 const dinge = require('./routes/dinge');
 const ding = require('./routes/ding');
 const comments = require('./routes/comments');
+const eventComments = require('./routes/eventComments');
 const events = require('./routes/events');
 const event = require('./routes/event');
 
@@ -38,6 +39,7 @@ app.use('/api/users', users);
 app.use('/api/dinge', dinge);
 app.use('/api/ding', ding);
 app.use('/api/comments', comments);
+app.use('/api/eventcomments', eventComments);
 app.use('/api/events', events);
 app.use('/api/event', event);
 

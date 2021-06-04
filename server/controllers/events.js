@@ -114,7 +114,7 @@ exports.getLocalEvents = asyncHandler(async (req, res, next) => {
 //route   GET /api/events/:id
 //access  private
 exports.getEventById = asyncHandler(async (req, res, next) => {
-  const event = await Event.findById(req.params.id);
+  const event = await Event.findById(req.params.id).populate('comments');
 
   if (!event) {
     return next(new ErrorResponse('No event with this ID found', 400));

@@ -21,7 +21,7 @@ const CustomSocials = (props) => {
     onProfile,
   } = props;
 
-  const description = JSON.parse(item.description);
+  const description = item.description;
 
   return (
     <View style={styles.socialIconsContainer}>
@@ -85,7 +85,7 @@ const CustomSocials = (props) => {
 const styles = StyleSheet.create({
   socialIconsContainer: {
     marginVertical: 10,
-    marginHorizontal: 16,
+    //marginHorizontal: 16,
   },
   iconContainer: {
     flexDirection: 'row',

@@ -34,7 +34,7 @@ const UploadScreen = (props) => {
   const image = useSelector((state) => state.image.image);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchAnyways, setFetchAnyways] = useState(false);
-  const [text, onChangeText] = useState('');
+  const [text, onChangeText] = useState(null);
   const [location, setLocation] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [addressModalVisible, setAddressModalVisible] = useState(false);
@@ -208,7 +208,7 @@ const UploadScreen = (props) => {
             <Text style={styles.descriptionTitle}>Description</Text>
             <TextInput
               style={styles.descriptionInput}
-              onChangeText={(text) => onChangeText(text)}
+              onChangeText={onChangeText}
               multiline={true}
               value={text}
               placeholder="write description here"

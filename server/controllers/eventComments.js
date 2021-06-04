@@ -1,37 +1,37 @@
-const Ding = require('../models/Ding');
+const Event = require('../models/Event');
 const User = require('../models/User');
-const Comment = require('../models/Comment');
+const EventComment = require('../models/EventComment');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const repScores = require('../utils/repScores');
 
-//desc    CREATE Comment by Ding ID
-//route   POST /api/comments/:id/
+//desc    CREATE Event Comment by Event ID
+//route   POST /api/eventcomments/:id/
 //access  private
-exports.createComment = asyncHandler(async (req, res, next) => {
+exports.createEventComment = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
-  const dingId = req.params.id;
+  const eventId = req.params.id;
   const text = req.body.text;
-  const ding = await Ding.findById(dingId);
+  const event = await Event.findById(eventId);
   const user = await User.findById(userId);
 
   const userName = user.name;
 
-  if (!ding) {
+  if (!event) {
     return next(
-      new ErrorResponse(`No ding with the id of ${req.params.id}`, 404)
+      new ErrorResponse(`No event with the id of ${req.params.id}`, 404)
     );
   }
 
-  const comment = await Comment.create({
+  const comment = await EventComment.create({
     userId,
     userName,
     text,
-    dingId,
+    eventId,
   });
 
-  ding.comments.unshift(comment._id);
-  ding.save();
+  event.comments.unshift(comment._id);
+  event.save();
 
   res.status(200).json({
     success: true,
@@ -40,12 +40,12 @@ exports.createComment = asyncHandler(async (req, res, next) => {
 });
 
 //desc    EDIT Comment by comment ID
-//route   PUT /api/comments/:id/
+//route   PUT /api/eventcomments/:id/
 //access  private
-exports.editCommentById = asyncHandler(async (req, res, next) => {
+exports.editEventCommentById = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
   const text = req.body.text;
-  const comment = await Comment.findById(req.params.id);
+  const comment = await EventComment.findById(req.params.id);
 
   const commentUser = comment.userId;
 
@@ -55,7 +55,7 @@ exports.editCommentById = asyncHandler(async (req, res, next) => {
     );
   }
 
-  await Comment.updateOne(
+  await EventComment.updateOne(
     {
       _id: req.params.id,
     },
@@ -67,7 +67,7 @@ exports.editCommentById = asyncHandler(async (req, res, next) => {
     }
   );
 
-  const editedComment = await Comment.findById(req.params.id);
+  const editedComment = await EventComment.findById(req.params.id);
 
   res.status(200).json({
     success: true,
@@ -76,10 +76,10 @@ exports.editCommentById = asyncHandler(async (req, res, next) => {
 });
 
 //desc    GET Comment by Comment ID
-//route   GET /api/comments/:id/
+//route   GET /api/eventcomments/:id/
 //access  private
-exports.getCommentById = asyncHandler(async (req, res, next) => {
-  const comment = await Comment.findById(req.params.id);
+exports.getEventCommentById = asyncHandler(async (req, res, next) => {
+  const comment = await EventComment.findById(req.params.id);
 
   res.status(200).json({
     success: true,
@@ -88,10 +88,10 @@ exports.getCommentById = asyncHandler(async (req, res, next) => {
 });
 
 //desc    LIKE Comment by ID
-//route   PUT /api/comments/likes/:id
+//route   PUT /api/eventcomments/likes/:id
 //access  private
-exports.likeCommentById = asyncHandler(async (req, res, next) => {
-  const comment = await Comment.findById(req.params.id);
+exports.likeEventCommentById = asyncHandler(async (req, res, next) => {
+  const comment = await EventComment.findById(req.params.id);
   const commentUser = await User.findById(comment.userId); //should be just 'user' in Comment model
   const user = await User.findById(req.user.id);
 
@@ -120,15 +120,15 @@ exports.likeCommentById = asyncHandler(async (req, res, next) => {
 });
 
 //desc    UNLIKE Comment
-//route   DELETE /api/comments/likes/:id
+//route   DELETE /api/eventcomments/likes/:id
 //access  private
-exports.unlikeCommentById = asyncHandler(async (req, res, next) => {
-  await Comment.updateOne(
+exports.unlikeEventCommentById = asyncHandler(async (req, res, next) => {
+  await EventComment.updateOne(
     { _id: req.params.id },
     { $pull: { likes: req.user.id } }
   );
 
-  const comment = await Comment.findById(req.params.id);
+  const comment = await EventComment.findById(req.params.id);
   const commentUser = await User.findById(comment.userId);
   const user = await User.findById(req.user.id);
 
@@ -150,10 +150,10 @@ exports.unlikeCommentById = asyncHandler(async (req, res, next) => {
 });
 
 //desc    REPORT Comment
-//route   PUT /api/comments/reports/:id
+//route   PUT /api/eventcomments/reports/:id
 //access  private
-exports.reportCommentById = asyncHandler(async (req, res, next) => {
-  const comment = await Comment.findById(req.params.id);
+exports.reportEventCommentById = asyncHandler(async (req, res, next) => {
+  const comment = await EventComment.findById(req.params.id);
   const commentUser = await User.findById(comment.userId);
   const user = await User.findById(req.user.id);
 
@@ -186,15 +186,15 @@ exports.reportCommentById = asyncHandler(async (req, res, next) => {
 });
 
 //desc    UNREPORT Comment
-//route   DELETE /api/comments/reports/:id
+//route   DELETE /api/eventcomments/reports/:id
 //access  private
-exports.unReportCommentById = asyncHandler(async (req, res, next) => {
-  await Comment.updateOne(
+exports.unReportEventCommentById = asyncHandler(async (req, res, next) => {
+  await EventComment.updateOne(
     { _id: req.params.id },
     { $pull: { reports: req.user.id } }
   );
 
-  const comment = await Comment.findOne({ _id: req.params.id });
+  const comment = await EventComment.findOne({ _id: req.params.id });
   const commentUser = await User.findById(comment.userId);
   const user = await User.findById(req.user.id);
 
@@ -214,11 +214,11 @@ exports.unReportCommentById = asyncHandler(async (req, res, next) => {
 });
 
 //desc    DELETE Comment by Comment ID
-//route   DELETE /api/comments/:commentid/:dingid
+//route   DELETE /api/eventcomments/:commentid/:eventid
 //access  private
-exports.deleteCommentById = asyncHandler(async (req, res, next) => {
+exports.deleteEventCommentById = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
-  const comment = await Comment.findById(req.params.commentid);
+  const comment = await EventComment.findById(req.params.commentid);
 
   const commentUser = comment.userId;
 
@@ -228,9 +228,9 @@ exports.deleteCommentById = asyncHandler(async (req, res, next) => {
     );
   }
 
-  await Comment.findByIdAndRemove(req.params.commentid);
-  await Ding.updateOne(
-    { _id: req.params.dingid },
+  await EventComment.findByIdAndRemove(req.params.commentid);
+  await Event.updateOne(
+    { _id: req.params.eventid },
     { $pull: { comments: req.params.commentid } }
   );
 

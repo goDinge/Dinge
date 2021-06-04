@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LogBox, StyleSheet } from 'react-native';
+import { LogBox } from 'react-native';
 import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
@@ -15,6 +15,7 @@ import eventsReducer from './store/reducers/events';
 import eventReducer from './store/reducers/event';
 import locationReducer from './store/reducers/location';
 import commentReducer from './store/reducers/comment';
+import eventCommentReducer from './store/reducers/eventComment';
 import messageReducer from './store/reducers/message';
 
 import AppNavigator from './navigation/AppNavigator';
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
   event: eventReducer,
   location: locationReducer,
   comment: commentReducer,
+  eventComment: eventCommentReducer,
   message: messageReducer,
 });
 

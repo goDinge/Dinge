@@ -5,7 +5,6 @@ import {
   Pressable,
   Alert,
   ScrollView,
-  Dimensions,
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
@@ -17,7 +16,7 @@ import * as userActions from '../../store/actions/user';
 import * as eventActions from '../../store/actions/event';
 import * as eventsActions from '../../store/actions/events';
 import * as authActions from '../../store/actions/auth';
-import * as commentActions from '../../store/actions/comment';
+import * as commentActions from '../../store/actions/eventComment';
 import * as messageActions from '../../store/actions/message';
 
 import CustomMarker from '../../components/CustomMarker';
@@ -130,12 +129,7 @@ const EventDetailsScreen = (props) => {
     });
   };
 
-  const publicProfileHandler = (userId) => {
-    props.navigation.navigate('Public', userId);
-  };
-
   //Like and Unlike
-
   const likeEventHandler = async (eventId, userId) => {
     setError(null);
     setIsLikeLoading(true);
@@ -155,7 +149,6 @@ const EventDetailsScreen = (props) => {
   };
 
   //Delete
-
   const openEventDeleteModalHandler = () => {
     setModalMessage('event');
     setConfirmDelete(true);
@@ -177,7 +170,6 @@ const EventDetailsScreen = (props) => {
   };
 
   //Report
-
   const openEventReportModalHandler = () => {
     setEventReportModal(true);
   };
@@ -237,7 +229,7 @@ const EventDetailsScreen = (props) => {
     setError(null);
     try {
       await dispatch(commentActions.deleteComment(id, eventId));
-      await dispatch(eventActions.getDing(eventId));
+      await dispatch(eventActions.getEvent(eventId));
       setModalMessage('Comment Deleted');
       setMessageModal(true);
     } catch (err) {
@@ -298,27 +290,27 @@ const EventDetailsScreen = (props) => {
             </Pressable>
           </View>
         </View>
-        <View>
-          <View style={styles.lowerInfoContainer}>
-            <View style={styles.mapContainer}>
-              <MapView
-                style={styles.map}
-                region={region}
-                minZoomLevel={13}
-                maxZoomLevel={17}
-              >
-                {isFocused && <CustomMarker data={event} />}
-              </MapView>
-            </View>
-            <View style={styles.aboutInfoContainer}>
-              <Text style={[styles.eventTitle, { fontSize: 20 }]}>
-                About this event
-              </Text>
-              <Text style={[styles.eventInfo, { marginBottom: 8 }]}>
-                {event.address}
-              </Text>
-              <Text style={styles.eventText}>{event.description}</Text>
-            </View>
+        <View style={styles.lowerInfoContainer}>
+          <View style={styles.mapContainer}>
+            <MapView
+              style={styles.map}
+              region={region}
+              minZoomLevel={13}
+              maxZoomLevel={17}
+            >
+              {isFocused && <CustomMarker data={event} />}
+            </MapView>
+          </View>
+          <View style={styles.aboutInfoContainer}>
+            <Text style={[styles.eventTitle, { fontSize: 20 }]}>
+              About this event
+            </Text>
+            <Text style={[styles.eventInfo, { marginBottom: 8 }]}>
+              {event.address}
+            </Text>
+            <Text style={styles.eventText}>{event.description}</Text>
+          </View>
+          <View style={{ marginVertical: 5 }}>
             <CustomSocials
               type="event"
               isLikeLoading={isLikeLoading}
@@ -330,8 +322,10 @@ const EventDetailsScreen = (props) => {
               onLike={likeEventHandler}
               onFlag={openEventReportModalHandler}
               onDelete={openEventDeleteModalHandler}
-              onProfile={publicProfileHandler}
+              onProfile={toUserNameHandler}
             />
+          </View>
+          <View style={{ marginVertical: 5 }}>
             <CustomCommentInput
               item={event}
               text={text}
@@ -339,26 +333,24 @@ const EventDetailsScreen = (props) => {
               onText={onChangeText}
               onComment={postCommentHandler}
             />
-            <View style={styles.commentsContainer}>
-              {comments &&
-                comments.map((item, index) => {
-                  return (
-                    <CustomComment
-                      key={index}
-                      item={item}
-                      authUser={authUser}
-                      itemType={event}
-                      isLoading={isCommentLikeLoading}
-                      onProfile={publicProfileHandler}
-                      onEditor={openEditorHandler}
-                      onDelete={deleteCommentHandler}
-                      onLike={likeCommentHandler}
-                      onFlag={reportCommentHandler}
-                    />
-                  );
-                })}
-            </View>
           </View>
+          {comments &&
+            comments.map((item, index) => {
+              return (
+                <CustomComment
+                  key={index}
+                  comment={item}
+                  authUser={authUser}
+                  item={event}
+                  isLoading={isCommentLikeLoading}
+                  onProfile={toUserNameHandler}
+                  onEditor={openEditorHandler}
+                  onDelete={deleteCommentHandler}
+                  onLike={likeCommentHandler}
+                  onFlag={reportCommentHandler}
+                />
+              );
+            })}
         </View>
       </ScrollView>
       {/*    **** MODALS ****     */}
@@ -404,6 +396,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+  indicatorContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   scrollViewContainer: {
     width: '96%',
     alignSelf: 'center',
@@ -433,31 +431,21 @@ const styles = StyleSheet.create({
     width: 100,
     borderRadius: 50,
   },
-  lowerInfoContainer: {
-    width: '100%',
-  },
   mapContainer: {
     justifyContent: 'center',
   },
   map: {
     height: 200,
   },
-  aboutInfoContainer: {
-    marginTop: 16,
+  lowerInfoContainer: {
+    width: '100%',
   },
-  indicatorContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  aboutInfoContainer: {
+    marginVertical: 16,
   },
   pin: {
     width: 50,
     height: 50,
-  },
-  commentsContainer: {
-    alignItems: 'center',
-    marginHorizontal: 16,
   },
   //modal styles
   modalText: {

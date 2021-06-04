@@ -57,7 +57,7 @@ export const postDing = (description, lat, long, img, thumb) => {
       const thumbNameFixed = thumbName.split('.')[0].concat('-thumb.jpg');
 
       let formData = new FormData();
-      formData.append('description', JSON.stringify(description));
+      formData.append('description', description);
       formData.append('location[longitude]', JSON.stringify(long));
       formData.append('location[latitude]', JSON.stringify(lat));
       formData.append('img', {

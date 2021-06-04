@@ -263,39 +263,39 @@ const DingScreen = (props) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.imageContainer}>
           <Image style={styles.image} source={{ uri: ding.imgUrl }} />
         </View>
-        <CustomSocials
-          type="ding"
-          isLikeLoading={isLikeLoading}
-          initLikeItem={initLikeDing}
-          itemState={dingState}
-          item={ding}
-          authUser={authUser}
-          user={user}
-          onLike={likeDingHandler}
-          onFlag={openDingReportModalHandler}
-          onDelete={openDingDeleteModalHandler}
-          onProfile={publicProfileHandler}
-        />
-        <CustomCommentInput
-          item={ding}
-          text={text}
-          isCommentLoading={isCommentLoading}
-          onText={onChangeText}
-          onComment={postCommentHandler}
-        />
-        <View style={styles.commentsContainer}>
+        <View style={styles.lowerInfoContainer}>
+          <CustomSocials
+            type="ding"
+            isLikeLoading={isLikeLoading}
+            initLikeItem={initLikeDing}
+            itemState={dingState}
+            item={ding}
+            authUser={authUser}
+            user={user}
+            onLike={likeDingHandler}
+            onFlag={openDingReportModalHandler}
+            onDelete={openDingDeleteModalHandler}
+            onProfile={publicProfileHandler}
+          />
+          <CustomCommentInput
+            item={ding}
+            text={text}
+            isCommentLoading={isCommentLoading}
+            onText={onChangeText}
+            onComment={postCommentHandler}
+          />
           {comments &&
             comments.map((item, index) => {
               return (
                 <CustomComment
                   key={index}
-                  item={item}
+                  comment={item}
                   authUser={authUser}
-                  itemType={ding}
+                  item={ding}
                   isLoading={isCommentLikeLoading}
                   onProfile={publicProfileHandler}
                   onEditor={openEditorHandler}
@@ -346,7 +346,6 @@ const DingScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     backgroundColor: '#fff',
   },
   indicatorContainer: {
@@ -362,13 +361,13 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: SCREEN_WIDTH,
   },
-  socialIconsContainer: {
-    marginVertical: 10,
-    marginHorizontal: 16,
+  scrollViewContainer: {
+    width: '100%',
+    alignSelf: 'center',
   },
-  commentsContainer: {
-    alignItems: 'center',
-    marginHorizontal: 16,
+  lowerInfoContainer: {
+    width: '96%',
+    alignSelf: 'center',
   },
   //modal styles
   modalText: {
