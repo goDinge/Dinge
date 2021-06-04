@@ -99,7 +99,6 @@ const ProfileEditScreen = (props) => {
       Alert.alert('Could not upload avatar!', 'Please try again later.', [
         { text: 'Okay' },
       ]);
-      console.log(err.message);
     }
   };
 
@@ -120,7 +119,6 @@ const ProfileEditScreen = (props) => {
       Alert.alert('Profile updated.', 'Thanks.', [{ text: 'Okay' }]);
     } catch (err) {
       setError(err.message);
-      console.log(err);
     }
     setIsUpdating(false);
   };
@@ -144,25 +142,21 @@ const ProfileEditScreen = (props) => {
       Alert.alert('Password changed.', 'Thanks.', [{ text: 'Okay' }]);
     } catch (err) {
       setError(err.message);
-      console.log(err);
     }
   };
-
-  //console.log(formState);
-  //console.log(passwordState);
 
   const deleteAccountModalHandler = () => {
     setModalVisible(true);
   };
 
   const deleteAccountHandler = async () => {
-    console.log('delete account');
+    setError(null);
     setModalVisible(false);
     try {
       await dispatch(authActions.logout());
       await dispatch(authActions.deleteAccount());
     } catch (err) {
-      console.log(err.message);
+      setError(err.message);
     }
   };
 

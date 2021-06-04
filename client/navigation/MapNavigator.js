@@ -3,7 +3,11 @@ import { useSelector } from 'react-redux';
 import { Platform } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
+import {
+  MaterialCommunityIcons,
+  Feather,
+  FontAwesome5,
+} from '@expo/vector-icons';
 
 import MapScreen from '../screens/map/MapScreen';
 import DingScreen from '../screens/map/DingScreen';
@@ -136,14 +140,14 @@ export const CameraNavigator = () => {
   return (
     <CameraStackNavigator.Navigator screenOptions={defaultNavOptions}>
       <CameraStackNavigator.Screen
-        name="Upload"
-        component={UploadScreen}
-        options={{ headerTitle: 'Dinge!' }}
-      />
-      <CameraStackNavigator.Screen
         name="Camera"
         component={CameraScreen}
         options={{ headerTitle: 'Camera' }}
+      />
+      <CameraStackNavigator.Screen
+        name="Upload"
+        component={UploadScreen}
+        options={{ headerTitle: 'Dinge!' }}
       />
     </CameraStackNavigator.Navigator>
   );
@@ -277,7 +281,7 @@ export const BottomTabNavigator = () => {
     >
       <MapBottomTabNavigator.Screen name="Map" component={MapNavigator} />
       <MapBottomTabNavigator.Screen name="Events" component={EventsNavigator} />
-      <MapBottomTabNavigator.Screen name="Social" component={SocialNavigator} />
+      <MapBottomTabNavigator.Screen name="Camera" component={CameraNavigator} />
       <MapBottomTabNavigator.Screen
         name="Profile"
         component={ProfileNavigator}

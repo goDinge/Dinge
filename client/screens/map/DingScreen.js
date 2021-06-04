@@ -226,6 +226,7 @@ const DingScreen = (props) => {
   };
 
   const likeCommentHandler = async (id, dingId) => {
+    setError(null);
     setIsCommentLikeLoading(true);
     const comment = comments.find((comment) => comment._id === id);
 
@@ -237,11 +238,10 @@ const DingScreen = (props) => {
         await dispatch(commentActions.unlikeComment(id));
         await dispatch(dingActions.getDing(dingId));
       }
-      setIsCommentLikeLoading(false);
     } catch (err) {
       setError(err.message);
-      setIsCommentLikeLoading(false);
     }
+    setIsCommentLikeLoading(false);
   };
 
   const reportCommentHandler = async (id) => {

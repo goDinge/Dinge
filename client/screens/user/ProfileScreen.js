@@ -94,7 +94,6 @@ const ProfileScreen = (props) => {
       Alert.alert('Could not upload avatar!', 'Please try again later.', [
         { text: 'Okay' },
       ]);
-      console.log(err.message);
     }
   };
 

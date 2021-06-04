@@ -17,11 +17,11 @@ import * as Location from 'expo-location';
 import CustomButton from '../../components/CustomButton';
 import CustomMarker from '../../components/CustomMarker';
 import CustomBlueMarker from '../../components/CustomBlueMarker';
-import CustomCameraIcon from '../../components/CustomCameraIcon';
 import CustomReloadIcon from '../../components/CustomReloadIcon';
 import CustomCompassIcon from '../../components/CustomCompassIcon';
-import CustomAddressModal from '../../components/CustomAddressModal';
 import CustomMessageModal from '../../components/CustomMessageModal';
+//import CustomCameraIcon from '../../components/CustomCameraIcon';
+
 import Colors from '../../constants/Colors';
 
 import * as dingeActions from '../../store/actions/dinge';
@@ -74,7 +74,6 @@ const MapScreen = (props) => {
 
   useEffect(() => {
     if (messageState) {
-      console.log(messageState);
       setModalVisible(true);
       setModalMessage(messageState);
     }
@@ -85,6 +84,7 @@ const MapScreen = (props) => {
   };
 
   const addressSearch = async (address) => {
+    setError(null);
     setIsAddressLoading(true);
     try {
       const location = await Location.geocodeAsync(address); //returns array (of 1 element)
@@ -94,7 +94,7 @@ const MapScreen = (props) => {
       setIsAddressLoading(false);
       setAddressModal(false);
     } catch (err) {
-      console.log(err);
+      setError(err.message);
     }
     setAddress('');
     setIsAddressLoading(false);
@@ -153,7 +153,6 @@ const MapScreen = (props) => {
       }
     } catch (err) {
       setError(err.message);
-      console.log(err.message);
     }
   };
 
@@ -172,9 +171,9 @@ const MapScreen = (props) => {
     props.navigation.navigate('Ding', item);
   };
 
-  const selectCameraHandler = () => {
-    props.navigation.navigate('Upload');
-  };
+  // const selectCameraHandler = () => {
+  //   props.navigation.navigate('Camera');
+  // };
 
   const selectEventHandler = (item) => {
     props.navigation.navigate('Event Details', item);
@@ -259,9 +258,9 @@ const MapScreen = (props) => {
           fillColor={'rgba(0, 166, 153, 0.05)'}
         />
       </MapView>
-      <View style={styles.buttonContainer}>
+      {/* <View style={styles.buttonContainer}>
         <CustomCameraIcon onSelect={selectCameraHandler} />
-      </View>
+      </View> */}
       <View style={styles.compassContainer}>
         <CustomCompassIcon onSelect={compassHandler} />
       </View>

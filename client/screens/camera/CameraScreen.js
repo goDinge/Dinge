@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  StyleSheet,
+} from 'react-native';
 import { Camera } from 'expo-camera';
 import { useDispatch } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import * as imageActions from '../../store/actions/image';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const CameraScreen = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -14,6 +23,7 @@ const CameraScreen = (props) => {
   const [flashIcon, setFlashIcon] = useState('flash-auto');
 
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     (async () => {
@@ -49,61 +59,61 @@ const CameraScreen = (props) => {
   };
 
   return (
-    <View style={styles.cameraContainer}>
-      <Camera
-        style={styles.cameraContainer}
-        type={type}
-        ratio="1:1"
-        whiteBalance="auto"
-        autoFocus="on"
-        flashMode={flashMode}
-        ref={(ref) => {
-          setCameraRef(ref);
-        }}
-      >
-        <View style={styles.cameraInnerView}>
-          <TouchableOpacity
-            style={styles.flipButton}
-            onPress={() => {
-              setType(
-                type === Camera.Constants.Type.back
-                  ? Camera.Constants.Type.front
-                  : Camera.Constants.Type.back
-              );
-            }}
-          >
-            <Text style={styles.flipText}>flip</Text>
-          </TouchableOpacity>
-          <View>
-            <MaterialCommunityIcons
-              name={flashIcon}
-              color="white"
-              size={32}
-              style={styles.flashButton}
-              onPress={flashModeHandler}
-            />
-          </View>
-          <TouchableOpacity
-            style={{ alignSelf: 'center' }}
-            onPress={async () => {
-              if (cameraRef) {
-                const image = await cameraRef.takePictureAsync({
-                  quality: 8,
-                  skipProcessing: true,
-                });
-                await dispatch(imageActions.setImage(image));
-                await props.navigation.navigate('Upload');
-              }
-            }}
-          >
-            <View style={{ marginBottom: 20 }}>
-              <View style={styles.shutterRing}>
-                <View style={styles.shutterSolid}></View>
-              </View>
-            </View>
-          </TouchableOpacity>
+    <View style={styles.container}>
+      {isFocused && (
+        <Camera
+          style={styles.cameraContainer}
+          type={type}
+          ratio="1:1"
+          pictureSize="2160x2160"
+          whiteBalance="auto"
+          autoFocus="on"
+          flashMode={flashMode}
+          ref={(ref) => {
+            setCameraRef(ref);
+          }}
+        />
+      )}
+
+      <View style={styles.cameraInnerView}>
+        <View>
+          <MaterialCommunityIcons
+            name={flashIcon}
+            color="white"
+            size={40}
+            style={styles.flashButton}
+            onPress={flashModeHandler}
+          />
         </View>
-      </Camera>
+        <TouchableOpacity
+          onPress={async () => {
+            if (cameraRef) {
+              const image = await cameraRef.takePictureAsync({
+                quality: 8,
+                skipProcessing: true,
+              });
+              await dispatch(imageActions.setImage(image));
+              await props.navigation.navigate('Upload');
+            }
+          }}
+        >
+          <View style={styles.shutterRing}>
+            <View style={styles.shutterSolid}></View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.flipButton}
+          onPress={() => {
+            setType(
+              type === Camera.Constants.Type.back
+                ? Camera.Constants.Type.front
+                : Camera.Constants.Type.back
+            );
+          }}
+        >
+          <Text style={styles.flipText}>flip</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -111,34 +121,52 @@ const CameraScreen = (props) => {
 export default CameraScreen;
 
 const styles = StyleSheet.create({
-  cameraContainer: {
+  container: {
     flex: 1,
+    backgroundColor: 'black',
+  },
+  cameraContainer: {
+    height: SCREEN_WIDTH,
+    width: SCREEN_WIDTH,
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
   },
   cameraInnerView: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    justifyContent: 'flex-end',
+    width: '90%',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    top: 20,
+    //right: -8,
   },
   flashButton: {
-    alignSelf: 'flex-start',
-    position: 'absolute',
-    top: 22,
-    left: 27,
+    width: 50,
+    //alignSelf: 'flex-start',
+    //position: 'absolute',
+    //top: 22,
+    //left: 27,
   },
   flipButton: {
+    justifyContent: 'center',
+    width: 50,
     borderWidth: 1,
-    marginRight: 15,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    //marginRight: 15,
     borderRadius: 10,
     borderColor: 'white',
-    alignSelf: 'flex-end',
-    position: 'absolute',
-    bottom: 35,
-    right: 10,
+    //alignSelf: 'flex-end',
+    //position: 'absolute',
+    //bottom: 35,
+    height: 38,
+    //right: 10,
   },
   flipText: {
     fontSize: 20,
+    alignSelf: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     fontFamily: 'cereal-bold',
     color: 'white',
   },
@@ -148,7 +176,6 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     height: 70,
     width: 70,
-    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
