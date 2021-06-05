@@ -5,6 +5,8 @@ import { HOME_IP } from '@env';
 export const getEvent = (id) => {
   return async (dispatch) => {
     try {
+      console.log('event action - IP used:', HOME_IP);
+
       const response = await axios.get(`${HOME_IP}/api/events/${id}`);
       const event = response.data.data;
 
@@ -29,7 +31,6 @@ export const likeEvent = (eventId) => {
         event: event,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -48,7 +49,6 @@ export const unlikeEvent = (eventId) => {
         event: event,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -67,7 +67,6 @@ export const reportEventById = (eventId) => {
         event: event,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };

@@ -12,8 +12,8 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import Geocoder from 'react-native-geocoding';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as expoLocation from 'expo-location';
 
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Location from 'expo-location';
@@ -22,16 +22,10 @@ import * as imageActions from '../../store/actions/image';
 
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
-import CustomAddressModal from '../../components/CustomAddressModal';
-
-import { GOOGLE_MAPS } from '@env';
-
-Geocoder.init(GOOGLE_MAPS);
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const UploadScreen = (props) => {
-  const image = useSelector((state) => state.image.image);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchAnyways, setFetchAnyways] = useState(false);
   const [text, onChangeText] = useState(null);
@@ -39,6 +33,8 @@ const UploadScreen = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [addressModalVisible, setAddressModalVisible] = useState(false);
   const [address, setAddress] = useState('');
+
+  const image = useSelector((state) => state.image.image);
 
   const dispatch = useDispatch();
 
@@ -114,17 +110,18 @@ const UploadScreen = (props) => {
     }
     try {
       setFetchAnyways(true);
-      const json = await Geocoder.from(address);
-      const coordsGoogle = json.results[0].geometry.location;
-      if (coordsGoogle) {
-        location.coords.latitude = coordsGoogle.lat;
-        location.coords.longitude = coordsGoogle.lng;
+      const locationData = await expoLocation.geocodeAsync(address);
+      if (locationData) {
+        location.coords.latitude = locationData[0].latitude;
+        location.coords.longitude = locationData[0].longitude;
         await awsUpload(location);
         setAddressModalVisible(false);
         goToMap();
       }
     } catch (err) {
-      console.log(err);
+      Alert.alert('Error', 'Cannot connect with server. Please try again.', [
+        { text: 'Okay' },
+      ]);
     }
   };
 
@@ -154,8 +151,6 @@ const UploadScreen = (props) => {
         } else if (location.coords.accuracy > target) {
           count = count + 1;
           target = target + 5;
-          // console.log('count: ', count);
-          // console.log('target: ', target);
           getLocation();
         } else {
           await awsUpload(location);
@@ -166,10 +161,9 @@ const UploadScreen = (props) => {
       await getLocation();
     } catch (err) {
       setIsFetching(false);
-      Alert.alert('Could not fetch location!', 'Please try again later.', [
+      Alert.alert('Could not get your location!', 'Please try again later.', [
         { text: 'Okay' },
       ]);
-      console.log(err.message);
     }
   };
 
@@ -299,15 +293,6 @@ const UploadScreen = (props) => {
             </View>
           </Modal>
         </View>
-        {/* <CustomAddressModal
-          address={address}
-          fetchAnyways={fetchAnyways}
-          addressModalVisible={addressModalVisible}
-          onText={onChangeText}
-          setAddress={setAddress}
-          onAddressUpload={addressUpload}
-          setAddressModalVisible={setAddressModalVisible}
-        /> */}
         <View style={styles.centeredView}>
           <Modal
             animationType="fade"
@@ -325,7 +310,7 @@ const UploadScreen = (props) => {
                   style={styles.descriptionInput}
                   onChangeText={(text) => setAddress(text)}
                   value={address}
-                  autoCapitaliz="words"
+                  autoCapitalize="words"
                 />
                 <View
                   style={[

@@ -4,7 +4,6 @@ import {
   GET_LOCAL_EVENTS,
   CREATE_EVENT,
   UPDATE_EVENT_LOCATION,
-  DELETE_EVENT,
 } from '../types';
 import { HOME_IP } from '@env';
 
@@ -54,8 +53,6 @@ export const getLocalEvents = (location) => {
 export const updateEventLocation = (eventId, location) => {
   return async (dispatch) => {
     try {
-      console.log('event action - IP used:', HOME_IP);
-
       const response = await axios.put(
         `${HOME_IP}/api/event/${eventId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
       );
@@ -66,7 +63,6 @@ export const updateEventLocation = (eventId, location) => {
         payload: updatedEvent,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -131,10 +127,7 @@ export const deleteEventById = (eventId) => {
         events: events,
       });
     } catch (err) {
-      console.log(err.message);
-      throw new Error(
-        'Delete event - Cannot connect with server. Please try again.'
-      );
+      throw new Error('Cannot connect with server. Please try again.');
     }
   };
 };

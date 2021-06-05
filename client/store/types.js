@@ -3,7 +3,6 @@ export const GET_LOCAL_DINGE = 'GET_LOCAL_DINGE';
 export const GET_DING = 'GET_DING';
 export const POST_DING = 'POST_DING';
 export const UPDATE_DING_LOCATION = 'UPDATE_DING_LOCATION';
-export const UPDATE_DING_LOCATION2 = 'UPDATE_DING_LOCATION2';
 export const LIKE_DING = 'LIKE_DING';
 export const UNLIKE_DING = 'UNLIKE_DING';
 export const REPORT_DING = 'REPORT_DING';
@@ -28,7 +27,7 @@ export const CREATE_EVENT = 'CREATE_EVENT';
 export const LIKE_EVENT = 'LIKE_EVENT';
 export const UNLIKE_EVENT = 'UNLIKE_EVENT';
 export const REPORT_EVENT = 'REPORT_EVENT';
-export const DELETE_EVENT = 'DELETE_EVENT';
+//export const DELETE_EVENT = 'DELETE_EVENT';
 
 export const SET_IMAGE = 'SET_IMAGE';
 export const RESET_IMAGE = 'RESET_IMAGE';

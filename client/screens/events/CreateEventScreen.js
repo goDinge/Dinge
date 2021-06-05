@@ -29,7 +29,6 @@ import * as eventsActions from '../../store/actions/events';
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
 import CustomMarker from '../../components/CustomMarker';
-import CustomInput from '../../components/CustomInput';
 
 import { convertAMPM, properDate } from '../../helpers/dateConversions';
 
@@ -78,7 +77,7 @@ const CreateEventScreen = (props) => {
   const [location, setLocation] = useState(null);
   const [region, setRegion] = useState(location);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [tempEvent, setTempEvent] = useState({
+  const [event, setEvent] = useState({
     location: {
       latitude: 0,
       longitude: 0,
@@ -90,9 +89,6 @@ const CreateEventScreen = (props) => {
 
   const newEvent = useSelector((state) => state.events.newEvent);
   const userLocation = useSelector((state) => state.location.location);
-  // if (newEvent) {
-  //   console.log('newEvent', newEvent.eventName);
-  // }
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -102,6 +98,12 @@ const CreateEventScreen = (props) => {
       newEvent ? setEventToPass(newEvent) : null;
     }
   }, [newEvent]);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+    }
+  }, [error]);
 
   useEffect(() => {
     (async () => {
@@ -146,16 +148,18 @@ const CreateEventScreen = (props) => {
     formIsValid: false,
   });
 
-  console.log(formState);
-
   //Date and Time picker functions
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
     let isValid;
-    if (currentDate > Date.now()) {
+    if (Date.parse(currentDate) + 100000 > Date.now()) {
       isValid = true;
+    } else {
+      Alert.alert('Careful', 'Start time must be after right now.', [
+        { text: 'Okay' },
+      ]);
     }
     dispatchFormState({
       type: FORM_INPUT,
@@ -218,37 +222,42 @@ const CreateEventScreen = (props) => {
 
   //Map and marker
   const loadMapHandler = async (region, address) => {
+    setError(null);
     setIsFetchingMarker(true);
-    await coordLookUp(address);
+    try {
+      await coordLookUp(address);
+    } catch (err) {
+      setError(err.message);
+    }
     setIsFetchingMarker(false);
     setMapLoaded(true);
   };
 
   const coordLookUp = async (address) => {
+    setError(null);
     let coordsMongo = {
       latitude: null,
       longitude: null,
     };
     try {
-      const json = await Geocoder.from(address);
-      const coordsGoogle = json.results[0].geometry.location;
+      const locationData = await Location.geocodeAsync(address);
 
       let isValid = false;
-      if (coordsGoogle) {
+      if (locationData) {
         (coordsMongo = {
-          latitude: coordsGoogle.lat,
-          longitude: coordsGoogle.lng,
+          latitude: locationData[0].latitude,
+          longitude: locationData[0].longitude,
         }),
-          setTempEvent({
+          setEvent({
             location: {
-              latitude: coordsGoogle.lat,
-              longitude: coordsGoogle.lng,
+              latitude: locationData[0].latitude,
+              longitude: locationData[0].longitude,
             },
             thumbUrl: `${AWS_EVENT_TYPES}${eventType}.png`,
           }),
           setRegion({
-            latitude: coordsGoogle.lat,
-            longitude: coordsGoogle.lng,
+            latitude: locationData[0].latitude,
+            longitude: locationData[0].longitude,
             latitudeDelta: 0.04,
             longitudeDelta: 0.04,
           }),
@@ -262,7 +271,7 @@ const CreateEventScreen = (props) => {
       }
       return coordsMongo;
     } catch (err) {
-      console.log(err);
+      setError(err.message);
     }
   };
 
@@ -323,7 +332,6 @@ const CreateEventScreen = (props) => {
       await dispatch(eventsActions.getLocalEvents(userLocation));
     } catch (err) {
       setError(err.message);
-      console.log(err.message);
     }
     setIsCreatingEvent(false);
     setConfirmVisible(true);
@@ -472,7 +480,7 @@ const CreateEventScreen = (props) => {
                   minZoomLevel={12}
                   maxZoomLevel={17}
                 >
-                  {isFocused && mapLoaded && <CustomMarker data={tempEvent} />}
+                  {isFocused && mapLoaded && <CustomMarker data={event} />}
                 </MapView>
               ) : null}
             </View>

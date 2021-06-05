@@ -13,8 +13,6 @@ const settingConfigs = require('../../settingConfigs.json');
 export const getDinge = () => {
   return async (dispatch) => {
     try {
-      console.log('getDinge action - IP used:', HOME_IP);
-
       const response = await axios.get(`${HOME_IP}/api/dinge`);
       const dinge = response.data.data;
 
@@ -91,7 +89,6 @@ export const postDing = (description, lat, long, img, thumb) => {
         newDing: newDing,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -100,8 +97,6 @@ export const postDing = (description, lat, long, img, thumb) => {
 export const updateDingLocation = (dingId, location) => {
   return async (dispatch) => {
     try {
-      console.log('ding action - IP used:', HOME_IP);
-
       const response = await axios.put(
         `${HOME_IP}/api/ding/${dingId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
       );
@@ -112,7 +107,6 @@ export const updateDingLocation = (dingId, location) => {
         payload: updatedDing,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -129,7 +123,6 @@ export const deleteDingById = (dingId) => {
         dinge: dinge,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };

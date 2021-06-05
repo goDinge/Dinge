@@ -6,7 +6,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   MaterialCommunityIcons,
   Feather,
-  FontAwesome5,
+  AntDesign,
+  FontAwesome,
 } from '@expo/vector-icons';
 
 import MapScreen from '../screens/map/MapScreen';
@@ -248,17 +249,17 @@ const bottomTabOptions = ({ route }) => ({
 
     if (route.name === 'Map') {
       iconName = focused ? 'map-marker-radius' : 'map-marker-radius-outline';
-    } else if (route.name === 'Camera') {
-      iconName = focused ? 'camera' : 'camera-outline';
+      return <MaterialCommunityIcons name={iconName} size={32} color={color} />;
     } else if (route.name === 'Events') {
-      iconName = focused ? 'calendar' : 'calendar-outline';
-    } else if (route.name === 'Social') {
-      iconName = focused ? 'account-group' : 'account-group-outline';
+      iconName = focused ? 'calendar' : 'calendar';
+      return <AntDesign name={iconName} size={32} color={color} />;
+    } else if (route.name === 'Camera') {
+      iconName = focused ? 'camera-retro' : 'camera-retro';
+      return <FontAwesome name={iconName} size={30} color={color} />;
     } else if (route.name === 'Profile') {
-      iconName = focused ? 'account' : 'account-outline';
+      iconName = focused ? 'account-settings' : 'account-settings-outline';
+      return <MaterialCommunityIcons name={iconName} size={32} color={color} />;
     }
-
-    return <MaterialCommunityIcons name={iconName} size={30} color={color} />;
   },
 });
 
@@ -269,6 +270,7 @@ export const BottomTabNavigator = () => {
       tabBarOptions={{
         activeTintColor: Colors.secondary,
         inactiveTintColor: Colors.grey,
+        showLabel: false,
         labelPosition: 'below-icon',
         style:
           Platform.OS === 'android'

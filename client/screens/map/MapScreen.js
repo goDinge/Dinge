@@ -20,7 +20,6 @@ import CustomBlueMarker from '../../components/CustomBlueMarker';
 import CustomReloadIcon from '../../components/CustomReloadIcon';
 import CustomCompassIcon from '../../components/CustomCompassIcon';
 import CustomMessageModal from '../../components/CustomMessageModal';
-//import CustomCameraIcon from '../../components/CustomCameraIcon';
 
 import Colors from '../../constants/Colors';
 
@@ -171,10 +170,6 @@ const MapScreen = (props) => {
     props.navigation.navigate('Ding', item);
   };
 
-  // const selectCameraHandler = () => {
-  //   props.navigation.navigate('Camera');
-  // };
-
   const selectEventHandler = (item) => {
     props.navigation.navigate('Event Details', item);
   };
@@ -258,9 +253,6 @@ const MapScreen = (props) => {
           fillColor={'rgba(0, 166, 153, 0.05)'}
         />
       </MapView>
-      {/* <View style={styles.buttonContainer}>
-        <CustomCameraIcon onSelect={selectCameraHandler} />
-      </View> */}
       <View style={styles.compassContainer}>
         <CustomCompassIcon onSelect={compassHandler} />
       </View>

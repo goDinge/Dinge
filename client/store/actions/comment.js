@@ -33,7 +33,6 @@ export const postComment = (text, dingId) => {
         comment: comment,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -56,14 +55,12 @@ export const editComment = (text, commentId) => {
         config
       );
       const comment = response.data.data;
-      console.log('comment: ', comment);
 
       dispatch({
         type: EDIT_COMMENT,
         comment: comment,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -73,7 +70,6 @@ export const deleteComment = (commentId, dingId) => {
     try {
       await axios.delete(`${HOME_IP}/api/comments/${commentId}/${dingId}`);
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -92,7 +88,6 @@ export const likeComment = (commentId) => {
         comment: comment,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -111,7 +106,6 @@ export const unlikeComment = (commentId) => {
         comment: comment,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -130,7 +124,6 @@ export const reportComment = (commentId) => {
         comment: comment,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };

@@ -9,13 +9,14 @@ import {
 import { Camera } from 'expo-camera';
 import { useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 import * as imageActions from '../../store/actions/image';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const CameraScreen = (props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -27,9 +28,11 @@ const CameraScreen = (props) => {
 
   useEffect(() => {
     (async () => {
+      setIsLoading(true);
       const { status } = await Camera.requestPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
+    setIsLoading(false);
   }, []);
 
   if (hasPermission === null) {
@@ -58,6 +61,14 @@ const CameraScreen = (props) => {
     setFlashIcon(flashIcons[index]);
   };
 
+  if (isLoading) {
+    return (
+      <View style={styles.indicatorContainer}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {isFocused && (
@@ -76,15 +87,13 @@ const CameraScreen = (props) => {
       )}
 
       <View style={styles.cameraInnerView}>
-        <View>
-          <MaterialCommunityIcons
-            name={flashIcon}
-            color="white"
-            size={40}
-            style={styles.flashButton}
-            onPress={flashModeHandler}
-          />
-        </View>
+        <MaterialCommunityIcons
+          name={flashIcon}
+          color="white"
+          size={38}
+          style={styles.flashButton}
+          onPress={flashModeHandler}
+        />
         <TouchableOpacity
           onPress={async () => {
             if (cameraRef) {
@@ -111,7 +120,7 @@ const CameraScreen = (props) => {
             );
           }}
         >
-          <Text style={styles.flipText}>flip</Text>
+          <MaterialIcons name="flip-camera-ios" color="white" size={40} />
         </TouchableOpacity>
       </View>
     </View>
@@ -124,6 +133,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'black',
+  },
+  indicatorContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cameraContainer: {
     height: SCREEN_WIDTH,
@@ -140,36 +155,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     top: 20,
-    //right: -8,
   },
   flashButton: {
+    right: -5,
     width: 50,
-    //alignSelf: 'flex-start',
-    //position: 'absolute',
-    //top: 22,
-    //left: 27,
   },
   flipButton: {
-    justifyContent: 'center',
+    alignItems: 'center',
     width: 50,
-    borderWidth: 1,
-    //marginRight: 15,
-    borderRadius: 10,
-    borderColor: 'white',
-    //alignSelf: 'flex-end',
-    //position: 'absolute',
-    //bottom: 35,
-    height: 38,
-    //right: 10,
   },
-  flipText: {
-    fontSize: 20,
-    alignSelf: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    fontFamily: 'cereal-bold',
-    color: 'white',
-  },
+
   shutterRing: {
     borderWidth: 2,
     borderRadius: 35,

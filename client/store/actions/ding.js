@@ -31,7 +31,6 @@ export const likeDing = (dingId) => {
         ding: ding,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -50,7 +49,6 @@ export const unlikeDing = (dingId) => {
         ding: ding,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -67,66 +65,7 @@ export const reportDingById = (dingId) => {
         ding: ding,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
 };
-
-// export const postComment = (text, dingId) => {
-//   return async (dispatch) => {
-//     try {
-//       const config = {
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//       };
-
-//       const body = JSON.stringify({ text });
-
-//       const response = await axios.post(
-//         `${HOME_IP}/api/comments/${dingId}`,
-//         body,
-//         config
-//       );
-//       const ding = response.data.data;
-
-//       dispatch({
-//         type: POST_COMMENT,
-//         ding: ding,
-//       });
-//     } catch (err) {
-//       console.log(err.message);
-//       throw new Error('Cannot connect with server. Please try again.');
-//     }
-//   };
-// };
-
-// export const editComment = (text, commentId) => {
-//   return async (dispatch) => {
-//     try {
-//       const config = {
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//       };
-
-//       const body = JSON.stringify({ text });
-
-//       const response = await axios.put(
-//         `${HOME_IP}/api/comments/${commentId}`,
-//         body,
-//         config
-//       );
-//       const editedComment = response.data.data;
-
-//       dispatch({
-//         type: EDIT_COMMENT,
-//         editedComment: editedComment,
-//       });
-//     } catch (err) {
-//       console.log(err.message);
-//       throw new Error('Cannot connect with server. Please try again.');
-//     }
-//   };
-// };

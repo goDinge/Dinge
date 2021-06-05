@@ -33,7 +33,6 @@ export const postComment = (text, eventId) => {
         comment: comment,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -74,7 +73,6 @@ export const deleteComment = (commentId, eventId) => {
         `${HOME_IP}/api/eventcomments/${commentId}/${eventId}`
       );
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -93,7 +91,6 @@ export const likeComment = (commentId) => {
         comment: comment,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -112,7 +109,6 @@ export const unlikeComment = (commentId) => {
         comment: comment,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
@@ -131,7 +127,6 @@ export const reportComment = (commentId) => {
         comment: comment,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
