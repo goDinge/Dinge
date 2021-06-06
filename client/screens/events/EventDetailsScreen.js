@@ -70,6 +70,7 @@ const EventDetailsScreen = (props) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
+    setIsLoading(true);
     loadUser(event.user);
     loadEvent(event._id);
     loadAuthUser();
@@ -81,6 +82,7 @@ const EventDetailsScreen = (props) => {
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     });
+    setIsLoading(false);
   }, [loadUser, loadEvent, loadAuthUser, setIsLoading, setRegion]);
 
   useEffect(() => {
@@ -91,35 +93,29 @@ const EventDetailsScreen = (props) => {
 
   const loadUser = async (user) => {
     setError(null);
-    setIsLoading(true);
     try {
       await dispatch(userActions.getUser(user));
     } catch (err) {
       setError(err.message);
     }
-    setIsLoading(false);
   };
 
   const loadAuthUser = async () => {
     setError(null);
-    setIsLoading(true);
     try {
       await dispatch(authActions.getAuthUser());
     } catch (err) {
       setError(err.message);
     }
-    setIsLoading(false);
   };
 
   const loadEvent = async (eventId) => {
     setError(null);
-    setIsLoading(true);
     try {
       await dispatch(eventActions.getEvent(eventId));
     } catch (err) {
       setError(err.message);
     }
-    setIsLoading(false);
   };
 
   const toUserNameHandler = (user) => {
@@ -184,7 +180,6 @@ const EventDetailsScreen = (props) => {
   };
 
   //Comment
-
   const postCommentHandler = async (text, eventId) => {
     setError(null);
     setIsCommentLoading(true);
@@ -265,7 +260,7 @@ const EventDetailsScreen = (props) => {
     }
   };
 
-  if (isLoading || !location) {
+  if (isLoading) {
     return (
       <View style={styles.indicatorContainer}>
         <ActivityIndicator color={Colors.primary} size="large" />

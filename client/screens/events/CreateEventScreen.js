@@ -15,7 +15,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Geocoder from 'react-native-geocoding';
 import MapView from 'react-native-maps';
 import {
   Entypo,
@@ -31,10 +30,9 @@ import CustomButton from '../../components/CustomButton';
 import CustomMarker from '../../components/CustomMarker';
 
 import { convertAMPM, properDate } from '../../helpers/dateConversions';
+import eventTypes from '../../helpers/eventTypes';
 
-import { GOOGLE_MAPS, AWS_EVENT_TYPES } from '@env';
-
-Geocoder.init(GOOGLE_MAPS);
+import { AWS_EVENT_TYPES } from '@env';
 
 const FORM_INPUT = 'FORM_INPUT';
 
@@ -74,8 +72,7 @@ const CreateEventScreen = (props) => {
   const [show, setShow] = useState(false);
   const [datePicked, setDatePicked] = useState(false);
   const [timePicked, setTimePicked] = useState(false);
-  const [location, setLocation] = useState(null);
-  const [region, setRegion] = useState(location);
+  const [region, setRegion] = useState(userLocation);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [event, setEvent] = useState({
     location: {
@@ -113,16 +110,14 @@ const CreateEventScreen = (props) => {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
       setRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: userLocation.coords.latitude,
+        longitude: userLocation.coords.longitude,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       });
     })();
-  }, [setLocation, setRegion]);
+  }, [setRegion]);
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -275,22 +270,6 @@ const CreateEventScreen = (props) => {
     }
   };
 
-  //Event types
-  const eventTypes = [
-    'arts',
-    'business',
-    'community',
-    'culture',
-    'health',
-    'music',
-    'party',
-    'political',
-    'religious',
-    'sports',
-    'volunteer',
-    'other',
-  ];
-
   const eventTypeHandler = () => {
     setModalVisible(true);
   };
@@ -342,7 +321,7 @@ const CreateEventScreen = (props) => {
     props.navigation.navigate('Event Details', eventToPass);
   };
 
-  if (isLoading || !location) {
+  if (isLoading || !userLocation) {
     return (
       <View style={styles.indicatorContainer}>
         <ActivityIndicator color={Colors.primary} size="large" />
