@@ -34,6 +34,8 @@ import eventTypes from '../../helpers/eventTypes';
 
 import { AWS_EVENT_TYPES } from '@env';
 
+const mapStyle = require('../../helpers/mapStyle.json');
+
 const FORM_INPUT = 'FORM_INPUT';
 
 const formReducer = (state, action) => {
@@ -458,6 +460,7 @@ const CreateEventScreen = (props) => {
                   region={region}
                   minZoomLevel={12}
                   maxZoomLevel={17}
+                  customMapStyle={mapStyle}
                 >
                   {isFocused && mapLoaded && <CustomMarker data={event} />}
                 </MapView>

@@ -32,6 +32,8 @@ import Colors from '../../constants/Colors';
 
 import { convertAMPM, properDate } from '../../helpers/dateConversions';
 
+const mapStyle = require('../../helpers/mapStyle.json');
+
 const EventDetailsScreen = (props) => {
   const event = props.route.params;
   const authUser = useSelector((state) => state.auth.authUser);
@@ -292,6 +294,7 @@ const EventDetailsScreen = (props) => {
               region={region}
               minZoomLevel={13}
               maxZoomLevel={17}
+              customMapStyle={mapStyle}
             >
               {isFocused && <CustomMarker data={event} />}
             </MapView>

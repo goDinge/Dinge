@@ -20,6 +20,7 @@ import CustomBlueMarker from '../../components/CustomBlueMarker';
 import CustomReloadIcon from '../../components/CustomReloadIcon';
 import CustomCompassIcon from '../../components/CustomCompassIcon';
 import CustomMessageModal from '../../components/CustomMessageModal';
+import CustomTimeFilter from '../../components/CustomTimeFilter';
 
 import Colors from '../../constants/Colors';
 
@@ -45,6 +46,7 @@ const MapScreen = (props) => {
   const [address, setAddress] = useState('');
   const [isAddressLoading, setIsAddressLoading] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [timeSelected, setTimeSelected] = useState(true);
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -197,6 +199,18 @@ const MapScreen = (props) => {
     setMapLoaded(true);
   };
 
+  const timeNow = () => {
+    setTimeSelected('now');
+  };
+
+  const timeToday = () => {
+    setTimeSelected('today');
+  };
+
+  const timeTomorrow = () => {
+    setTimeSelected('tomorrow');
+  };
+
   const now = new Date(Date.now()).getTime();
 
   if (!mapLoaded || !location || !authUser) {
@@ -253,12 +267,33 @@ const MapScreen = (props) => {
           fillColor={'rgba(0, 166, 153, 0.05)'}
         />
       </MapView>
+      <View style={styles.topFilterContainer}>
+        <CustomTimeFilter
+          name="now"
+          text="Now"
+          timeSelected={timeSelected}
+          onSelect={timeNow}
+        />
+        <CustomTimeFilter
+          name="today"
+          text="Later Today"
+          timeSelected={timeSelected}
+          onSelect={timeToday}
+        />
+        <CustomTimeFilter
+          name="tomorrow"
+          text="Next Day"
+          timeSelected={timeSelected}
+          onSelect={timeTomorrow}
+        />
+      </View>
       <View style={styles.compassContainer}>
         <CustomCompassIcon onSelect={compassHandler} />
       </View>
       <View style={styles.reloadContainer}>
         <CustomReloadIcon onSelect={() => reloadHandler(location)} />
       </View>
+
       {/* MODALS */}
       <CustomMessageModal
         message={modalMessage}
@@ -323,20 +358,22 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT,
     position: 'absolute',
   },
-  buttonContainer: {
+  topFilterContainer: {
     position: 'absolute',
-    top: 20,
-    right: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    top: 15,
+    left: 10,
   },
   reloadContainer: {
     position: 'absolute',
     bottom: 20,
-    right: 20,
+    right: 15,
   },
   compassContainer: {
     position: 'absolute',
-    bottom: 80,
-    right: 20,
+    bottom: 70,
+    right: 15,
   },
   centeredView: {
     flex: 1,

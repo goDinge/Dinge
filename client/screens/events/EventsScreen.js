@@ -130,7 +130,7 @@ const EventsScreen = (props) => {
       <View style={styles.innerContainer}>
         <View style={styles.datesContainer}>
           <ScrollView horizontal={true}>
-            {nextSevenDaysArray.map((item, index) => {
+            {nextTwoWeeksArray.map((item, index) => {
               return (
                 <Pressable
                   key={index}
@@ -287,6 +287,12 @@ const datePlusSixInMilli = currentDateInMilli + day * 6;
 const datePlusSevenInMilli = currentDateInMilli + day * 7;
 const datePlusEightInMilli = currentDateInMilli + day * 8;
 const datePlusNineInMilli = currentDateInMilli + day * 9;
+const datePlusTenInMilli = currentDateInMilli + day * 10;
+const datePlusElevenInMilli = currentDateInMilli + day * 11;
+const datePlusTwelveInMilli = currentDateInMilli + day * 12;
+const datePlusThirteenInMilli = currentDateInMilli + day * 13;
+const datePlusFourteenInMilli = currentDateInMilli + day * 14;
+const datePlusFifteenInMilli = currentDateInMilli + day * 15;
 
 const currentDate = new Date(currentDateInMilli).toLocaleDateString();
 const datePlusOne = new Date(datePlusOneInMilli).toLocaleDateString();
@@ -298,6 +304,12 @@ const datePlusSix = new Date(datePlusSixInMilli).toLocaleDateString();
 const datePlusSeven = new Date(datePlusSevenInMilli).toLocaleDateString();
 const datePlusEight = new Date(datePlusEightInMilli).toLocaleDateString();
 const datePlusNine = new Date(datePlusNineInMilli).toLocaleDateString();
+const datePlusTen = new Date(datePlusTenInMilli).toLocaleDateString();
+const datePlusEleven = new Date(datePlusElevenInMilli).toLocaleDateString();
+const datePlusTwelve = new Date(datePlusTwelveInMilli).toLocaleDateString();
+const datePlusThirteen = new Date(datePlusThirteenInMilli).toLocaleDateString();
+const datePlusFourteen = new Date(datePlusFourteenInMilli).toLocaleDateString();
+const datePlusFifteen = new Date(datePlusFifteenInMilli).toLocaleDateString();
 
 const convertWeekDay = (num) => {
   const day = {
@@ -317,7 +329,7 @@ const convertDate = (dateInMilli) => {
   return dateObj.slice(0, 5);
 };
 
-const nextSevenDaysArray = [
+const nextTwoWeeksArray = [
   {
     date: convertDate(currentDate),
     day: convertWeekDay(new Date(currentDateInMilli).getDay()),
@@ -357,5 +369,29 @@ const nextSevenDaysArray = [
   {
     date: convertDate(datePlusNine),
     day: convertWeekDay(new Date(datePlusNineInMilli).getDay()),
+  },
+  {
+    date: convertDate(datePlusTen),
+    day: convertWeekDay(new Date(datePlusTenInMilli).getDay()),
+  },
+  {
+    date: convertDate(datePlusEleven),
+    day: convertWeekDay(new Date(datePlusElevenInMilli).getDay()),
+  },
+  {
+    date: convertDate(datePlusTwelve),
+    day: convertWeekDay(new Date(datePlusTwelveInMilli).getDay()),
+  },
+  {
+    date: convertDate(datePlusThirteen),
+    day: convertWeekDay(new Date(datePlusThirteenInMilli).getDay()),
+  },
+  {
+    date: convertDate(datePlusFourteen),
+    day: convertWeekDay(new Date(datePlusFourteenInMilli).getDay()),
+  },
+  {
+    date: convertDate(datePlusFifteen),
+    day: convertWeekDay(new Date(datePlusFifteenInMilli).getDay()),
   },
 ];

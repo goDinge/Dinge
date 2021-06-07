@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Image } from 'react-native';
+import { View, Pressable, StyleSheet, Image } from 'react-native';
 
 const CustomReloadIcon = (props) => {
   return (
