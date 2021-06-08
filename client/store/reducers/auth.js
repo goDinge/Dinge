@@ -6,6 +6,7 @@ import {
   UPDATE_AUTH_AVATAR,
   GET_AUTH_USER,
   PROFILE_UPDATE_REDUX,
+  PASSWORD_UPDATE_REDUX,
   GET_VERIFICATION_CODE,
   CODE_VERIFIED,
   SET_NEW_PASSWORD,
@@ -54,6 +55,11 @@ export default (state = initialState, action) => {
         },
       };
     case PROFILE_UPDATE_REDUX:
+      return {
+        ...state,
+        authUser: action.authUser,
+      };
+    case PASSWORD_UPDATE_REDUX:
       return {
         ...state,
         authUser: action.authUser,

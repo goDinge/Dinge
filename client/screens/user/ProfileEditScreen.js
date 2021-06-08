@@ -25,6 +25,7 @@ import Colors from '../../constants/Colors';
 
 const ProfileEditScreen = (props) => {
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isPasswordChanging, setIsPasswordChanging] = useState(false);
   const [error, setError] = useState(undefined);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -137,12 +138,14 @@ const ProfileEditScreen = (props) => {
     }
 
     setError(null);
+    setIsPasswordChanging(true);
     try {
       await dispatch(authActions.changePassword(passwordState.inputValues));
       Alert.alert('Password changed.', 'Thanks.', [{ text: 'Okay' }]);
     } catch (err) {
       setError(err.message);
     }
+    setIsPasswordChanging(false);
   };
 
   const deleteAccountModalHandler = () => {
@@ -321,7 +324,7 @@ const ProfileEditScreen = (props) => {
               />
             </View>
             <View style={styles.buttonContainer}>
-              {isUpdating ? (
+              {isPasswordChanging ? (
                 <CustomButton
                   style={{ flexDirection: 'row' }}
                   onSelect={changePasswordHandler}

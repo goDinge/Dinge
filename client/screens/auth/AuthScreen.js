@@ -70,6 +70,7 @@ const Auth = (props) => {
   }, [error]);
 
   const authHandler = async () => {
+    setIsLoading(true);
     let action;
     if (isSignup) {
       if (formState.inputValues.password !== formState.inputValues.password2) {
@@ -90,7 +91,7 @@ const Auth = (props) => {
         formState.inputValues.email,
         formState.inputValues.password
       );
-      console.log(formState);
+      //console.log(formState);
     }
     setError(null);
     try {
@@ -119,103 +120,104 @@ const Auth = (props) => {
       keyboardVerticalOffset={15}
       style={styles.screen}
     >
-      {isLoading ? (
-        <View style={styles.indicatorContainer}>
-          <ActivityIndicator color={Colors.primary} size="large" />
-        </View>
-      ) : (
-        <ScrollView contentContainerStyle={styles.outerContainer}>
-          <View style={styles.container}>
-            <Text style={styles.titleText}>Dinge</Text>
-            <View style={styles.authContainer}>
-              <Text style={styles.subtitleText}>
-                {isSignup ? 'Sign-up' : 'Login'}
-              </Text>
-              {isSignup ? (
-                <CustomInput
-                  id="name"
-                  label="Name:"
-                  labelColor="white"
-                  keyboardType="default"
-                  autoCapitalize="none"
-                  errorText="Please enter your name"
-                  onInputChange={inputChangeHandler}
-                  initialValue=""
-                  required
-                  style={styles.textInput}
-                />
-              ) : null}
+      <ScrollView contentContainerStyle={styles.outerContainer}>
+        <View style={styles.container}>
+          <Text style={styles.titleText}>Dinge</Text>
+          <View style={styles.authContainer}>
+            <Text style={styles.subtitleText}>
+              {isSignup ? 'Sign-up' : 'Login'}
+            </Text>
+            {isSignup ? (
               <CustomInput
-                id="email"
-                label="Email:"
+                id="name"
+                label="Name:"
                 labelColor="white"
-                keyboardType="email-address"
+                keyboardType="default"
                 autoCapitalize="none"
-                errorText="Please enter a valid email"
+                errorText="Please enter your name"
                 onInputChange={inputChangeHandler}
                 initialValue=""
                 required
                 style={styles.textInput}
               />
+            ) : null}
+            <CustomInput
+              id="email"
+              label="Email:"
+              labelColor="white"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              errorText="Please enter a valid email"
+              onInputChange={inputChangeHandler}
+              initialValue=""
+              required
+              style={styles.textInput}
+            />
+            <CustomInput
+              id="password"
+              label="Password:"
+              labelColor="white"
+              keyboardType="default"
+              secureTextEntry
+              autoCapitalize="none"
+              minLength={6}
+              errorText="Please enter a valid password"
+              onInputChange={inputChangeHandler}
+              initialValue=""
+              required
+              style={styles.textInput}
+            />
+            {isSignup ? (
               <CustomInput
-                id="password"
-                label="Password:"
+                id="password2"
+                label="Confirm Password:"
                 labelColor="white"
                 keyboardType="default"
                 secureTextEntry
                 autoCapitalize="none"
                 minLength={6}
-                errorText="Please enter a valid password"
+                errorText="Please confirm your password"
                 onInputChange={inputChangeHandler}
                 initialValue=""
                 required
                 style={styles.textInput}
               />
-              {isSignup ? (
-                <CustomInput
-                  id="password2"
-                  label="Confirm Password:"
-                  labelColor="white"
-                  keyboardType="default"
-                  secureTextEntry
-                  autoCapitalize="none"
-                  minLength={6}
-                  errorText="Please confirm your password"
-                  onInputChange={inputChangeHandler}
-                  initialValue=""
-                  required
-                  style={styles.textInput}
-                />
-              ) : null}
-              <View style={styles.buttonContainer}>
-                <CustomButton style={styles.mainButton} onSelect={authHandler}>
+            ) : null}
+            <View style={styles.buttonContainer}>
+              <CustomButton style={styles.mainButton} onSelect={authHandler}>
+                {isLoading ? (
+                  <View style={styles.loadingContainer}>
+                    <Text style={styles.mainButtonText}>Loading...</Text>
+                    <ActivityIndicator color="white" size="small" />
+                  </View>
+                ) : (
                   <Text style={styles.mainButtonText}>
                     {isSignup ? 'Sign-up' : 'Login'}
                   </Text>
-                </CustomButton>
-              </View>
-            </View>
-            <View style={styles.bottomContainer}>
-              <CustomButton
-                title="Sign-up"
-                style={styles.buttonContainer}
-                onSelect={() => setIsSignup((prevState) => !prevState)}
-              >
-                <Text style={styles.buttonText}>
-                  {isSignup ? 'Login' : 'Sign-up'}
-                </Text>
-              </CustomButton>
-              <CustomButton
-                title="Forgot Password"
-                style={styles.buttonContainer}
-                onSelect={() => props.navigation.navigate('Forgot Password')}
-              >
-                <Text style={styles.buttonText}>Forgot Password</Text>
+                )}
               </CustomButton>
             </View>
           </View>
-        </ScrollView>
-      )}
+          <View style={styles.bottomContainer}>
+            <CustomButton
+              title="Sign-up"
+              style={styles.buttonContainer}
+              onSelect={() => setIsSignup((prevState) => !prevState)}
+            >
+              <Text style={styles.buttonText}>
+                {isSignup ? 'Login' : 'Sign-up'}
+              </Text>
+            </CustomButton>
+            <CustomButton
+              title="Forgot Password"
+              style={styles.buttonContainer}
+              onSelect={() => props.navigation.navigate('Forgot Password')}
+            >
+              <Text style={styles.buttonText}>Forgot Password</Text>
+            </CustomButton>
+          </View>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -228,7 +230,6 @@ const styles = StyleSheet.create({
   },
   outerContainer: {
     flex: 1,
-
     alignItems: 'center',
   },
   container: {
@@ -237,12 +238,6 @@ const styles = StyleSheet.create({
     width: '80%',
     paddingTop: 20,
     paddingBottom: 30,
-  },
-  indicatorContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   titleText: {
     alignSelf: 'flex-start',
@@ -273,6 +268,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginVertical: 3,
     marginTop: 30,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
   buttonText: {
     fontSize: 18,

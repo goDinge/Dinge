@@ -109,7 +109,7 @@ exports.editAuthUser = asyncHandler(async (req, res, next) => {
 //route    PUT /api/auth/password
 //access   Private
 exports.changeAuthPassword = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id).select('+password');
+  let user = await User.findById(req.user.id).select('+password');
 
   const { oldPassword, newPassword } = req.body;
 
@@ -124,7 +124,7 @@ exports.changeAuthPassword = asyncHandler(async (req, res, next) => {
   const salt = await bcrypt.genSalt(10);
   const encrypted = await bcrypt.hash(newPassword, salt);
 
-  const updateResult = await User.updateOne(
+  await User.updateOne(
     { _id: req.user.id },
     {
       $set: {
@@ -134,7 +134,9 @@ exports.changeAuthPassword = asyncHandler(async (req, res, next) => {
     }
   );
 
-  res.status(200).json({ success: true, data: updateResult });
+  user = await User.findById(req.user.id);
+
+  res.status(200).json({ success: true, data: user });
 });
 
 //desc    GENERATE verification code
@@ -159,17 +161,17 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   try {
     await sgMail.send({
       to: user.email,
-      from: 'info@uvstudio.ca',
+      from: 'leonard@getdinge.com',
       subject: 'Dinge - reset',
       html: `<p>Hello ${user.name}, <br><br>
         ${mailText}<br>
         <br>
         Thanks, <br><br>
         Leonard, Dinge<br>
-        leonard.shen@gmail.com
+        leonard@getdinge.com
         </p>`,
     });
-    console.log('server veriCode: ', veriCode);
+    //console.log('server veriCode: ', veriCode);
     res.status(200).json({
       success: true,
       data: veriCode,
@@ -180,7 +182,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    return next(new ErrorResponse('Email could not be sent', 500));
+    return next(new ErrorResponse(err.message, 500));
   }
 });
 

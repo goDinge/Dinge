@@ -46,7 +46,7 @@ const MapScreen = (props) => {
   const [address, setAddress] = useState('');
   const [isAddressLoading, setIsAddressLoading] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const [timeSelected, setTimeSelected] = useState(true);
+  const [timeSelected, setTimeSelected] = useState('now');
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -193,11 +193,11 @@ const MapScreen = (props) => {
     setMapLoaded(true);
   };
 
-  const compassHandler = async () => {
-    setMapLoaded(false);
-    await getLocation();
-    setMapLoaded(true);
-  };
+  // const compassHandler = async () => {
+  //   setMapLoaded(false);
+  //   await getLocation();
+  //   setMapLoaded(true);
+  // };
 
   const timeNow = () => {
     setTimeSelected('now');
@@ -212,6 +212,12 @@ const MapScreen = (props) => {
   };
 
   const now = new Date(Date.now()).getTime();
+  const endOfDay = new Date().setHours(23, 59, 59, 999);
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStart = tomorrow.setHours(0, 0, 0, 0);
+  const tomorrowEnd = tomorrow.setHours(23, 59, 59, 999);
 
   if (!mapLoaded || !location || !authUser) {
     return (
@@ -231,27 +237,56 @@ const MapScreen = (props) => {
         maxZoomLevel={18}
         customMapStyle={mapStyle}
       >
-        {isFocused &&
-          dinge.map((item, index) => (
-            <CustomMarker
-              key={index}
-              data={item}
-              onSelect={() => selectDingHandler(item)}
-            />
-          ))}
+        {isFocused && timeSelected === 'now'
+          ? dinge.map((item, index) => (
+              <CustomMarker
+                key={index}
+                data={item}
+                onSelect={() => selectDingHandler(item)}
+              />
+            ))
+          : null}
         {isFocused &&
           events.map((item, index) => {
-            if (
-              new Date(item.date).getTime() < now &&
-              new Date(item.endDate).getTime() > now
-            ) {
-              return (
-                <CustomMarker
-                  key={index}
-                  data={item}
-                  onSelect={() => selectEventHandler(item)}
-                />
-              );
+            if (timeSelected === 'now') {
+              if (
+                new Date(item.date).getTime() < now &&
+                new Date(item.endDate).getTime() > now
+              ) {
+                return (
+                  <CustomMarker
+                    key={index}
+                    data={item}
+                    onSelect={() => selectEventHandler(item)}
+                  />
+                );
+              }
+            } else if (timeSelected === 'today') {
+              if (
+                new Date(item.date).getTime() > now &&
+                new Date(item.date).getTime() < endOfDay
+              ) {
+                return (
+                  <CustomMarker
+                    key={index}
+                    data={item}
+                    onSelect={() => selectEventHandler(item)}
+                  />
+                );
+              }
+            } else if (timeSelected === 'tomorrow') {
+              if (
+                new Date(item.date).getTime() > tomorrowStart &&
+                new Date(item.date).getTime() < tomorrowEnd
+              ) {
+                return (
+                  <CustomMarker
+                    key={index}
+                    data={item}
+                    onSelect={() => selectEventHandler(item)}
+                  />
+                );
+              }
             }
           })}
         {isFocused && location ? (
@@ -287,9 +322,9 @@ const MapScreen = (props) => {
           onSelect={timeTomorrow}
         />
       </View>
-      <View style={styles.compassContainer}>
+      {/* <View style={styles.compassContainer}>
         <CustomCompassIcon onSelect={compassHandler} />
-      </View>
+      </View> */}
       <View style={styles.reloadContainer}>
         <CustomReloadIcon onSelect={() => reloadHandler(location)} />
       </View>

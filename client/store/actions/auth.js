@@ -6,6 +6,7 @@ import {
   GET_AUTH_USER,
   SET_DID_TRY_AL,
   PROFILE_UPDATE_REDUX,
+  PASSWORD_UPDATE_REDUX,
   GET_VERIFICATION_CODE,
   CODE_VERIFIED,
   SET_NEW_PASSWORD,
@@ -73,7 +74,7 @@ export const updateProfile = (profile) => {
 
     try {
       const response = await axios.put(`${HOME_IP}/api/auth/me`, body, config);
-      const profile = response.data.data;
+      const profile = response.data.data.user;
 
       dispatch({
         type: PROFILE_UPDATE_REDUX,
@@ -105,6 +106,13 @@ export const changePassword = (password) => {
 
     try {
       await axios.put(`${HOME_IP}/api/auth/password`, body, config);
+      // const profile = response.data.data;
+      // console.log('authActions changePassword: ', profile);
+
+      // dispatch({
+      //   type: PASSWORD_UPDATE_REDUX,
+      //   authUser: profile,
+      // });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }

@@ -296,11 +296,11 @@ const DingScreen = (props) => {
                   comment={item}
                   authUser={authUser}
                   item={ding}
-                  isLoading={isCommentLikeLoading}
+                  //isLoading={isCommentLikeLoading}
                   onProfile={publicProfileHandler}
                   onEditor={openEditorHandler}
                   onDelete={deleteCommentHandler}
-                  onLike={likeCommentHandler}
+                  //onLike={likeCommentHandler}
                   onFlag={reportCommentHandler}
                 />
               );

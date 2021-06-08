@@ -127,7 +127,7 @@ const CreateEventScreen = (props) => {
       date: '',
       eventType: 'community',
       thumbUrl:
-        'https://dinge.s3.us-east-2.amazonaws.com/event-types/community.png',
+        'https://dinge.s3.us-east-2.amazonaws.com/event-types-2/community.png',
       address: '',
       location: '',
       description: '',

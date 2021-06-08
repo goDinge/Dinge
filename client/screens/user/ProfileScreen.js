@@ -26,7 +26,6 @@ const ProfileScreen = (props) => {
   const [image, setImage] = useState(null);
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
-  const [showEvents, setShowEvents] = useState(null);
 
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.authUser);
@@ -35,6 +34,12 @@ const ProfileScreen = (props) => {
   useEffect(() => {
     loadAuthUser();
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+    }
+  }, [error]);
 
   const loadAuthUser = async () => {
     setError(null);
@@ -156,14 +161,6 @@ const ProfileScreen = (props) => {
             <View style={styles.statBox}>
               <Text style={styles.statsTitle}>Reputation</Text>
               <Text style={styles.stats}>{authUser.reputation}</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statsTitle}>Followers</Text>
-              <Text style={styles.stats}>{authUser.followers.length}</Text>
-            </View>
-            <View style={styles.statBox}>
-              <Text style={styles.statsTitle}>Following</Text>
-              <Text style={styles.stats}>{authUser.following.length}</Text>
             </View>
           </View>
           <View style={styles.statsContainer}>

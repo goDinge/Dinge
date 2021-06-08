@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { FontAwesome, Feather } from '@expo/vector-icons';
+import { useSelector, useDispatch } from 'react-redux';
+
+import * as commentActions from '../store/actions/comment';
+import * as dingActions from '../store/actions/ding';
 
 import Colors from '../constants/Colors';
 
@@ -14,9 +18,42 @@ const CustomComment = (props) => {
     onProfile,
     onEditor,
     onDelete,
-    onLike,
+    //onLike,
     onFlag,
   } = props;
+
+  const [error, setError] = useState(undefined);
+  const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
+
+  const dingState = useSelector((state) => state.ding.ding);
+
+  const comments = dingState.comments;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+    }
+  }, [error]);
+
+  const likeCommentHandler = async (id, dingId) => {
+    setError(null);
+    setIsCommentLikeLoading(true);
+    const comment = comments.find((comment) => comment._id === id);
+
+    try {
+      if (!comment.likes.includes(authUser._id)) {
+        await dispatch(commentActions.likeComment(id));
+        await dispatch(dingActions.getDing(dingId));
+      } else {
+        await dispatch(commentActions.unlikeComment(id));
+        await dispatch(dingActions.getDing(dingId));
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsCommentLikeLoading(false);
+  };
 
   return (
     <View key={index} style={styles.outerCommentContainer}>
@@ -59,7 +96,7 @@ const CustomComment = (props) => {
         </View>
       ) : comment.likes.includes(authUser._id) ? (
         <View style={styles.commentsIconContainer}>
-          {isLoading ? (
+          {isCommentLikeLoading ? (
             <View style={styles.commentLikeActInd}>
               <ActivityIndicator color={Colors.red} size="small" />
             </View>
@@ -69,7 +106,7 @@ const CustomComment = (props) => {
               color={Colors.red}
               size={23.2}
               style={styles.icon}
-              onPress={() => onLike(comment._id, item._id)}
+              onPress={() => likeCommentHandler(comment._id, item._id)}
             />
           )}
           <Feather
@@ -82,7 +119,7 @@ const CustomComment = (props) => {
         </View>
       ) : (
         <View style={styles.commentsIconContainer}>
-          {isLoading ? (
+          {isCommentLikeLoading ? (
             <View style={styles.commentLikeActInd}>
               <ActivityIndicator color={Colors.primary} size="small" />
             </View>
@@ -92,7 +129,7 @@ const CustomComment = (props) => {
               color={Colors.gray}
               size={23.2}
               style={styles.icon}
-              onPress={() => onLike(comment._id, item._id)}
+              onPress={() => likeCommentHandler(comment._id, item._id)}
             />
           )}
           <Feather
@@ -147,8 +184,7 @@ const styles = StyleSheet.create({
   },
   commentLikeActInd: {
     top: 4,
-    left: -2,
-    paddingHorizontal: 4.9,
+    paddingHorizontal: 5.5,
   },
   likesCountContainer: {
     position: 'absolute',
