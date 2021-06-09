@@ -58,9 +58,9 @@ const styles = StyleSheet.create({
 
 const stylesClicked = StyleSheet.create({
   timeIcon: {
-    height: 54,
-    width: 54,
-    borderRadius: 27,
+    height: 60,
+    width: 60,
+    borderRadius: 30,
     borderWidth: 1.5,
     borderColor: Colors.primary,
     marginHorizontal: 10,
@@ -82,7 +82,7 @@ const stylesClicked = StyleSheet.create({
     textAlign: 'center',
     color: Colors.primary,
     fontFamily: 'cereal-black',
-    fontSize: 12,
+    fontSize: 14,
   },
 });
 

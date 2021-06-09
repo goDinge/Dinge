@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   TextInput,
   ActivityIndicator,
   Modal,
+  Image,
+  Pressable,
+  Animated,
+  Easing,
   Dimensions,
   StyleSheet,
   Alert,
@@ -79,6 +83,23 @@ const MapScreen = (props) => {
       setModalMessage(messageState);
     }
   }, [messageState]);
+
+  let rotateValueHolder = new Animated.Value(0);
+
+  const startImageRotateFunction = () => {
+    rotateValueHolder.setValue(0);
+    Animated.timing(rotateValueHolder, {
+      toValue: 1,
+      duration: 700,
+      easing: Easing.linear,
+      useNativeDriver: false,
+    }).start(() => startImageRotateFunction());
+  };
+
+  const RotateData = rotateValueHolder.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
 
   const addressLocation = () => {
     setAddressModal(true);
@@ -188,16 +209,18 @@ const MapScreen = (props) => {
   };
 
   const reloadHandler = async (location) => {
-    setMapLoaded(false);
+    startImageRotateFunction();
     await loadData(location);
-    setMapLoaded(true);
   };
 
-  // const compassHandler = async () => {
-  //   setMapLoaded(false);
-  //   await getLocation();
-  //   setMapLoaded(true);
-  // };
+  const compassHandler = async () => {
+    setError(null);
+    try {
+      await getLocation();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   const timeNow = () => {
     setTimeSelected('now');
@@ -211,6 +234,7 @@ const MapScreen = (props) => {
     setTimeSelected('tomorrow');
   };
 
+  //vars for time filters
   const now = new Date(Date.now()).getTime();
   const endOfDay = new Date().setHours(23, 59, 59, 999);
   const today = new Date();
@@ -236,6 +260,7 @@ const MapScreen = (props) => {
         minZoomLevel={13}
         maxZoomLevel={18}
         customMapStyle={mapStyle}
+        onRegionChangeComplete={setRegion}
       >
         {isFocused && timeSelected === 'now'
           ? dinge.map((item, index) => (
@@ -322,12 +347,22 @@ const MapScreen = (props) => {
           onSelect={timeTomorrow}
         />
       </View>
-      {/* <View style={styles.compassContainer}>
+      <View style={styles.compassContainer}>
         <CustomCompassIcon onSelect={compassHandler} />
-      </View> */}
-      <View style={styles.reloadContainer}>
-        <CustomReloadIcon onSelect={() => reloadHandler(location)} />
       </View>
+      <Pressable
+        style={styles.reloadContainer}
+        onPress={() => reloadHandler(location)}
+      >
+        <Animated.Image
+          style={{
+            width: 40,
+            height: 40,
+            transform: [{ rotate: RotateData }],
+          }}
+          source={require('../../assets/reload.png')}
+        />
+      </Pressable>
 
       {/* MODALS */}
       <CustomMessageModal
@@ -404,6 +439,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 15,
+    borderRadius: 20,
+    backgroundColor: Colors.primary,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   compassContainer: {
     position: 'absolute',

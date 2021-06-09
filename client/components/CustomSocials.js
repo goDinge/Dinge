@@ -24,7 +24,7 @@ const CustomSocials = (props) => {
   const description = item.description;
 
   return (
-    <View style={styles.socialIconsContainer}>
+    <View style={styles.container}>
       <View style={styles.iconContainer}>
         <View style={styles.iconLeftContainer}>
           {isLikeLoading ? (
@@ -35,7 +35,7 @@ const CustomSocials = (props) => {
             <FontAwesome
               name={initLikeItem ? 'thumbs-up' : 'thumbs-o-up'}
               color={initLikeItem ? Colors.red : 'black'}
-              size={28}
+              size={26}
               style={
                 initLikeItem
                   ? styles.iconDingThumb
@@ -52,7 +52,7 @@ const CustomSocials = (props) => {
           <Feather
             name="flag"
             color="black"
-            size={28}
+            size={26}
             style={styles.icon}
             onPress={onFlag}
           />
@@ -60,8 +60,8 @@ const CustomSocials = (props) => {
             <AntDesign
               name="delete"
               color="black"
-              size={28}
-              style={[styles.icon, { marginRight: 0 }]}
+              size={26}
+              style={[styles.icon, { marginLeft: 15 }]}
               onPress={() => onDelete(item._id)}
             />
           ) : null}
@@ -69,10 +69,11 @@ const CustomSocials = (props) => {
       </View>
       {type === 'ding' ? (
         <View style={styles.socialContainer}>
-          <Text style={styles.userName} onPress={() => onProfile(user._id)}>
-            {user.name}
-          </Text>
-          <View style={styles.timeContainer}>
+          <View style={styles.nameTimeContainer}>
+            <Text style={styles.userName} onPress={() => onProfile(user._id)}>
+              {user.name}
+            </Text>
+
             <Text style={styles.timeText}>{timeConverter(item.createdAt)}</Text>
           </View>
           <Text style={styles.description}>{description}</Text>
@@ -83,11 +84,12 @@ const CustomSocials = (props) => {
 };
 
 const styles = StyleSheet.create({
-  socialIconsContainer: {
+  container: {
     marginVertical: 10,
-    //marginHorizontal: 16,
+    marginHorizontal: 2,
   },
   iconContainer: {
+    height: 40,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -101,12 +103,8 @@ const styles = StyleSheet.create({
     marginRight: 12,
     padding: 3,
   },
-  icon: {
-    marginRight: 4,
-    padding: 3,
-  },
   iconActInd: {
-    marginRight: 12,
+    marginRight: 10,
     paddingRight: 5,
     paddingLeft: 7,
     justifyContent: 'center',
@@ -133,14 +131,13 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-light',
     fontSize: 16,
   },
-  timeContainer: {
-    flexDirection: 'column',
-    position: 'absolute',
-    right: 10,
+  nameTimeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   timeText: {
     fontFamily: 'cereal-medium',
-    fontSize: 20,
+    fontSize: 18,
   },
   modalText: {
     fontFamily: 'cereal-medium',

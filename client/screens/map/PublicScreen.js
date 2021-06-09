@@ -29,7 +29,13 @@ const PublicScreen = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    loadUser(user.params.user._id);
+    if (error) {
+      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    loadUser(user._id);
   }, []);
 
   const loadUser = async (user) => {

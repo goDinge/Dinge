@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   View,
   Text,
@@ -154,7 +154,6 @@ const ProfileEditScreen = (props) => {
 
   const deleteAccountHandler = async () => {
     setError(null);
-    setModalVisible(false);
     try {
       await dispatch(authActions.logout());
       await dispatch(authActions.deleteAccount());

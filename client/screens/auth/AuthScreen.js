@@ -187,7 +187,7 @@ const Auth = (props) => {
               <CustomButton style={styles.mainButton} onSelect={authHandler}>
                 {isLoading ? (
                   <View style={styles.loadingContainer}>
-                    <Text style={styles.mainButtonText}>Loading...</Text>
+                    <Text style={styles.loadingText}>Loading...</Text>
                     <ActivityIndicator color="white" size="small" />
                   </View>
                 ) : (
@@ -286,6 +286,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 15,
     textAlign: 'center',
+    fontFamily: 'cereal-bold',
+    color: 'white',
+  },
+  loadingText: {
+    fontSize: 24,
+    paddingVertical: 8,
     fontFamily: 'cereal-bold',
     color: 'white',
   },

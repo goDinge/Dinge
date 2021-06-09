@@ -225,25 +225,6 @@ const DingScreen = (props) => {
     }
   };
 
-  const likeCommentHandler = async (id, dingId) => {
-    setError(null);
-    setIsCommentLikeLoading(true);
-    const comment = comments.find((comment) => comment._id === id);
-
-    try {
-      if (!comment.likes.includes(authUser._id)) {
-        await dispatch(commentActions.likeComment(id));
-        await dispatch(dingActions.getDing(dingId));
-      } else {
-        await dispatch(commentActions.unlikeComment(id));
-        await dispatch(dingActions.getDing(dingId));
-      }
-    } catch (err) {
-      setError(err.message);
-    }
-    setIsCommentLikeLoading(false);
-  };
-
   const reportCommentHandler = async (id) => {
     setError(null);
     try {

@@ -34,7 +34,7 @@ exports.createDing = asyncHandler(async (req, res, next) => {
 
   let folder;
 
-  console.log(uploads);
+  //console.log(uploads);
 
   uploads.forEach((upload) => {
     folder = 'img';
