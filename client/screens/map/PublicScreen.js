@@ -7,12 +7,11 @@ import {
   Pressable,
   ScrollView,
   Image,
+  Alert,
   ActivityIndicator,
 } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
-
 import * as userActions from '../../store/actions/user';
-
 import CustomEvent from '../../components/CustomEvent';
 import Colors from '../../constants/Colors';
 

@@ -11,7 +11,7 @@ import { HOME_IP } from '@env';
 export const postComment = (text, dingId) => {
   return async (dispatch) => {
     try {
-      console.log('comment action - IP used:', HOME_IP);
+      console.log('comment action - IP used: ', HOME_IP);
 
       const config = {
         headers: {
@@ -78,6 +78,7 @@ export const deleteComment = (commentId, dingId) => {
 export const likeComment = (commentId) => {
   return async (dispatch) => {
     try {
+      console.log('comment action - IP used: ', HOME_IP);
       const response = await axios.put(
         `${HOME_IP}/api/comments/likes/${commentId}`
       );

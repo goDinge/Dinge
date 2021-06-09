@@ -30,7 +30,7 @@ export const getDinge = () => {
 export const getLocalDinge = (location) => {
   return async (dispatch) => {
     try {
-      console.log('getLocalDinge action - IP used: ', HOME_IP);
+      console.log('getLocalDinge action - IP used:', HOME_IP);
       const distance = settingConfigs[0].radius;
 
       const response = await axios.get(

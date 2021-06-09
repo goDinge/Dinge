@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 

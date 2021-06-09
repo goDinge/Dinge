@@ -108,8 +108,8 @@ const DingScreen = (props) => {
     setIsLoading(false);
   };
 
-  const publicProfileHandler = (userId) => {
-    props.navigation.navigate('Public', userId);
+  const publicProfileHandler = (user) => {
+    props.navigation.navigate('Public', user);
   };
 
   //Like and Unlike
@@ -260,7 +260,7 @@ const DingScreen = (props) => {
             onLike={likeDingHandler}
             onFlag={openDingReportModalHandler}
             onDelete={openDingDeleteModalHandler}
-            onProfile={publicProfileHandler}
+            onProfile={() => publicProfileHandler(user)}
           />
           <CustomCommentInput
             item={ding}
@@ -278,7 +278,7 @@ const DingScreen = (props) => {
                   authUser={authUser}
                   item={ding}
                   //isLoading={isCommentLikeLoading}
-                  onProfile={publicProfileHandler}
+                  onProfile={() => publicProfileHandler(user)}
                   onEditor={openEditorHandler}
                   onDelete={deleteCommentHandler}
                   //onLike={likeCommentHandler}

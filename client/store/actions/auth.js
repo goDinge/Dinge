@@ -110,7 +110,7 @@ export const changePassword = (password) => {
       // console.log('authActions changePassword: ', profile);
 
       // dispatch({
-      //   type: PASSWORD_UPDATE_REDUX,
+      //   type: PASSWORD_UPDATE_REDUX
       //   authUser: profile,
       // });
     } catch (err) {
