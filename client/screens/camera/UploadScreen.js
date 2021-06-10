@@ -13,12 +13,12 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import * as expoLocation from 'expo-location';
 
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as Location from 'expo-location';
 import * as dingeActions from '../../store/actions/dinge';
 import * as imageActions from '../../store/actions/image';
+import * as locationActions from '../../store/actions/location';
 
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
@@ -110,7 +110,7 @@ const UploadScreen = (props) => {
     }
     try {
       setFetchAnyways(true);
-      const locationData = await expoLocation.geocodeAsync(address);
+      const locationData = await Location.geocodeAsync(address);
       if (locationData) {
         location.coords.latitude = locationData[0].latitude;
         location.coords.longitude = locationData[0].longitude;
@@ -137,7 +137,7 @@ const UploadScreen = (props) => {
     }
 
     let count = 0;
-    let target = 10;
+    let target = 15;
     try {
       setIsFetching(true);
       const getLocation = async () => {
@@ -145,6 +145,7 @@ const UploadScreen = (props) => {
           accuracy: Location.Accuracy.Highest,
         });
         setLocation(location);
+        await dispatch(locationActions.setLocation(location));
 
         if (count > 6) {
           setModalVisible(true);

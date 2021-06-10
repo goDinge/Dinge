@@ -34,7 +34,7 @@ const DingScreen = (props) => {
   const authUser = useSelector((state) => state.auth.authUser);
   const dingState = useSelector((state) => state.ding.ding);
   const user = useSelector((state) => state.user.user);
-  const userLocation = useSelector((state) => state.location.location);
+  const locationState = useSelector((state) => state.location.location);
 
   let initLikeDing = false;
   if (dingState.likes) {
@@ -48,7 +48,6 @@ const DingScreen = (props) => {
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
-  const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
   const [dingReportModal, setDingReportModal] = useState(false);
   const [messageModal, setMessageModal] = useState(false);
   const [text, onChangeText] = useState(null);
@@ -147,8 +146,8 @@ const DingScreen = (props) => {
     setError(null);
     setIsDeleting(true);
     try {
-      await dispatch(dingeActions.deleteDingById(dingId));
-      await dispatch(dingeActions.getLocalDinge(userLocation));
+      await dispatch(dingeActions.deleteDingById(dingId)); //possible to fix reducer so no need to call getLocalDinge for a fresh state?
+      await dispatch(dingeActions.getLocalDinge(locationState));
       await setConfirmDelete(false);
       await dispatch(messageActions.setMessage('Ding Deleted'));
     } catch (err) {

@@ -5,7 +5,6 @@ import {
   TextInput,
   ActivityIndicator,
   Modal,
-  Image,
   Pressable,
   Animated,
   Easing,
@@ -21,7 +20,7 @@ import * as Location from 'expo-location';
 import CustomButton from '../../components/CustomButton';
 import CustomMarker from '../../components/CustomMarker';
 import CustomBlueMarker from '../../components/CustomBlueMarker';
-import CustomReloadIcon from '../../components/CustomReloadIcon';
+//import CustomReloadIcon from '../../components/CustomReloadIcon';
 import CustomCompassIcon from '../../components/CustomCompassIcon';
 import CustomMessageModal from '../../components/CustomMessageModal';
 import CustomTimeFilter from '../../components/CustomTimeFilter';
@@ -43,22 +42,25 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const MapScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [location, setLocation] = useState({});
-  const [region, setRegion] = useState(location);
+  //const [location, setLocation] = useState({});
+  const [region, setRegion] = useState(locationState);
   const [modalVisible, setModalVisible] = useState(false);
   const [addressModal, setAddressModal] = useState(false);
   const [address, setAddress] = useState('');
   const [isAddressLoading, setIsAddressLoading] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [timeSelected, setTimeSelected] = useState('now');
+  const [isCompassLoading, setIsCompassLoading] = useState(false);
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
   const dinge = useSelector((state) => state.dinge.dinge);
+  const newDing = useSelector((state) => state.dinge.newDing);
   const events = useSelector((state) => state.events.events);
   const authUser = useSelector((state) => state.auth.authUser);
   const messageState = useSelector((state) => state.message.message);
+  const locationState = useSelector((state) => state.location.location);
 
   useEffect(() => {
     (async () => {
@@ -76,6 +78,18 @@ const MapScreen = (props) => {
       Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (newDing) {
+      const regionObj = {
+        latitude: newDing.location.latitude,
+        longitude: newDing.location.longitude,
+        latitudeDelta: 0.015,
+        longitudeDelta: 0.015,
+      };
+      setRegion(regionObj);
+    }
+  }, [newDing]);
 
   useEffect(() => {
     if (messageState) {
@@ -111,7 +125,7 @@ const MapScreen = (props) => {
     try {
       const location = await Location.geocodeAsync(address); //returns array (of 1 element)
       location.coords = location[0];
-      setLocation(location);
+      await dispatch(locationActions.setLocation(location));
       setRegion(regionData(location));
       setIsAddressLoading(false);
       setAddressModal(false);
@@ -137,7 +151,6 @@ const MapScreen = (props) => {
   //remember: useEffect calls getLocation(), loadData() gets called inside getLocation
   const getLocation = async () => {
     setError(null);
-    setMapLoaded(false);
 
     try {
       const location = await Location.getCurrentPositionAsync({
@@ -148,8 +161,7 @@ const MapScreen = (props) => {
         addressLocation();
         setMapLoaded(true);
       }
-      setLocation(location);
-      //await dispatch(locationActions.setLocation(location));
+      //setLocation(location); //this hook is not the final location - it is only used as a test for the below if / else function
       if (count > settingConfigs[1].count) {
         //after too many attempts for accurate location, just set location and launch app anyways
         await dispatch(locationActions.setLocation(location));
@@ -215,11 +227,13 @@ const MapScreen = (props) => {
 
   const compassHandler = async () => {
     setError(null);
+    setIsCompassLoading(true);
     try {
       await getLocation();
     } catch (err) {
       setError(err.message);
     }
+    setIsCompassLoading(false);
   };
 
   const timeNow = () => {
@@ -243,7 +257,7 @@ const MapScreen = (props) => {
   const tomorrowStart = tomorrow.setHours(0, 0, 0, 0);
   const tomorrowEnd = tomorrow.setHours(23, 59, 59, 999);
 
-  if (!mapLoaded || !location || !authUser) {
+  if (!mapLoaded || !locationState || !authUser) {
     return (
       <View style={styles.indicatorContainer}>
         <ActivityIndicator size="large" color={Colors.primary} />
@@ -314,13 +328,13 @@ const MapScreen = (props) => {
               }
             }
           })}
-        {isFocused && location ? (
-          <CustomBlueMarker data={location} user={authUser} />
+        {isFocused && locationState ? (
+          <CustomBlueMarker data={locationState} user={authUser} />
         ) : null}
         <Circle
           center={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
+            latitude: locationState.coords.latitude,
+            longitude: locationState.coords.longitude,
           }}
           radius={settingConfigs[0].radius * 1000}
           strokeColor={Colors.primary}
@@ -348,11 +362,19 @@ const MapScreen = (props) => {
         />
       </View>
       <View style={styles.compassContainer}>
-        <CustomCompassIcon onSelect={compassHandler} />
+        {isCompassLoading ? (
+          <ActivityIndicator
+            size="large"
+            color={Colors.primary}
+            style={{ right: 2 }}
+          />
+        ) : (
+          <CustomCompassIcon onSelect={compassHandler} />
+        )}
       </View>
       <Pressable
         style={styles.reloadContainer}
-        onPress={() => reloadHandler(location)}
+        onPress={() => reloadHandler(locationState)}
       >
         <Animated.Image
           style={{

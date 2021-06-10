@@ -8,7 +8,7 @@ import {
 
 const initialState = {
   dinge: [],
-  newDing: {},
+  newDing: null,
   ding: {},
 };
 
@@ -32,7 +32,7 @@ export default (state = initialState, action) => {
     case POST_DING:
       return {
         ...state,
-        newDing: action.dinge,
+        newDing: action.newDing,
       };
     case UPDATE_DING_LOCATION:
       return {
