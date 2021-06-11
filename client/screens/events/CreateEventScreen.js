@@ -3,6 +3,7 @@ import {
   View,
   Text,
   TextInput,
+  Dimensions,
   Image,
   Modal,
   KeyboardAvoidingView,
@@ -23,6 +24,7 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import * as Location from 'expo-location';
+import * as ImagePicker from 'expo-image-picker';
 
 import * as eventsActions from '../../store/actions/events';
 import Colors from '../../constants/Colors';
@@ -34,8 +36,8 @@ import eventTypes from '../../helpers/eventTypes';
 
 import { AWS_EVENT_TYPES } from '@env';
 
+const SCREEN_WIDTH = Dimensions.get('window').width;
 const mapStyle = require('../../helpers/mapStyle.json');
-
 const FORM_INPUT = 'FORM_INPUT';
 
 const formReducer = (state, action) => {
@@ -74,6 +76,7 @@ const CreateEventScreen = (props) => {
   const [show, setShow] = useState(false);
   const [datePicked, setDatePicked] = useState(false);
   const [timePicked, setTimePicked] = useState(false);
+  const [image, setImage] = useState(null);
   const [region, setRegion] = useState(userLocation);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [event, setEvent] = useState({
@@ -126,6 +129,7 @@ const CreateEventScreen = (props) => {
       eventName: '',
       date: '',
       eventType: 'community',
+      eventPic: '',
       thumbUrl:
         'https://dinge.s3.us-east-2.amazonaws.com/event-types-2/community.png',
       address: '',
@@ -137,6 +141,7 @@ const CreateEventScreen = (props) => {
       eventName: false,
       date: false,
       eventType: true,
+      eventPic: false,
       thumbUrl: true,
       location: false,
       description: false,
@@ -179,6 +184,34 @@ const CreateEventScreen = (props) => {
   };
   const showTimepicker = () => {
     showMode('time');
+  };
+
+  const imagePickerHandler = async () => {
+    let isValid;
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [16, 9],
+        quality: 0.2,
+      });
+
+      console.log('create event: ', result);
+
+      if (!result.cancelled) {
+        setImage(result);
+        isValid = true;
+      }
+
+      dispatchFormState({
+        type: FORM_INPUT,
+        value: result,
+        isValid: isValid,
+        input: 'eventPic',
+      });
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   //Text input
@@ -367,7 +400,16 @@ const CreateEventScreen = (props) => {
                 </View>
               </View>
             </View>
-
+            <View style={styles.buttonContainer}>
+              <CustomButton onSelect={imagePickerHandler}>
+                <Text style={styles.locateOnMapText}>Pick Event Image</Text>
+              </CustomButton>
+            </View>
+            <View>
+              {image ? (
+                <Image style={styles.image} source={{ uri: image.uri }} />
+              ) : null}
+            </View>
             <View style={styles.dateContainer}>
               <View style={styles.pickDateContainer}>
                 <Text style={[styles.instructionText, { marginBottom: 5 }]}>
@@ -480,18 +522,20 @@ const CreateEventScreen = (props) => {
               {isCreatingEvent ? (
                 <CustomButton
                   onSelect={createEventHandler}
-                  style={{ flexDirection: 'row' }}
+                  style={styles.buttonLoading}
                 >
-                  <Text style={styles.locateOnMapText}>Creating Event</Text>
+                  <Text style={styles.creatingEventButtonText}>
+                    Creating Event
+                  </Text>
                   <ActivityIndicator
                     color="white"
                     size="small"
-                    style={{ paddingRight: 15 }}
+                    style={{ marginRight: 15 }}
                   />
                 </CustomButton>
               ) : (
                 <CustomButton onSelect={createEventHandler}>
-                  <Text style={styles.locateOnMapText}>Create Event</Text>
+                  <Text style={styles.createEventButtonText}>Create Event</Text>
                 </CustomButton>
               )}
             </View>
@@ -592,6 +636,11 @@ const styles = StyleSheet.create({
   eventNameContainer: {
     marginVertical: 15,
   },
+  image: {
+    width: '100%',
+    height: (SCREEN_WIDTH * 9) / 16,
+    marginBottom: 15,
+  },
   instructionText: {
     fontSize: 16,
     fontFamily: 'cereal-medium',
@@ -612,6 +661,9 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-light',
     paddingLeft: 15,
     paddingRight: 15,
+  },
+  dateContainer: {
+    marginTop: 15,
   },
   pickDateContainer: {
     flexDirection: 'row',
@@ -640,6 +692,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 16,
   },
+  createEventButtonText: {
+    color: 'white',
+    fontFamily: 'cereal-bold',
+    paddingVertical: 12,
+    paddingHorizontal: 26,
+    fontSize: 20,
+  },
+  creatingEventButtonText: {
+    color: 'white',
+    fontFamily: 'cereal-bold',
+    paddingVertical: 12,
+    paddingHorizontal: 26,
+    fontSize: 20,
+  },
   mapContainer: {
     justifyContent: 'center',
     marginBottom: 18,
@@ -650,6 +716,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     alignItems: 'center',
     marginVertical: 10,
+  },
+  buttonLoading: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
   eventTypeContainer: {
     justifyContent: 'flex-start',
@@ -681,6 +751,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginVertical: 15,
   },
+  //modals
   centeredView: {
     flex: 1,
     justifyContent: 'center',

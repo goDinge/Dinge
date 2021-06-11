@@ -23,6 +23,9 @@ const EventSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  eventPic: {
+    type: String,
+  },
   eventType: {
     type: String,
     required: true,

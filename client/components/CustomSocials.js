@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { FontAwesome, Feather, AntDesign } from '@expo/vector-icons';
 
 import CustomEditModal from './CustomEditModal';
@@ -96,13 +96,23 @@ const CustomSocials = (props) => {
         </View>
         {item.user === authUser._id ? (
           <View style={styles.iconRightContainer}>
-            <Feather
-              name="edit"
-              color="black"
-              size={26}
-              style={styles.icon}
-              onPress={() => openEditorHandler(item._id, item.description)}
-            />
+            {type === 'ding' ? (
+              <Feather
+                name="edit"
+                color="black"
+                size={26}
+                style={styles.icon}
+                onPress={() => openEditorHandler(item._id, item.description)}
+              />
+            ) : (
+              <Feather
+                name="edit"
+                color="black"
+                size={26}
+                style={styles.icon}
+                onPress={() => console.log('type is not ding')}
+              />
+            )}
             <AntDesign
               name="delete"
               color="black"
@@ -124,7 +134,7 @@ const CustomSocials = (props) => {
       {type === 'ding' ? (
         <View style={styles.socialContainer}>
           <View style={styles.nameTimeContainer}>
-            <Text style={styles.userName} onPress={() => onProfile(user._id)}>
+            <Text style={styles.userName} onPress={onProfile}>
               {user.name}
             </Text>
 

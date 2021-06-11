@@ -3,7 +3,9 @@ import {
   View,
   Text,
   Pressable,
+  Dimensions,
   Alert,
+  Image,
   ScrollView,
   ActivityIndicator,
   StyleSheet,
@@ -34,6 +36,8 @@ import { convertAMPM, properDate } from '../../helpers/dateConversions';
 
 const mapStyle = require('../../helpers/mapStyle.json');
 
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
 const EventDetailsScreen = (props) => {
   const event = props.route.params;
   const authUser = useSelector((state) => state.auth.authUser);
@@ -49,7 +53,7 @@ const EventDetailsScreen = (props) => {
   }
 
   const [error, setError] = useState(undefined);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [location, setLocation] = useState(null);
   const [region, setRegion] = useState(location);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
@@ -72,7 +76,6 @@ const EventDetailsScreen = (props) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    setIsLoading(true);
     loadUser(event.user);
     loadEvent(event._id);
     loadAuthUser();
@@ -95,36 +98,44 @@ const EventDetailsScreen = (props) => {
 
   const loadUser = async (user) => {
     setError(null);
+    setIsLoading(true);
     try {
       await dispatch(userActions.getUser(user));
     } catch (err) {
       setError(err.message);
     }
+    setIsLoading(false);
   };
 
   const loadAuthUser = async () => {
     setError(null);
+    setIsLoading(true);
     try {
       await dispatch(authActions.getAuthUser());
     } catch (err) {
       setError(err.message);
     }
+    setIsLoading(false);
   };
 
   const loadEvent = async (eventId) => {
     setError(null);
+    setIsLoading(true);
     try {
       await dispatch(eventActions.getEvent(eventId));
     } catch (err) {
       setError(err.message);
     }
+    setIsLoading(false);
   };
 
-  const toUserNameHandler = (user) => {
-    props.navigation.navigate('Public', {
-      screen: 'Public',
-      params: { user },
-    });
+  //console.log('event details: ', eventState.eventPic);
+
+  const publicProfileHandler = (user) => {
+    //setIsLoading here ensures a smoother transition to 'Public'
+    setIsLoading(true);
+    props.navigation.navigate('Public', user);
+    setIsLoading(false);
   };
 
   //Like and Unlike
@@ -262,7 +273,14 @@ const EventDetailsScreen = (props) => {
     }
   };
 
-  if (isLoading) {
+  if (
+    isLoading ||
+    !location ||
+    !region ||
+    !event ||
+    !userLocation ||
+    !eventState
+  ) {
     return (
       <View style={styles.indicatorContainer}>
         <ActivityIndicator color={Colors.primary} size="large" />
@@ -275,6 +293,12 @@ const EventDetailsScreen = (props) => {
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <View style={styles.topInfoContainer}>
           <View style={styles.leftContainer}>
+            {eventState.eventPic ? (
+              <Image
+                style={styles.image}
+                source={{ uri: eventState.eventPic }}
+              />
+            ) : null}
             <Text style={styles.eventTitle}>{event.eventName}</Text>
             <Text style={[styles.eventInfo, { marginBottom: 3 }]}>
               {properDate(event.date)}
@@ -282,7 +306,7 @@ const EventDetailsScreen = (props) => {
             <Text style={[styles.eventInfo, { marginBottom: 8 }]}>
               {convertAMPM(event.date)} - {convertAMPM(event.endDate)}
             </Text>
-            <Pressable onPress={() => toUserNameHandler(user)}>
+            <Pressable onPress={() => publicProfileHandler(user._id)}>
               <Text style={styles.eventInfo}>Organizer: {user.name}</Text>
             </Pressable>
           </View>
@@ -320,7 +344,7 @@ const EventDetailsScreen = (props) => {
               onLike={likeEventHandler}
               onFlag={openEventReportModalHandler}
               onDelete={openEventDeleteModalHandler}
-              onProfile={toUserNameHandler}
+              onProfile={() => publicProfileHandler(user._id)}
             />
           </View>
           <View style={{ marginVertical: 5 }}>
@@ -341,7 +365,7 @@ const EventDetailsScreen = (props) => {
                   authUser={authUser}
                   item={event}
                   isLoading={isCommentLikeLoading}
-                  onProfile={toUserNameHandler}
+                  onProfile={() => publicProfileHandler(user._id)}
                   onEditor={openEditorHandler}
                   onDelete={deleteCommentHandler}
                   onLike={likeCommentHandler}
@@ -413,6 +437,11 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-bold',
     fontSize: 23,
     marginBottom: 12,
+  },
+  image: {
+    width: '100%',
+    height: (SCREEN_WIDTH * 9) / 16,
+    marginBottom: 15,
   },
   eventInfo: {
     fontFamily: 'cereal-medium',

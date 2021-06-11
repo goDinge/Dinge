@@ -9,6 +9,7 @@ export const getEvent = (id) => {
 
       const response = await axios.get(`${HOME_IP}/api/events/${id}`);
       const event = response.data.data;
+      //console.log('event action: ', event);
 
       dispatch({
         type: GET_EVENT,

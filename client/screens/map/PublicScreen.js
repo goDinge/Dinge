@@ -21,7 +21,7 @@ const PublicScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
-  const user = props.route.params;
+  const userId = props.route.params;
   const userState = useSelector((state) => state.user.user);
   const events = useSelector((state) => state.events.events);
 
@@ -34,7 +34,7 @@ const PublicScreen = (props) => {
   }, [error]);
 
   useEffect(() => {
-    loadUser(user._id);
+    loadUser(userId);
   }, []);
 
   const loadUser = async (user) => {

@@ -1,9 +1,9 @@
 const fs = require('fs');
-const User = require('../models/User');
 const Comment = require('../models/Comment');
 const Event = require('../models/Event');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
+const aws = require('aws-sdk');
 
 //desc    CREATE Event
 //route   POST /api/events
@@ -33,22 +33,64 @@ exports.createEvent = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Please enter all neceesarily info.', 400));
   }
 
-  const endDate = Date.parse(date) + 1000 * 60 * 60 * hours;
+  const eventPic = req.file;
+  let eventPicUrl;
 
-  const event = await Event.create({
-    eventName,
-    user: userId,
-    status,
-    date,
-    endDate,
-    eventType,
-    address,
-    location,
-    thumbUrl,
-    description,
+  aws.config.setPromisesDependency();
+  aws.config.update({
+    accessKeyId: process.env.ACCESSKEYID,
+    secretAccessKey: process.env.SECRETACCESSKEY,
+    region: process.env.REGION,
   });
 
-  res.status(200).json({ success: true, data: event });
+  const s3 = new aws.S3();
+
+  //extracted the 'save to S3 process' out to a function
+  //don't need to do that
+  const upload = (pic) => {
+    let params = {
+      ACL: 'public-read',
+      Bucket: process.env.BUCKET_NAME,
+      Body: fs.createReadStream(pic.path),
+      Key: `eventPic/${pic.originalname}`,
+    };
+    s3.upload(params, async (err, data) => {
+      if (err) {
+        res.json({ msg: err });
+      }
+
+      fs.unlinkSync(pic.path);
+
+      if (data) {
+        eventPicUrl = data.Location;
+        console.log(
+          'EventPic has been uploaded to S3 and URL created successfully'
+        );
+
+        const dateFormattedFromJSON = JSON.parse(date);
+        const dateParsed = Date.parse(dateFormattedFromJSON);
+
+        const endDate = dateParsed + 1000 * 60 * 60 * hours;
+
+        const event = await Event.create({
+          eventName,
+          user: userId,
+          status,
+          date: dateParsed,
+          endDate,
+          eventPic: eventPicUrl,
+          eventType,
+          address,
+          location,
+          thumbUrl,
+          description,
+        });
+
+        res.status(200).json({ success: true, data: event });
+      }
+    });
+  };
+  await upload(eventPic);
 });
 
 //desc    DELETE Event by ID

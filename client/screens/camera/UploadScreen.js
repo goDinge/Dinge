@@ -382,7 +382,6 @@ const styles = StyleSheet.create({
   textRegular: {
     fontFamily: 'cereal-light',
   },
-  buttonsContainer: {},
   buttonContainer: {
     marginVertical: 8,
     marginBottom: 12,

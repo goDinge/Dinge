@@ -70,40 +70,49 @@ export const updateEventLocation = (eventId, location) => {
 
 export const createEvent = (formState) => {
   return async (dispatch) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
     const {
       eventName,
       date,
       eventType,
+      eventPic,
       thumbUrl,
       address,
       description,
       hours,
+      location,
     } = formState.inputValues;
 
-    let location = formState.inputValues.location;
-    location = {
-      longitude: location.longitude,
-      latitude: location.latitude,
-    };
+    const eventPicName = eventPic.uri.split('/').pop();
 
-    const body = JSON.stringify({
-      eventName,
-      date,
-      eventType,
-      thumbUrl,
-      address,
-      location,
-      description,
-      hours,
+    let formData = new FormData();
+    formData.append('eventName', eventName);
+    formData.append('date', JSON.stringify(date));
+    formData.append('eventType', eventType);
+    formData.append('thumbUrl', thumbUrl);
+    formData.append('address', address);
+    formData.append('description', description);
+    formData.append('hours', hours);
+    formData.append('location[longitude]', JSON.stringify(location.longitude));
+    formData.append('location[latitude]', JSON.stringify(location.latitude));
+    formData.append('eventPic', {
+      uri: `file://${eventPic.uri}`,
+      type: 'image/jpg',
+      name: `${eventPicName}`,
     });
 
+    const config = {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+
     try {
-      const response = await axios.post(`${HOME_IP}/api/events`, body, config);
+      const response = await axios.post(
+        `${HOME_IP}/api/events`,
+        formData,
+        config
+      );
       const event = response.data.data;
 
       dispatch({

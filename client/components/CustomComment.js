@@ -57,10 +57,7 @@ const CustomComment = (props) => {
     <View key={index} style={styles.outerCommentContainer}>
       <View style={styles.commentContainer}>
         <View style={styles.textContainer}>
-          <Text
-            style={styles.commentsUserName}
-            onPress={() => onProfile(comment.userId)}
-          >
+          <Text style={styles.commentsUserName} onPress={onProfile}>
             {comment.userName}
           </Text>
           <Text style={styles.description}>{comment.text}</Text>

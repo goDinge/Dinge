@@ -38,8 +38,6 @@ exports.getUserById = asyncHandler(async (req, res, next) => {
 exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
 
-  console.log('req.file', req.file);
-
   const avatar = req.file;
 
   if (!user) {
@@ -78,7 +76,7 @@ exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
       fs.unlinkSync(avatar.path);
 
       if (data) {
-        console.log(data);
+        //console.log(data);
         avatarUrl = data.Location;
         console.log(
           'Avatar has been uploaded to S3 and URL created successfully'

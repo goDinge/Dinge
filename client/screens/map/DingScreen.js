@@ -259,7 +259,7 @@ const DingScreen = (props) => {
             onLike={likeDingHandler}
             onFlag={openDingReportModalHandler}
             onDelete={openDingDeleteModalHandler}
-            onProfile={() => publicProfileHandler(user)}
+            onProfile={() => publicProfileHandler(user._id)}
           />
           <CustomCommentInput
             item={ding}
@@ -276,7 +276,7 @@ const DingScreen = (props) => {
                   comment={item}
                   authUser={authUser}
                   item={ding}
-                  onProfile={() => publicProfileHandler(user)}
+                  onProfile={() => publicProfileHandler(item.userId)}
                   onEditor={openEditorHandler}
                   onDelete={deleteCommentHandler}
                   onFlag={reportCommentHandler}
