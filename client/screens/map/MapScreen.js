@@ -81,13 +81,7 @@ const MapScreen = (props) => {
 
   useEffect(() => {
     if (newDing) {
-      const regionObj = {
-        latitude: newDing.location.latitude,
-        longitude: newDing.location.longitude,
-        latitudeDelta: 0.015,
-        longitudeDelta: 0.015,
-      };
-      setRegion(regionObj);
+      setRegion(newDingRegion(newDing));
     }
   }, [newDing]);
 
@@ -141,6 +135,15 @@ const MapScreen = (props) => {
     return {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
+      latitudeDelta: 0.015,
+      longitudeDelta: 0.015,
+    };
+  };
+
+  const newDingRegion = (newDingLocation) => {
+    return {
+      latitude: newDingLocation.location.latitude,
+      longitude: newDingLocation.location.longitude,
       latitudeDelta: 0.015,
       longitudeDelta: 0.015,
     };

@@ -14,11 +14,9 @@ const CustomComment = (props) => {
     comment,
     item,
     authUser,
-    isLoading,
     onProfile,
     onEditor,
     onDelete,
-    //onLike,
     onFlag,
   } = props;
 

@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
   commentsInputContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    //marginHorizontal: 16,
     marginBottom: 20,
   },
   commentsInput: {

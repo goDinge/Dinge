@@ -155,7 +155,6 @@ exports.unReportEvent = asyncHandler(async (req, res, next) => {
 //access  private
 exports.deleteEventById = asyncHandler(async (req, res, next) => {
   const event = await Event.findOne({ _id: req.params.id });
-  //const eventUser = await User.findById(event.user);
   const userId = req.user.id;
 
   if (event.user.toString() === userId) {

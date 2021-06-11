@@ -6,12 +6,14 @@ const {
   reportDing,
   unReportDing,
   updateDingLocation,
+  updateDingDescription,
 } = require('../controllers/ding');
 
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
 
+router.put('/:id', protect, updateDingDescription);
 router.put('/likes/:id', protect, likeDing);
 router.put('/reports/:id', protect, reportDing);
 router.put('/:id/:location/', protect, updateDingLocation);

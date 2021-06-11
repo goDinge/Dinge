@@ -1,7 +1,11 @@
-import React from 'react';
-import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
-
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesome, Feather, AntDesign } from '@expo/vector-icons';
+
+import CustomEditModal from './CustomEditModal';
+
+import * as dingActions from '../store/actions/ding';
 
 import { timeConverter } from '../helpers/timeConverter';
 import Colors from '../constants/Colors';
@@ -21,7 +25,49 @@ const CustomSocials = (props) => {
     onProfile,
   } = props;
 
-  const description = item.description;
+  const [error, setError] = useState(undefined);
+  const [editModal, setEditModal] = useState(false);
+  const [isEditLoading, setIsEditLoading] = useState(false);
+  const [editInitialText, setEditInitialText] = useState('');
+  const [editDingId, setEditDingId] = useState(null);
+  const [text, onChangeText] = useState(null);
+  const [description, setDescription] = useState(item.description);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+    }
+  }, [error]);
+
+  const updateDescriptionHandler = async (dingId) => {
+    setError(null);
+    setIsEditLoading(true);
+    try {
+      await dispatch(dingActions.updateDingDescription(text, dingId));
+      await dispatch(dingActions.getDing(dingId));
+      setDescription(text);
+    } catch (err) {
+      setError(err.message);
+    }
+    onChangeText(null);
+    setEditInitialText('');
+    setIsEditLoading(false);
+    setEditModal(false);
+    cancelEditHandler();
+  };
+
+  const openEditorHandler = (id, text) => {
+    setEditModal(true);
+    setEditDingId(id);
+    setEditInitialText(text);
+  };
+
+  const cancelEditHandler = () => {
+    setEditModal(false);
+    setEditInitialText('');
+  };
 
   return (
     <View style={styles.container}>
@@ -48,7 +94,24 @@ const CustomSocials = (props) => {
             {itemState.likes && itemState.likes.length}
           </Text>
         </View>
-        <View style={styles.iconRightContainer}>
+        {item.user === authUser._id ? (
+          <View style={styles.iconRightContainer}>
+            <Feather
+              name="edit"
+              color="black"
+              size={26}
+              style={styles.icon}
+              onPress={() => openEditorHandler(item._id, item.description)}
+            />
+            <AntDesign
+              name="delete"
+              color="black"
+              size={26}
+              style={styles.icon}
+              onPress={() => onDelete(item._id)}
+            />
+          </View>
+        ) : (
           <Feather
             name="flag"
             color="black"
@@ -56,16 +119,7 @@ const CustomSocials = (props) => {
             style={styles.icon}
             onPress={onFlag}
           />
-          {item.user === authUser._id ? (
-            <AntDesign
-              name="delete"
-              color="black"
-              size={26}
-              style={[styles.icon, { marginLeft: 15 }]}
-              onPress={() => onDelete(item._id)}
-            />
-          ) : null}
-        </View>
+        )}
       </View>
       {type === 'ding' ? (
         <View style={styles.socialContainer}>
@@ -79,6 +133,18 @@ const CustomSocials = (props) => {
           <Text style={styles.description}>{description}</Text>
         </View>
       ) : null}
+      <CustomEditModal
+        editModal={editModal}
+        text={text}
+        item={item}
+        isEditLoading={isEditLoading}
+        editInitialText={editInitialText}
+        editCommentId={editDingId}
+        onEditModal={setEditModal}
+        onText={onChangeText}
+        onEdit={updateDescriptionHandler}
+        onCancel={cancelEditHandler}
+      />
     </View>
   );
 };
@@ -126,6 +192,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 5,
     alignSelf: 'flex-start',
+  },
+  icon: {
+    marginLeft: 15,
   },
   description: {
     fontFamily: 'cereal-light',

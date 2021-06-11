@@ -181,3 +181,40 @@ exports.updateDingLocation = asyncHandler(async (req, res, next) => {
   //   return next(new ErrorResponse('You are not authorized.', 400));
   // }
 });
+
+//desc    UPDATE Ding's description by ID
+//route   PUT /api/ding/:id
+//access  private
+exports.updateDingDescription = asyncHandler(async (req, res, next) => {
+  const userId = req.user.id;
+  const description = req.body.text;
+  const ding = await Ding.findById(req.params.id);
+
+  const dingUser = ding.user;
+
+  if (dingUser != userId) {
+    return next(
+      new ErrorResponse(`You are not authorized to edit this comment.`, 400)
+    );
+  }
+
+  await Ding.updateOne(
+    {
+      _id: req.params.id,
+    },
+    {
+      $set: {
+        description,
+        lastModifiedAt: Date.now(),
+      },
+    }
+  );
+
+  const editedDing = await Ding.findById(req.params.id);
+  console.log('controllers ding: ', editedDing.description);
+
+  res.status(200).json({
+    success: true,
+    data: editedDing.description,
+  });
+});

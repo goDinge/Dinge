@@ -201,7 +201,7 @@ const DingScreen = (props) => {
     cancelEditHandler();
   };
 
-  const openEditorHandler = async (id, text) => {
+  const openEditorHandler = (id, text) => {
     setEditModal(true);
     setEditCommentId(id);
     setEditInitialText(text);
@@ -276,11 +276,9 @@ const DingScreen = (props) => {
                   comment={item}
                   authUser={authUser}
                   item={ding}
-                  //isLoading={isCommentLikeLoading}
                   onProfile={() => publicProfileHandler(user)}
                   onEditor={openEditorHandler}
                   onDelete={deleteCommentHandler}
-                  //onLike={likeCommentHandler}
                   onFlag={reportCommentHandler}
                 />
               );

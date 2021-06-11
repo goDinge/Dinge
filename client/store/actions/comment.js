@@ -11,7 +11,7 @@ import { HOME_IP } from '@env';
 export const postComment = (text, dingId) => {
   return async (dispatch) => {
     try {
-      console.log('comment action - IP used: ', HOME_IP);
+      console.log('comment action - IP used:  ', HOME_IP);
 
       const config = {
         headers: {
@@ -65,6 +65,7 @@ export const editComment = (text, commentId) => {
     }
   };
 };
+
 export const deleteComment = (commentId, dingId) => {
   return async () => {
     try {
