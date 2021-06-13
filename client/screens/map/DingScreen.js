@@ -35,6 +35,7 @@ const DingScreen = (props) => {
   const dingState = useSelector((state) => state.ding.ding);
   const user = useSelector((state) => state.user.user);
   const locationState = useSelector((state) => state.location.location);
+  console.log('ding screen: ', props);
 
   let initLikeDing = false;
   if (dingState.likes) {

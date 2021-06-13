@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, Alert, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { FontAwesome, Feather, AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 import CustomEditModal from './CustomEditModal';
 
@@ -34,12 +35,21 @@ const CustomSocials = (props) => {
   const [description, setDescription] = useState(item.description);
 
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (error) {
       Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
     }
   }, [error]);
+
+  //right now, user can only cross stack navigate to edit their event
+  const editEventHandler = (authUser, event) => {
+    navigation.navigate('Events', {
+      screen: 'Create Event',
+      params: { authUser, event },
+    });
+  };
 
   const updateDescriptionHandler = async (dingId) => {
     setError(null);
@@ -110,7 +120,7 @@ const CustomSocials = (props) => {
                 color="black"
                 size={26}
                 style={styles.icon}
-                onPress={() => console.log('type is not ding')}
+                onPress={() => editEventHandler(authUser, item._id)}
               />
             )}
             <AntDesign

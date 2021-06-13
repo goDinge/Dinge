@@ -109,8 +109,8 @@ const EventsScreen = (props) => {
 
   const renderItem = ({ item }) => <Item item={item} />;
 
-  const createEventHandler = (authUser) => {
-    props.navigation.navigate('Create Event', authUser);
+  const createEventHandler = () => {
+    props.navigation.navigate('Create Event');
   };
 
   const eventDetailsHandler = (event) => {

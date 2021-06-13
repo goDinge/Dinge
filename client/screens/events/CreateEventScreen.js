@@ -64,7 +64,13 @@ const formReducer = (state, action) => {
 };
 
 const CreateEventScreen = (props) => {
-  const authUser = props.route.params;
+  const eventId = props.route.params ? props.route.params.event : null;
+  const editedEvent = useSelector((state) =>
+    state.events.events.find((event) => event._id === eventId)
+  );
+
+  //console.log('create event param id: ', eventId);
+  //console.log('CES: ', editedEvent);
 
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,18 +80,41 @@ const CreateEventScreen = (props) => {
   const [date, setDate] = useState(new Date(Date.now()));
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
-  const [datePicked, setDatePicked] = useState(false);
-  const [timePicked, setTimePicked] = useState(false);
-  const [image, setImage] = useState(null);
-  const [region, setRegion] = useState(userLocation);
+  const [datePicked, setDatePicked] = useState(editedEvent ? true : false);
+  const [timePicked, setTimePicked] = useState(editedEvent ? true : false);
+  const [editedHours, setEditedHours] = useState(null);
+  const [image, setImage] = useState(editedEvent ? editedEvent.eventPic : null);
+  const [region, setRegion] = useState(
+    editedEvent
+      ? {
+          latitude: editedEvent.location.latitude,
+          longitude: editedEvent.location.longitude,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04,
+        }
+      : userLocation
+  );
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [event, setEvent] = useState({
-    location: {
-      latitude: 0,
-      longitude: 0,
-    },
-  });
-  const [eventType, setEventType] = useState('community');
+  const [event, setEvent] = useState(
+    editedEvent
+      ? {
+          location: {
+            latitude: editedEvent.location.latitude,
+            longitude: editedEvent.location.longitude,
+          },
+          thumbUrl: editedEvent.thumbUrl,
+        }
+      : {
+          location: {
+            latitude: 0,
+            longitude: 0,
+          },
+        }
+  );
+
+  const [eventType, setEventType] = useState(
+    editedEvent ? editedEvent.eventType : 'community'
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
 
@@ -94,6 +123,12 @@ const CreateEventScreen = (props) => {
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (editedEvent) {
+      setMapLoaded(true);
+    }
+  }, []);
 
   useEffect(() => {
     {
@@ -124,31 +159,43 @@ const CreateEventScreen = (props) => {
     })();
   }, [setRegion]);
 
+  const calcEditedHours = () => {
+    const result =
+      (new Date(editedEvent.endDate).getTime() -
+        new Date(editedEvent.date).getTime()) /
+      (1000 * 60 * 60);
+    const resultString = result.toString();
+    return resultString;
+  };
+
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
-      eventName: '',
-      date: '',
-      eventType: 'community',
-      eventPic: '',
-      thumbUrl:
-        'https://dinge.s3.us-east-2.amazonaws.com/event-types-2/community.png',
-      address: '',
-      location: '',
-      description: '',
-      hours: '',
+      eventName: editedEvent ? editedEvent.eventName : '',
+      date: editedEvent ? editedEvent.date : '',
+      eventType: editedEvent ? editedEvent.eventType : 'community',
+      eventPic: editedEvent ? editedEvent.eventPic : '',
+      thumbUrl: editedEvent
+        ? editedEvent.thumbUrl
+        : 'https://dinge.s3.us-east-2.amazonaws.com/event-types-2/community.png',
+      address: editedEvent ? editedEvent.address : '',
+      location: editedEvent ? editedEvent.location : '',
+      description: editedEvent ? editedEvent.description : '',
+      hours: editedEvent ? calcEditedHours() : '',
     },
     inputValidities: {
-      eventName: false,
-      date: false,
+      eventName: editedEvent ? true : false,
+      date: editedEvent ? true : false,
       eventType: true,
-      eventPic: false,
+      eventPic: editedEvent ? true : false,
       thumbUrl: true,
-      location: false,
-      description: false,
-      hours: false,
+      location: editedEvent ? true : false,
+      description: editedEvent ? true : false,
+      hours: editedEvent ? true : false,
     },
-    formIsValid: false,
+    formIsValid: editedEvent ? true : false,
   });
+
+  console.log(formState);
 
   //Date and Time picker functions
   const onDateChange = (event, selectedDate) => {
@@ -196,10 +243,8 @@ const CreateEventScreen = (props) => {
         quality: 0.2,
       });
 
-      console.log('create event: ', result);
-
       if (!result.cancelled) {
-        setImage(result);
+        setImage(result.uri);
         isValid = true;
       }
 
@@ -232,7 +277,7 @@ const CreateEventScreen = (props) => {
               onPress: () => {
                 dispatchFormState({
                   type: FORM_INPUT,
-                  value: '',
+                  value: null,
                   isValid: isValid,
                   input: inputType,
                 });
@@ -407,7 +452,7 @@ const CreateEventScreen = (props) => {
             </View>
             <View>
               {image ? (
-                <Image style={styles.image} source={{ uri: image.uri }} />
+                <Image style={styles.image} source={{ uri: image }} />
               ) : null}
             </View>
             <View style={styles.dateContainer}>
@@ -454,7 +499,7 @@ const CreateEventScreen = (props) => {
                 <TextInput
                   placeholder="hours"
                   keyboardType="numeric"
-                  style={[styles.textInput]}
+                  style={styles.textInput}
                   value={formState.inputValues.hours}
                   onChangeText={(text) => inputChangeHandler('hours', text)}
                 />
