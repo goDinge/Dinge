@@ -28,6 +28,8 @@ const CustomComment = (props) => {
   const comments = dingState.comments;
   const dispatch = useDispatch();
 
+  console.log('CC comment: ', comment);
+
   useEffect(() => {
     if (error) {
       Alert.alert('An error occurred', error, [{ text: 'Okay' }]);

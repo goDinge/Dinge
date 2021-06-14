@@ -76,6 +76,7 @@ const EventDetailsScreen = (props) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
+    //console.log('EDS: ', event);
     loadUser(event.user);
     loadEvent(event._id);
     loadAuthUser();

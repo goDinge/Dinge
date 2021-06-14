@@ -44,11 +44,15 @@ const CustomSocials = (props) => {
   }, [error]);
 
   //right now, user can only cross stack navigate to edit their event
+  // const editEventHandler = (authUser, event) => {
+  //   navigation.navigate('Events', {
+  //     screen: 'Create Event',
+  //     params: { authUser, event },
+  //   });
+  // };
+
   const editEventHandler = (authUser, event) => {
-    navigation.navigate('Events', {
-      screen: 'Create Event',
-      params: { authUser, event },
-    });
+    navigation.navigate('Create Event', { authUser, event });
   };
 
   const updateDescriptionHandler = async (dingId) => {

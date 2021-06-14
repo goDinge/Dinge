@@ -26,7 +26,9 @@ import {
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 
+import * as eventActions from '../../store/actions/event';
 import * as eventsActions from '../../store/actions/events';
+
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
 import CustomMarker from '../../components/CustomMarker';
@@ -69,8 +71,9 @@ const CreateEventScreen = (props) => {
     state.events.events.find((event) => event._id === eventId)
   );
 
-  //console.log('create event param id: ', eventId);
-  //console.log('CES: ', editedEvent);
+  const updatedEvent = useSelector((state) => state.event.event);
+  const newEvent = useSelector((state) => state.events.newEvent);
+  const userLocation = useSelector((state) => state.location.location);
 
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,7 +85,6 @@ const CreateEventScreen = (props) => {
   const [show, setShow] = useState(false);
   const [datePicked, setDatePicked] = useState(editedEvent ? true : false);
   const [timePicked, setTimePicked] = useState(editedEvent ? true : false);
-  const [editedHours, setEditedHours] = useState(null);
   const [image, setImage] = useState(editedEvent ? editedEvent.eventPic : null);
   const [region, setRegion] = useState(
     editedEvent
@@ -95,7 +97,7 @@ const CreateEventScreen = (props) => {
       : userLocation
   );
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [event, setEvent] = useState(
+  const [eventLocation, setEventLocation] = useState(
     editedEvent
       ? {
           location: {
@@ -118,23 +120,31 @@ const CreateEventScreen = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
 
-  const newEvent = useSelector((state) => state.events.newEvent);
-  const userLocation = useSelector((state) => state.location.location);
-
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    if (editedEvent) {
-      setMapLoaded(true);
+    {
+      editedEvent
+        ? (setMapLoaded(true),
+          console.log('CES eventId: ', eventId),
+          console.log('CES editedevent: ', editedEvent),
+          console.log('CES useEffect formState: ', formState))
+        : null;
     }
-  }, []);
+  }, [editedEvent]);
 
   useEffect(() => {
     {
       newEvent ? setEventToPass(newEvent) : null;
     }
   }, [newEvent]);
+
+  useEffect(() => {
+    {
+      updatedEvent ? setEventToPass(updatedEvent) : null;
+    }
+  }, [updatedEvent]);
 
   useEffect(() => {
     if (error) {
@@ -159,6 +169,7 @@ const CreateEventScreen = (props) => {
     })();
   }, [setRegion]);
 
+  //backwards calculation from event endDate to hours
   const calcEditedHours = () => {
     const result =
       (new Date(editedEvent.endDate).getTime() -
@@ -195,7 +206,7 @@ const CreateEventScreen = (props) => {
     formIsValid: editedEvent ? true : false,
   });
 
-  console.log(formState);
+  //console.log('CES formState: ', formState);
 
   //Date and Time picker functions
   const onDateChange = (event, selectedDate) => {
@@ -323,7 +334,7 @@ const CreateEventScreen = (props) => {
           latitude: locationData[0].latitude,
           longitude: locationData[0].longitude,
         }),
-          setEvent({
+          setEventLocation({
             location: {
               latitude: locationData[0].latitude,
               longitude: locationData[0].longitude,
@@ -396,9 +407,78 @@ const CreateEventScreen = (props) => {
     setConfirmVisible(true);
   };
 
-  const toEventDetailsHandler = () => {
+  const updateEventHandler = async () => {
+    setError(null);
+
+    if (!formState.formIsValid) {
+      Alert.alert(
+        'Form not complete.',
+        'Please complete all parts of form to update.',
+        [{ text: 'Okay' }]
+      );
+      return;
+    }
+
+    setIsCreatingEvent(true);
+    try {
+      await dispatch(eventActions.updateEvent(formState, eventId));
+      await dispatch(eventsActions.getLocalEvents(userLocation));
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsCreatingEvent(false);
+    setConfirmVisible(true);
+  };
+
+  const toEventDetailsHandler = (eventToPass) => {
     setConfirmVisible(false);
     props.navigation.navigate('Event Details', eventToPass);
+  };
+
+  const renderButton = () => {
+    if (editedEvent) {
+      if (isCreatingEvent) {
+        return (
+          <CustomButton
+            onSelect={updateEventHandler}
+            style={styles.buttonLoading}
+          >
+            <Text style={styles.creatingEventButtonText}>Updating Event</Text>
+            <ActivityIndicator
+              color="white"
+              size="small"
+              style={{ marginRight: 15 }}
+            />
+          </CustomButton>
+        );
+      } else {
+        return (
+          <CustomButton onSelect={updateEventHandler}>
+            <Text style={styles.creatingEventButtonText}>Update Event</Text>
+          </CustomButton>
+        );
+      }
+    } else if (isCreatingEvent) {
+      return (
+        <CustomButton
+          onSelect={createEventHandler}
+          style={styles.buttonLoading}
+        >
+          <Text style={styles.creatingEventButtonText}>Creating Event</Text>
+          <ActivityIndicator
+            color="white"
+            size="small"
+            style={{ marginRight: 15 }}
+          />
+        </CustomButton>
+      );
+    } else {
+      return (
+        <CustomButton onSelect={createEventHandler}>
+          <Text style={styles.creatingEventButtonText}>Create Event</Text>
+        </CustomButton>
+      );
+    }
   };
 
   if (isLoading || !userLocation) {
@@ -549,7 +629,9 @@ const CreateEventScreen = (props) => {
                   maxZoomLevel={17}
                   customMapStyle={mapStyle}
                 >
-                  {isFocused && mapLoaded && <CustomMarker data={event} />}
+                  {isFocused && mapLoaded && (
+                    <CustomMarker data={eventLocation} />
+                  )}
                 </MapView>
               ) : null}
             </View>
@@ -564,6 +646,16 @@ const CreateEventScreen = (props) => {
               />
             </View>
             <View style={styles.buttonContainer}>
+              {renderButton()}
+              {/* {editedEvent ? (
+                <CustomButton onSelect={updateEventHandler}>
+                  <Text style={styles.createEventButtonText}>Update Event</Text>
+                </CustomButton>
+              ) : (
+                <CustomButton onSelect={createEventHandler}>
+                  <Text style={styles.createEventButtonText}>Create Event</Text>
+                </CustomButton>
+              )}
               {isCreatingEvent ? (
                 <CustomButton
                   onSelect={createEventHandler}
@@ -582,7 +674,7 @@ const CreateEventScreen = (props) => {
                 <CustomButton onSelect={createEventHandler}>
                   <Text style={styles.createEventButtonText}>Create Event</Text>
                 </CustomButton>
-              )}
+              )} */}
             </View>
             <View style={styles.extraSpace}></View>
           </ScrollView>
@@ -633,11 +725,23 @@ const CreateEventScreen = (props) => {
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>Event Created!</Text>
                 <View style={styles.buttonContainer}>
-                  <CustomButton onSelect={() => toEventDetailsHandler()}>
-                    <Text style={styles.locateOnMapText}>
-                      Go see your event
-                    </Text>
-                  </CustomButton>
+                  {editedEvent ? (
+                    <CustomButton
+                      onSelect={() => toEventDetailsHandler(updatedEvent)}
+                    >
+                      <Text style={styles.locateOnMapText}>
+                        Go see your updated event
+                      </Text>
+                    </CustomButton>
+                  ) : (
+                    <CustomButton
+                      onSelect={() => toEventDetailsHandler(eventToPass)}
+                    >
+                      <Text style={styles.locateOnMapText}>
+                        Go see your new event
+                      </Text>
+                    </CustomButton>
+                  )}
                 </View>
               </View>
             </View>

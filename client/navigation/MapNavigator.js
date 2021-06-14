@@ -237,6 +237,11 @@ export const ProfileNavigator = () => {
         component={ProfileEditScreen}
         options={{ headerTitle: 'Profile Edit' }}
       />
+      <EventsStackNavigator.Screen
+        name="Create Event"
+        component={CreateEventScreen}
+        options={{ headerTitle: 'Edit Event' }}
+      />
     </ProfileStackNavigator.Navigator>
   );
 };

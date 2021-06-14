@@ -25,6 +25,7 @@ export const GET_LOCAL_EVENTS = 'GET_LOCAL_EVENTS';
 export const GET_EVENT = 'GET_EVENT';
 export const UPDATE_EVENT_LOCATION = 'UPDATE_EVENT_LOCATION';
 export const CREATE_EVENT = 'CREATE_EVENT';
+export const UPDATE_EVENT = 'UPDATE_EVENT';
 export const LIKE_EVENT = 'LIKE_EVENT';
 export const UNLIKE_EVENT = 'UNLIKE_EVENT';
 export const REPORT_EVENT = 'REPORT_EVENT';

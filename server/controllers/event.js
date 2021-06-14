@@ -1,9 +1,11 @@
+const fs = require('fs');
 const Event = require('../models/Event');
 const User = require('../models/User');
 const Comment = require('../models/Comment');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const repScores = require('../utils/repScores');
+const aws = require('aws-sdk');
 
 //desc    UPDATE Event's location by ID
 //route   PUT /api/event/:id/:location
@@ -22,6 +24,105 @@ exports.updateEventLocation = asyncHandler(async (req, res, next) => {
   await event.save();
 
   res.status(200).json({ success: true, data: event });
+});
+
+//desc    UPDATE Event by ID
+//route   PUT /api/event/:id
+//access  private
+exports.updateEvent = asyncHandler(async (req, res, next) => {
+  const {
+    eventName,
+    status,
+    date,
+    hours,
+    eventType,
+    address,
+    location,
+    thumbUrl,
+    description,
+  } = req.body;
+
+  console.log('event controller:', req.body);
+  console.log('event controller req.file :', req.file);
+
+  if (
+    !eventName ||
+    !date ||
+    !eventType ||
+    !location ||
+    !description ||
+    !hours
+  ) {
+    return next(new ErrorResponse('Please enter all neceesarily info.', 400));
+  }
+
+  const eventPic = req.file;
+  let eventPicUrl;
+
+  aws.config.setPromisesDependency();
+  aws.config.update({
+    accessKeyId: process.env.ACCESSKEYID,
+    secretAccessKey: process.env.SECRETACCESSKEY,
+    region: process.env.REGION,
+  });
+
+  const s3 = new aws.S3();
+
+  //extracted the 'save to S3 process' out to a function
+  //don't need to do that
+  const upload = (pic) => {
+    let params = {
+      ACL: 'public-read',
+      Bucket: process.env.BUCKET_NAME,
+      Body: fs.createReadStream(pic.path),
+      Key: `eventPic/${pic.originalname}`,
+    };
+    s3.upload(params, async (err, data) => {
+      if (err) {
+        res.json({ msg: err });
+      }
+
+      fs.unlinkSync(pic.path);
+
+      if (data) {
+        eventPicUrl = data.Location;
+        console.log(
+          'EventPic has been uploaded to S3 and URL created successfully'
+        );
+
+        const dateFormattedFromJSON = JSON.parse(date);
+        const dateParsed = Date.parse(dateFormattedFromJSON);
+
+        const endDate = dateParsed + 1000 * 60 * 60 * hours;
+
+        await Event.updateOne(
+          {
+            _id: req.params.id,
+          },
+          {
+            $set: {
+              eventName,
+              status,
+              date: dateParsed,
+              endDate,
+              eventPic: eventPicUrl,
+              eventType,
+              address,
+              location,
+              thumbUrl,
+              description,
+              lastModifiedAt: Date.now(),
+            },
+          }
+        );
+
+        const event = await Event.findById(req.params.id).populate('comments');
+
+        res.status(200).json({ success: true, data: event });
+      }
+    });
+  };
+  await upload(eventPic);
 });
 
 //desc    LIKE Event
