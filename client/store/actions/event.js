@@ -40,7 +40,16 @@ export const updateEvent = (formState, eventId) => {
       location,
     } = formState.inputValues;
 
-    const eventPicName = eventPic.uri.split('/').pop();
+    let eventPicName;
+    let eventPicURI;
+
+    if (eventPic.hasOwnProperty('uri')) {
+      eventPicName = eventPic.uri.split('/').pop();
+      eventPicURI = `file://${eventPic.uri}`;
+    } else {
+      eventPicName = eventPic.split('/').pop();
+      eventPicURI = eventPic;
+    }
 
     let formData = new FormData();
     formData.append('eventName', eventName);
@@ -53,7 +62,7 @@ export const updateEvent = (formState, eventId) => {
     formData.append('location[longitude]', JSON.stringify(location.longitude));
     formData.append('location[latitude]', JSON.stringify(location.latitude));
     formData.append('eventPic', {
-      uri: `file://${eventPic.uri}`,
+      uri: `${eventPicURI}`,
       type: 'image/jpg',
       name: `${eventPicName}`,
     });
@@ -64,9 +73,6 @@ export const updateEvent = (formState, eventId) => {
         'Content-Type': 'multipart/form-data',
       },
     };
-
-    console.log('event actions: ', formState.inputValues);
-    console.log('event actions formData: ', formData);
 
     try {
       const response = await axios.put(

@@ -111,14 +111,9 @@ export const MapNavigator = () => {
         options={{ headerTitle: 'Event Details' }}
       />
       <MapStackNavigator.Screen
-        name="Upload"
-        component={UploadScreen}
-        options={{ headerTitle: 'Dinge!' }}
-      />
-      <MapStackNavigator.Screen
-        name="Camera"
-        component={CameraScreen}
-        options={{ headerTitle: 'Camera' }}
+        name="Create Event"
+        component={CreateEventScreen}
+        options={{ headerTitle: 'Edit Event' }}
       />
       <MapStackNavigator.Screen
         name="Public"
@@ -172,7 +167,7 @@ export const EventsNavigator = () => {
       <EventsStackNavigator.Screen
         name="Create Event"
         component={CreateEventScreen}
-        options={{ headerTitle: 'Create Event' }}
+        options={{ headerTitle: 'Create / Edit Event' }}
       />
     </EventsStackNavigator.Navigator>
   );
@@ -237,7 +232,7 @@ export const ProfileNavigator = () => {
         component={ProfileEditScreen}
         options={{ headerTitle: 'Profile Edit' }}
       />
-      <EventsStackNavigator.Screen
+      <ProfileStackNavigator.Screen
         name="Create Event"
         component={CreateEventScreen}
         options={{ headerTitle: 'Edit Event' }}

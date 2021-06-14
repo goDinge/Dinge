@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
-
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MapView from 'react-native-maps';
 import {
@@ -23,24 +22,23 @@ import {
   SimpleLineIcons,
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
+
+import { AWS_EVENT_TYPES } from '@env';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 
 import * as eventActions from '../../store/actions/event';
 import * as eventsActions from '../../store/actions/events';
-
-import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
 import CustomMarker from '../../components/CustomMarker';
+import Colors from '../../constants/Colors';
 
 import { convertAMPM, properDate } from '../../helpers/dateConversions';
 import eventTypes from '../../helpers/eventTypes';
 
-import { AWS_EVENT_TYPES } from '@env';
-
-const SCREEN_WIDTH = Dimensions.get('window').width;
 const mapStyle = require('../../helpers/mapStyle.json');
 const FORM_INPUT = 'FORM_INPUT';
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const formReducer = (state, action) => {
   if (action.type === FORM_INPUT) {
@@ -80,7 +78,9 @@ const CreateEventScreen = (props) => {
   const [isFetchingMarker, setIsFetchingMarker] = useState(false);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const [eventToPass, setEventToPass] = useState(null);
-  const [date, setDate] = useState(new Date(Date.now()));
+  const [date, setDate] = useState(
+    editedEvent ? editedEvent.date : new Date(Date.now())
+  );
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [datePicked, setDatePicked] = useState(editedEvent ? true : false);
@@ -125,12 +125,7 @@ const CreateEventScreen = (props) => {
 
   useEffect(() => {
     {
-      editedEvent
-        ? (setMapLoaded(true),
-          console.log('CES eventId: ', eventId),
-          console.log('CES editedevent: ', editedEvent),
-          console.log('CES useEffect formState: ', formState))
-        : null;
+      editedEvent ? setMapLoaded(true) : null;
     }
   }, [editedEvent]);
 
@@ -160,12 +155,16 @@ const CreateEventScreen = (props) => {
         return;
       }
 
-      setRegion({
-        latitude: userLocation.coords.latitude,
-        longitude: userLocation.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      });
+      setRegion(
+        editedEvent
+          ? {
+              latitude: editedEvent.location.latitude,
+              longitude: editedEvent.location.longitude,
+              latitudeDelta: 0.04,
+              longitudeDelta: 0.04,
+            }
+          : userLocation
+      );
     })();
   }, [setRegion]);
 
@@ -205,8 +204,6 @@ const CreateEventScreen = (props) => {
     },
     formIsValid: editedEvent ? true : false,
   });
-
-  //console.log('CES formState: ', formState);
 
   //Date and Time picker functions
   const onDateChange = (event, selectedDate) => {
@@ -645,37 +642,7 @@ const CreateEventScreen = (props) => {
                 onChangeText={(text) => inputChangeHandler('description', text)}
               />
             </View>
-            <View style={styles.buttonContainer}>
-              {renderButton()}
-              {/* {editedEvent ? (
-                <CustomButton onSelect={updateEventHandler}>
-                  <Text style={styles.createEventButtonText}>Update Event</Text>
-                </CustomButton>
-              ) : (
-                <CustomButton onSelect={createEventHandler}>
-                  <Text style={styles.createEventButtonText}>Create Event</Text>
-                </CustomButton>
-              )}
-              {isCreatingEvent ? (
-                <CustomButton
-                  onSelect={createEventHandler}
-                  style={styles.buttonLoading}
-                >
-                  <Text style={styles.creatingEventButtonText}>
-                    Creating Event
-                  </Text>
-                  <ActivityIndicator
-                    color="white"
-                    size="small"
-                    style={{ marginRight: 15 }}
-                  />
-                </CustomButton>
-              ) : (
-                <CustomButton onSelect={createEventHandler}>
-                  <Text style={styles.createEventButtonText}>Create Event</Text>
-                </CustomButton>
-              )} */}
-            </View>
+            <View style={styles.buttonContainer}>{renderButton()}</View>
             <View style={styles.extraSpace}></View>
           </ScrollView>
         </View>

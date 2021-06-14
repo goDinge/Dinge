@@ -76,7 +76,6 @@ const EventDetailsScreen = (props) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    //console.log('EDS: ', event);
     loadUser(event.user);
     loadEvent(event._id);
     loadAuthUser();
@@ -129,8 +128,6 @@ const EventDetailsScreen = (props) => {
     }
     setIsLoading(false);
   };
-
-  //console.log('event details: ', eventState.eventPic);
 
   const publicProfileHandler = (user) => {
     //setIsLoading here ensures a smoother transition to 'Public'
