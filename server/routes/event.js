@@ -6,7 +6,6 @@ const {
   unlikeEvent,
   reportEvent,
   unReportEvent,
-  deleteEventById,
   updateEventLocation,
 } = require('../controllers/event');
 
@@ -24,7 +23,7 @@ router.put('/likes/:id', protect, likeEvent);
 router.delete('/likes/:id', protect, unlikeEvent);
 router.put('/reports/:id', protect, reportEvent);
 router.delete('/reports/:id', protect, unReportEvent);
-router.delete('/:id', protect, deleteEventById);
+//router.delete('/:id', protect, deleteEventById);
 router.put('/:id/:location', protect, updateEventLocation);
 
 module.exports = router;

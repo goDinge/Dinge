@@ -4,6 +4,7 @@ const Comment = require('../models/Comment');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const repScores = require('../utils/repScores');
+const aws = require('aws-sdk');
 
 //desc    LIKE Ding
 //route   PUT /api/ding/likes/:id
@@ -139,7 +140,30 @@ exports.deleteDingById = asyncHandler(async (req, res, next) => {
   const dingUser = await User.findById(ding.user);
   const userId = req.user.id;
 
+  const imgUrl = 'img/' + ding.imgUrl.split('/').pop();
+  const thumbUrl = 'thumbnails/' + ding.thumbUrl.split('/').pop();
+
+  const deleteParam = {
+    Bucket: process.env.BUCKET_NAME,
+    Delete: {
+      Objects: [{ Key: imgUrl }, { Key: thumbUrl }],
+    },
+  };
+
   if (ding.user.toString() === userId) {
+    const s3 = new aws.S3({
+      accessKeyId: process.env.ACCESSKEYID,
+      secretAccessKey: process.env.SECRETACCESSKEY,
+      Bucket: process.env.BUCKET_NAME,
+    });
+
+    await s3
+      .deleteObjects(deleteParam, (err, data) => {
+        if (err) console.error('err: ', err);
+        if (data) console.log('data:', data);
+      })
+      .promise();
+
     await ding.remove();
     dingUser.reputation = dingUser.reputation - repScores.repScores.uploadDing;
     await dingUser.save();

@@ -26,6 +26,7 @@ const comments = require('./routes/comments');
 const eventComments = require('./routes/eventComments');
 const events = require('./routes/events');
 const event = require('./routes/event');
+const admin = require('./routes/admin');
 
 //Routes setup
 app.get('/', (req, res) => {
@@ -42,6 +43,7 @@ app.use('/api/comments', comments);
 app.use('/api/eventcomments', eventComments);
 app.use('/api/events', events);
 app.use('/api/event', event);
+app.use('/api/admin', admin);
 
 app.use(errorHandler);
 

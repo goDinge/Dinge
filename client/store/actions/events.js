@@ -107,8 +107,6 @@ export const createEvent = (formState) => {
       },
     };
 
-    console.log('events actions: ', formState.inputValues);
-
     try {
       const response = await axios.post(
         `${HOME_IP}/api/events`,

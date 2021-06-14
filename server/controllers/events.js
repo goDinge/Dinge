@@ -97,23 +97,50 @@ exports.createEvent = asyncHandler(async (req, res, next) => {
 //route   DELETE /api/events/:id
 //access  private
 exports.deleteEventById = asyncHandler(async (req, res, next) => {
+  const event = await Event.findOne({ _id: req.params.id });
   const userId = req.user.id;
-  const event = await Event.findById(req.params.id);
 
   if (!event) {
     return next(new ErrorResponse('Event not found', 400));
   }
 
-  if (userId === event.user.toString()) {
-    await event.remove();
-    await Comment.deleteMany({ eventId: event._id });
-  } else {
-    return next(new ErrorResponse('User not authorized', 400));
+  const eventPic = 'eventPic/' + event.eventPic.split('/').pop();
+
+  const deleteParam = {
+    Bucket: process.env.BUCKET_NAME,
+    Key: eventPic,
+  };
+
+  if (event.user.toString() === userId) {
+    const s3 = new aws.S3({
+      accessKeyId: process.env.ACCESSKEYID,
+      secretAccessKey: process.env.SECRETACCESSKEY,
+      Bucket: process.env.BUCKET_NAME,
+    });
+
+    await s3
+      .deleteObject(deleteParam, (err, data) => {
+        if (err) console.error('err: ', err);
+        if (data) console.log('data:', data);
+      })
+      .promise();
+
+    if (event.user.toString() === userId) {
+      await event.remove();
+    } else {
+      return next(
+        new ErrorResponse('You are not authorized to delete this event.', 400)
+      );
+    }
   }
+  await Comment.deleteMany({ eventId: event });
 
   const events = await Event.find();
 
-  res.status(200).json({ success: true, data: events });
+  res.status(200).json({
+    success: true,
+    data: events,
+  });
 });
 
 //desc    GET all Events

@@ -14,8 +14,6 @@ exports.createDing = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
   const { description, dingType, location } = req.body;
 
-  console.log('ding controller: ', req.body);
-
   let imgUrl, thumbUrl;
 
   if (!description || !location) {

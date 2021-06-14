@@ -387,7 +387,7 @@ const CreateEventScreen = (props) => {
     setError(null);
 
     if (!formState.formIsValid) {
-      Alert.alert('Form not complete.', 'Please complete all parts of form', [
+      Alert.alert('Form not complete.', 'Please complete all parts of form.', [
         { text: 'Okay' },
       ]);
       return;
@@ -411,6 +411,15 @@ const CreateEventScreen = (props) => {
       Alert.alert(
         'Form not complete.',
         'Please complete all parts of form to update.',
+        [{ text: 'Okay' }]
+      );
+      return;
+    }
+
+    if (Date.parse(formState.inputValues.date) < Date.now()) {
+      Alert.alert(
+        'Date Invalid',
+        'Please make sure event start time is after current time.',
         [{ text: 'Okay' }]
       );
       return;
