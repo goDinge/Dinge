@@ -4,31 +4,32 @@ import { FontAwesome, Feather } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
 import * as commentActions from '../store/actions/comment';
+import * as eventCommentActions from '../store/actions/eventComment';
 import * as dingActions from '../store/actions/ding';
+import * as eventActions from '../store/actions/event';
+
+import CustomMessageModal from '../components/CustomMessageModal';
 
 import Colors from '../constants/Colors';
 
 const CustomComment = (props) => {
-  const {
-    index,
-    comment,
-    item,
-    authUser,
-    onProfile,
-    onEditor,
-    onDelete,
-    onFlag,
-  } = props;
+  const { type, index, comment, item, authUser, onProfile, onEditor, onFlag } =
+    props;
 
   const [error, setError] = useState(undefined);
+  const [messageModal, setMessageModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
   const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
+  const [isCommentDeleteLoading, setIsCommentDeleteLoading] = useState(false);
 
   const dingState = useSelector((state) => state.ding.ding);
+  const eventState = useSelector((state) => state.event.event);
 
-  const comments = dingState.comments;
+  let comments;
+  if (type === 'ding') comments = dingState.comments;
+  if (type === 'event') comments = eventState.comments;
+
   const dispatch = useDispatch();
-
-  console.log('CC comment: ', comment);
 
   useEffect(() => {
     if (error) {
@@ -36,23 +37,50 @@ const CustomComment = (props) => {
     }
   }, [error]);
 
-  const likeCommentHandler = async (id, dingId) => {
+  const likeCommentHandler = async (id, itemId) => {
     setError(null);
     setIsCommentLikeLoading(true);
     const comment = comments.find((comment) => comment._id === id);
 
     try {
-      if (!comment.likes.includes(authUser._id)) {
-        await dispatch(commentActions.likeComment(id));
-        await dispatch(dingActions.getDing(dingId));
-      } else {
-        await dispatch(commentActions.unlikeComment(id));
-        await dispatch(dingActions.getDing(dingId));
+      if (type === 'ding') {
+        if (!comment.likes.includes(authUser._id)) {
+          await dispatch(commentActions.likeComment(id));
+        } else {
+          await dispatch(commentActions.unlikeComment(id));
+        }
+        await dispatch(dingActions.getDing(itemId));
+      } else if (type === 'event') {
+        if (!comment.likes.includes(authUser._id)) {
+          await dispatch(eventCommentActions.likeComment(id));
+        } else {
+          await dispatch(eventCommentActions.unlikeComment(id));
+        }
+        await dispatch(eventActions.getEvent(itemId));
       }
     } catch (err) {
       setError(err.message);
     }
     setIsCommentLikeLoading(false);
+  };
+
+  const deleteCommentHandler = async (id, itemId) => {
+    setError(null);
+    setIsCommentDeleteLoading(true);
+    try {
+      if (type === 'ding') {
+        await dispatch(commentActions.deleteComment(id, itemId));
+        await dispatch(dingActions.getDing(itemId));
+      } else if (type === 'event') {
+        await dispatch(eventCommentActions.deleteComment(id, itemId));
+        await dispatch(eventActions.getEvent(itemId));
+      }
+      setModalMessage('Comment Deleted');
+      setMessageModal(true);
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsCommentDeleteLoading(false);
   };
 
   return (
@@ -83,13 +111,19 @@ const CustomComment = (props) => {
             style={styles.icon}
             onPress={() => onEditor(comment._id, comment.text)}
           />
-          <Feather
-            name="delete"
-            color={Colors.gray}
-            size={22}
-            style={[styles.icon, { left: -4 }]}
-            onPress={() => onDelete(comment._id, item._id)}
-          />
+          {isCommentDeleteLoading ? (
+            <View style={styles.commentLikeActInd}>
+              <ActivityIndicator color={Colors.red} size="small" />
+            </View>
+          ) : (
+            <Feather
+              name="delete"
+              color={Colors.gray}
+              size={22}
+              style={[styles.icon, { left: -4 }]}
+              onPress={() => deleteCommentHandler(comment._id, item._id)}
+            />
+          )}
         </View>
       ) : comment.likes.includes(authUser._id) ? (
         <View style={styles.commentsIconContainer}>
@@ -138,6 +172,11 @@ const CustomComment = (props) => {
           />
         </View>
       )}
+      <CustomMessageModal
+        message={modalMessage}
+        messageModal={messageModal}
+        onClose={setMessageModal}
+      />
     </View>
   );
 };
@@ -146,6 +185,7 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 5,
     paddingLeft: 6,
+    top: 2,
   },
   description: {
     fontFamily: 'cereal-light',
@@ -198,7 +238,6 @@ const styles = StyleSheet.create({
   },
   miniLikesCount: {
     fontSize: 14,
-    top: 1,
     marginRight: 3,
     fontFamily: 'cereal-book',
   },

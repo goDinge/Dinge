@@ -228,6 +228,8 @@ const DingScreen = (props) => {
     setError(null);
     try {
       await dispatch(commentActions.reportComment(id));
+      setModalMessage('Thank you for reporting this ding.');
+      setMessageModal(true);
     } catch (err) {
       setError(err.message);
     }
@@ -272,6 +274,7 @@ const DingScreen = (props) => {
             comments.map((item, index) => {
               return (
                 <CustomComment
+                  type="ding"
                   key={index}
                   comment={item}
                   authUser={authUser}

@@ -118,7 +118,7 @@ export const reportComment = (commentId) => {
   return async (dispatch) => {
     try {
       const response = await axios.put(
-        `${HOME_IP}/api/comments/reports/${commentId}`
+        `${HOME_IP}/api/eventcomments/reports/${commentId}`
       );
       const comment = response.data.data;
 

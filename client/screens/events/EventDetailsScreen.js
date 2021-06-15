@@ -231,41 +231,12 @@ const EventDetailsScreen = (props) => {
     setEditInitialText('');
   };
 
-  const deleteCommentHandler = async (id, eventId) => {
-    setError(null);
-    try {
-      await dispatch(commentActions.deleteComment(id, eventId));
-      await dispatch(eventActions.getEvent(eventId));
-      setModalMessage('Comment Deleted');
-      setMessageModal(true);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const likeCommentHandler = async (id, eventId) => {
-    setIsCommentLikeLoading(true);
-    const comment = comments.find((comment) => comment._id === id);
-
-    try {
-      if (!comment.likes.includes(authUser._id)) {
-        await dispatch(commentActions.likeComment(id));
-        await dispatch(eventActions.getDing(eventId));
-      } else {
-        await dispatch(commentActions.unlikeComment(id));
-        await dispatch(eventActions.getDing(eventId));
-      }
-      setIsCommentLikeLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setIsCommentLikeLoading(false);
-    }
-  };
-
   const reportCommentHandler = async (id) => {
     setError(null);
     try {
       await dispatch(commentActions.reportComment(id));
+      setModalMessage('Thank you for reporting this event.');
+      setMessageModal(true);
     } catch (err) {
       setError(err.message);
     }
@@ -358,6 +329,7 @@ const EventDetailsScreen = (props) => {
             comments.map((item, index) => {
               return (
                 <CustomComment
+                  type="event"
                   key={index}
                   comment={item}
                   authUser={authUser}
@@ -365,8 +337,6 @@ const EventDetailsScreen = (props) => {
                   isLoading={isCommentLikeLoading}
                   onProfile={() => publicProfileHandler(user._id)}
                   onEditor={openEditorHandler}
-                  onDelete={deleteCommentHandler}
-                  onLike={likeCommentHandler}
                   onFlag={reportCommentHandler}
                 />
               );

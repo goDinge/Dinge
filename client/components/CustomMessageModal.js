@@ -34,14 +34,9 @@ const CustomMessageModal = (props) => {
 const styles = StyleSheet.create({
   modalText: {
     fontFamily: 'cereal-medium',
-    fontSize: 16,
+    fontSize: 15,
+    marginVertical: 10,
     color: 'black',
-  },
-  reportText: {
-    fontFamily: 'cereal-bold',
-    fontSize: 20,
-    color: Colors.primary,
-    padding: 20,
   },
   centeredView: {
     flex: 1,

@@ -235,7 +235,6 @@ exports.updateDingDescription = asyncHandler(async (req, res, next) => {
   );
 
   const editedDing = await Ding.findById(req.params.id);
-  console.log('controllers ding: ', editedDing.description);
 
   res.status(200).json({
     success: true,

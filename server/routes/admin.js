@@ -1,16 +1,16 @@
 const express = require('express');
-const multer = require('multer');
-const { getUsers } = require('../controllers/users');
+const {
+  getUsers,
+  deleteEvents,
+  deleteEventPics,
+} = require('../controllers/admin');
 
 const router = express.Router();
 
 const { protect } = require('../middleware/auth');
 
-const multerSingle = multer({
-  dest: 'uploads/',
-  //limits: { fieldSize: 300 * 300 },
-}).single('avatar');
-
-router.get('/users', getUsers);
+router.get('/users', protect, getUsers);
+router.delete('/events', protect, deleteEvents);
+router.delete('/events', protect, deleteEventPics);
 
 module.exports = router;
