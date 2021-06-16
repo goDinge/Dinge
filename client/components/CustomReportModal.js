@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Alert,
-  Modal,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert, Modal } from 'react-native';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';

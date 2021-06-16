@@ -449,7 +449,9 @@ const CreateEventScreen = (props) => {
             onSelect={updateEventHandler}
             style={styles.buttonLoading}
           >
-            <Text style={styles.creatingEventButtonText}>Updating Event</Text>
+            <Text style={styles.creatingEventButtonText}>
+              Updating Event...
+            </Text>
             <ActivityIndicator
               color="white"
               size="small"
@@ -470,7 +472,7 @@ const CreateEventScreen = (props) => {
           onSelect={createEventHandler}
           style={styles.buttonLoading}
         >
-          <Text style={styles.creatingEventButtonText}>Creating Event</Text>
+          <Text style={styles.creatingEventButtonText}>Creating Event...</Text>
           <ActivityIndicator
             color="white"
             size="small"
@@ -828,7 +830,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'cereal-bold',
     paddingVertical: 12,
-    paddingHorizontal: 26,
+    paddingHorizontal: 20,
     fontSize: 20,
   },
   mapContainer: {

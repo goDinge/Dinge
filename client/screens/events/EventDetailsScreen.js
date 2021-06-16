@@ -54,12 +54,9 @@ const EventDetailsScreen = (props) => {
 
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
-  const [location, setLocation] = useState(null);
-  const [region, setRegion] = useState(location);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
-  const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
   const [eventReportModal, setEventReportModal] = useState(false);
   const [messageModal, setMessageModal] = useState(false);
   const [text, onChangeText] = useState(null);
@@ -79,16 +76,7 @@ const EventDetailsScreen = (props) => {
     loadUser(event.user);
     loadEvent(event._id);
     loadAuthUser();
-    let location = event.location;
-    setLocation(location);
-    setRegion({
-      latitude: location.latitude,
-      longitude: location.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    });
-    setIsLoading(false);
-  }, [loadUser, loadEvent, loadAuthUser, setIsLoading, setRegion]);
+  }, [loadUser, loadEvent]);
 
   useEffect(() => {
     if (error) {
@@ -130,10 +118,14 @@ const EventDetailsScreen = (props) => {
   };
 
   const publicProfileHandler = (user) => {
-    //setIsLoading here ensures a smoother transition to 'Public'
-    setIsLoading(true);
     props.navigation.navigate('Public', user);
-    setIsLoading(false);
+  };
+
+  const region = {
+    latitude: event.location.latitude,
+    longitude: event.location.longitude,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
   };
 
   //Like and Unlike
@@ -196,11 +188,11 @@ const EventDetailsScreen = (props) => {
     setIsCommentLoading(true);
     try {
       await dispatch(commentActions.postComment(text, eventId));
-      onChangeText(null);
       await dispatch(eventActions.getEvent(eventId));
     } catch (err) {
       setError(err.message);
     }
+    onChangeText(null);
     setIsCommentLoading(false);
   };
 
@@ -242,14 +234,7 @@ const EventDetailsScreen = (props) => {
     }
   };
 
-  if (
-    isLoading ||
-    !location ||
-    !region ||
-    !event ||
-    !userLocation ||
-    !eventState
-  ) {
+  if (isLoading) {
     return (
       <View style={styles.indicatorContainer}>
         <ActivityIndicator color={Colors.primary} size="large" />
@@ -324,23 +309,22 @@ const EventDetailsScreen = (props) => {
               onText={onChangeText}
               onComment={postCommentHandler}
             />
+            {comments &&
+              comments.map((item, index) => {
+                return (
+                  <CustomComment
+                    type="event"
+                    key={index}
+                    comment={item}
+                    authUser={authUser}
+                    item={event}
+                    onProfile={() => publicProfileHandler(item.userId)}
+                    onEditor={openEditorHandler}
+                    onFlag={reportCommentHandler}
+                  />
+                );
+              })}
           </View>
-          {comments &&
-            comments.map((item, index) => {
-              return (
-                <CustomComment
-                  type="event"
-                  key={index}
-                  comment={item}
-                  authUser={authUser}
-                  item={event}
-                  isLoading={isCommentLikeLoading}
-                  onProfile={() => publicProfileHandler(user._id)}
-                  onEditor={openEditorHandler}
-                  onFlag={reportCommentHandler}
-                />
-              );
-            })}
         </View>
       </ScrollView>
       {/*    **** MODALS ****     */}

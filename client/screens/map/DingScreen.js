@@ -212,18 +212,6 @@ const DingScreen = (props) => {
     setEditInitialText('');
   };
 
-  const deleteCommentHandler = async (id, dingId) => {
-    setError(null);
-    try {
-      await dispatch(commentActions.deleteComment(id, dingId));
-      await dispatch(dingActions.getDing(dingId));
-      setModalMessage('Comment Deleted');
-      setMessageModal(true);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
   const reportCommentHandler = async (id) => {
     setError(null);
     try {
@@ -258,6 +246,7 @@ const DingScreen = (props) => {
             item={ding}
             authUser={authUser}
             user={user}
+            locationState={locationState}
             onLike={likeDingHandler}
             onFlag={openDingReportModalHandler}
             onDelete={openDingDeleteModalHandler}
@@ -281,7 +270,6 @@ const DingScreen = (props) => {
                   item={ding}
                   onProfile={() => publicProfileHandler(item.userId)}
                   onEditor={openEditorHandler}
-                  onDelete={deleteCommentHandler}
                   onFlag={reportCommentHandler}
                 />
               );

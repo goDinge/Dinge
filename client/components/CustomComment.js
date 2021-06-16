@@ -8,7 +8,7 @@ import * as eventCommentActions from '../store/actions/eventComment';
 import * as dingActions from '../store/actions/ding';
 import * as eventActions from '../store/actions/event';
 
-import CustomMessageModal from '../components/CustomMessageModal';
+//import CustomMessageModal from '../components/CustomMessageModal';
 
 import Colors from '../constants/Colors';
 
@@ -17,8 +17,6 @@ const CustomComment = (props) => {
     props;
 
   const [error, setError] = useState(undefined);
-  const [messageModal, setMessageModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
   const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
   const [isCommentDeleteLoading, setIsCommentDeleteLoading] = useState(false);
 
@@ -68,19 +66,17 @@ const CustomComment = (props) => {
     setError(null);
     setIsCommentDeleteLoading(true);
     try {
-      if (type === 'ding') {
-        await dispatch(commentActions.deleteComment(id, itemId));
-        await dispatch(dingActions.getDing(itemId));
-      } else if (type === 'event') {
+      if (type === 'event') {
         await dispatch(eventCommentActions.deleteComment(id, itemId));
         await dispatch(eventActions.getEvent(itemId));
       }
-      setModalMessage('Comment Deleted');
-      setMessageModal(true);
+      if (type === 'ding') {
+        await dispatch(commentActions.deleteComment(id, itemId));
+        await dispatch(dingActions.getDing(itemId));
+      }
     } catch (err) {
       setError(err.message);
     }
-    setIsCommentDeleteLoading(false);
   };
 
   return (
@@ -172,11 +168,6 @@ const CustomComment = (props) => {
           />
         </View>
       )}
-      <CustomMessageModal
-        message={modalMessage}
-        messageModal={messageModal}
-        onClose={setMessageModal}
-      />
     </View>
   );
 };

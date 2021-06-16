@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import CustomEditModal from './CustomEditModal';
 
 import * as dingActions from '../store/actions/ding';
+import * as dingeActions from '../store/actions/dinge';
 
 import { timeConverter } from '../helpers/timeConverter';
 import Colors from '../constants/Colors';
@@ -20,6 +21,7 @@ const CustomSocials = (props) => {
     item,
     authUser,
     user,
+    locationState,
     onLike,
     onDelete,
     onFlag,
@@ -43,14 +45,6 @@ const CustomSocials = (props) => {
     }
   }, [error]);
 
-  //right now, user can only cross stack navigate to edit their event
-  // const editEventHandler = (authUser, event) => {
-  //   navigation.navigate('Events', {
-  //     screen: 'Create Event',
-  //     params: { authUser, event },
-  //   });
-  // };
-
   const editEventHandler = (authUser, event) => {
     navigation.navigate('Create Event', { authUser, event });
   };
@@ -61,6 +55,7 @@ const CustomSocials = (props) => {
     try {
       await dispatch(dingActions.updateDingDescription(text, dingId));
       await dispatch(dingActions.getDing(dingId));
+      await dispatch(dingeActions.getLocalDinge(locationState));
       setDescription(text);
     } catch (err) {
       setError(err.message);

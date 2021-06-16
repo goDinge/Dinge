@@ -13,7 +13,8 @@ const EventSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['active', 'inactive'],
-    requried: true,
+    default: 'active',
+    required: true,
   },
   date: {
     type: Date,

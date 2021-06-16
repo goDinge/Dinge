@@ -61,11 +61,11 @@ export const editComment = (text, commentId) => {
         comment: comment,
       });
     } catch (err) {
-      console.log(err.message);
       throw new Error('Cannot connect with server. Please try again.');
     }
   };
 };
+
 export const deleteComment = (commentId, eventId) => {
   return async () => {
     try {

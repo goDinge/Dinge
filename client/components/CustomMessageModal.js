@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, Modal, StyleSheet } from 'react-native';
 
 import CustomButton from '../components/CustomButton';
-import Colors from '../constants/Colors';
 
 const CustomMessageModal = (props) => {
   const { message, messageModal, onClose } = props;
@@ -35,7 +34,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontFamily: 'cereal-medium',
     fontSize: 15,
-    marginVertical: 10,
+    marginVertical: 6,
     color: 'black',
   },
   centeredView: {

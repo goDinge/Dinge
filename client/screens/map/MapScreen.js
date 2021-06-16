@@ -20,7 +20,6 @@ import * as Location from 'expo-location';
 import CustomButton from '../../components/CustomButton';
 import CustomMarker from '../../components/CustomMarker';
 import CustomBlueMarker from '../../components/CustomBlueMarker';
-//import CustomReloadIcon from '../../components/CustomReloadIcon';
 import CustomCompassIcon from '../../components/CustomCompassIcon';
 import CustomMessageModal from '../../components/CustomMessageModal';
 import CustomTimeFilter from '../../components/CustomTimeFilter';
@@ -42,7 +41,6 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const MapScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [mapLoaded, setMapLoaded] = useState(false);
-  //const [location, setLocation] = useState({});
   const [region, setRegion] = useState(locationState);
   const [modalVisible, setModalVisible] = useState(false);
   const [addressModal, setAddressModal] = useState(false);
