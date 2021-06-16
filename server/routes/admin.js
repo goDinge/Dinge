@@ -2,7 +2,7 @@ const express = require('express');
 const {
   getUsers,
   deleteEvents,
-  deleteEventPics,
+  createEvents,
 } = require('../controllers/admin');
 
 const router = express.Router();
@@ -10,7 +10,7 @@ const router = express.Router();
 const { protect } = require('../middleware/auth');
 
 router.get('/users', protect, getUsers);
+router.post('/events', protect, createEvents);
 router.delete('/events', protect, deleteEvents);
-router.delete('/events', protect, deleteEventPics);
 
 module.exports = router;

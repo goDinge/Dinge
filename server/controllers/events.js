@@ -33,6 +33,16 @@ exports.createEvent = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Please enter all neceesarily info.', 400));
   }
 
+  let dateFormattedFromJSON;
+  if (req.body.admin) {
+    dateFormattedFromJSON = date;
+  } else {
+    dateFormattedFromJSON = JSON.parse(date);
+  }
+
+  const dateParsed = Date.parse(dateFormattedFromJSON);
+  const endDate = dateParsed + 1000 * 60 * 60 * hours;
+
   const eventPic = req.file;
   let eventPicUrl;
 
@@ -67,11 +77,6 @@ exports.createEvent = asyncHandler(async (req, res, next) => {
           'EventPic has been uploaded to S3 and URL created successfully'
         );
 
-        const dateFormattedFromJSON = JSON.parse(date);
-        const dateParsed = Date.parse(dateFormattedFromJSON);
-
-        const endDate = dateParsed + 1000 * 60 * 60 * hours;
-
         const event = await Event.create({
           eventName,
           user: userId,
@@ -85,12 +90,30 @@ exports.createEvent = asyncHandler(async (req, res, next) => {
           thumbUrl,
           description,
         });
-
-        res.status(200).json({ success: true, data: event });
+        if (!req.body.admin) {
+          res.status(200).json({ success: true, data: event });
+          return;
+        }
       }
     });
   };
-  await upload(eventPic);
+  if (!req.body.admin) {
+    await upload(eventPic);
+  } else {
+    await Event.create({
+      eventName,
+      user: userId,
+      status,
+      date: dateParsed,
+      endDate,
+      eventPic: req.body.eventPic,
+      eventType,
+      address,
+      location,
+      thumbUrl,
+      description,
+    });
+  }
 });
 
 //desc    DELETE Event by ID

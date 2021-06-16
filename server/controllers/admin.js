@@ -3,6 +3,8 @@ const Event = require('../models/Event');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const aws = require('aws-sdk');
+const events = require('../eventsData/events.json');
+const { createEvent } = require('./events');
 
 //desc     get all users
 //route    GET /api/admin/users
@@ -32,6 +34,10 @@ exports.deleteEvents = asyncHandler(async (req, res, next) => {
   };
 
   const eventsToDelete = await Event.find(eventFilter);
+
+  if (!eventsToDelete) {
+    return next(new ErrorResponse('No events found.'));
+  }
 
   //delete AWS S3 eventPics
   const eventPicsToDelete = [];
@@ -65,7 +71,31 @@ exports.deleteEvents = asyncHandler(async (req, res, next) => {
     .promise();
 
   await Event.deleteMany(eventFilter);
-  res.status(200).json({ success: 'true' });
+  res.status(200).json({ success: true });
+});
+
+//desc     CREATE multiple events
+//route    POST /api/admin/events
+//access   Private
+exports.createEvents = asyncHandler(async (req, res, next) => {
+  const eventsArray = events;
+
+  eventsArray.forEach((elem) => {
+    req.body.admin = true;
+    req.body.eventName = elem.eventName;
+    req.body.status = elem.status;
+    req.body.date = elem.date;
+    req.body.hours = elem.hours;
+    req.body.eventType = elem.eventType;
+    req.body.address = elem.address;
+    req.body.location = elem.location;
+    req.body.thumbUrl = elem.thumbUrl;
+    req.body.description = elem.description;
+    req.body.eventPic = elem.eventPic;
+    createEvent(req, res, next);
+  });
+
+  res.status(200).json({ success: true });
 });
 
 //desc     DELETE all event pics from AWS S3 after 24 hours after event endDate
