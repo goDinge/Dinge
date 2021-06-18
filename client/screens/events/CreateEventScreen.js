@@ -29,8 +29,11 @@ import * as ImagePicker from 'expo-image-picker';
 
 import * as eventActions from '../../store/actions/event';
 import * as eventsActions from '../../store/actions/events';
+
 import CustomButton from '../../components/CustomButton';
 import CustomMarker from '../../components/CustomMarker';
+import CustomMessageModal from '../../components/CustomMessageModal';
+import CustomErrorModal from '../../components/CustomErrorModal';
 import Colors from '../../constants/Colors';
 
 import { convertAMPM, properDate } from '../../helpers/dateConversions';
@@ -117,8 +120,11 @@ const CreateEventScreen = (props) => {
   const [eventType, setEventType] = useState(
     editedEvent ? editedEvent.eventType : 'community'
   );
-  const [modalVisible, setModalVisible] = useState(false);
-  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [messageModal, setMessageModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [eventModalVisible, setEventModalVisible] = useState(false);
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -143,7 +149,7 @@ const CreateEventScreen = (props) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+      setErrorModalVisible(true);
     }
   }, [error]);
 
@@ -151,7 +157,7 @@ const CreateEventScreen = (props) => {
     (async () => {
       let { status } = await Location.getForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+        Alert.alert('Permission to access location was denied');
         return;
       }
 
@@ -214,9 +220,8 @@ const CreateEventScreen = (props) => {
     if (Date.parse(currentDate) + 100000 > Date.now()) {
       isValid = true;
     } else {
-      Alert.alert('Careful', 'Start time must be after right now.', [
-        { text: 'Okay' },
-      ]);
+      setModalMessage('Careful! Start time must be after this moment.');
+      setMessageModalVisible(true);
     }
     dispatchFormState({
       type: FORM_INPUT,
@@ -276,23 +281,33 @@ const CreateEventScreen = (props) => {
     if (inputType === 'hours') {
       if (text > 8 || text < 1) {
         isValid = false;
-        Alert.alert(
-          'Duration invalid',
-          'Duration of event needs to be between 1 to 8 hours.',
-          [
-            {
-              text: 'Ok',
-              onPress: () => {
-                dispatchFormState({
-                  type: FORM_INPUT,
-                  value: null,
-                  isValid: isValid,
-                  input: inputType,
-                });
-              },
-            },
-          ]
-        );
+        if (text) {
+          setError('Duration of event needs to be between 1 to 8 hours.');
+          setErrorModalVisible(true);
+        }
+        dispatchFormState({
+          type: FORM_INPUT,
+          value: null,
+          isValid: isValid,
+          input: inputType,
+        });
+        // Alert.alert(
+        //   'Duration invalid',
+        //   'Duration of event needs to be between 1 to 8 hours.',
+        //   [
+        //     {
+        //       text: 'Ok',
+        //       onPress: () => {
+        //         dispatchFormState({
+        //           type: FORM_INPUT,
+        //           value: null,
+        //           isValid: isValid,
+        //           input: inputType,
+        //         });
+        //       },
+        //     },
+        //   ]
+        // );
       }
     }
     dispatchFormState({
@@ -359,7 +374,7 @@ const CreateEventScreen = (props) => {
   };
 
   const eventTypeHandler = () => {
-    setModalVisible(true);
+    setEventModalVisible(true);
   };
 
   const chooseEventType = (text) => {
@@ -380,16 +395,15 @@ const CreateEventScreen = (props) => {
       isValid: isValid,
       input: 'thumbUrl',
     });
-    setModalVisible(false);
+    setEventModalVisible(false);
   };
 
   const createEventHandler = async () => {
     setError(null);
 
     if (!formState.formIsValid) {
-      Alert.alert('Form not complete.', 'Please complete all parts of form.', [
-        { text: 'Okay' },
-      ]);
+      setError('Form not complete. Please complete all parts of form.');
+      setErrorModalVisible(true);
       return;
     }
 
@@ -401,27 +415,21 @@ const CreateEventScreen = (props) => {
       setError(err.message);
     }
     setIsCreatingEvent(false);
-    setConfirmVisible(true);
+    setConfirmModalVisible(true);
   };
 
   const updateEventHandler = async () => {
     setError(null);
 
     if (!formState.formIsValid) {
-      Alert.alert(
-        'Form not complete.',
-        'Please complete all parts of form to update.',
-        [{ text: 'Okay' }]
-      );
+      setError('Form not complete. Please complete all parts of form.');
+      setErrorModalVisible(true);
       return;
     }
 
     if (Date.parse(formState.inputValues.date) < Date.now()) {
-      Alert.alert(
-        'Date Invalid',
-        'Please make sure event start time is after current time.',
-        [{ text: 'Okay' }]
-      );
+      setError('Please make sure start date and time is after this moment.');
+      setErrorModalVisible(true);
       return;
     }
 
@@ -433,12 +441,19 @@ const CreateEventScreen = (props) => {
       setError(err.message);
     }
     setIsCreatingEvent(false);
-    setConfirmVisible(true);
+    setConfirmModalVisible(true);
   };
 
   const toEventDetailsHandler = (eventToPass) => {
-    setConfirmVisible(false);
+    setConfirmModalVisible(false);
     props.navigation.navigate('Event Details', eventToPass);
+  };
+
+  const closeModalHandler = async () => {
+    setError(null);
+    setModalMessage('');
+    setMessageModalVisible(false);
+    setErrorModalVisible(false);
   };
 
   const renderButton = () => {
@@ -658,13 +673,23 @@ const CreateEventScreen = (props) => {
           </ScrollView>
         </View>
         {/* *****Modals***** */}
+        <CustomErrorModal
+          error={error}
+          errorModal={errorModalVisible}
+          onClose={closeModalHandler}
+        />
+        <CustomMessageModal
+          message={modalMessage}
+          messageModal={messageModal}
+          onClose={closeModalHandler}
+        />
         <View style={styles.centeredView}>
           <Modal
             animationType="fade"
             transparent={true}
-            visible={modalVisible}
+            visible={eventModalVisible}
             onRequestClose={() => {
-              setModalVisible(!modalVisible);
+              setEventModalVisible(!eventModalVisible);
             }}
           >
             <View style={styles.centeredView}>
@@ -683,7 +708,7 @@ const CreateEventScreen = (props) => {
                     name="close"
                     size={30}
                     style={styles.iconClose}
-                    onPress={() => setModalVisible(!modalVisible)}
+                    onPress={() => setModalVisible(!eventModalVisible)}
                   />
                 </View>
               </View>
@@ -694,9 +719,9 @@ const CreateEventScreen = (props) => {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={confirmVisible}
+            visible={confirmModalVisible}
             onRequestClose={() => {
-              seConfirmVisible(!confirmVisible);
+              setConfirmModalVisible(!confirmModalVisible);
             }}
           >
             <View style={styles.centeredView}>

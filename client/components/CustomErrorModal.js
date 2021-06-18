@@ -1,23 +1,24 @@
 import React from 'react';
 import { View, Text, Modal, StyleSheet } from 'react-native';
 
-import CustomButton from '../components/CustomButton';
+import CustomButton from './CustomButton';
 
-const CustomMessageModal = (props) => {
-  const { message, messageModal, onClose } = props;
+const CustomErrorModal = (props) => {
+  const { error, errorModal, onClose } = props;
   return (
     <View style={styles.centeredView}>
       <Modal
         animationType="fade"
         transparent={true}
-        visible={messageModal}
+        visible={errorModal}
         onRequestClose={() => {
           onClose(false);
         }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>{message}</Text>
+            <Text style={styles.modalTextTitle}>An Error occurred</Text>
+            <Text style={styles.modalText}>{error}</Text>
             <View style={styles.buttonContainer}>
               <CustomButton onSelect={() => onClose(false)}>
                 <Text style={styles.postButtonText}>Okay</Text>
@@ -31,6 +32,12 @@ const CustomMessageModal = (props) => {
 };
 
 const styles = StyleSheet.create({
+  modalTextTitle: {
+    fontFamily: 'cereal-bold',
+    fontSize: 18,
+    marginVertical: 4,
+    color: 'black',
+  },
   modalText: {
     fontFamily: 'cereal-medium',
     fontSize: 16,
@@ -72,4 +79,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomMessageModal;
+export default CustomErrorModal;

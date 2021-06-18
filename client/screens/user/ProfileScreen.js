@@ -15,8 +15,11 @@ import * as WebBrowser from 'expo-web-browser';
 
 import * as authActions from '../../store/actions/auth';
 import * as eventsActions from '../../store/actions/events';
+
 import CustomButton from '../../components/CustomButton';
 import CustomEvent from '../../components/CustomEvent';
+import CustomErrorModal from '../../components/CustomErrorModal';
+
 import Colors from '../../constants/Colors';
 import getMonthName from '../../helpers/getMonth';
 
@@ -26,6 +29,7 @@ const ProfileScreen = (props) => {
   const [image, setImage] = useState(null);
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const dispatch = useDispatch();
   const authUser = useSelector((state) => state.auth.authUser);
@@ -37,7 +41,8 @@ const ProfileScreen = (props) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+      setError(error);
+      setErrorModalVisible(true);
     }
   }, [error]);
 
@@ -59,7 +64,9 @@ const ProfileScreen = (props) => {
         const { status } =
           await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
+          Alert.alert(
+            'Sorry, we need camera roll permissions to make this work!'
+          );
         }
       }
     })();
@@ -96,14 +103,20 @@ const ProfileScreen = (props) => {
 
       await dispatch(authActions.updateAuthAvatar(result));
     } catch (err) {
-      Alert.alert('Could not upload avatar!', 'Please try again later.', [
-        { text: 'Okay' },
-      ]);
+      setError(
+        'Did not upload avatar. Please try again if you intended to upload a new avatar.'
+      );
+      setErrorModalVisible(true);
     }
   };
 
   const eventDetailsHandler = (event) => {
     props.navigation.navigate('Event Details', event);
+  };
+
+  const closeModalHandler = async () => {
+    setError(null);
+    setErrorModalVisible(false);
   };
 
   const browserHandler = (url) => {
@@ -135,7 +148,7 @@ const ProfileScreen = (props) => {
       <View style={styles.profileContainer}>
         <ScrollView style={{ width: '100%' }}>
           <View style={styles.avatarContainer}>
-            <Pressable onPressIn={imagePickerHandler}>
+            <Pressable onLongPress={imagePickerHandler}>
               <Image
                 style={styles.avatar}
                 source={{ uri: authUser.avatar }}
@@ -209,6 +222,11 @@ const ProfileScreen = (props) => {
           </View>
         </ScrollView>
       </View>
+      <CustomErrorModal
+        error={error}
+        errorModal={errorModalVisible}
+        onClose={closeModalHandler}
+      />
     </View>
   );
 };
@@ -231,6 +249,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     width: '90%',
     height: '93%',
+    marginTop: 15,
     paddingVertical: 15,
     paddingHorizontal: 15,
     borderRadius: 10,

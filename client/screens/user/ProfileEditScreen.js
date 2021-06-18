@@ -17,6 +17,8 @@ import * as authActions from '../../store/actions/auth';
 
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
+import CustomMessageModal from '../../components/CustomMessageModal';
+import CustomErrorModal from '../../components/CustomErrorModal';
 
 import { PROFILE_UPDATE, PASSWORD_UPDATE } from '../../store/types';
 import { profileReducer, passwordReducer } from '../../helpers/formReducer';
@@ -27,7 +29,9 @@ const ProfileEditScreen = (props) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isPasswordChanging, setIsPasswordChanging] = useState(false);
   const [error, setError] = useState(undefined);
+  const [modalMessage, setModalMessage] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const authUser = props.route.params.authUser;
 
@@ -69,7 +73,7 @@ const ProfileEditScreen = (props) => {
         const { status } =
           await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
-          alert('Sorry, we need camera permission to make this work!');
+          Alert.alert('Sorry, we need camera permission to make this work!');
         }
       }
     })();
@@ -77,7 +81,7 @@ const ProfileEditScreen = (props) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+      setErrorModalVisible(true);
     }
   }, [error]);
 
@@ -97,9 +101,10 @@ const ProfileEditScreen = (props) => {
 
       await dispatch(authActions.updateAuthAvatar(result));
     } catch (err) {
-      Alert.alert('Could not upload avatar!', 'Please try again later.', [
-        { text: 'Okay' },
-      ]);
+      setError(
+        'Did not upload avatar. Please try again if you intended to upload a new avatar.'
+      );
+      setErrorModalVisible(true);
     }
   };
 
@@ -107,17 +112,17 @@ const ProfileEditScreen = (props) => {
     setError(null);
     setIsUpdating(true);
     if (!formState.formIsValid) {
-      Alert.alert(
-        'Error.',
-        'Please make sure name and email fields are completed. Website and Facebook are not necessarily, but if you wish to list them, please make sure they are correct.',
-        [{ text: 'Okay' }]
+      setError(
+        'Please make sure name and email fields are completed. Website and Facebook are not necessarily, but if you wish to list them, please make sure they are correct.'
       );
+      setErrorModalVisible(true);
       return;
     }
 
     try {
       await dispatch(authActions.updateProfile(formState.inputValues));
-      Alert.alert('Profile updated.', 'Thanks.', [{ text: 'Okay' }]);
+      setModalMessage('Profile updated.');
+      setModalVisible(true);
     } catch (err) {
       setError(err.message);
     }
@@ -129,11 +134,8 @@ const ProfileEditScreen = (props) => {
       passwordState.inputValues.newPassword !==
       passwordState.inputValues.confirmNewPassword
     ) {
-      Alert.alert(
-        'Error.',
-        'Please make sure your new password inputs are identical.',
-        [{ text: 'Okay' }]
-      );
+      setError('Please make sure your new password inputs are identical.');
+      setErrorModalVisible(true);
       return;
     }
 
@@ -141,11 +143,20 @@ const ProfileEditScreen = (props) => {
     setIsPasswordChanging(true);
     try {
       await dispatch(authActions.changePassword(passwordState.inputValues));
-      Alert.alert('Password changed.', 'Thanks.', [{ text: 'Okay' }]);
+      setModalMessage('Password changed.');
+      setModalVisible(true);
     } catch (err) {
       setError(err.message);
     }
     setIsPasswordChanging(false);
+  };
+
+  const closeModalHandler = async () => {
+    setError(null);
+    setModalMessage('');
+    setIsUpdating(false);
+    setModalVisible(false);
+    setErrorModalVisible(false);
   };
 
   const deleteAccountModalHandler = () => {
@@ -193,7 +204,7 @@ const ProfileEditScreen = (props) => {
           <View style={styles.editProfileContainer}>
             <Text style={styles.title}>Your Profile</Text>
             <View style={styles.avatarContainer}>
-              <Pressable onPressIn={imagePickerHandler}>
+              <Pressable onLongPress={imagePickerHandler}>
                 <Image
                   style={styles.avatar}
                   source={{ uri: authUser.avatar }}
@@ -357,6 +368,17 @@ const ProfileEditScreen = (props) => {
             </View>
           </View>
         </ScrollView>
+        {/* MODALS  */}
+        <CustomMessageModal
+          message={modalMessage}
+          messageModal={modalVisible}
+          onClose={closeModalHandler}
+        />
+        <CustomErrorModal
+          error={error}
+          errorModal={errorModalVisible}
+          onClose={closeModalHandler}
+        />
         <View style={styles.centeredView}>
           <Modal
             animationType="fade"

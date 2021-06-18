@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   View,
@@ -22,10 +22,12 @@ import * as locationActions from '../../store/actions/location';
 
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
+import CustomErrorModal from '../../components/CustomErrorModal';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const UploadScreen = (props) => {
+  const [error, setError] = useState(undefined);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchAnyways, setFetchAnyways] = useState(false);
   const [text, onChangeText] = useState(null);
@@ -33,10 +35,18 @@ const UploadScreen = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [addressModalVisible, setAddressModalVisible] = useState(false);
   const [address, setAddress] = useState('');
+  const [isAddressUploading, setIsAddressUploading] = useState('');
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const image = useSelector((state) => state.image.image);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (error) {
+      setErrorModalVisible(true);
+    }
+  }, [error]);
 
   const verifyPermissions = async () => {
     const results = await Location.getForegroundPermissionsAsync();
@@ -82,13 +92,20 @@ const UploadScreen = (props) => {
   };
 
   const closeModalHandler = () => {
+    setError(null);
     setModalVisible(false);
     setIsFetching(false);
+    setErrorModalVisible(false);
   };
 
   const uploadAnyways = async () => {
+    setError(null);
     setFetchAnyways(true);
-    await awsUpload(location);
+    try {
+      await awsUpload(location);
+    } catch (err) {
+      setError(err.message);
+    }
     setModalVisible(false);
     goToMap();
   };
@@ -98,41 +115,51 @@ const UploadScreen = (props) => {
   };
 
   const addressUpload = async () => {
+    setError(null);
+    setIsAddressUploading(true);
     let location = {
       coords: {
         latitude: null,
         longitude: null,
       },
     };
+
     if (!address) {
-      Alert.alert('No address', 'Please enter address.', [{ text: 'Ok' }]);
+      setError('No address. Please enter address.');
+      setErrorModalVisible(true);
       return;
     }
+
     try {
-      setFetchAnyways(true);
       const locationData = await Location.geocodeAsync(address);
       if (locationData) {
         location.coords.latitude = locationData[0].latitude;
         location.coords.longitude = locationData[0].longitude;
         await awsUpload(location);
+        setIsAddressUploading(false);
         setAddressModalVisible(false);
         goToMap();
       }
     } catch (err) {
-      Alert.alert('Error', 'Cannot connect with server. Please try again.', [
-        { text: 'Okay' },
-      ]);
+      setError(err.message);
     }
+    setIsAddressUploading(false);
   };
 
   const uploadGPSHandler = async () => {
     const hasPermissions = await verifyPermissions();
     if (!hasPermissions) {
+      Alert.alert(
+        'Insufficent permissions!',
+        'You need to grant location permissions',
+        [{ text: 'Okay' }]
+      );
       return;
     }
 
     if (!image) {
-      Alert.alert('No Picture!', 'Please take picture.', [{ text: 'Ok' }]);
+      setError('No Picture! Please take picture.');
+      setErrorModalVisible(true);
       return;
     }
 
@@ -162,9 +189,8 @@ const UploadScreen = (props) => {
       await getLocation();
     } catch (err) {
       setIsFetching(false);
-      Alert.alert('Could not get your location!', 'Please try again later.', [
-        { text: 'Okay' },
-      ]);
+      setError('Could not get your location! Please try again later.');
+      setErrorModalVisible(true);
     }
   };
 
@@ -240,6 +266,12 @@ const UploadScreen = (props) => {
             </View>
           </View>
         </View>
+        {/* MODALS */}
+        <CustomErrorModal
+          error={error}
+          errorModal={errorModalVisible}
+          onClose={closeModalHandler}
+        />
         <View style={styles.centeredView}>
           <Modal
             animationType="fade"
@@ -319,7 +351,7 @@ const UploadScreen = (props) => {
                     { marginTop: 15, justifyContent: 'center' },
                   ]}
                 >
-                  {fetchAnyways ? (
+                  {isAddressUploading ? (
                     <CustomButton
                       style={{ flexDirection: 'row' }}
                       onSelect={addressUpload}

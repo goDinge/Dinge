@@ -13,6 +13,8 @@ import { useDispatch } from 'react-redux';
 
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
+import CustomErrorModal from '../../components/CustomErrorModal';
+
 import * as authActions from '../../store/actions/auth';
 
 import { FORM_INPUT_UPDATE } from '../../store/types';
@@ -45,6 +47,7 @@ const Auth = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(undefined);
   const [isSignup, setIsSignup] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -65,7 +68,7 @@ const Auth = (props) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+      setErrorModalVisible(true);
     }
   }, [error]);
 
@@ -74,11 +77,10 @@ const Auth = (props) => {
     let action;
     if (isSignup) {
       if (formState.inputValues.password !== formState.inputValues.password2) {
-        Alert.alert(
-          'Password Invalid',
-          'Please make sure your confirm password is identical to your password',
-          [{ text: 'Okay' }]
+        setError(
+          'Password Invalid Please make sure your confirm password is identical to your password'
         );
+        setErrorModalVisible(true);
         return;
       }
       action = authActions.register(
@@ -113,6 +115,11 @@ const Auth = (props) => {
     },
     [dispatchFormState]
   );
+
+  const closeModalHandler = () => {
+    setError(null);
+    setErrorModalVisible(false);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -218,6 +225,11 @@ const Auth = (props) => {
           </View>
         </View>
       </ScrollView>
+      <CustomErrorModal
+        error={error}
+        errorModal={errorModalVisible}
+        onClose={closeModalHandler}
+      />
     </KeyboardAvoidingView>
   );
 };

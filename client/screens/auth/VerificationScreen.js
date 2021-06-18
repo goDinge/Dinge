@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
+import CustomErrorModal from '../../components/CustomErrorModal';
 
 import * as authActions from '../../store/actions/auth';
 
@@ -21,6 +22,8 @@ import Colors from '../../constants/Colors';
 
 const ForgotPasswordScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(undefined);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const verified = useSelector((state) => state.auth.verified);
 
@@ -31,6 +34,12 @@ const ForgotPasswordScreen = (props) => {
       props.navigation.navigate('Reset Password');
     }
   }, [verified]);
+
+  useEffect(() => {
+    if (error) {
+      setErrorModalVisible(true);
+    }
+  }, [error]);
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -57,13 +66,19 @@ const ForgotPasswordScreen = (props) => {
   );
 
   const verificationCodeHandler = async (code) => {
+    setError(null);
     setIsLoading(true);
     try {
       await dispatch(authActions.verifyCode(code));
     } catch (err) {
-      console.log(err.messsage);
+      setError(err.messsage);
     }
     setIsLoading(false);
+  };
+
+  const closeModalHandler = () => {
+    setError(null);
+    setErrorModalVisible(false);
   };
 
   return (
@@ -119,6 +134,11 @@ const ForgotPasswordScreen = (props) => {
           </View>
         </View>
       </ScrollView>
+      <CustomErrorModal
+        error={error}
+        errorModal={errorModalVisible}
+        onClose={closeModalHandler}
+      />
     </KeyboardAvoidingView>
   );
 };

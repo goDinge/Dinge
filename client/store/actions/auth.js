@@ -235,7 +235,7 @@ export const updateAuthAvatar = (avatar) => {
       );
 
       const newAvatar = response.data.data;
-      await dispatch(setAuthUser(newAvatar));
+      await dispatch(setAuthUser(newAvatar)); //essentially setting new user profile - could improve
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }

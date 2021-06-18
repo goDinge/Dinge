@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
+import CustomErrorModal from '../../components/CustomErrorModal';
 
 import * as authActions from '../../store/actions/auth';
 
@@ -22,6 +23,8 @@ import Colors from '../../constants/Colors';
 
 const ResetPasswordScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(undefined);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const veriCode = useSelector((state) => state.auth.veriCode);
   const newPasswordState = useSelector((state) => state.auth.newPassword);
@@ -35,6 +38,12 @@ const ResetPasswordScreen = (props) => {
       );
     }
   }, [newPasswordState]);
+
+  useEffect(() => {
+    if (error) {
+      setErrorModalVisible(true);
+    }
+  }, [error]);
 
   const dispatch = useDispatch();
 
@@ -72,9 +81,14 @@ const ResetPasswordScreen = (props) => {
       );
       //props.navigation.navigate('Auth');
     } catch (err) {
-      console.log(err.message);
+      setError(err.message);
     }
     setIsLoading(false);
+  };
+
+  const closeModalHandler = () => {
+    setError(null);
+    setErrorModalVisible(false);
   };
 
   return (
@@ -150,6 +164,11 @@ const ResetPasswordScreen = (props) => {
           </View>
         </View>
       </ScrollView>
+      <CustomErrorModal
+        error={error}
+        errorModal={errorModalVisible}
+        onClose={closeModalHandler}
+      />
     </KeyboardAvoidingView>
   );
 };

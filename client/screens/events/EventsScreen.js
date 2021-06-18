@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as eventsActions from '../../store/actions/events';
 import Colors from '../../constants/Colors';
 import CustomButton from '../../components/CustomButton';
+import CustomErrorModal from '../../components/CustomErrorModal';
 
 import { sortEvents } from '../../helpers/sort';
 
@@ -33,6 +34,7 @@ const EventsScreen = (props) => {
   );
   const [dateChosen, setDateChosen] = useState(0);
   const [isLoading, setLoading] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const events = useSelector((state) => state.events.events);
   const authUser = useSelector((state) => state.auth.authUser);
@@ -43,6 +45,12 @@ const EventsScreen = (props) => {
   useEffect(() => {
     loadEvents();
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      setErrorModalVisible(true);
+    }
+  }, [error]);
 
   useEffect(() => {
     if (events.length > 0) {
@@ -117,6 +125,11 @@ const EventsScreen = (props) => {
     props.navigation.navigate('Event Details', event);
   };
 
+  const closeModalHandler = async () => {
+    setError(null);
+    setErrorModalVisible(false);
+  };
+
   if (isLoading) {
     return (
       <View style={styles.indicatorContainer}>
@@ -171,6 +184,11 @@ const EventsScreen = (props) => {
           </CustomButton>
         </View>
       </View>
+      <CustomErrorModal
+        error={error}
+        errorModal={errorModalVisible}
+        onClose={closeModalHandler}
+      />
     </View>
   );
 };

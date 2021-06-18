@@ -10,7 +10,6 @@ import {
   Easing,
   Dimensions,
   StyleSheet,
-  Alert,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import MapView, { Circle } from 'react-native-maps';
@@ -22,6 +21,7 @@ import CustomMarker from '../../components/CustomMarker';
 import CustomBlueMarker from '../../components/CustomBlueMarker';
 import CustomCompassIcon from '../../components/CustomCompassIcon';
 import CustomMessageModal from '../../components/CustomMessageModal';
+import CustomErrorModal from '../../components/CustomErrorModal';
 import CustomTimeFilter from '../../components/CustomTimeFilter';
 
 import Colors from '../../constants/Colors';
@@ -49,6 +49,7 @@ const MapScreen = (props) => {
   const [modalMessage, setModalMessage] = useState('');
   const [timeSelected, setTimeSelected] = useState('now');
   const [isCompassLoading, setIsCompassLoading] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -73,7 +74,7 @@ const MapScreen = (props) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+      setErrorModalVisible(true);
     }
   }, [error]);
 
@@ -219,6 +220,7 @@ const MapScreen = (props) => {
     }
     setModalMessage('');
     setModalVisible(false);
+    setErrorModalVisible(false);
   };
 
   const reloadHandler = async (location) => {
@@ -391,6 +393,11 @@ const MapScreen = (props) => {
       <CustomMessageModal
         message={modalMessage}
         messageModal={modalVisible}
+        onClose={closeModalHandler}
+      />
+      <CustomErrorModal
+        error={error}
+        errorModal={errorModalVisible}
         onClose={closeModalHandler}
       />
       <View style={styles.centeredView}>

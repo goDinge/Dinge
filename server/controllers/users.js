@@ -37,7 +37,6 @@ exports.getUserById = asyncHandler(async (req, res, next) => {
 //access   Private
 exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id);
-
   const avatar = req.file;
 
   if (!user) {
@@ -48,7 +47,8 @@ exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`No avatar found.`));
   }
 
-  let avatarUrl;
+  const oldAvatar = 'avatar/' + user.avatar.split('/').pop();
+  let newAvatarUrl;
 
   aws.config.setPromisesDependency();
   aws.config.update({
@@ -59,16 +59,14 @@ exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
 
   const s3 = new aws.S3();
 
-  //extracted the 'save to S3 process' out to a function
-  //don't need to do that
-  const upload = (avatar) => {
+  const uploadAWSImage = async (avatar) => {
     let params = {
       ACL: 'public-read',
       Bucket: process.env.BUCKET_NAME,
       Body: fs.createReadStream(avatar.path),
       Key: `avatar/${avatar.originalname}`,
     };
-    s3.upload(params, async (err, data) => {
+    await s3.upload(params, async (err, data) => {
       if (err) {
         res.json({ msg: err });
       }
@@ -76,20 +74,35 @@ exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
       fs.unlinkSync(avatar.path);
 
       if (data) {
-        //console.log(data);
-        avatarUrl = data.Location;
+        newAvatarUrl = data.Location;
         console.log(
-          'Avatar has been uploaded to S3 and URL created successfully'
+          `Image has been uploaded to S3 successfully at ${newAvatarUrl}`
         );
 
-        user.avatar = avatarUrl;
+        user.avatar = newAvatarUrl;
         await user.save();
 
         res.status(200).json({ success: true, data: user });
       }
     });
   };
-  upload(avatar);
+
+  const deleteAWSImage = async (oldAvatar) => {
+    const deleteParam = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: oldAvatar,
+    };
+
+    await s3
+      .deleteObject(deleteParam, (err, data) => {
+        if (err) console.error('err: ', err);
+        if (data) console.log('data:', data);
+      })
+      .promise();
+  };
+
+  await uploadAWSImage(avatar);
+  await deleteAWSImage(oldAvatar);
 });
 
 //desc     ADD follow user

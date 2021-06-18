@@ -28,6 +28,7 @@ import CustomCommentInput from '../../components/CustomCommentInput';
 import CustomReportModal from '../../components/CustomReportModal';
 import CustomEditModal from '../../components/CustomEditModal';
 import CustomMessageModal from '../../components/CustomMessageModal';
+import CustomErrorModal from '../../components/CustomErrorModal';
 import CustomDeleteModal from '../../components/CustomDeleteModal';
 
 import Colors from '../../constants/Colors';
@@ -56,16 +57,17 @@ const EventDetailsScreen = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
-  const [eventReportModal, setEventReportModal] = useState(false);
-  const [messageModal, setMessageModal] = useState(false);
   const [text, onChangeText] = useState(null);
-  const [editModal, setEditModal] = useState(false);
+  const [eventReportModalVisible, setEventReportModalVisible] = useState(false);
+  const [messageModalVisible, setMessageModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editInitialText, setEditInitialText] = useState('');
   const [modalMessage, setModalMessage] = useState('');
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const comments = eventState.comments;
 
@@ -80,7 +82,7 @@ const EventDetailsScreen = (props) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+      setErrorModalVisible(true);
     }
   }, [error]);
 
@@ -170,7 +172,7 @@ const EventDetailsScreen = (props) => {
 
   //Report
   const openEventReportModalHandler = () => {
-    setEventReportModal(true);
+    setEventReportModalVisible(true);
   };
 
   const reportEventHandler = async (eventId) => {
@@ -208,19 +210,26 @@ const EventDetailsScreen = (props) => {
       setError(err.message);
     }
     setIsEditLoading(false);
-    setEditModal(false);
+    setEditModalVisible(false);
     cancelEditHandler();
   };
 
   const openEditorHandler = async (id, text) => {
-    setEditModal(true);
+    setEditModalVisible(true);
     setEditCommentId(id);
     setEditInitialText(text);
   };
 
   const cancelEditHandler = () => {
-    setEditModal(false);
+    setEditModalVisible(false);
     setEditInitialText('');
+  };
+
+  const closeModalHandler = async () => {
+    setError(null);
+    setModalMessage('');
+    setMessageModalVisible(false);
+    setErrorModalVisible(false);
   };
 
   const reportCommentHandler = async (id) => {
@@ -228,7 +237,7 @@ const EventDetailsScreen = (props) => {
     try {
       await dispatch(commentActions.reportComment(id));
       setModalMessage('Thank you for reporting this event.');
-      setMessageModal(true);
+      setMessageModalVisible(true);
     } catch (err) {
       setError(err.message);
     }
@@ -330,26 +339,31 @@ const EventDetailsScreen = (props) => {
       {/*    **** MODALS ****     */}
       <CustomReportModal
         item={event}
-        itemReportModal={eventReportModal}
-        onModalVisible={setEventReportModal}
+        itemReportModal={eventReportModalVisible}
+        onModalVisible={setEventReportModalVisible}
         onReport={reportEventHandler}
       />
       <CustomEditModal
-        editModal={editModal}
+        editModal={editModalVisible}
         text={text}
         item={event}
         isEditLoading={isEditLoading}
         editInitialText={editInitialText}
         editCommentId={editCommentId}
-        onEditModal={setEditModal}
+        onEditModal={setEditModalVisible}
         onText={onChangeText}
         onEdit={editCommentHandler}
         onCancel={cancelEditHandler}
       />
       <CustomMessageModal
         message={modalMessage}
-        messageModal={messageModal}
-        onClose={setMessageModal}
+        messageModal={messageModalVisible}
+        onClose={closeModalHandler}
+      />
+      <CustomErrorModal
+        error={error}
+        errorModal={errorModalVisible}
+        onClose={closeModalHandler}
       />
       <CustomDeleteModal
         item={event}

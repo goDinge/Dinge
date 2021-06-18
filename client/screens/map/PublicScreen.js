@@ -7,12 +7,13 @@ import {
   Pressable,
   ScrollView,
   Image,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import * as userActions from '../../store/actions/user';
+
 import CustomEvent from '../../components/CustomEvent';
+import CustomErrorModal from '../../components/CustomErrorModal';
 import Colors from '../../constants/Colors';
 
 import { sortEvents } from '../../helpers/sort';
@@ -20,6 +21,7 @@ import { sortEvents } from '../../helpers/sort';
 const PublicScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const userId = props.route.params;
   const userState = useSelector((state) => state.user.user);
@@ -28,14 +30,14 @@ const PublicScreen = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (error) {
-      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
-    }
-  }, [error]);
-
-  useEffect(() => {
     loadUser(userId);
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      setErrorModalVisible(true);
+    }
+  }, [error]);
 
   const loadUser = async (user) => {
     setError(null);
@@ -59,6 +61,11 @@ const PublicScreen = (props) => {
 
   const eventDetailsHandler = (event) => {
     props.navigation.navigate('Event Details', event);
+  };
+
+  const closeModalHandler = async () => {
+    setError(null);
+    setErrorModalVisible(false);
   };
 
   const browserHandler = (url) => {
@@ -148,6 +155,11 @@ const PublicScreen = (props) => {
           </View>
         </ScrollView>
       </View>
+      <CustomErrorModal
+        error={error}
+        errorModal={errorModalVisible}
+        onClose={closeModalHandler}
+      />
     </View>
   );
 };

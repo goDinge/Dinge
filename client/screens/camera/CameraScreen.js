@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
+import * as MediaLibrary from 'expo-media-library';
 import * as imageActions from '../../store/actions/image';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -102,6 +103,7 @@ const CameraScreen = (props) => {
                 skipProcessing: true,
               });
               await dispatch(imageActions.setImage(image));
+              await MediaLibrary.saveToLibraryAsync(image.uri);
               await props.navigation.navigate('Upload');
             }
           }}

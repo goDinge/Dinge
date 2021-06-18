@@ -5,7 +5,6 @@ import {
   ScrollView,
   Dimensions,
   StyleSheet,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
@@ -23,6 +22,7 @@ import CustomCommentInput from '../../components/CustomCommentInput';
 import CustomReportModal from '../../components/CustomReportModal';
 import CustomEditModal from '../../components/CustomEditModal';
 import CustomMessageModal from '../../components/CustomMessageModal';
+import CustomErrorModal from '../../components/CustomErrorModal';
 import CustomDeleteModal from '../../components/CustomDeleteModal';
 
 import Colors from '../../constants/Colors';
@@ -49,14 +49,15 @@ const DingScreen = (props) => {
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
   const [dingReportModal, setDingReportModal] = useState(false);
-  const [messageModal, setMessageModal] = useState(false);
   const [text, onChangeText] = useState(null);
   const [editModal, setEditModal] = useState(false);
   const [editCommentId, setEditCommentId] = useState(null);
   const [editInitialText, setEditInitialText] = useState('');
+  const [messageModal, setMessageModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const comments = dingState.comments;
 
@@ -70,7 +71,7 @@ const DingScreen = (props) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+      setErrorModalVisible(true);
     }
   }, [error]);
 
@@ -111,12 +112,18 @@ const DingScreen = (props) => {
     props.navigation.navigate('Public', user);
   };
 
+  const closeModalHandler = async () => {
+    setError(null);
+    setModalMessage('');
+    setModalVisible(false);
+    setErrorModalVisible(false);
+  };
+
   //Like and Unlike
   const likeDingHandler = async (dingId, userId) => {
     setError(null);
     setIsLikeLoading(true);
-    //many Actions are dispatched here for the purpose of updating reputation in real time
-    //should refactor to improve performance
+    //updating authUser and User would update real time rep, but kills performance
     try {
       if (initLikeDing) {
         initLikeDing = false;
@@ -298,7 +305,12 @@ const DingScreen = (props) => {
       <CustomMessageModal
         message={modalMessage}
         messageModal={messageModal}
-        onClose={setMessageModal}
+        onClose={closeModalHandler}
+      />
+      <CustomErrorModal
+        error={error}
+        errorModal={errorModalVisible}
+        onClose={closeModalHandler}
       />
       <CustomDeleteModal
         item={ding}
