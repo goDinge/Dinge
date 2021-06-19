@@ -6,13 +6,11 @@ import {
   UNLIKE_COMMENT,
   REPORT_COMMENT,
 } from '../types';
-import { HOME_IP } from '@env';
+import { CURRENT_IP } from '../../serverConfigs.js';
 
 export const postComment = (text, dingId) => {
   return async (dispatch) => {
     try {
-      console.log('comment action - IP used:', HOME_IP);
-
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -22,7 +20,7 @@ export const postComment = (text, dingId) => {
       const body = JSON.stringify({ text });
 
       const response = await axios.post(
-        `${HOME_IP}/api/comments/${dingId}`,
+        `${CURRENT_IP}/api/comments/${dingId}`,
         body,
         config
       );
@@ -50,7 +48,7 @@ export const editComment = (text, commentId) => {
       const body = JSON.stringify({ text });
 
       const response = await axios.put(
-        `${HOME_IP}/api/comments/${commentId}`,
+        `${CURRENT_IP}/api/comments/${commentId}`,
         body,
         config
       );
@@ -69,7 +67,7 @@ export const editComment = (text, commentId) => {
 export const deleteComment = (commentId, dingId) => {
   return async () => {
     try {
-      await axios.delete(`${HOME_IP}/api/comments/${commentId}/${dingId}`);
+      await axios.delete(`${CURRENT_IP}/api/comments/${commentId}/${dingId}`);
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }
@@ -79,9 +77,9 @@ export const deleteComment = (commentId, dingId) => {
 export const likeComment = (commentId) => {
   return async (dispatch) => {
     try {
-      console.log('comment action - IP used: ', HOME_IP);
+      console.log('comment action - IP used: ', CURRENT_IP);
       const response = await axios.put(
-        `${HOME_IP}/api/comments/likes/${commentId}`
+        `${CURRENT_IP}/api/comments/likes/${commentId}`
       );
       const comment = response.data.data;
 
@@ -99,7 +97,7 @@ export const unlikeComment = (commentId) => {
   return async (dispatch) => {
     try {
       const response = await axios.delete(
-        `${HOME_IP}/api/comments/likes/${commentId}`
+        `${CURRENT_IP}/api/comments/likes/${commentId}`
       );
       const comment = response.data.data;
 
@@ -117,7 +115,7 @@ export const reportComment = (commentId) => {
   return async (dispatch) => {
     try {
       const response = await axios.put(
-        `${HOME_IP}/api/comments/reports/${commentId}`
+        `${CURRENT_IP}/api/comments/reports/${commentId}`
       );
       const comment = response.data.data;
 

@@ -1,13 +1,11 @@
 import axios from 'axios';
 import { GET_USER } from '../types';
-import { HOME_IP } from '@env';
+import { CURRENT_IP } from '../../serverConfigs.js';
 
 export const getUser = (userId) => {
   return async (dispatch) => {
     try {
-      console.log('user action - IP used:', HOME_IP);
-
-      const response = await axios.get(`${HOME_IP}/api/users/${userId}`);
+      const response = await axios.get(`${CURRENT_IP}/api/users/${userId}`);
       const user = response.data.data;
 
       dispatch({

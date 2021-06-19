@@ -6,13 +6,11 @@ import {
   UNLIKE_EVENT_COMMENT,
   REPORT_EVENT_COMMENT,
 } from '../types';
-import { HOME_IP } from '@env';
+import { CURRENT_IP } from '../../serverConfigs.js';
 
 export const postComment = (text, eventId) => {
   return async (dispatch) => {
     try {
-      console.log('comment action - IP used:', HOME_IP);
-
       const config = {
         headers: {
           'Content-Type': 'application/json',
@@ -22,7 +20,7 @@ export const postComment = (text, eventId) => {
       const body = JSON.stringify({ text });
 
       const response = await axios.post(
-        `${HOME_IP}/api/eventcomments/${eventId}`,
+        `${CURRENT_IP}/api/eventcomments/${eventId}`,
         body,
         config
       );
@@ -50,7 +48,7 @@ export const editComment = (text, commentId) => {
       const body = JSON.stringify({ text });
 
       const response = await axios.put(
-        `${HOME_IP}/api/eventcomments/${commentId}`,
+        `${CURRENT_IP}/api/eventcomments/${commentId}`,
         body,
         config
       );
@@ -70,7 +68,7 @@ export const deleteComment = (commentId, eventId) => {
   return async () => {
     try {
       await axios.delete(
-        `${HOME_IP}/api/eventcomments/${commentId}/${eventId}`
+        `${CURRENT_IP}/api/eventcomments/${commentId}/${eventId}`
       );
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
@@ -82,7 +80,7 @@ export const likeComment = (commentId) => {
   return async (dispatch) => {
     try {
       const response = await axios.put(
-        `${HOME_IP}/api/eventcomments/likes/${commentId}`
+        `${CURRENT_IP}/api/eventcomments/likes/${commentId}`
       );
       const comment = response.data.data;
 
@@ -100,7 +98,7 @@ export const unlikeComment = (commentId) => {
   return async (dispatch) => {
     try {
       const response = await axios.delete(
-        `${HOME_IP}/api/eventcomments/likes/${commentId}`
+        `${CURRENT_IP}/api/eventcomments/likes/${commentId}`
       );
       const comment = response.data.data;
 
@@ -118,7 +116,7 @@ export const reportComment = (commentId) => {
   return async (dispatch) => {
     try {
       const response = await axios.put(
-        `${HOME_IP}/api/eventcomments/reports/${commentId}`
+        `${CURRENT_IP}/api/eventcomments/reports/${commentId}`
       );
       const comment = response.data.data;
 

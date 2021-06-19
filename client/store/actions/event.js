@@ -6,14 +6,12 @@ import {
   UNLIKE_EVENT,
   REPORT_EVENT,
 } from '../types';
-import { HOME_IP } from '@env';
+import { CURRENT_IP } from '../../serverConfigs.js';
 
 export const getEvent = (id) => {
   return async (dispatch) => {
     try {
-      console.log('event action - IP used:', HOME_IP);
-
-      const response = await axios.get(`${HOME_IP}/api/events/${id}`);
+      const response = await axios.get(`${CURRENT_IP}/api/events/${id}`);
       const event = response.data.data;
 
       dispatch({
@@ -76,7 +74,7 @@ export const updateEvent = (formState, eventId) => {
 
     try {
       const response = await axios.put(
-        `${HOME_IP}/api/event/${eventId}`,
+        `${CURRENT_IP}/api/event/${eventId}`,
         formData,
         config
       );
@@ -95,7 +93,9 @@ export const updateEvent = (formState, eventId) => {
 export const likeEvent = (eventId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.put(`${HOME_IP}/api/event/likes/${eventId}`);
+      const response = await axios.put(
+        `${CURRENT_IP}/api/event/likes/${eventId}`
+      );
       const event = response.data.data;
 
       dispatch({
@@ -112,7 +112,7 @@ export const unlikeEvent = (eventId) => {
   return async (dispatch) => {
     try {
       const response = await axios.delete(
-        `${HOME_IP}/api/event/likes/${eventId}`
+        `${CURRENT_IP}/api/event/likes/${eventId}`
       );
       const event = response.data.data;
 
@@ -130,7 +130,7 @@ export const reportEventById = (eventId) => {
   return async (dispatch) => {
     try {
       const response = await axios.put(
-        `${HOME_IP}/api/event/reports/${eventId}`
+        `${CURRENT_IP}/api/event/reports/${eventId}`
       );
       const event = response.data.data;
 

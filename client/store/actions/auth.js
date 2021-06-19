@@ -11,7 +11,7 @@ import {
   SET_NEW_PASSWORD,
   LOGOUT,
 } from '../types';
-import { HOME_IP } from '@env';
+import { CURRENT_IP } from '../../serverConfigs.js';
 
 let timer;
 const oneMonth = 30 * 24 * 60 * 60 * 1000;
@@ -36,7 +36,7 @@ export const setAuthUser = (resData) => {
 export const setLastLogin = () => {
   return async () => {
     try {
-      await axios.put(`${HOME_IP}/api/auth/lastlogin`);
+      await axios.put(`${CURRENT_IP}/api/auth/lastlogin`);
     } catch (err) {
       return;
     }
@@ -46,8 +46,7 @@ export const setLastLogin = () => {
 export const getAuthUser = () => {
   return async (dispatch) => {
     try {
-      console.log('auth action - IP used:', HOME_IP);
-      const response = await axios.get(`${HOME_IP}/api/auth/me`);
+      const response = await axios.get(`${CURRENT_IP}/api/auth/me`);
       if (!response) {
         throw new Error('You are not logged in.');
       }
@@ -82,7 +81,11 @@ export const updateProfile = (profile) => {
     };
 
     try {
-      const response = await axios.put(`${HOME_IP}/api/auth/me`, body, config);
+      const response = await axios.put(
+        `${CURRENT_IP}/api/auth/me`,
+        body,
+        config
+      );
       const profile = response.data.data.user;
 
       dispatch({
@@ -114,7 +117,7 @@ export const changePassword = (password) => {
     };
 
     try {
-      await axios.put(`${HOME_IP}/api/auth/password`, body, config);
+      await axios.put(`${CURRENT_IP}/api/auth/password`, body, config);
       // const profile = response.data.data;
       // console.log('authActions changePassword: ', profile);
 
@@ -140,7 +143,7 @@ export const forgotPassword = (email) => {
 
     try {
       const response = await axios.post(
-        `${HOME_IP}/api/auth/forgotpassword`,
+        `${CURRENT_IP}/api/auth/forgotpassword`,
         body,
         config
       );
@@ -169,7 +172,7 @@ export const verifyCode = (code) => {
 
     try {
       const response = await axios.post(
-        `${HOME_IP}/api/auth/forgotpassword/${code}`,
+        `${CURRENT_IP}/api/auth/forgotpassword/${code}`,
         body,
         config
       );
@@ -204,7 +207,7 @@ export const setNewPassword = (password, passwordConfirm, veriCode) => {
 
     try {
       const response = await axios.put(
-        `${HOME_IP}/api/auth/forgotpassword/${veriCode}`,
+        `${CURRENT_IP}/api/auth/forgotpassword/${veriCode}`,
         body,
         config
       );
@@ -239,7 +242,7 @@ export const updateAuthAvatar = (avatar) => {
         },
       };
       const response = await axios.put(
-        `${HOME_IP}/api/users/me`,
+        `${CURRENT_IP}/api/users/me`,
         formData,
         config
       );
@@ -255,7 +258,7 @@ export const updateAuthAvatar = (avatar) => {
 export const deleteAccount = () => {
   return async () => {
     try {
-      await axios.delete(`${HOME_IP}/api/auth/me`);
+      await axios.delete(`${CURRENT_IP}/api/auth/me`);
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }
@@ -272,7 +275,11 @@ export const register = (name, email, password) => {
     const body = JSON.stringify({ name, email, password });
 
     try {
-      const response = await axios.post(`${HOME_IP}/api/auth/`, body, config);
+      const response = await axios.post(
+        `${CURRENT_IP}/api/auth/`,
+        body,
+        config
+      );
 
       const resData = response.data;
       await dispatch(
@@ -303,7 +310,7 @@ export const login = (email, password) => {
 
     try {
       const response = await axios.post(
-        `${HOME_IP}/api/auth/login`,
+        `${CURRENT_IP}/api/auth/login`,
         body,
         config
       );

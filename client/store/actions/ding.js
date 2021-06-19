@@ -6,14 +6,12 @@ import {
   REPORT_DING,
   UPDATE_DING_DESCRIPTION,
 } from '../types';
-import { HOME_IP } from '@env';
+import { CURRENT_IP } from '../../serverConfigs.js';
 
 export const getDing = (dingId) => {
   return async (dispatch) => {
     try {
-      console.log('ding action - IP used:', HOME_IP);
-
-      const response = await axios.get(`${HOME_IP}/api/dinge/${dingId}`);
+      const response = await axios.get(`${CURRENT_IP}/api/dinge/${dingId}`);
       const ding = response.data.data;
 
       dispatch({
@@ -29,7 +27,9 @@ export const getDing = (dingId) => {
 export const likeDing = (dingId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.put(`${HOME_IP}/api/ding/likes/${dingId}`);
+      const response = await axios.put(
+        `${CURRENT_IP}/api/ding/likes/${dingId}`
+      );
       const ding = response.data.data;
 
       dispatch({
@@ -46,7 +46,7 @@ export const unlikeDing = (dingId) => {
   return async (dispatch) => {
     try {
       const response = await axios.delete(
-        `${HOME_IP}/api/ding/likes/${dingId}`
+        `${CURRENT_IP}/api/ding/likes/${dingId}`
       );
       const ding = response.data.data;
 
@@ -63,7 +63,9 @@ export const unlikeDing = (dingId) => {
 export const reportDingById = (dingId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.put(`${HOME_IP}/api/ding/reports/${dingId}`);
+      const response = await axios.put(
+        `${CURRENT_IP}/api/ding/reports/${dingId}`
+      );
       const ding = response.data.data;
 
       dispatch({
@@ -88,7 +90,7 @@ export const updateDingDescription = (text, dingId) => {
       const body = JSON.stringify({ text });
 
       const response = await axios.put(
-        `${HOME_IP}/api/ding/${dingId}`,
+        `${CURRENT_IP}/api/ding/${dingId}`,
         body,
         config
       );

@@ -5,16 +5,14 @@ import {
   CREATE_EVENT,
   UPDATE_EVENT_LOCATION,
 } from '../types';
-import { HOME_IP } from '@env';
+import { CURRENT_IP } from '../../serverConfigs.js';
 
 const settingConfigs = require('../../settingConfigs.json');
 
 export const getEventsByAuth = () => {
   return async (dispatch) => {
     try {
-      console.log('events action - IP used:', HOME_IP);
-
-      const response = await axios.get(`${HOME_IP}/api/events/authUser`);
+      const response = await axios.get(`${CURRENT_IP}/api/events/authUser`);
       const events = response.data.data;
 
       dispatch({
@@ -30,11 +28,11 @@ export const getEventsByAuth = () => {
 export const getLocalEvents = (location) => {
   return async (dispatch) => {
     try {
-      console.log('getLocalEvents action - IP used: ', HOME_IP);
+      console.log('getLocalEvents action - IP used: ', CURRENT_IP);
       const distance = settingConfigs[0].radius;
 
       const response = await axios.get(
-        `${HOME_IP}/api/events/local/${distance}/location?longitude=${location.coords.longitude}&latitude=${location.coords.latitude}`
+        `${CURRENT_IP}/api/events/local/${distance}/location?longitude=${location.coords.longitude}&latitude=${location.coords.latitude}`
       );
       const events = response.data.data;
 
@@ -54,7 +52,7 @@ export const updateEventLocation = (eventId, location) => {
   return async (dispatch) => {
     try {
       const response = await axios.put(
-        `${HOME_IP}/api/event/${eventId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
+        `${CURRENT_IP}/api/event/${eventId}/location?longitude=${location.longitude}&latitude=${location.latitude}`
       );
 
       const updatedEvent = response.data.data;
@@ -109,7 +107,7 @@ export const createEvent = (formState) => {
 
     try {
       const response = await axios.post(
-        `${HOME_IP}/api/events`,
+        `${CURRENT_IP}/api/events`,
         formData,
         config
       );
@@ -128,7 +126,9 @@ export const createEvent = (formState) => {
 export const deleteEventById = (eventId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.delete(`${HOME_IP}/api/events/${eventId}`);
+      const response = await axios.delete(
+        `${CURRENT_IP}/api/events/${eventId}`
+      );
       const events = response.data.data;
 
       dispatch({
