@@ -80,6 +80,8 @@ exports.updateCurrentUserAvatar = asyncHandler(async (req, res, next) => {
         );
 
         user.avatar = newAvatarUrl;
+        user.lastModifiedAt = Date.now();
+
         await user.save();
 
         res.status(200).json({ success: true, data: user });

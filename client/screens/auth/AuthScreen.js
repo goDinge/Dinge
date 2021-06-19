@@ -2,7 +2,6 @@ import React, { useState, useEffect, useReducer, useCallback } from 'react';
 import {
   View,
   Text,
-  Alert,
   ScrollView,
   Platform,
   ActivityIndicator,
@@ -78,7 +77,7 @@ const Auth = (props) => {
     if (isSignup) {
       if (formState.inputValues.password !== formState.inputValues.password2) {
         setError(
-          'Password Invalid Please make sure your confirm password is identical to your password'
+          'Password Invalid. Please make sure your confirm password is identical to your password'
         );
         setErrorModalVisible(true);
         return;

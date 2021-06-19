@@ -81,6 +81,21 @@ exports.getAuthUser = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, data: user });
 });
 
+//desc     UPDATE last login date without Login or Register
+//route    PUT /api/auth/lastlogin
+//access   Private
+exports.lastLogin = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    return next(new ErrorResponse(`No user found.`));
+  }
+
+  user.lastLoginAt = Date.now();
+  await user.save();
+
+  res.status(200).json({ success: true, data: user });
+});
+
 //desc     EDIT auth user
 //route    PUT /api/auth/me
 //access   Private
@@ -290,7 +305,7 @@ exports.deleteAuthUser = asyncHandler(async (req, res, next) => {
 });
 
 /*** HELPER ***/
-const sendTokenResponse = (user, statusCode, res) => {
+const sendTokenResponse = async (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
   const options = {
     expires: new Date(
@@ -298,6 +313,9 @@ const sendTokenResponse = (user, statusCode, res) => {
     ),
     //httpOnly: true,
   };
+
+  user.lastLoginAt = Date.now();
+  await user.save();
 
   // if (process.env.NODE_ENV === 'production') {
   //   options.secure = true;

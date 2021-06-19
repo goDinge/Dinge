@@ -33,6 +33,16 @@ export const setAuthUser = (resData) => {
   };
 };
 
+export const setLastLogin = () => {
+  return async () => {
+    try {
+      await axios.put(`${HOME_IP}/api/auth/lastlogin`);
+    } catch (err) {
+      return;
+    }
+  };
+};
+
 export const getAuthUser = () => {
   return async (dispatch) => {
     try {

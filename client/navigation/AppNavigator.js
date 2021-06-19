@@ -1,18 +1,20 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthNavigator } from './MapNavigator';
 import { BottomTabNavigator } from '../navigation/MapNavigator';
 import Startup from '../screens/Startup';
 
+import * as authActions from '../store/actions/auth';
+
 const AppNavigator = () => {
   const isAuth = useSelector((state) => !!state.auth.token);
   const didTryAutoLogin = useSelector((state) => state.auth.didTryAutoLogin);
-
   const authUser = useSelector((state) => state.auth.authUser);
-  // if (isAuth) {
-  //   console.log('auth-user', );
-  // }
+
+  const dispatch = useDispatch();
+
+  if (isAuth) dispatch(authActions.setLastLogin());
 
   return (
     <NavigationContainer>
