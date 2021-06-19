@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     width: '90%',
     height: '93%',
+    marginTop: 15,
     paddingVertical: 15,
     paddingHorizontal: 15,
     borderRadius: 10,

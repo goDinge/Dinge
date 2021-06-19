@@ -46,7 +46,7 @@ export const setLastLogin = () => {
 export const getAuthUser = () => {
   return async (dispatch) => {
     try {
-      console.log('auth action - IP used:  ', HOME_IP);
+      console.log('auth action - IP used:', HOME_IP);
       const response = await axios.get(`${HOME_IP}/api/auth/me`);
       if (!response) {
         throw new Error('You are not logged in.');

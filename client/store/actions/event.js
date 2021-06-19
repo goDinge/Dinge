@@ -11,7 +11,7 @@ import { HOME_IP } from '@env';
 export const getEvent = (id) => {
   return async (dispatch) => {
     try {
-      console.log('event action - IP used:  ', HOME_IP);
+      console.log('event action - IP used:', HOME_IP);
 
       const response = await axios.get(`${HOME_IP}/api/events/${id}`);
       const event = response.data.data;

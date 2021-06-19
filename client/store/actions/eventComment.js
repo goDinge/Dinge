@@ -11,7 +11,7 @@ import { HOME_IP } from '@env';
 export const postComment = (text, eventId) => {
   return async (dispatch) => {
     try {
-      console.log('comment action - IP used:  ', HOME_IP);
+      console.log('comment action - IP used:', HOME_IP);
 
       const config = {
         headers: {

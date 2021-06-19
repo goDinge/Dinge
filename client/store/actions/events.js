@@ -12,7 +12,7 @@ const settingConfigs = require('../../settingConfigs.json');
 export const getEventsByAuth = () => {
   return async (dispatch) => {
     try {
-      console.log('events action - IP used:  ', HOME_IP);
+      console.log('events action - IP used:', HOME_IP);
 
       const response = await axios.get(`${HOME_IP}/api/events/authUser`);
       const events = response.data.data;
