@@ -572,12 +572,14 @@ const CreateEventScreen = (props) => {
               >
                 <Ionicons
                   name="calendar-outline"
+                  color={datePicked ? Colors.secondary : 'black'}
                   size={30}
                   onPress={showDatepicker}
                   style={{ marginRight: 40 }}
                 />
                 <SimpleLineIcons
                   name="clock"
+                  color={timePicked ? Colors.secondary : 'black'}
                   size={30}
                   onPress={showTimepicker}
                 />
