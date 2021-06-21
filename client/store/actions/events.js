@@ -28,7 +28,6 @@ export const getEventsByAuth = () => {
 export const getLocalEvents = (location) => {
   return async (dispatch) => {
     try {
-      console.log('getLocalEvents action - IP used: ', CURRENT_IP);
       const distance = settingConfigs[0].radius;
 
       const response = await axios.get(

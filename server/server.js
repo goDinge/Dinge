@@ -1,9 +1,11 @@
 const express = require('express');
-const path = require('path');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./db/db');
 const errorHandler = require('./middleware/error');
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const rateLimit = require('express-rate-limit');
 
 //.env setup
 dotenv.config({ path: '.env' });
@@ -33,6 +35,19 @@ app.get('/', (req, res) => {
   console.log('Route connected');
   res.send('Route connected');
 });
+
+//set security headers
+app.use(helmet());
+
+//prevent cross site attacks
+app.use(xss());
+
+//rate limit
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100, // limit each IP to 100 requests per windowMs
+});
+app.use(limiter);
 
 //Mount routes
 app.use('/api/auth', auth);

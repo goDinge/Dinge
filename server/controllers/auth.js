@@ -7,6 +7,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const asyncHandler = require('../middleware/async');
 const sgMail = require('@sendgrid/mail');
+const sanitize = require('mongo-sanitize');
+
 
 //desc    REGISTER user
 //route   POST /api/auth
@@ -45,6 +47,8 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
 //access  public
 exports.login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
+  const cleanEmail = sanitize(email);
+  const cleanPassword = sanitize(password);
 
   //Validate email and password
   if (!email || !password) {
@@ -52,14 +56,14 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   //Check for user
-  const user = await User.findOne({ email }).select('+password'); //need to see password for login
+  const user = await User.findOne({ email: cleanEmail }).select('+password'); //need to see password for login
 
   if (!user) {
     return next(new ErrorResponse('Invalid email', 401));
   }
 
   //Check if password matches
-  const isMatch = await user.matchPassword(password);
+  const isMatch = await user.matchPassword(cleanPassword);
 
   if (!isMatch) {
     return next(new ErrorResponse('Invalid password', 401));
