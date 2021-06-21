@@ -757,7 +757,7 @@ const CreateEventScreen = (props) => {
             value={date}
             mode={mode}
             is24Hour={true}
-            display="default"
+            display={mode === 'date' ? 'default' : 'spinner'}
             onChange={onDateChange}
             minimumDate={Date.now()}
           />

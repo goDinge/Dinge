@@ -82,7 +82,7 @@ const UploadScreen = (props) => {
     const lng = location.coords.longitude;
 
     await dispatch(dingeActions.postDing(text, lat, lng, awsImage, awsThumb));
-    await dispatch(dingeActions.getDinge());
+    await dispatch(dingeActions.getLocalDinge(location));
     await dispatch(imageActions.resetImage(''));
   };
 
