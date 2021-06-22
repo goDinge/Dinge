@@ -129,6 +129,10 @@ const ProfileScreen = (props) => {
     WebBrowser.openBrowserAsync('https://' + url);
   };
 
+  const toPrivacyHandler = () => {
+    props.navigation.navigate('Privacy');
+  };
+
   const logout = async () => {
     await dispatch(authActions.logout());
   };
@@ -215,6 +219,11 @@ const ProfileScreen = (props) => {
           </View>
           <View style={styles.bottomContainer}>
             <View style={styles.buttonContainer}>
+              <CustomButton style={styles.button} onSelect={toPrivacyHandler}>
+                <Text style={styles.buttonText}>Privacy</Text>
+              </CustomButton>
+            </View>
+            <View style={styles.buttonContainer}>
               <CustomButton style={styles.button} onSelect={logout}>
                 <Text style={styles.buttonText}>Log out</Text>
               </CustomButton>
@@ -249,7 +258,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     width: '90%',
     height: '93%',
-    marginTop: 15,
+    marginVertical: 15,
     paddingVertical: 15,
     paddingHorizontal: 15,
     borderRadius: 10,
@@ -358,7 +367,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
   buttonContainer: {
-    marginVertical: 15,
+    marginTop: 15,
     alignItems: 'center',
   },
   button: {

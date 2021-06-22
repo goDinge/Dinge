@@ -22,6 +22,7 @@ import ResetPasswordScreen from '../screens/auth/ResetPasswordScreen';
 import SocialScreen from '../screens/SocialScreen';
 import ProfileScreen from '../screens/user/ProfileScreen';
 import ProfileEditScreen from '../screens/user/ProfileEditScreen';
+import PrivacyScreen from '../screens/user/PrivacyScreen';
 import EventsScreen from '../screens/events/EventsScreen';
 import EventDetailsScreen from '../screens/events/EventDetailsScreen';
 import CreateEventScreen from '../screens/events/CreateEventScreen';
@@ -231,6 +232,11 @@ export const ProfileNavigator = () => {
         name="Profile Edit"
         component={ProfileEditScreen}
         options={{ headerTitle: 'Profile Edit' }}
+      />
+      <ProfileStackNavigator.Screen
+        name="Privacy"
+        component={PrivacyScreen}
+        options={{ headerTitle: 'Privacy' }}
       />
       <ProfileStackNavigator.Screen
         name="Create Event"
