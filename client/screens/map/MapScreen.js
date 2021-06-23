@@ -353,7 +353,7 @@ const MapScreen = (props) => {
         />
         <CustomTimeFilter
           name="today"
-          text="Later Today"
+          text="Later"
           timeSelected={timeSelected}
           onSelect={timeToday}
         />

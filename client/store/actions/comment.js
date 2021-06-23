@@ -77,7 +77,6 @@ export const deleteComment = (commentId, dingId) => {
 export const likeComment = (commentId) => {
   return async (dispatch) => {
     try {
-      console.log('comment action - IP used: ', CURRENT_IP);
       const response = await axios.put(
         `${CURRENT_IP}/api/comments/likes/${commentId}`
       );

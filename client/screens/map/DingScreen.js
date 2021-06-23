@@ -115,7 +115,7 @@ const DingScreen = (props) => {
   const closeModalHandler = async () => {
     setError(null);
     setModalMessage('');
-    setModalVisible(false);
+    setMessageModal(false);
     setErrorModalVisible(false);
   };
 
@@ -180,6 +180,11 @@ const DingScreen = (props) => {
 
   //Comment
   const postCommentHandler = async (text, dingId) => {
+    if (!text) {
+      setModalMessage('Please type something');
+      setMessageModal(true);
+      return;
+    }
     setError(null);
     setIsCommentLoading(true);
     try {
@@ -223,7 +228,7 @@ const DingScreen = (props) => {
     setError(null);
     try {
       await dispatch(commentActions.reportComment(id));
-      setModalMessage('Thank you for reporting this ding.');
+      setModalMessage('Thank you for reporting this comment.');
       setMessageModal(true);
     } catch (err) {
       setError(err.message);

@@ -168,7 +168,7 @@ export const EventsNavigator = () => {
       <EventsStackNavigator.Screen
         name="Create Event"
         component={CreateEventScreen}
-        options={{ headerTitle: 'Create / Edit Event' }}
+        options={{ headerTitle: 'Create Event' }}
       />
     </EventsStackNavigator.Navigator>
   );
@@ -236,7 +236,7 @@ export const ProfileNavigator = () => {
       <ProfileStackNavigator.Screen
         name="Privacy"
         component={PrivacyScreen}
-        options={{ headerTitle: 'Privacy' }}
+        options={{ headerTitle: 'Privacy Policy' }}
       />
       <ProfileStackNavigator.Screen
         name="Create Event"

@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
-  Alert,
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
@@ -21,18 +20,13 @@ const CustomCommentInput = (props) => {
         onChangeText={onText}
         value={text}
         multiline={true}
+        blurOnSubmit={true}
         placeholder="write comment"
       />
       <View style={styles.postButtonContainer}>
-        {!text ? (
-          <CustomButton
-            style={styles.postButton}
-            onSelect={() => Alert.alert('Please type something')}
-          >
-            <Text style={styles.postButtonText}>Post</Text>
-          </CustomButton>
-        ) : isCommentLoading ? (
+        {isCommentLoading ? (
           <CustomButton style={styles.postButton}>
+            <Text style={styles.postButtonText}>Posting... </Text>
             <ActivityIndicator
               color="white"
               size="small"
@@ -54,12 +48,11 @@ const CustomCommentInput = (props) => {
 
 const styles = StyleSheet.create({
   commentsInputContainer: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 20,
   },
   commentsInput: {
-    width: '80%',
+    width: '100%',
     backgroundColor: Colors.lightBlue,
     borderRadius: 10,
     borderColor: '#ddd',
@@ -70,8 +63,8 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-light',
   },
   postButtonContainer: {
-    width: 50,
-    marginLeft: 10,
+    width: '100%',
+    marginTop: 10,
   },
   buttonContainer: {
     width: 170,
@@ -80,7 +73,9 @@ const styles = StyleSheet.create({
   postButton: {
     width: '100%',
     backgroundColor: Colors.secondary,
-    borderRadius: 8,
+    borderRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   postButtonText: {
     color: 'white',

@@ -185,14 +185,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   iconDingThumb: {
-    marginRight: 12,
-    padding: 3,
+    marginRight: 5,
+    paddingVertical: 1,
+    paddingHorizontal: 3,
   },
   iconActInd: {
-    marginRight: 10,
+    marginRight: 3,
     paddingRight: 5,
     paddingLeft: 7,
-    justifyContent: 'center',
+    top: 3,
     alignItems: 'center',
   },
   iconClose: {
@@ -203,8 +204,7 @@ const styles = StyleSheet.create({
     fontFamily: 'cereal-bold',
     color: 'black',
     fontSize: 20,
-    marginRight: 12,
-    padding: 3,
+    paddingHorizontal: 3,
   },
   userName: {
     fontFamily: 'cereal-bold',

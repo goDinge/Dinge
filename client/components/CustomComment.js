@@ -77,6 +77,7 @@ const CustomComment = (props) => {
     } catch (err) {
       setError(err.message);
     }
+    setIsCommentDeleteLoading(false);
   };
 
   return (
@@ -178,6 +179,11 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
     top: 2,
   },
+  miniLikesCount: {
+    fontSize: 13,
+    top: 1,
+    fontFamily: 'cereal-book',
+  },
   description: {
     fontFamily: 'cereal-light',
     fontSize: 16,
@@ -219,18 +225,13 @@ const styles = StyleSheet.create({
     zIndex: 1,
     right: 5,
     bottom: -9,
-    width: 36,
+    width: 39,
     flexDirection: 'row',
     backgroundColor: 'white',
     paddingVertical: 3,
     borderRadius: 10,
     borderWidth: 0.5,
     borderColor: '#777',
-  },
-  miniLikesCount: {
-    fontSize: 14,
-    marginRight: 3,
-    fontFamily: 'cereal-book',
   },
 });
 

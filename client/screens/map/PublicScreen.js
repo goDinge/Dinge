@@ -231,12 +231,11 @@ const styles = StyleSheet.create({
   },
   socialsContainer: {
     width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
   },
   socialBox: {
-    marginBottom: 10,
     alignItems: 'center',
+    marginBottom: 20,
   },
   socials: {
     width: 90,
@@ -268,8 +267,8 @@ const styles = StyleSheet.create({
   socialText: {
     textAlign: 'left',
     fontFamily: 'cereal-book',
-    fontSize: 16,
-    color: '#777',
-    top: 30,
+    fontSize: 14,
+    color: '#aaa',
+    top: 5,
   },
 });

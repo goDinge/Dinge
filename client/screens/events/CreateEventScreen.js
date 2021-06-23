@@ -728,14 +728,16 @@ const CreateEventScreen = (props) => {
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Text style={styles.modalText}>Event Created!</Text>
+                <Text style={styles.modalText}>
+                  {editedEvent ? 'Event Edited!' : 'Event Created!'}
+                </Text>
                 <View style={styles.buttonContainer}>
                   {editedEvent ? (
                     <CustomButton
                       onSelect={() => toEventDetailsHandler(updatedEvent)}
                     >
                       <Text style={styles.locateOnMapText}>
-                        Go see your updated event
+                        Go See Your Updated Event
                       </Text>
                     </CustomButton>
                   ) : (
@@ -743,7 +745,7 @@ const CreateEventScreen = (props) => {
                       onSelect={() => toEventDetailsHandler(eventToPass)}
                     >
                       <Text style={styles.locateOnMapText}>
-                        Go see your new event
+                        Go See Your New Event
                       </Text>
                     </CustomButton>
                   )}

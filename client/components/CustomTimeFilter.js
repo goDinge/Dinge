@@ -1,10 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Image, Pressable, StyleSheet, Text } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { Marker } from 'react-native-maps';
-
-import * as dingeActions from '../store/actions/dinge';
-import * as eventsActions from '../store/actions/events';
+import React from 'react';
+import { View, Pressable, StyleSheet, Text } from 'react-native';
 
 import Colors from '../constants/Colors';
 
@@ -52,15 +47,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
     fontFamily: 'cereal-black',
-    fontSize: 12,
+    fontSize: 11,
   },
 });
 
 const stylesClicked = StyleSheet.create({
   timeIcon: {
-    height: 60,
-    width: 60,
-    borderRadius: 30,
+    height: 64,
+    width: 64,
+    borderRadius: 32,
     borderWidth: 1.5,
     borderColor: Colors.primary,
     marginHorizontal: 10,
@@ -82,7 +77,7 @@ const stylesClicked = StyleSheet.create({
     textAlign: 'center',
     color: Colors.primary,
     fontFamily: 'cereal-black',
-    fontSize: 14,
+    fontSize: 12,
   },
 });
 
