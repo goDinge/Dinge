@@ -139,7 +139,11 @@ export const reportEventById = (eventId) => {
         event: event,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      if (!err.response) {
+        throw new Error('Cannot connect with server. Please try again.');
+      } else {
+        throw new Error(err.response.data);
+      }
     }
   };
 };

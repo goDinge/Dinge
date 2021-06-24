@@ -162,12 +162,8 @@ exports.reportEventCommentById = asyncHandler(async (req, res, next) => {
   if (!commentReports.includes(user.id)) {
     commentReports.push(user.id);
   } else {
-    return next(
-      new ErrorResponse(
-        'You have previously reported this Comment. Thanks.',
-        400
-      )
-    );
+    res.status(400).send('You have previously reported this comment. Thanks.');
+    return;
   }
 
   commentUser.reputation =

@@ -131,7 +131,7 @@ const EventDetailsScreen = (props) => {
   };
 
   //Like and Unlike
-  const likeEventHandler = async (eventId, userId) => {
+  const likeEventHandler = async (eventId) => {
     setError(null);
     setIsLikeLoading(true);
     try {
@@ -179,6 +179,8 @@ const EventDetailsScreen = (props) => {
     setError(null);
     try {
       await dispatch(eventActions.reportEventById(eventId));
+      setModalMessage('Event reported!');
+      setMessageModal(true);
     } catch (err) {
       setError(err.message);
     }
@@ -236,7 +238,7 @@ const EventDetailsScreen = (props) => {
     setError(null);
     try {
       await dispatch(commentActions.reportComment(id));
-      setModalMessage('Thank you for reporting this event.');
+      setModalMessage('Thank you for reporting this comment.');
       setMessageModalVisible(true);
     } catch (err) {
       setError(err.message);
@@ -339,6 +341,7 @@ const EventDetailsScreen = (props) => {
       {/*    **** MODALS ****     */}
       <CustomReportModal
         item={event}
+        type="event"
         itemReportModal={eventReportModalVisible}
         onModalVisible={setEventReportModalVisible}
         onReport={reportEventHandler}

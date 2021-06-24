@@ -85,9 +85,8 @@ exports.reportEvent = asyncHandler(async (req, res, next) => {
   if (!eventReports.includes(user.id)) {
     eventReports.push(user.id);
   } else {
-    return next(
-      new ErrorResponse('You have previously reported this event. Thanks.', 400)
-    );
+    res.status(400).send('You have previously reported this event. Thanks.');
+    return;
   }
 
   eventUser.reputation =
@@ -275,7 +274,7 @@ exports.updateEvent = asyncHandler(async (req, res, next) => {
           {
             $set: {
               eventName,
-              status,
+              status: 'active',
               date: dateParsed,
               endDate,
               eventPic: eventPicUrl,

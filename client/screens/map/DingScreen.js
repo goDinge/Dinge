@@ -44,6 +44,7 @@ const DingScreen = (props) => {
   }
 
   const [error, setError] = useState(undefined);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
@@ -57,7 +58,6 @@ const DingScreen = (props) => {
   const [modalMessage, setModalMessage] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const comments = dingState.comments;
 
@@ -173,6 +173,8 @@ const DingScreen = (props) => {
     setError(null);
     try {
       await dispatch(dingActions.reportDingById(dingId));
+      setModalMessage('Ding reported!');
+      setMessageModal(true);
     } catch (err) {
       setError(err.message);
     }
@@ -291,6 +293,7 @@ const DingScreen = (props) => {
       {/*    **** MODALS ****     */}
       <CustomReportModal
         item={ding}
+        type="ding"
         itemReportModal={dingReportModal}
         onModalVisible={setDingReportModal}
         onReport={reportDingHandler}

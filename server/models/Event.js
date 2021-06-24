@@ -14,7 +14,6 @@ const EventSchema = new mongoose.Schema({
     type: String,
     enum: ['active', 'inactive'],
     default: 'active',
-    required: true,
   },
   date: {
     type: Date,

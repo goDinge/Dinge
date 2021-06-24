@@ -8,8 +8,7 @@ import * as eventCommentActions from '../store/actions/eventComment';
 import * as dingActions from '../store/actions/ding';
 import * as eventActions from '../store/actions/event';
 
-//import CustomMessageModal from '../components/CustomMessageModal';
-
+import CustomErrorModal from './CustomErrorModal';
 import Colors from '../constants/Colors';
 
 const CustomComment = (props) => {
@@ -17,6 +16,7 @@ const CustomComment = (props) => {
     props;
 
   const [error, setError] = useState(undefined);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
   const [isCommentDeleteLoading, setIsCommentDeleteLoading] = useState(false);
 
@@ -31,7 +31,7 @@ const CustomComment = (props) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
+      setErrorModalVisible(true);
     }
   }, [error]);
 
@@ -78,6 +78,11 @@ const CustomComment = (props) => {
       setError(err.message);
     }
     setIsCommentDeleteLoading(false);
+  };
+
+  const closeModalHandler = async () => {
+    setError(null);
+    setErrorModalVisible(false);
   };
 
   return (
@@ -169,6 +174,11 @@ const CustomComment = (props) => {
           />
         </View>
       )}
+      <CustomErrorModal
+        error={error}
+        errorModal={errorModalVisible}
+        onClose={closeModalHandler}
+      />
     </View>
   );
 };

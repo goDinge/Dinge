@@ -84,9 +84,8 @@ exports.reportDing = asyncHandler(async (req, res, next) => {
   if (!dingReports.includes(user.id)) {
     dingReports.push(user.id);
   } else {
-    return next(
-      new ErrorResponse('You have previously reported this Ding. Thanks.', 400)
-    );
+    res.status(400).send('You have previously reported this Ding. Thanks.');
+    return;
   }
 
   dingUser.reputation =
@@ -200,10 +199,6 @@ exports.updateDingLocation = asyncHandler(async (req, res, next) => {
   await ding.save();
 
   res.status(200).json({ success: true, data: ding });
-
-  // if (userId != ding.user) {
-  //   return next(new ErrorResponse('You are not authorized.', 400));
-  // }
 });
 
 //desc    UPDATE Ding's description by ID
