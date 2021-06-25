@@ -139,7 +139,7 @@ exports.getLocalDinge = asyncHandler(async (req, res, next) => {
   });
 
   if (!dinge) {
-    return next(ErrorResponse('No nearby dinge found', 400));
+    return next(ErrorResponse('No nearby ding found', 400));
   }
 
   res.status(200).json({ success: true, number: dinge.length, data: dinge });

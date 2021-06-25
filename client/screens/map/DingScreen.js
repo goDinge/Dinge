@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Image,
@@ -6,6 +6,9 @@ import {
   Dimensions,
   StyleSheet,
   ActivityIndicator,
+  Animated,
+  LayoutAnimation,
+  UIManager,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -60,6 +63,23 @@ const DingScreen = (props) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const comments = dingState.comments;
+
+  if (
+    Platform.OS === 'android' &&
+    UIManager.setLayoutAnimationEnabledExperimental
+  ) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+
+  const fadeAnimation = (duration) => {
+    LayoutAnimation.configureNext(
+      LayoutAnimation.create(
+        duration,
+        LayoutAnimation.Types.easeInEaseOut,
+        LayoutAnimation.Properties.opacity
+      )
+    );
+  };
 
   const dispatch = useDispatch();
 
@@ -181,17 +201,26 @@ const DingScreen = (props) => {
   };
 
   //Comment
+  const fadeInAnim = useRef(new Animated.Value(0)).current;
+  const fadeInValues = {
+    toValue: 1,
+    duration: 2000,
+    useNativeDriver: true,
+  };
+
   const postCommentHandler = async (text, dingId) => {
     if (!text) {
       setModalMessage('Please type something');
       setMessageModal(true);
       return;
     }
+
     setError(null);
     setIsCommentLoading(true);
     try {
       await dispatch(commentActions.postComment(text, dingId));
       await dispatch(dingActions.getDing(dingId));
+      Animated.timing(fadeInAnim, fadeInValues).start();
     } catch (err) {
       setError(err.message);
     }
@@ -276,16 +305,18 @@ const DingScreen = (props) => {
           {comments &&
             comments.map((item, index) => {
               return (
-                <CustomComment
-                  type="ding"
-                  key={index}
-                  comment={item}
-                  authUser={authUser}
-                  item={ding}
-                  onProfile={() => publicProfileHandler(item.userId)}
-                  onEditor={openEditorHandler}
-                  onFlag={reportCommentHandler}
-                />
+                <Animated.View opacity={1} key={index}>
+                  <CustomComment
+                    type="ding"
+                    //key={index}
+                    comment={item}
+                    authUser={authUser}
+                    item={ding}
+                    onProfile={() => publicProfileHandler(item.userId)}
+                    onEditor={openEditorHandler}
+                    onFlag={reportCommentHandler}
+                  />
+                </Animated.View>
               );
             })}
         </View>

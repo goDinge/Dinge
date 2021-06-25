@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Alert, ActivityIndicator, StyleSheet } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  Animated,
+} from 'react-native';
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -20,6 +26,8 @@ const CustomComment = (props) => {
   const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
   const [isCommentDeleteLoading, setIsCommentDeleteLoading] = useState(false);
 
+  const fadeOutAnim = useRef(new Animated.Value(1)).current;
+
   const dingState = useSelector((state) => state.ding.ding);
   const eventState = useSelector((state) => state.event.event);
 
@@ -34,6 +42,18 @@ const CustomComment = (props) => {
       setErrorModalVisible(true);
     }
   }, [error]);
+
+  const fadeOutValues = {
+    toValue: 0,
+    duration: 400,
+    useNativeDriver: true,
+  };
+
+  const fadeInValues = {
+    toValue: 1,
+    duration: 250,
+    useNativeDriver: true,
+  };
 
   const likeCommentHandler = async (id, itemId) => {
     setError(null);
@@ -65,18 +85,21 @@ const CustomComment = (props) => {
   const deleteCommentHandler = async (id, itemId) => {
     setError(null);
     setIsCommentDeleteLoading(true);
-    try {
-      if (type === 'event') {
-        await dispatch(eventCommentActions.deleteComment(id, itemId));
-        await dispatch(eventActions.getEvent(itemId));
+    Animated.timing(fadeOutAnim, fadeOutValues).start(async () => {
+      try {
+        if (type === 'event') {
+          await dispatch(eventCommentActions.deleteComment(id, itemId));
+          await dispatch(eventActions.getEvent(itemId));
+        }
+        if (type === 'ding') {
+          await dispatch(commentActions.deleteComment(id, itemId));
+          await dispatch(dingActions.getDing(itemId));
+        }
+        Animated.timing(fadeOutAnim, fadeInValues).start();
+      } catch (err) {
+        setError(err.message);
       }
-      if (type === 'ding') {
-        await dispatch(commentActions.deleteComment(id, itemId));
-        await dispatch(dingActions.getDing(itemId));
-      }
-    } catch (err) {
-      setError(err.message);
-    }
+    });
     setIsCommentDeleteLoading(false);
   };
 
@@ -86,7 +109,11 @@ const CustomComment = (props) => {
   };
 
   return (
-    <View key={index} style={styles.outerCommentContainer}>
+    <Animated.View
+      key={index}
+      style={styles.outerCommentContainer}
+      opacity={fadeOutAnim}
+    >
       <View style={styles.commentContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.commentsUserName} onPress={onProfile}>
@@ -179,7 +206,7 @@ const CustomComment = (props) => {
         errorModal={errorModalVisible}
         onClose={closeModalHandler}
       />
-    </View>
+    </Animated.View>
   );
 };
 
