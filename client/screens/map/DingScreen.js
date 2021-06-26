@@ -128,6 +128,8 @@ const DingScreen = (props) => {
     setIsLoading(false);
   };
 
+  const arr = [{ a: 17, b: 4 }, 2, 3, 5];
+
   const publicProfileHandler = (user) => {
     props.navigation.navigate('Public', user);
   };

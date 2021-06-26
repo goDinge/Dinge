@@ -1,0 +1,34 @@
+@font-face {
+  font-family: "AirbnbCerealBlack";
+  src: local("AirbnbCerealBlack"),
+   url('./fonts/AirbnbCerealBlack.ttf') format("truetype");
+  font-weight: extraBold;
+ }
+
+ @font-face {
+  font-family: "AirbnbCerealBold";
+  src: local("AirbnbCerealBold"),
+   url("./fonts/AirbnbCerealBold.ttf") format("truetype");
+  font-weight: bold;
+ }
+
+ @font-face {
+  font-family: "AirbnbCerealBook";
+  src: local("AirbnbCerealBook"),
+   url("./fonts/AirbnbCerealBook.ttf") format("truetype");
+  font-weight: book;
+ }
+
+ @font-face {
+  font-family: "AirbnbCerealLight";
+  src: local("AirbnbCerealLight"),
+   url("./fonts/AirbnbCerealLight.ttf") format("truetype");
+  font-weight: light;
+ }
+
+ @font-face {
+  font-family: "AirbnbCerealMedium";
+  src: local("AirbnbCerealMedium"),
+   url("./fonts/AirbnbCerealMedium.ttf") format("truetype");
+  font-weight: medium;
+ }
