@@ -44,6 +44,12 @@ img {
   margin-bottom: 3rem;
 }
 
+.center {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 /* Text Styles*/
 .x-large {
   font-size: 4rem;
@@ -59,7 +65,6 @@ img {
 
 .lead {
   font-size: 1.5rem;
-  margin-bottom: 1rem;
 }
 
 .text-center {
@@ -149,13 +154,17 @@ img {
   display: inline-block;
   background: var(--light-color);
   color: #333;
+  border-radius: 15px;
   padding: 0.4rem 1.3rem;
   font-size: 1rem;
   border: none;
   cursor: pointer;
-  margin-right: 0.5rem;
   transition: opacity 0.2s ease-in;
   outline: none;
+}
+
+.text-btn {
+  cursor: pointer;
 }
 
 .badge {
@@ -274,6 +283,7 @@ img {
   width: 100%;
   padding: 0.4rem;
   font-size: 1.2rem;
+  font-family: 'AirbnbCerealBook';
   border: 1px solid #ccc;
 }
 
@@ -359,7 +369,31 @@ button {
 .landing-inner {
   color: #fff;
   height: 100%;
-  width: 80%;
+  width: 90%;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.landing-inner-left {
+  color: #fff;
+  height: 100%;
+  width: 50%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.landing-inner-right {
+  color: #fff;
+  height: 100%;
+  width: 50%;
   margin: auto;
   display: flex;
   flex-direction: column;

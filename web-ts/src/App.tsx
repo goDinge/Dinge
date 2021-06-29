@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import Navbar from './screens/Navbar';
 import Landing from './screens/Landing';
-import Login from './screens/auth/Login';
-import Register from './screens/auth/Register';
 import About from './screens/About';
 import Investors from './screens/Investors';
 
@@ -25,8 +23,6 @@ const App = () => {
         <Route exact path="/" component={Landing} />
         <section className="container">
           <Switch>
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/login" component={Login} />
             <Route exact path="/about" component={About} />
             <Route exact path="/investors" component={Investors} />
           </Switch>
