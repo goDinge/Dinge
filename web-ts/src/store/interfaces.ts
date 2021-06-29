@@ -48,19 +48,33 @@ export interface dinge_data {
   data: ding;
 }
 
+export interface Message {
+  id: string;
+  messageType: string;
+  text: string;
+}
+
+//Action Types
+
 export interface Get_Dinge {
   type: ActionTypes.GET_DINGE;
   payload: ding;
 }
 
-export interface Set_Message {
-  type: ActionTypes.SET_MESSAGE;
-  payload: string;
+export interface Add_Message {
+  type: ActionTypes.ADD_MESSAGE;
+  message: {
+    message: string;
+    messageType: string;
+    id: string;
+  };
 }
 
-export interface Reset_Message {
-  type: ActionTypes.RESET_MESSAGE;
-  payload: string;
+export interface Remove_Message {
+  type: ActionTypes.REMOVE_MESSAGE;
+  message: string;
 }
 
-export type Action = Get_Dinge | Set_Message | Reset_Message;
+export type MessageActions = Add_Message | Remove_Message;
+
+export type DingeActions = Get_Dinge;

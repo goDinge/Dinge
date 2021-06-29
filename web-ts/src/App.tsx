@@ -20,13 +20,11 @@ const App = () => {
     <Router>
       <Fragment>
         <Navbar />
-        <Route exact path="/" component={Landing} />
-        <section className="container">
-          <Switch>
-            <Route exact path="/about" component={About} />
-            <Route exact path="/investors" component={Investors} />
-          </Switch>
-        </section>
+        <Switch>
+          <Route exact path="/" component={Landing} />
+          <Route exact path="/about" component={About} />
+          <Route exact path="/investors" component={Investors} />
+        </Switch>
       </Fragment>
     </Router>
   );

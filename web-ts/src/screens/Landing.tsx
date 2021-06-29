@@ -1,5 +1,10 @@
 import React, { Fragment, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Dispatch } from 'redux';
+
+import { AppState } from '../store/reducers/rootReducer';
 import { formData } from '../store/interfaces';
+import * as MessageActions from '../store/actions/message';
 
 export const Landing = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -12,6 +17,11 @@ export const Landing = () => {
 
   const { name, email, password, password2 } = formData;
 
+  const message = useSelector((state: AppState) => state.message);
+  console.log(message);
+  //const messageDispatch = useDispatch<Dispatch<MessageActions>>();
+  const dispatch = useDispatch<Dispatch<any>>();
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
     //console.log('landing: ', formData);
@@ -19,7 +29,7 @@ export const Landing = () => {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('landing submit: ', formData);
+    dispatch(MessageActions.addMessage('it works', 'success'));
   };
 
   const loginOrRegister = () => {

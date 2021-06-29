@@ -1,5 +1,5 @@
 import { ActionTypes } from '../types';
-import { Action } from '../interfaces';
+import { DingeActions } from '../interfaces';
 
 const initialState = {
   dinge: [],
@@ -7,7 +7,7 @@ const initialState = {
   ding: {},
 };
 
-export const dingeReducer = (state = initialState, action: Action) => {
+export const dingeReducer = (state = initialState, action: DingeActions) => {
   switch (action.type) {
     case ActionTypes.GET_DINGE:
       return {
