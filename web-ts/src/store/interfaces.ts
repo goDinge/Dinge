@@ -64,7 +64,7 @@ export interface Get_Dinge {
 export interface Add_Message {
   type: ActionTypes.ADD_MESSAGE;
   message: {
-    message: string;
+    text: string;
     messageType: string;
     id: string;
   };
@@ -75,6 +75,6 @@ export interface Remove_Message {
   message: string;
 }
 
-export type MessageActions = Add_Message | Remove_Message;
+export type MessageActionTypes = Add_Message | Remove_Message;
 
 export type DingeActions = Get_Dinge;

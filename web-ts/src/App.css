@@ -280,6 +280,7 @@ img {
 .form select,
 .form textarea {
   display: block;
+  border-radius: 6px;
   width: 100%;
   padding: 0.4rem;
   font-size: 1.2rem;

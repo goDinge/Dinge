@@ -2,13 +2,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { ActionTypes } from '../types';
 import { Dispatch } from 'redux';
 
-export const addMessage = (message: string, messageType: string) => {
+export const addMessage = (text: string, messageType: string) => {
   return (dispatch: Dispatch) => {
     const id = uuidv4();
     dispatch({
       type: ActionTypes.ADD_MESSAGE,
       message: {
-        message,
+        text,
         messageType,
         id,
       },

@@ -1,11 +1,11 @@
 import { ActionTypes } from '../../store/types';
-import { MessageActions, Message } from '../interfaces';
+import { MessageActionTypes, Message } from '../interfaces';
 
 const initialState: Message[] = [];
 
 export const messageReducer = (
   state: Message[] = initialState,
-  action: MessageActions
+  action: MessageActionTypes
 ) => {
   switch (action.type) {
     case ActionTypes.ADD_MESSAGE:

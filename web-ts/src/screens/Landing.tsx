@@ -5,6 +5,7 @@ import { Dispatch } from 'redux';
 import { AppState } from '../store/reducers/rootReducer';
 import { formData } from '../store/interfaces';
 import * as MessageActions from '../store/actions/message';
+import CustomMessage from '../components/CustomMessage';
 
 export const Landing = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -17,19 +18,40 @@ export const Landing = () => {
 
   const { name, email, password, password2 } = formData;
 
-  const message = useSelector((state: AppState) => state.message);
-  console.log(message);
-  //const messageDispatch = useDispatch<Dispatch<MessageActions>>();
+  // const message = useSelector((state: AppState) => state.message);
+  // console.log(message);
+
   const dispatch = useDispatch<Dispatch<any>>();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
-    //console.log('landing: ', formData);
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(MessageActions.addMessage('it works', 'success'));
+    const emailRegex =
+      // eslint-disable-next-line
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    let isValid = true;
+    if (isSignUp) {
+      if (password !== password2) {
+        isValid = false;
+        dispatch(
+          MessageActions.addMessage('Please check your passwords.', 'danger')
+        );
+      }
+      if (!emailRegex.test(email.toLowerCase())) {
+        isValid = false;
+      }
+      if (!isValid) {
+        dispatch(
+          MessageActions.addMessage('Please check your inputs.', 'danger')
+        );
+      }
+      //dispatch register user action
+    } else {
+      //dispatch login action
+    }
   };
 
   const loginOrRegister = () => {
@@ -57,9 +79,9 @@ export const Landing = () => {
                 {isSignUp ? (
                   <div className="form-group">
                     <input
+                      id="name"
                       type="text"
                       placeholder="Name"
-                      name="name"
                       value={name}
                       onChange={(e) => onChange(e)}
                       required
@@ -73,6 +95,7 @@ export const Landing = () => {
                     placeholder="Email Address"
                     value={email}
                     onChange={(e) => onChange(e)}
+                    required
                   />
                 </div>
                 <div className="form-group">
@@ -83,17 +106,19 @@ export const Landing = () => {
                     minLength={6}
                     value={password}
                     onChange={(e) => onChange(e)}
+                    required
                   />
                 </div>
                 {isSignUp ? (
                   <div className="form-group">
                     <input
+                      id="password2"
                       type="password"
                       placeholder="Confirm Password"
-                      name="password2"
                       minLength={6}
                       value={password2}
                       onChange={(e) => onChange(e)}
+                      required
                     />
                   </div>
                 ) : null}
@@ -113,6 +138,7 @@ export const Landing = () => {
                   {isSignUp ? 'Login' : 'Register'}
                 </p>
               </div>
+              <CustomMessage />
             </Fragment>
           </div>
         </div>
