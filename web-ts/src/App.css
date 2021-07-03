@@ -3,6 +3,7 @@
   --primary-color: #FF5A5F;
   --dark-color: #343a40;
   --light-color: #f4f4f4;
+  --black-color: #000000;
   --danger-color: #dc3545;
   --success-color: #28a745;
 }
@@ -155,6 +156,7 @@ img {
   background: var(--light-color);
   color: #333;
   border-radius: 15px;
+  margin-top: 1rem;
   padding: 0.4rem 1.3rem;
   font-size: 1rem;
   border: none;
@@ -177,11 +179,13 @@ img {
 }
 
 .alert {
+  border-radius: 10px;
   padding: 0.8rem;
   margin: 1rem 0;
   opacity: 0.9;
+  font-family: 'AirbnbCerealMedium','Raleway', sans-serif;;
   background: var(--light-color);
-  color: #333;
+  color: 'black';
 }
 
 .btn-primary,
@@ -212,8 +216,8 @@ img {
 .bg-danger,
 .badge-danger,
 .alert-danger {
-  background: var(--danger-color);
-  color: #fff;
+  background: var(--light-color);
+  color: var(--black-color);
 }
 
 .btn-success,

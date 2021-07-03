@@ -13,14 +13,18 @@ export const addMessage = (text: string, messageType: string) => {
         id,
       },
     });
+    setTimeout(
+      () => dispatch({ type: ActionTypes.REMOVE_MESSAGE, message: id }),
+      5000
+    );
   };
 };
 
-export const removeMessage = (message: string) => {
+export const removeMessage = (id: string) => {
   return (dispatch: Dispatch) => {
     dispatch({
       type: ActionTypes.REMOVE_MESSAGE,
-      message: message,
+      message: id,
     });
   };
 };

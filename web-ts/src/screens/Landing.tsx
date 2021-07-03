@@ -19,7 +19,7 @@ export const Landing = () => {
   const { name, email, password, password2 } = formData;
 
   // const message = useSelector((state: AppState) => state.message);
-  // console.log(message);
+  // console.log('landing: ', message);
 
   const dispatch = useDispatch<Dispatch<any>>();
 
