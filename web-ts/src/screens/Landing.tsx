@@ -5,6 +5,7 @@ import { Dispatch } from 'redux';
 import { AppState } from '../store/reducers/rootReducer';
 import { formData } from '../store/interfaces';
 import * as MessageActions from '../store/actions/message';
+import * as AuthActions from '../store/actions/auth';
 import CustomMessage from '../components/CustomMessage';
 
 export const Landing = () => {
@@ -49,6 +50,7 @@ export const Landing = () => {
         );
       }
       //dispatch register user action
+      dispatch(AuthActions.register(name, email, password));
     } else {
       //dispatch login action
     }

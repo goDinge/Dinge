@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Dispatch } from 'redux';
 import { ActionTypes } from '../types';
 import { Get_Dinge, dinge_data } from '../interfaces';
-import { CURRENT_IP } from '../../../serverConfigs';
+import { CURRENT_IP } from '../../serverConfigs';
 
 //this should only be used by admin
 export const getDinge = () => {
