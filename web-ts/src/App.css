@@ -152,9 +152,11 @@ img {
 }
 
 .btn {
+  align-self: center;
   display: inline-block;
   background: var(--light-color);
   color: #333;
+  height: 2.5rem;
   border-radius: 15px;
   margin-top: 1rem;
   padding: 0.4rem 1.3rem;
@@ -194,6 +196,11 @@ img {
 .alert-primary {
   background: var(--primary-color);
   color: #fff;
+}
+
+.loading {
+  flex-direction: row;
+  align-items: center;
 }
 
 .btn-light,

@@ -1,8 +1,9 @@
 import React, { Fragment, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
+import { Spinner } from 'react-activity';
 
-import { AppState } from '../store/reducers/rootReducer';
+//import { AppState } from '../store/reducers/rootReducer';
 import { formData } from '../store/interfaces';
 import * as MessageActions from '../store/actions/message';
 import * as AuthActions from '../store/actions/auth';
@@ -10,6 +11,7 @@ import CustomMessage from '../components/CustomMessage';
 
 export const Landing = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<formData>({
     name: '',
     email: '',
@@ -28,8 +30,10 @@ export const Landing = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
+    console.log(isLoading);
     const emailRegex =
       // eslint-disable-next-line
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -49,11 +53,11 @@ export const Landing = () => {
           MessageActions.addMessage('Please check your inputs.', 'danger')
         );
       }
-      //dispatch register user action
-      dispatch(AuthActions.register(name, email, password));
+      await dispatch(AuthActions.register(name, email, password));
     } else {
-      //dispatch login action
+      await dispatch(AuthActions.login(email, password));
     }
+    setIsLoading(false);
   };
 
   const loginOrRegister = () => {
@@ -127,7 +131,9 @@ export const Landing = () => {
                 <input
                   type="submit"
                   className="btn btn-primary"
-                  value={isSignUp ? 'Register' : 'Login'}
+                  value={
+                    isLoading ? 'Loading...' : isSignUp ? 'Register' : 'Login'
+                  }
                 />
               </form>
               <div className="center">

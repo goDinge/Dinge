@@ -5,7 +5,7 @@ import { ActionTypes } from '../types';
 import { CURRENT_IP } from '../../serverConfigs';
 
 let timer: null | ReturnType<typeof setTimeout> = null;
-const oneMonth = 30 * 24 * 60 * 60 * 1000;
+const twentyOneDays = 21 * 24 * 60 * 60 * 1000;
 
 export const setAuthUser = (resData: user) => {
   return (dispatch: Dispatch<any>) => {
@@ -15,10 +15,6 @@ export const setAuthUser = (resData: user) => {
     });
   };
 };
-
-// Access-Control-Allow-Origin:  http://127.0.0.1:3000
-// Access-Control-Allow-Methods: POST
-// Access-Control-Allow-Headers: Content-Type, Authorization
 
 export const register = (name: string, email: string, password: string) => {
   return async (dispatch: Dispatch<any>) => {
@@ -37,19 +33,58 @@ export const register = (name: string, email: string, password: string) => {
       );
 
       const result = response.data;
+
       await dispatch(
-        authenticate(result.token, result.user._id, oneMonth, result.user)
+        authenticate(result.token, result.user._id, twentyOneDays, result.user)
       );
-      // const expirationDate = result.options.expires;
-      // await saveDataToStorage(
-      //   result.token,
-      //   result.user._id,
-      //   expirationDate,
-      //   result.user
-      // );
+      const expirationDate = result.options.expires;
+      await saveDataToStorage(
+        result.token,
+        result.user._id,
+        expirationDate,
+        result.user
+      );
       await dispatch(setAuthUser(result.user));
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const login = (email: string, password: string) => {
+  return async (dispatch: Dispatch<any>) => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const body = JSON.stringify({ email, password });
+
+    try {
+      const response: AxiosResponse<userObj> = await axios.post(
+        `${CURRENT_IP}/api/auth/login`,
+        body,
+        config
+      );
+      const resData = response.data;
+      await dispatch(
+        authenticate(
+          resData.token,
+          resData.user._id,
+          twentyOneDays,
+          resData.user
+        )
+      );
+      const expirationDate = resData.options.expires;
+      await saveDataToStorage(
+        resData.token,
+        resData.user._id,
+        expirationDate,
+        resData.user
+      );
+      await dispatch(setAuthUser(resData.user));
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again. ');
     }
   };
 };
@@ -67,9 +102,30 @@ export const authenticate = (
   };
 };
 
+const saveDataToStorage = (
+  token: string,
+  userId: string,
+  expirationDate: string,
+  user: user
+) => {
+  localStorage.setItem(
+    'userData',
+    JSON.stringify({
+      token: token,
+      userId: userId,
+      expiryDate: expirationDate,
+      authUser: user,
+    })
+  );
+};
+
+export const setDidTryAL = () => {
+  return { type: ActionTypes.SET_DID_TRY_AL };
+};
+
 export const logout = () => {
   clearLogoutTimer();
-  //AsyncStorage.removeItem('userData');
+  localStorage.removeItem('userData');
   return { type: ActionTypes.LOGOUT };
 };
 
