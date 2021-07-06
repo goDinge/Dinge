@@ -1,13 +1,13 @@
 import React, { Fragment, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
-import { Spinner } from 'react-activity';
 
 //import { AppState } from '../store/reducers/rootReducer';
 import { formData } from '../store/interfaces';
 import * as MessageActions from '../store/actions/message';
 import * as AuthActions from '../store/actions/auth';
 import CustomMessage from '../components/CustomMessage';
+import { emailRegex } from '../helpers/emailRegex';
 
 export const Landing = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -33,19 +33,20 @@ export const Landing = () => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log(isLoading);
-    const emailRegex =
-      // eslint-disable-next-line
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    const emailRegexLocal: RegExp = emailRegex;
     let isValid = true;
+    let action: (dispatch: Dispatch<any>) => Promise<void>;
+
     if (isSignUp) {
       if (password !== password2) {
         isValid = false;
+        //These are only supposed to be local hooks, not redux. Refector later.
         dispatch(
           MessageActions.addMessage('Please check your passwords.', 'danger')
         );
       }
-      if (!emailRegex.test(email.toLowerCase())) {
+      if (!emailRegexLocal.test(email.toLowerCase())) {
         isValid = false;
       }
       if (!isValid) {
@@ -53,9 +54,14 @@ export const Landing = () => {
           MessageActions.addMessage('Please check your inputs.', 'danger')
         );
       }
-      await dispatch(AuthActions.register(name, email, password));
+      action = AuthActions.register(name, email, password);
     } else {
-      await dispatch(AuthActions.login(email, password));
+      action = AuthActions.login(email, password);
+    }
+    try {
+      await dispatch(action);
+    } catch (err) {
+      console.log(err.message);
     }
     setIsLoading(false);
   };
@@ -132,7 +138,13 @@ export const Landing = () => {
                   type="submit"
                   className="btn btn-primary"
                   value={
-                    isLoading ? 'Loading...' : isSignUp ? 'Register' : 'Login'
+                    isSignUp
+                      ? isLoading
+                        ? 'Registering...'
+                        : 'Register'
+                      : isLoading
+                      ? 'Logging in...'
+                      : 'Login'
                   }
                 />
               </form>
