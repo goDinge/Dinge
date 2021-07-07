@@ -20,15 +20,12 @@ const CustomMessage = () => {
     <div>
       {messages && messages.length > 0
         ? messages.map((message) => (
-            <div
-              key={message.id}
-              className={`alert alert-${message.messageType}`}
-            >
+            <div key={message.id} className="alert">
               <p>{message.text}</p>
               <button
                 onClick={(e) => onClose(e)}
                 className="btn btn-primary"
-                value={message.id}
+                value={message.id} //to close the message div
               >
                 Okay
               </button>

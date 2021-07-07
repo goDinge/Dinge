@@ -187,7 +187,7 @@ img {
   opacity: 0.9;
   font-family: 'AirbnbCerealMedium','Raleway', sans-serif;;
   background: var(--light-color);
-  color: 'black';
+  color: var(--black-color);
 }
 
 .btn-primary,

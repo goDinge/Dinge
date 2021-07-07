@@ -7,11 +7,13 @@ import { formData } from '../store/interfaces';
 import * as MessageActions from '../store/actions/message';
 import * as AuthActions from '../store/actions/auth';
 import CustomMessage from '../components/CustomMessage';
+import CustomError from '../components/CustomError';
 import { emailRegex } from '../helpers/emailRegex';
 
 export const Landing = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState<formData>({
     name: '',
     email: '',
@@ -30,8 +32,14 @@ export const Landing = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const onClose = () => {
+    //const element = e.target as HTMLButtonElement;
+    setError('');
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError('');
     setIsLoading(true);
 
     const emailRegexLocal: RegExp = emailRegex;
@@ -41,18 +49,13 @@ export const Landing = () => {
     if (isSignUp) {
       if (password !== password2) {
         isValid = false;
-        //These are only supposed to be local hooks, not redux. Refector later.
-        dispatch(
-          MessageActions.addMessage('Please check your passwords.', 'danger')
-        );
       }
       if (!emailRegexLocal.test(email.toLowerCase())) {
         isValid = false;
       }
       if (!isValid) {
-        dispatch(
-          MessageActions.addMessage('Please check your inputs.', 'danger')
-        );
+        setError('Please check your inputs.');
+        return;
       }
       action = AuthActions.register(name, email, password);
     } else {
@@ -61,7 +64,7 @@ export const Landing = () => {
     try {
       await dispatch(action);
     } catch (err) {
-      console.log(err.message);
+      setError(err.message);
     }
     setIsLoading(false);
   };
@@ -126,7 +129,7 @@ export const Landing = () => {
                     <input
                       id="password2"
                       type="password"
-                      placeholder="Confirm Password"
+                      placeholder="Retype Password"
                       minLength={6}
                       value={password2}
                       onChange={(e) => onChange(e)}
@@ -159,6 +162,9 @@ export const Landing = () => {
                 </p>
               </div>
               <CustomMessage />
+              {error !== '' ? (
+                <CustomError message={error} onClose={onClose} />
+              ) : null}
             </Fragment>
           </div>
         </div>

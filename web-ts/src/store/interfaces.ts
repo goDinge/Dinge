@@ -91,7 +91,6 @@ export interface dinge_data {
 
 export interface Message {
   id: string;
-  messageType: string;
   text: string;
 }
 
@@ -106,7 +105,6 @@ export interface Add_Message {
   type: ActionTypes.ADD_MESSAGE;
   message: {
     text: string;
-    messageType: string;
     id: string;
   };
 }
