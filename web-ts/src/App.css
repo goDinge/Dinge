@@ -180,7 +180,7 @@ img {
   color: #333;
 }
 
-.alert {
+.message {
   border-radius: 10px;
   padding: 0.8rem;
   margin: 1rem 0;
@@ -193,7 +193,7 @@ img {
 .btn-primary,
 .bg-primary,
 .badge-primary,
-.alert-primary {
+.message-primary {
   background: var(--primary-color);
   color: #fff;
 }
@@ -206,7 +206,7 @@ img {
 .btn-light,
 .bg-light,
 .badge-light,
-.alert-light {
+.message-light {
   background: var(--light-color);
   color: #333;
 }
@@ -214,7 +214,7 @@ img {
 .btn-dark,
 .bg-dark,
 .badge-dark,
-.alert-dark {
+.message-dark {
   background: var(--dark-color);
   color: #fff;
 }
@@ -222,7 +222,7 @@ img {
 .btn-danger,
 .bg-danger,
 .badge-danger,
-.alert-danger {
+.message-danger {
   background: var(--light-color);
   color: var(--black-color);
 }
@@ -230,7 +230,7 @@ img {
 .btn-success,
 .bg-success,
 .badge-success,
-.alert-success {
+.message-success {
   background: var(--success-color);
   color: #fff;
 }
@@ -238,7 +238,7 @@ img {
 .btn-white,
 .bg-white,
 .badge-white,
-.alert-white {
+.message-white {
   background: #fff;
   color: #333;
   border: #ccc solid 1px;

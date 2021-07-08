@@ -55,7 +55,7 @@ export interface AuthState {
   token: string | null;
   userId: string | null;
   didTryAutoLogin: boolean;
-  authUser: user | {};
+  authUser: user | null;
 }
 
 export interface customInputProps {

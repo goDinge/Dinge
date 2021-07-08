@@ -51,21 +51,23 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   //Validate email and password
   if (!email || !password) {
-    return next(new ErrorResponse('Please provide an email and password', 400));
+    return next(
+      new ErrorResponse('Please provide an email and password.', 400)
+    );
   }
 
   //Check for user
   const user = await User.findOne({ email: cleanEmail }).select('+password'); //need to see password for login
 
   if (!user) {
-    return next(new ErrorResponse('Did not login. Invalid email', 401));
+    return next(new ErrorResponse('Did not login. Invalid email.', 401));
   }
 
   //Check if password matches
   const isMatch = await user.matchPassword(cleanPassword);
 
   if (!isMatch) {
-    return next(new ErrorResponse('Did not login. Invalid password', 401));
+    return next(new ErrorResponse('Did not login. Invalid password.', 401));
   }
 
   sendTokenResponse(user, 200, res);

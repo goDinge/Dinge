@@ -89,6 +89,13 @@ export const login = (email: string, password: string) => {
   };
 };
 
+export const logout = () => {
+  clearLogoutTimer();
+  localStorage.removeItem('userData');
+  console.log('logout action');
+  return { type: ActionTypes.LOGOUT };
+};
+
 export const authenticate = (
   token: string,
   userId: string,
@@ -123,19 +130,13 @@ export const setDidTryAL = () => {
   return { type: ActionTypes.SET_DID_TRY_AL };
 };
 
-export const logout = () => {
-  clearLogoutTimer();
-  localStorage.removeItem('userData');
-  return { type: ActionTypes.LOGOUT };
-};
-
 const clearLogoutTimer = () => {
   if (timer) {
     clearTimeout(timer);
   }
 };
 
-const setLogoutTimer = (expirationTime: number) => {
+export const setLogoutTimer = (expirationTime: number) => {
   return (dispatch: Dispatch<any>) => {
     timer = setTimeout(() => {
       dispatch(logout());

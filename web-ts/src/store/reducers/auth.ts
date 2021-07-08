@@ -5,7 +5,7 @@ const initialState: AuthState = {
   token: null,
   userId: null,
   didTryAutoLogin: false,
-  authUser: {},
+  authUser: null,
 };
 
 //localStorage.getItem('token'),
@@ -38,8 +38,10 @@ export const authReducer = (
         didTryAutoLogin: true,
       };
     case ActionTypes.LOGOUT:
+      console.log('reducer: ', initialState);
       return {
         ...initialState,
+        authUser: null,
         didTryAutoLogin: false,
       };
     default:

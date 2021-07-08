@@ -2,9 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
-//import { AppState } from '../store/reducers/rootReducer';
 import { formData } from '../store/interfaces';
-import * as MessageActions from '../store/actions/message';
 import * as AuthActions from '../store/actions/auth';
 import CustomMessage from '../components/CustomMessage';
 import CustomError from '../components/CustomError';
@@ -23,9 +21,6 @@ export const Landing = () => {
 
   const { name, email, password, password2 } = formData;
 
-  // const message = useSelector((state: AppState) => state.message);
-  // console.log('landing: ', message);
-
   const dispatch = useDispatch<Dispatch<any>>();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +28,6 @@ export const Landing = () => {
   };
 
   const onClose = () => {
-    //const element = e.target as HTMLButtonElement;
     setError('');
   };
 
@@ -55,6 +49,7 @@ export const Landing = () => {
       }
       if (!isValid) {
         setError('Please check your inputs.');
+        setIsLoading(false);
         return;
       }
       action = AuthActions.register(name, email, password);
