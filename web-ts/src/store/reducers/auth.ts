@@ -23,6 +23,7 @@ export const authReducer = (
         authUser: action.authUser,
       };
     case ActionTypes.SET_AUTH_USER:
+    case ActionTypes.LOAD_USER:
       return {
         ...state,
         authUser: action.authUser,
@@ -38,7 +39,6 @@ export const authReducer = (
         didTryAutoLogin: true,
       };
     case ActionTypes.LOGOUT:
-      console.log('reducer: ', initialState);
       return {
         ...initialState,
         authUser: null,

@@ -3,9 +3,60 @@ import { Dispatch } from 'redux';
 import { user, userObj } from '../interfaces';
 import { ActionTypes } from '../types';
 import { CURRENT_IP } from '../../serverConfigs';
+import { setAuthToken } from '../../helpers/setAuthToken';
 
 let timer: null | ReturnType<typeof setTimeout> = null;
 const twentyOneDays = 21 * 24 * 60 * 60 * 1000;
+
+export const loadUser: any = () => {
+  return async (dispatch: Dispatch<any>) => {
+    if (localStorage.userData) {
+      const data = JSON.parse(localStorage.userData);
+      console.log('auth actions: ', data.token);
+      setAuthToken(data.token);
+    }
+
+    try {
+      const response: AxiosResponse<userObj> = await axios.get(
+        `${CURRENT_IP}/api/auth/me`
+      );
+      if (!response) {
+        throw new Error('You are not logged in.');
+      }
+
+      const user = response.data;
+
+      await dispatch({
+        type: ActionTypes.LOAD_USER,
+        authUser: user,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const getAuthUser = () => {
+  return async (dispatch: Dispatch<any>) => {
+    try {
+      const response: AxiosResponse<userObj> = await axios.get(
+        `${CURRENT_IP}/api/auth/me`
+      );
+      if (!response) {
+        throw new Error('You are not logged in.');
+      }
+
+      const user = response.data;
+
+      await dispatch({
+        type: ActionTypes.GET_AUTH_USER,
+        authUser: user,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
 
 export const setAuthUser = (resData: user) => {
   return (dispatch: Dispatch<any>) => {
@@ -92,7 +143,6 @@ export const login = (email: string, password: string) => {
 export const logout = () => {
   clearLogoutTimer();
   localStorage.removeItem('userData');
-  console.log('logout action');
   return { type: ActionTypes.LOGOUT };
 };
 

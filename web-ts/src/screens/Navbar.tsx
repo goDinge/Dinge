@@ -10,7 +10,6 @@ import * as authActions from '../store/actions/auth';
 
 export const Navbar = () => {
   const auth: AuthState = useSelector((state: AppState) => state.auth);
-  console.log(auth.authUser);
 
   const dispatch = useDispatch<Dispatch<any>>();
 

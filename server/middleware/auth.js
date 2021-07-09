@@ -5,11 +5,7 @@ const User = require('../models/User');
 
 //Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
-  let token;
-
-  if (req.cookies.token) {
-    token = req.cookies.token;
-  }
+  let token = req.header('x-auth-token');
 
   //Make sure token is sent
   if (!token) {

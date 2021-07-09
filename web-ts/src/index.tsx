@@ -1,11 +1,22 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import store from './store/store';
+import ReactDOM from 'react-dom';
 
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+import store from './store/store';
+import { setAuthToken } from './helpers/setAuthToken';
+
+// const x = JSON.parse(localStorage.userData);
+// console.log('index hit: ', x.token);
+
+// if (localStorage.userData) {
+//   const userDataObj = JSON.parse(localStorage.userData);
+//   console.log('token being set: ', userDataObj.token);
+//   setAuthToken(userDataObj.token);
+// }
 
 ReactDOM.render(
   <React.StrictMode>

@@ -329,7 +329,7 @@ const sendTokenResponse = async (user, statusCode, res) => {
   //where we save token to cookie, with options
   res
     .status(statusCode)
-    .cookie('token', token, options)
+    .header('token', token, options)
     .json({ token, user, options });
 };
 

@@ -1,12 +1,16 @@
 import React, { Fragment, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { Redirect } from 'react-router';
+import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { formData } from '../store/interfaces';
-import * as AuthActions from '../store/actions/auth';
-import CustomMessage from '../components/CustomMessage';
-import CustomError from '../components/CustomError';
-import { emailRegex } from '../helpers/emailRegex';
+import * as AuthActions from '../../store/actions/auth';
+import CustomMessage from '../../components/CustomMessage';
+import CustomError from '../../components/CustomError';
+import { emailRegex } from '../../helpers/emailRegex';
+
+import { formData } from '../../store/interfaces';
+import { AppState } from '../../store/reducers/rootReducer';
+import { AuthState } from '../../store/interfaces';
 
 export const Landing = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -21,7 +25,13 @@ export const Landing = () => {
 
   const { name, email, password, password2 } = formData;
 
+  const authUser: AuthState = useSelector((state: AppState) => state.auth);
+
   const dispatch = useDispatch<Dispatch<any>>();
+
+  if (authUser.authUser) {
+    return <Redirect to="profile" />;
+  }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -60,8 +70,8 @@ export const Landing = () => {
       await dispatch(action);
     } catch (err) {
       setError(err.message);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const loginOrRegister = () => {
@@ -94,6 +104,7 @@ export const Landing = () => {
                       placeholder="Name"
                       value={name}
                       onChange={(e) => onChange(e)}
+                      onFocus={() => onClose()}
                       required
                     />
                   </div>
@@ -105,6 +116,7 @@ export const Landing = () => {
                     placeholder="Email Address"
                     value={email}
                     onChange={(e) => onChange(e)}
+                    onFocus={() => onClose()}
                     required
                   />
                 </div>
@@ -116,6 +128,7 @@ export const Landing = () => {
                     minLength={6}
                     value={password}
                     onChange={(e) => onChange(e)}
+                    onFocus={() => onClose()}
                     required
                   />
                 </div>
@@ -128,6 +141,7 @@ export const Landing = () => {
                       minLength={6}
                       value={password2}
                       onChange={(e) => onChange(e)}
+                      onFocus={() => onClose()}
                       required
                     />
                   </div>
