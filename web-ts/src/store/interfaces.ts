@@ -1,5 +1,4 @@
 import { ActionTypes } from './types';
-import { Dispatch } from 'redux';
 
 export interface ding {
   description: string;
@@ -128,6 +127,8 @@ export interface Authenticate {
 
 export interface Set_Auth_User {
   type: ActionTypes.SET_AUTH_USER;
+  userId: string;
+  token: string;
   authUser: {
     name: string;
     email: string;
@@ -137,15 +138,8 @@ export interface Set_Auth_User {
 
 export interface Get_Auth_User {
   type: ActionTypes.GET_AUTH_USER;
-  authUser: {
-    name: string;
-    email: string;
-    password: string;
-  };
-}
-
-export interface Load_User {
-  type: ActionTypes.LOAD_USER;
+  userId: string;
+  token: string;
   authUser: {
     name: string;
     email: string;
@@ -168,7 +162,6 @@ export type AuthActionTypes =
   | Authenticate
   | Set_Auth_User
   | Get_Auth_User
-  | Load_User
   | Set_Did_Try_Al
   | Logout;
 

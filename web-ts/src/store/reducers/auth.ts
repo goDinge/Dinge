@@ -23,11 +23,6 @@ export const authReducer = (
         authUser: action.authUser,
       };
     case ActionTypes.SET_AUTH_USER:
-    case ActionTypes.LOAD_USER:
-      return {
-        ...state,
-        authUser: action.authUser,
-      };
     case ActionTypes.GET_AUTH_USER:
       return {
         ...state,

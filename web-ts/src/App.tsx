@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
+import { getAuthUser } from './store/actions/auth';
 import { setAuthToken } from './helpers/setAuthToken';
-import { loadUser } from './store/actions/auth';
 
 import * as AuthActions from './store/actions/auth';
 
@@ -13,8 +13,7 @@ import Landing from './screens/auth/Landing';
 import About from './screens/About';
 import Investors from './screens/Investors';
 import Profile from './screens/user/Profile';
-
-//import store from './store/store';
+import store from './store/store';
 
 import './index.css';
 import './App.css';
@@ -24,13 +23,17 @@ import './fonts/AirbnbCerealBold.ttf';
 import './fonts/AirbnbCerealBook.ttf';
 import './fonts/AirbnbCerealLight.ttf';
 import './fonts/AirbnbCerealMedium.ttf';
-import store from './store/store';
+
+if (localStorage.userData) {
+  const data = JSON.parse(localStorage.userData);
+  setAuthToken(data.token);
+}
 
 const App = () => {
   const dispatch = useDispatch<Dispatch<any>>();
 
   useEffect(() => {
-    const callLoadUser = async () => {
+    const tryLogin = async () => {
       const userData = await localStorage.getItem('userData');
       if (!userData) {
         dispatch(AuthActions.setDidTryAL());
@@ -52,9 +55,11 @@ const App = () => {
         console.log(err.message);
       }
     };
-    callLoadUser();
+    tryLogin();
 
-    store.dispatch(loadUser());
+    if (localStorage.userData) {
+      store.dispatch(getAuthUser());
+    }
   }, [dispatch]);
 
   return (
