@@ -3,8 +3,9 @@ import axios from 'axios';
 export const setAuthToken = (token: string) => {
   if (token) {
     //axios.defaults.headers.common.cookies = token;
-    axios.defaults.headers.common['x-auth-token'] = token;
+    console.log('setAuthToken: ', token);
+    axios.defaults.headers.common['Authorization'] = token;
   } else {
-    delete axios.defaults.headers.common['x-auth-token'];
+    delete axios.defaults.headers.common['Authorization'];
   }
 };

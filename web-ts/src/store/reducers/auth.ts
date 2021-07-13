@@ -23,9 +23,15 @@ export const authReducer = (
         authUser: action.authUser,
       };
     case ActionTypes.SET_AUTH_USER:
-    case ActionTypes.GET_AUTH_USER:
       return {
         ...state,
+        authUser: action.authUser,
+      };
+    case ActionTypes.GET_AUTH_USER:
+      return {
+        token: action.token,
+        userId: action.userId,
+        didTryAutoLogin: true,
         authUser: action.authUser,
       };
     case ActionTypes.SET_DID_TRY_AL:

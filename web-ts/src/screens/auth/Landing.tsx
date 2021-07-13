@@ -25,12 +25,12 @@ export const Landing = () => {
 
   const { name, email, password, password2 } = formData;
 
-  const authUser: AuthState = useSelector((state: AppState) => state.auth);
-  console.log('landing: ', authUser);
+  const authState: AuthState = useSelector((state: AppState) => state.auth);
+  console.log('landing authState: ', authState);
 
   const dispatch = useDispatch<Dispatch<any>>();
 
-  if (authUser.authUser) {
+  if (authState.authUser) {
     return <Redirect to="profile" />;
   }
 

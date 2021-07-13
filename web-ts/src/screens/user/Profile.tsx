@@ -7,8 +7,9 @@ import { AuthState } from '../../store/interfaces';
 //import * as AuthActions from '../../store/actions/auth';
 
 const Profile = () => {
-  const authUser: AuthState = useSelector((state: AppState) => state.auth);
-  console.log('profile: ', authUser);
+  const authState: AuthState = useSelector((state: AppState) => state.auth);
+  //const authUser = useSelector((state: AppState) => state.auth.authUser);
+  console.log('profile authState: ', authState);
 
   return <div>Profile</div>;
 };
