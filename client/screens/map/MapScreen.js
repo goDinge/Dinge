@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -60,9 +60,6 @@ const MapScreen = (props) => {
   const authUser = useSelector((state) => state.auth.authUser);
   const messageState = useSelector((state) => state.message.message);
   const locationState = useSelector((state) => state.location.location);
-  const authState = useSelector((state) => state.auth);
-
-  console.log('mapscreen auth state: ', authState);
 
   useEffect(() => {
     (async () => {

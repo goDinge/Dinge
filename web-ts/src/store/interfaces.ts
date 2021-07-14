@@ -157,6 +157,12 @@ export interface Logout {
   didTryAutoLogin: boolean;
 }
 
+export type Marker = {
+  lat: number;
+  lng: number;
+  text: string;
+};
+
 export type MessageActionTypes = Add_Message | Remove_Message;
 export type AuthActionTypes =
   | Authenticate

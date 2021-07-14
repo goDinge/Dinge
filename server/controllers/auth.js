@@ -327,8 +327,6 @@ const sendTokenResponse = async (user, statusCode, res) => {
   // }
 
   //where we save token to cookie, with options
-
-  //console.log('auth contr res: ', res);
   res
     .status(statusCode)
     .cookie('token', token, options)

@@ -24,15 +24,15 @@ export const getAuthUser: any = () => {
       }
 
       const user = response.data.data;
-      console.log('auth actions getauthuser: ', user);
+      //console.log('auth actions getauthuser: ', user);
 
       const storageData: any = localStorage.getItem('userData');
       const storageDataTransformed: any = JSON.parse(storageData);
       const { token, userId } = storageDataTransformed;
-      console.log(
-        'auth actions storageData token: ',
-        storageDataTransformed.token
-      );
+      // console.log(
+      //   'auth actions storageData token: ',
+      //   storageDataTransformed.token
+      // );
 
       await dispatch({
         type: ActionTypes.GET_AUTH_USER,
@@ -48,7 +48,7 @@ export const getAuthUser: any = () => {
 
 export const setAuthUser = (resData: user) => {
   return (dispatch: Dispatch<any>) => {
-    console.log('auth actions setauthuser: ', resData);
+    //console.log('auth actions setauthuser: ', resData);
 
     dispatch({
       type: ActionTypes.SET_AUTH_USER,
@@ -133,7 +133,7 @@ export const login = (email: string, password: string) => {
 export const logout = () => {
   clearLogoutTimer();
   localStorage.removeItem('userData');
-  console.log('auth actions logout: ', localStorage.userData);
+  //console.log('auth actions logout: ', localStorage.userData);
   return { type: ActionTypes.LOGOUT };
 };
 

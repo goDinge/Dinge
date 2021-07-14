@@ -3,7 +3,7 @@ import { Redirect } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import * as AuthActions from '../../store/actions/auth';
+import * as authActions from '../../store/actions/auth';
 import CustomMessage from '../../components/CustomMessage';
 import CustomError from '../../components/CustomError';
 import { emailRegex } from '../../helpers/emailRegex';
@@ -26,7 +26,7 @@ export const Landing = () => {
   const { name, email, password, password2 } = formData;
 
   const authState: AuthState = useSelector((state: AppState) => state.auth);
-  console.log('landing authState: ', authState);
+  //console.log('landing authState: ', authState);
 
   const dispatch = useDispatch<Dispatch<any>>();
 
@@ -63,9 +63,9 @@ export const Landing = () => {
         setIsLoading(false);
         return;
       }
-      action = AuthActions.register(name, email, password);
+      action = authActions.register(name, email, password);
     } else {
-      action = AuthActions.login(email, password);
+      action = authActions.login(email, password);
     }
     try {
       await dispatch(action);

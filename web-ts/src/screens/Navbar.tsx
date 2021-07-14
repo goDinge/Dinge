@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { AppState } from '../store/reducers/rootReducer';
-import { AuthState } from '../store/interfaces';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
+
+import { AppState } from '../store/reducers/rootReducer';
+import { AuthState } from '../store/interfaces';
 import * as authActions from '../store/actions/auth';
-//import { logout } from '../store/actions/auth';
 
 export const Navbar = () => {
   const auth: AuthState = useSelector((state: AppState) => state.auth);
@@ -32,14 +32,17 @@ export const Navbar = () => {
         {auth.authUser !== null ? (
           <ul>
             <li>
+              <Link to="/map">Map</Link>
+            </li>
+            <li>
               <a href="#!" onClick={() => console.log(auth.authUser)}>
                 Profile
               </a>
             </li>
             <li>
-              <a href="#!" onClick={logout}>
+              <Link to="/" onClick={logout}>
                 Logout
-              </a>
+              </Link>
             </li>
           </ul>
         ) : null}

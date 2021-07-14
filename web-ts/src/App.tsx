@@ -13,6 +13,7 @@ import Landing from './screens/auth/Landing';
 import About from './screens/About';
 import Investors from './screens/Investors';
 import Profile from './screens/user/Profile';
+import Map from './screens/map/Map';
 import store from './store/store';
 
 import './index.css';
@@ -43,7 +44,6 @@ const App = () => {
       //destructuring - names have to be same as keys in set Item in AsyncStorage
       //from saveDataToStorage
       const { token, userId, expiryDate, authUser } = transformedData;
-      console.log('app.tsx transformedData: ', transformedData);
       const expirationDate = new Date(expiryDate);
       if (expirationDate <= new Date() || !token || !userId) {
         dispatch(AuthActions.setDidTryAL());
@@ -57,7 +57,7 @@ const App = () => {
       }
     };
     tryLogin();
-    console.log('app.tsx storage: ', localStorage.userData);
+    //console.log('app.tsx storage: ', localStorage.userData);
 
     if (localStorage.userData) {
       store.dispatch(getAuthUser());
@@ -73,6 +73,7 @@ const App = () => {
           <Route exact path="/about" component={About} />
           <Route exact path="/investors" component={Investors} />
           <Route exact path="/profile" component={Profile} />
+          <Route exact path="/map" component={Map} />
         </Switch>
       </Fragment>
     </Router>

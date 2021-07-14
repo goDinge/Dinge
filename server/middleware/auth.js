@@ -8,19 +8,15 @@ exports.protect = asyncHandler(async (req, res, next) => {
   //let token = req.header('x-auth-token');
   let token = req.cookies.token || req.headers.authorization;
 
-  console.log('middleware auth token or: ', token);
-  console.log('middleware auth req.headers: ', req.headers.authorization);
-  console.log('middleware auth req.cookies: ', req.cookies);
+  // console.log('middleware auth token or: ', token);
+  // console.log('middleware auth req.headers: ', req.headers.authorization);
+  // console.log('middleware auth req.cookies: ', req.cookies);
   //Make sure token is sent
-  //(!req.cookies.token){}
   if (!token) {
     return next(
       new errorResponse('Not authorized to access this route - no token', 401)
     );
   }
-
-  //token = req.headers.authorization;
-  //token = req.cookies.token;
 
   try {
     //Verify token
