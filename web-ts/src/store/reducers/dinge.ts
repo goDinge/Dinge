@@ -12,7 +12,12 @@ export const dingeReducer = (state = initialState, action: DingeActions) => {
     case ActionTypes.GET_DINGE:
       return {
         ...state,
-        dinge: action.payload,
+        dinge: action.dinge,
+      };
+    case ActionTypes.GET_LOCAL_DINGE:
+      return {
+        ...state,
+        dinge: action.dinge,
       };
     default:
       return state;

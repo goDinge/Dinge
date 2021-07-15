@@ -40,9 +40,7 @@ export const getLocalEvents = (location) => {
         events: events,
       });
     } catch (err) {
-      throw new Error(
-        'Local events - Cannot connect with server. Please try again.'
-      );
+      throw new Error('Events. Cannot connect with server. Please try again.');
     }
   };
 };

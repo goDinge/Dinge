@@ -2,6 +2,7 @@
 :root {
   --primary-color: #FF5A5F;
   --dark-color: #343a40;
+  --light-grey: #ededed;
   --light-color: #f4f4f4;
   --black-color: #000000;
   --danger-color: #dc3545;
@@ -45,10 +46,20 @@ img {
   margin-bottom: 3rem;
 }
 
+.map {
+  height: 100vh; 
+  width: 100%;
+}
+
 .center {
   align-items: center;
   justify-content: center;
   text-align: center;
+}
+
+.marker { 
+  position: 'absolute'; 
+  transform: translate(-200%, -100%); 
 }
 
 /* Text Styles*/
@@ -364,7 +375,7 @@ button {
 }
 
 .navbar a:hover {
-  color: var(--primary-color);
+  color: var(--light-grey);
 }
 
 .navbar .welcome span {

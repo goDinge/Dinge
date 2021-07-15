@@ -26,7 +26,6 @@ export const Landing = () => {
   const { name, email, password, password2 } = formData;
 
   const authState: AuthState = useSelector((state: AppState) => state.auth);
-  //console.log('landing authState: ', authState);
 
   const dispatch = useDispatch<Dispatch<any>>();
 

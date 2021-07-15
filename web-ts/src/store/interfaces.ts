@@ -18,6 +18,18 @@ export interface ding {
   lastModifiedAt: Date;
 }
 
+export interface dingeState {
+  dinge: [];
+}
+
+export interface dingObj {
+  data: ding;
+  lat: number;
+  lng: number;
+}
+
+export type dinge = ding[];
+
 export interface userObj {
   token: string;
   user: user;
@@ -87,7 +99,7 @@ export interface formData {
 }
 
 export interface dinge_data {
-  data: ding;
+  data: dinge;
 }
 
 export interface Message {
@@ -99,7 +111,12 @@ export interface Message {
 
 export interface Get_Dinge {
   type: ActionTypes.GET_DINGE;
-  payload: ding;
+  dinge: dinge;
+}
+
+export interface Get_Local_Dinge {
+  type: ActionTypes.GET_LOCAL_DINGE;
+  dinge: dinge;
 }
 
 export interface Add_Message {
@@ -171,5 +188,5 @@ export type AuthActionTypes =
   | Set_Did_Try_Al
   | Logout;
 
-export type DingeActions = Get_Dinge;
+export type DingeActions = Get_Dinge | Get_Local_Dinge;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;

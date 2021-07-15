@@ -5,7 +5,6 @@ const User = require('../models/User');
 
 //Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
-  //let token = req.header('x-auth-token');
   let token = req.cookies.token || req.headers.authorization;
 
   // console.log('middleware auth token or: ', token);

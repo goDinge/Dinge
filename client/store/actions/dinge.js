@@ -29,6 +29,7 @@ export const getDinge = () => {
 //this should be used by users
 export const getLocalDinge = (location) => {
   return async (dispatch) => {
+    console.log('dinge action: ', CURRENT_IP);
     try {
       const distance = settingConfigs[0].radius;
       const response = await axios.get(
@@ -41,7 +42,7 @@ export const getLocalDinge = (location) => {
         dinge: dinge,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again. ');
+      throw new Error('Dinge. Cannot connect with server. Please try again. ');
     }
   };
 };
