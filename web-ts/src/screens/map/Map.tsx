@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import GoogleMapReact from 'google-map-react';
 
 import { GOOGLE_MAPS } from '../../serverConfigs';
-import { Marker } from '../../store/interfaces';
+import CustomBlueMarker from '../../components/CustomBlueMarker';
+import website from '../../assets/website.png';
 
 const mapStyle = require('../../helpers/mapStyles.json');
-
-const AnyReactComponent = ({ text }: Marker) => <div>{text}</div>;
 
 const error = () => {
   console.log('error');
@@ -14,36 +13,54 @@ const error = () => {
 
 const defaultProps = {
   center: {
-    lat: 10.99835602,
-    lng: 77.01502627,
+    lat: 43.67028846899895,
+    lng: -79.38671623993413,
   },
-  zoom: 14,
+  zoom: 15,
+};
+
+const defaultGeoPosition = {
+  coords: {
+    accuracy: 0,
+    altitude: 0,
+    altitudeAccuracy: 0,
+    heading: 0,
+    speed: 0,
+    latitude: defaultProps.center.lat,
+    longitude: defaultProps.center.lng,
+  },
+  timestamp: 0,
 };
 
 const Map = () => {
-  const [location, setLocation] = useState<GeolocationPosition>({
-    coords: {
-      accuracy: 0,
-      altitude: 0,
-      altitudeAccuracy: 0,
-      heading: 0,
-      speed: 0,
-      latitude: 0,
-      longitude: 0,
-    },
-    timestamp: 0,
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [location, setLocation] =
+    useState<GeolocationPosition>(defaultGeoPosition);
+
+  const getLocation = async () => {
+    await navigator.geolocation.getCurrentPosition((position) => {
+      setLocation(position);
+      setIsLoading(false);
+    }, error);
+  };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setLocation(position);
-    }, error);
+    getLocation();
   }, [location]);
 
   const userLocation = {
     lat: location.coords.latitude,
     lng: location.coords.longitude,
   };
+
+  if (isLoading) {
+    console.log('Loading');
+    return (
+      <div style={{ height: '100vh', width: '100%' }}>
+        <img alt="logo" src={website} style={{ height: 300, width: 300 }} />
+      </div>
+    );
+  }
 
   return (
     <div style={{ height: '100vh', width: '100%' }}>
@@ -52,13 +69,9 @@ const Map = () => {
         defaultCenter={defaultProps.center}
         defaultZoom={defaultProps.zoom}
         center={userLocation}
-        options={{ styles: mapStyle }}
+        options={{ styles: mapStyle, minZoom: 15, maxZoom: 17 }}
       >
-        <AnyReactComponent
-          lat={10.99835602}
-          lng={77.01502627}
-          text="My Marker"
-        />
+        <CustomBlueMarker lat={userLocation.lat} lng={userLocation.lng} />
       </GoogleMapReact>
     </div>
   );

@@ -1,3 +1,4 @@
+//import { ReactElement } from 'hoist-non-react-statics/node_modules/@types/react';
 import { ActionTypes } from './types';
 
 export interface ding {
@@ -160,7 +161,6 @@ export interface Logout {
 export type Marker = {
   lat: number;
   lng: number;
-  text: string;
 };
 
 export type MessageActionTypes = Add_Message | Remove_Message;
