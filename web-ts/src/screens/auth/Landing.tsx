@@ -30,7 +30,7 @@ export const Landing = () => {
   const dispatch = useDispatch<Dispatch<any>>();
 
   if (authState.authUser) {
-    return <Redirect to="profile" />;
+    return <Redirect to="map" />;
   }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -8,6 +8,7 @@ const CustomMarker = (props: dingObj) => {
 
   return (
     <div
+      className="marker-container"
       onClick={() => console.log(data)}
       style={{ position: 'absolute', transform: 'translate(-50%, -100%)' }}
     >
@@ -15,13 +16,12 @@ const CustomMarker = (props: dingObj) => {
         alt="marker-thumbnail"
         src={imageUrl}
         style={{
-          height: 30,
-          width: 30,
-          borderRadius: 16,
-          borderColor: 'red',
-          borderWidth: 1.5,
+          height: 38,
+          width: 38,
+          borderRadius: 19,
+          border: '1px solid red',
           zIndex: 1,
-          transform: 'translate(20%, 115%)',
+          transform: 'translate(5%, 100%)',
         }}
       />
       <img alt="marker" src={pin} style={{ height: 42, width: 42 }}></img>

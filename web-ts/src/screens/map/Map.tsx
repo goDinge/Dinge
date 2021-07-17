@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -7,6 +7,7 @@ import { ding, dingeState } from '../../store/interfaces';
 import GoogleMapReact from 'google-map-react';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
+import { Colors } from '../../constants/Colors';
 
 import { AppState } from '../../store/reducers/rootReducer';
 import * as dingeActions from '../../store/actions/dinge';
@@ -16,29 +17,18 @@ import CustomBlueMarker from '../../components/CustomBlueMarker';
 import CustomMarker from '../../components/CustomMarker';
 
 const mapStyle = require('../../helpers/mapStyles.json');
-
-const error = () => {
-  console.log('error');
-};
+const settingConfigs = require('../../settingConfigs.json');
 
 const defaultLocation = {
   center: {
-    lat: 43.67028846899895,
-    lng: -79.38671623993413,
+    lat: settingConfigs[2].defaultLocation.coords.latitude,
+    lng: settingConfigs[2].defaultLocation.coords.longitude,
   },
   zoom: 15,
 };
 
 const defaultGeoPosition = {
-  coords: {
-    accuracy: 0,
-    altitude: 0,
-    altitudeAccuracy: 0,
-    heading: 0,
-    speed: 0,
-    latitude: defaultLocation.center.lat,
-    longitude: defaultLocation.center.lng,
-  },
+  coords: settingConfigs[2].defaultLocation.coords,
   timestamp: 0,
 };
 
@@ -52,28 +42,35 @@ const Map = () => {
 
   const dispatch = useDispatch<Dispatch<any>>();
 
-  const getLocation = async () => {
+  const error = () => {
+    console.log('error');
+  };
+
+  const loadData = useCallback(
+    async (location: GeolocationPosition) => {
+      //setError(null);
+      try {
+        await dispatch(dingeActions.getLocalDinge(location));
+        // await dispatch(eventsActions.getLocalEvents(location));
+        // await dispatch(authActions.getAuthUser());
+      } catch (err) {
+        //setError(err.message);
+      }
+    },
+    [dispatch]
+  );
+
+  const getLocation = useCallback(async () => {
     await navigator.geolocation.getCurrentPosition((position) => {
       setLocation(position);
       loadData(position);
       setIsMapLoading(false);
     }, error);
-  };
+  }, [loadData]);
 
   useEffect(() => {
     getLocation();
-  });
-
-  const loadData = async (location: GeolocationPosition) => {
-    //setError(null);
-    try {
-      await dispatch(dingeActions.getLocalDinge(location));
-      // await dispatch(eventsActions.getLocalEvents(location));
-      // await dispatch(authActions.getAuthUser());
-    } catch (err) {
-      //setError(err.message);
-    }
-  };
+  }, [getLocation]);
 
   const userLocation = {
     lat: location.coords.latitude,
@@ -91,7 +88,7 @@ const Map = () => {
             transform: 'translate(-50%, -50%)',
           }}
         >
-          <Loader type="Oval" color="#FF5A5F" height={70} width={70} />
+          <Loader type="Oval" color={Colors.primary} height={70} width={70} />
         </div>
       </div>
     );
@@ -104,7 +101,23 @@ const Map = () => {
         defaultCenter={defaultLocation.center}
         defaultZoom={defaultLocation.zoom}
         center={userLocation}
-        options={{ styles: mapStyle, minZoom: 15, maxZoom: 17 }}
+        options={{ styles: mapStyle, minZoom: 13, maxZoom: 17 }}
+        yesIWantToUseGoogleMapApiInternals={true}
+        onGoogleApiLoaded={({ map, maps }) =>
+          new maps.Circle({
+            strokeColor: Colors.primary,
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: 'rgba(0, 166, 153)',
+            fillOpacity: 0.05,
+            map,
+            center: {
+              lat: location.coords.latitude,
+              lng: location.coords.longitude,
+            },
+            radius: settingConfigs[0].radius * 1000,
+          })
+        }
       >
         <CustomBlueMarker lat={userLocation.lat} lng={userLocation.lng} />
         {dingeArr
