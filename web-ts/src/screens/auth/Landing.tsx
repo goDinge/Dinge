@@ -15,7 +15,7 @@ import { AuthState } from '../../store/interfaces';
 export const Landing = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<formData>({
     name: '',
     email: '',
@@ -38,12 +38,12 @@ export const Landing = () => {
   };
 
   const onClose = () => {
-    setError('');
+    setError(null);
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
+    setError(null);
     setIsLoading(true);
 
     const emailRegexLocal: RegExp = emailRegex;
@@ -171,8 +171,8 @@ export const Landing = () => {
                 </p>
               </div>
               <CustomMessage />
-              {error !== '' ? (
-                <CustomError message={error} onClose={onClose} />
+              {error ? (
+                <CustomError message={error} onClose={onClose} map={false} />
               ) : null}
             </Fragment>
           </div>

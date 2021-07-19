@@ -26,12 +26,11 @@ export const getDinge = () => {
 export const getLocalDinge = (location: GeolocationPosition) => {
   return async (dispatch: Dispatch) => {
     try {
-      const distance = settingConfigs[0].radius;
+      const distance: number = settingConfigs[0].radius;
       const response = await axios.get<dinge_data>(
         `${CURRENT_IP}/api/dinge/local/${distance}/location?longitude=${location.coords.longitude}&latitude=${location.coords.latitude}`
       );
       const dinge = response.data.data;
-      console.log('dinge action');
 
       dispatch<Get_Local_Dinge>({
         type: ActionTypes.GET_LOCAL_DINGE,

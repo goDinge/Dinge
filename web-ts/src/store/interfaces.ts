@@ -3,7 +3,7 @@ import { ActionTypes } from './types';
 
 export interface ding {
   description: string;
-  dingType: string;
+  //dingType: string;
   likes: string[];
   comments: string[];
   reports: string[];
@@ -22,6 +22,10 @@ export interface dingeState {
   dinge: [];
 }
 
+export interface eventsState {
+  events: [];
+}
+
 export interface dingObj {
   data: ding;
   lat: number;
@@ -29,6 +33,25 @@ export interface dingObj {
 }
 
 export type dinge = ding[];
+
+export interface event {
+  description: string;
+  //eventType: string;
+  likes: string[];
+  comments: string[];
+  reports: string[];
+  user: string;
+  location: {
+    longitude: number;
+    latitude: number;
+  };
+  thumbUrl: string;
+  imgUrl: string;
+  createdAt: Date;
+  lastModifiedAt: Date;
+}
+
+export type events = event[];
 
 export interface userObj {
   token: string;
@@ -102,13 +125,16 @@ export interface dinge_data {
   data: dinge;
 }
 
+export interface events_data {
+  data: events;
+}
+
 export interface Message {
   id: string;
   text: string;
 }
 
 //Action Types
-
 export interface Get_Dinge {
   type: ActionTypes.GET_DINGE;
   dinge: dinge;
@@ -117,6 +143,11 @@ export interface Get_Dinge {
 export interface Get_Local_Dinge {
   type: ActionTypes.GET_LOCAL_DINGE;
   dinge: dinge;
+}
+
+export interface Get_Local_Events {
+  type: ActionTypes.GET_LOCAL_EVENTS;
+  events: events;
 }
 
 export interface Add_Message {
@@ -189,4 +220,5 @@ export type AuthActionTypes =
   | Logout;
 
 export type DingeActions = Get_Dinge | Get_Local_Dinge;
+export type EventsActions = Get_Local_Events;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;

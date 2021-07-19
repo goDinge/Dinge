@@ -38,6 +38,15 @@ const settingConfigs = require('../../settingConfigs.json');
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
+//vars for time filters
+const now = new Date(Date.now()).getTime();
+const endOfDay = new Date().setHours(23, 59, 59, 999);
+const today = new Date();
+const tomorrow = new Date(today);
+tomorrow.setDate(tomorrow.getDate() + 1);
+const tomorrowStart = tomorrow.setHours(0, 0, 0, 0);
+const tomorrowEnd = tomorrow.setHours(23, 59, 59, 999);
+
 const MapScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -250,15 +259,6 @@ const MapScreen = (props) => {
   const timeTomorrow = () => {
     setTimeSelected('tomorrow');
   };
-
-  //vars for time filters
-  const now = new Date(Date.now()).getTime();
-  const endOfDay = new Date().setHours(23, 59, 59, 999);
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowStart = tomorrow.setHours(0, 0, 0, 0);
-  const tomorrowEnd = tomorrow.setHours(23, 59, 59, 999);
 
   if (!mapLoaded || !locationState || !authUser) {
     return (

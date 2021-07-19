@@ -89,6 +89,7 @@ img {
 .text-dark {
   color: var(--dark-color);
 }
+
 .cerealBlack {
   font-family: 'AirbnbCerealBlack';
 }
@@ -194,10 +195,82 @@ img {
   border-radius: 10px;
   padding: 0.8rem;
   margin: 1rem 0;
-  opacity: 0.9;
+  opacity: 0.95;
   font-family: 'AirbnbCerealMedium','Raleway', sans-serif;;
   background: var(--light-color);
   color: var(--black-color);
+}
+
+.message-map {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  border-radius: 10px;
+  padding: 0.8rem;
+  margin: 1rem 0;
+  opacity: 0.95;
+  font-family: 'AirbnbCerealMedium','Raleway', sans-serif;
+  font-size: 1.5rem;
+  text-align: center;
+  background: var(--light-color);
+  color: var(--black-color);
+  z-index: 2;
+}
+
+.time-filter-container {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  left: -45%;
+  bottom: 210px;
+  z-index: 3;
+}
+
+.time-icon {
+  display: flex;
+  height: 56px;
+  width: 56px;
+  border-radius: 28px;
+  border: 1px solid white;
+  margin: 12px;
+  background-color: var(--primary-color);
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.time-icon-selected {
+  display: flex;
+  height: 64px;
+  width: 64px;
+  border-radius: 32px;
+  border: 1px solid var(--primary-color);
+  margin: 12px;
+  background-color: white;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.button-container {
+  align-items: center;
+  text-align: center;
+}
+
+.icon-text {
+  color: white;
+  font-family: 'AirbnbCerealBlack';
+  font-size: 13,
+}
+
+.icon-text-selected {
+  color: var(--primary-color);
+  font-family: 'AirbnbCerealBlack';
+  font-size: 13,
 }
 
 .btn-primary,

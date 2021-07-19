@@ -35,7 +35,6 @@ export const getLocalDinge = (location) => {
         `${CURRENT_IP}/api/dinge/local/${distance}/location?longitude=${location.coords.longitude}&latitude=${location.coords.latitude}`
       );
       const dinge = response.data.data;
-      console.log('dinge action: ', CURRENT_IP);
 
       dispatch({
         type: GET_LOCAL_DINGE,

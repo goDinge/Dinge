@@ -1,20 +1,22 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { ding, dingeState } from '../../store/interfaces';
+import { ding, event, dingeState, eventsState } from '../../store/interfaces';
+import { AppState } from '../../store/reducers/rootReducer';
+import * as dingeActions from '../../store/actions/dinge';
+import * as eventsActions from '../../store/actions/events';
 
 import GoogleMapReact from 'google-map-react';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
 import { Colors } from '../../constants/Colors';
 
-import { AppState } from '../../store/reducers/rootReducer';
-import * as dingeActions from '../../store/actions/dinge';
-
 import { GOOGLE_MAPS } from '../../serverConfigs';
 import CustomBlueMarker from '../../components/CustomBlueMarker';
 import CustomMarker from '../../components/CustomMarker';
+import CustomError from '../../components/CustomError';
+import CustomTimeFilter from '../../components/CustomTimeFilter';
 
 const mapStyle = require('../../helpers/mapStyles.json');
 const settingConfigs = require('../../settingConfigs.json');
@@ -32,29 +34,47 @@ const defaultGeoPosition = {
   timestamp: 0,
 };
 
+//vars for time filters
+// const now = new Date(Date.now()).getTime();
+// const endOfDay = new Date().setHours(23, 59, 59, 999);
+// const today = new Date();
+// const tomorrow = new Date(today);
+// tomorrow.setDate(tomorrow.getDate() + 1);
+// const tomorrowStart = tomorrow.setHours(0, 0, 0, 0);
+// const tomorrowEnd = tomorrow.setHours(23, 59, 59, 999);
+
 const Map = () => {
   const [isMapLoading, setIsMapLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [timeSelected, setTimeSelected] = useState('');
   const [location, setLocation] =
     useState<GeolocationPosition>(defaultGeoPosition);
 
   const dinge: dingeState = useSelector((state: AppState) => state.dinge);
   const dingeArr: ding[] = dinge.dinge;
+  const events: eventsState = useSelector((state: AppState) => state.events);
+  const eventsArr: event[] = events.events;
 
   const dispatch = useDispatch<Dispatch<any>>();
 
-  const error = () => {
-    console.log('error');
+  const errorCallback = () => {
+    setError('error');
+  };
+
+  const onClose = () => {
+    setError(null);
   };
 
   const loadData = useCallback(
     async (location: GeolocationPosition) => {
-      //setError(null);
+      setError(null);
+      //setError('Testing error message to see what it looks like');
       try {
         await dispatch(dingeActions.getLocalDinge(location));
-        // await dispatch(eventsActions.getLocalEvents(location));
+        await dispatch(eventsActions.getLocalEvents(location));
         // await dispatch(authActions.getAuthUser());
       } catch (err) {
-        //setError(err.message);
+        setError(err.message);
       }
     },
     [dispatch]
@@ -65,12 +85,24 @@ const Map = () => {
       setLocation(position);
       loadData(position);
       setIsMapLoading(false);
-    }, error);
+    }, errorCallback);
   }, [loadData]);
 
   useEffect(() => {
     getLocation();
   }, [getLocation]);
+
+  const timeNow = () => {
+    setTimeSelected('now');
+  };
+
+  const timeToday = () => {
+    setTimeSelected('today');
+  };
+
+  const timeTomorrow = () => {
+    setTimeSelected('tomorrow');
+  };
 
   const userLocation = {
     lat: location.coords.latitude,
@@ -115,10 +147,33 @@ const Map = () => {
               lat: location.coords.latitude,
               lng: location.coords.longitude,
             },
+            cursor: 'grab',
             radius: settingConfigs[0].radius * 1000,
           })
         }
       >
+        <Fragment>
+          <div className="time-filter-container">
+            <CustomTimeFilter
+              name="now"
+              text="Now"
+              timeSelected={timeSelected}
+              onSelect={timeNow}
+            />
+            <CustomTimeFilter
+              name="today"
+              text="Later"
+              timeSelected={timeSelected}
+              onSelect={timeToday}
+            />
+            <CustomTimeFilter
+              name="tomorrow"
+              text="Next Day"
+              timeSelected={timeSelected}
+              onSelect={timeTomorrow}
+            />
+          </div>
+        </Fragment>
         <CustomBlueMarker lat={userLocation.lat} lng={userLocation.lng} />
         {dingeArr
           ? dingeArr.map((item: ding, index) => (
@@ -130,6 +185,17 @@ const Map = () => {
               />
             ))
           : null}
+        {eventsArr
+          ? eventsArr.map((item: event, index) => (
+              <CustomMarker
+                key={index}
+                data={item}
+                lat={item.location.latitude}
+                lng={item.location.longitude}
+              />
+            ))
+          : null}
+        {error ? <CustomError message={error} onClose={onClose} map /> : null}
       </GoogleMapReact>
     </div>
   );
