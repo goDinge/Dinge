@@ -295,8 +295,8 @@ img {
 .ding-container {
   position: absolute;
   display: flex;
-  width: 760px;
-  height: 400px;
+  width: 780px;
+  height: 420px;
   top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -314,12 +314,35 @@ img {
 }
 
 .dingImg {
-  width: 400px;
-  height: 400px;
+  width: 420px;
+  height: 420px;
 }
 
+.custom-socials-container {
+  width: 360px;
+  display: flex;
+  justify-content: center;
+}
 
+.custom-socials {
+  width: 96%;
+  margin-top: 10px;
+}
 
+.icon-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.icon-left-container {
+  display: flex;
+  background-color:#38a1f3;
+}
+
+.icon-right-container {
+  background-color: #28a745;
+}
 
 /* buttons */
 
