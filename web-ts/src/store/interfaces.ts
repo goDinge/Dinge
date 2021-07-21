@@ -23,6 +23,10 @@ export interface dingeState {
   dinge: [];
 }
 
+export interface dingState {
+  ding: ding;
+}
+
 export interface eventsState {
   events: [];
 }
@@ -163,6 +167,11 @@ export interface Get_Dinge_By_Id {
   ding: ding;
 }
 
+export interface Remove_Ding {
+  type: ActionTypes.REMOVE_DING;
+  ding: {};
+}
+
 export interface Add_Message {
   type: ActionTypes.ADD_MESSAGE;
   message: {
@@ -233,6 +242,6 @@ export type AuthActionTypes =
   | Logout;
 
 export type DingeActions = Get_Dinge | Get_Local_Dinge;
-export type DingActions = Get_Dinge_By_Id;
+export type DingActions = Get_Dinge_By_Id | Remove_Ding;
 export type EventsActions = Get_Local_Events;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;

@@ -1,8 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
-
-import { ding, event, dingeState, eventsState } from '../../store/interfaces';
+import {
+  ding,
+  event,
+  dingeState,
+  dingState,
+  eventsState,
+} from '../../store/interfaces';
 import { AppState } from '../../store/reducers/rootReducer';
 import * as dingeActions from '../../store/actions/dinge';
 import * as eventsActions from '../../store/actions/events';
@@ -13,6 +18,7 @@ import Loader from 'react-loader-spinner';
 import { Colors } from '../../constants/Colors';
 
 import { GOOGLE_MAPS } from '../../serverConfigs';
+import CustomDing from '../../components/CustomDing';
 import CustomBlueMarker from '../../components/CustomBlueMarker';
 import CustomMarker from '../../components/CustomMarker';
 import CustomError from '../../components/CustomError';
@@ -54,6 +60,8 @@ const Map = () => {
   const dingeArr: ding[] = dinge.dinge;
   const events: eventsState = useSelector((state: AppState) => state.events);
   const eventsArr: event[] = events.events;
+  const ding: dingState = useSelector((state: AppState) => state.ding);
+  const dingObj: ding | {} = ding.ding;
 
   const dispatch = useDispatch<Dispatch<any>>();
 
@@ -213,6 +221,8 @@ const Map = () => {
           : null}
         {error ? <CustomError message={error} onClose={onClose} map /> : null}
       </GoogleMapReact>
+      {dingObj ? <CustomDing /> : null}
+
       <div className="time-filter-container">
         <CustomTimeFilter
           name="now"

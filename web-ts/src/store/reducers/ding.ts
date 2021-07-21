@@ -2,7 +2,7 @@ import { ActionTypes } from '../types';
 import { DingActions } from '../interfaces';
 
 const initialState = {
-  ding: {},
+  ding: null,
 };
 
 export const dingReducer = (state = initialState, action: DingActions) => {
@@ -12,6 +12,8 @@ export const dingReducer = (state = initialState, action: DingActions) => {
         ...state,
         ding: action.ding,
       };
+    case ActionTypes.REMOVE_DING:
+      return initialState;
     default:
       return state;
   }
