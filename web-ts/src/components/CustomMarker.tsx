@@ -1,16 +1,32 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { Dispatch } from 'redux';
+
+import * as dingActions from '../store/actions/ding';
+import * as messageActions from '../store/actions/message';
 import pin from '../assets/pin.png';
 import { dingObj } from '../store/interfaces';
 
 const CustomMarker = (props: dingObj) => {
-  const data = props.data;
   const imageUrl = props.data.thumbUrl;
+  const data = props.data;
+
+  const dispatch = useDispatch<Dispatch<any>>();
+
+  const onDetails = (id: string) => {
+    try {
+      console.log(id);
+      dispatch(dingActions.getDing(id));
+    } catch (err) {
+      dispatch(messageActions.addMessage('Unable to get Ding info'));
+    }
+  };
 
   return (
     <div
       className="marker-container"
-      onClick={() => console.log(data)}
       style={{ position: 'absolute', transform: 'translate(-50%, -100%)' }}
+      onClick={() => onDetails(data._id)}
     >
       <img
         alt="marker-thumbnail"

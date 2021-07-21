@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Dispatch } from 'redux';
 import { ActionTypes } from '../types';
-import { Get_Dinge, dinge_data, Get_Local_Dinge } from '../interfaces';
+import { Get_Dinge, Get_Local_Dinge, dinge_data } from '../interfaces';
 import { CURRENT_IP } from '../../serverConfigs';
 
 const settingConfigs = require('../../settingConfigs.json');

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, Fragment } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -35,18 +35,18 @@ const defaultGeoPosition = {
 };
 
 //vars for time filters
-// const now = new Date(Date.now()).getTime();
-// const endOfDay = new Date().setHours(23, 59, 59, 999);
-// const today = new Date();
-// const tomorrow = new Date(today);
-// tomorrow.setDate(tomorrow.getDate() + 1);
-// const tomorrowStart = tomorrow.setHours(0, 0, 0, 0);
-// const tomorrowEnd = tomorrow.setHours(23, 59, 59, 999);
+const now = new Date(Date.now()).getTime();
+const endOfDay = new Date().setHours(23, 59, 59, 999);
+const today = new Date();
+const tomorrow = new Date(today);
+tomorrow.setDate(tomorrow.getDate() + 1);
+const tomorrowStart = tomorrow.setHours(0, 0, 0, 0);
+const tomorrowEnd = tomorrow.setHours(23, 59, 59, 999);
 
 const Map = () => {
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [timeSelected, setTimeSelected] = useState('');
+  const [timeSelected, setTimeSelected] = useState('now');
   const [location, setLocation] =
     useState<GeolocationPosition>(defaultGeoPosition);
 
@@ -152,51 +152,87 @@ const Map = () => {
           })
         }
       >
-        <Fragment>
-          <div className="time-filter-container">
-            <CustomTimeFilter
-              name="now"
-              text="Now"
-              timeSelected={timeSelected}
-              onSelect={timeNow}
-            />
-            <CustomTimeFilter
-              name="today"
-              text="Later"
-              timeSelected={timeSelected}
-              onSelect={timeToday}
-            />
-            <CustomTimeFilter
-              name="tomorrow"
-              text="Next Day"
-              timeSelected={timeSelected}
-              onSelect={timeTomorrow}
-            />
-          </div>
-        </Fragment>
         <CustomBlueMarker lat={userLocation.lat} lng={userLocation.lng} />
-        {dingeArr
+        {timeSelected === 'now' && dingeArr
           ? dingeArr.map((item: ding, index) => (
               <CustomMarker
-                key={index}
                 data={item}
+                key={index}
                 lat={item.location.latitude}
                 lng={item.location.longitude}
               />
             ))
           : null}
         {eventsArr
-          ? eventsArr.map((item: event, index) => (
-              <CustomMarker
-                key={index}
-                data={item}
-                lat={item.location.latitude}
-                lng={item.location.longitude}
-              />
-            ))
+          ? eventsArr.map((item: event, index) => {
+              if (timeSelected === 'now') {
+                if (
+                  new Date(item.date).getTime() < now &&
+                  new Date(item.endDate).getTime() > now
+                ) {
+                  return (
+                    <CustomMarker
+                      key={index}
+                      data={item}
+                      lat={item.location.latitude}
+                      lng={item.location.longitude}
+                    />
+                  );
+                }
+              } else if (timeSelected === 'today') {
+                if (
+                  new Date(item.date).getTime() > now &&
+                  new Date(item.date).getTime() < endOfDay
+                ) {
+                  return (
+                    <CustomMarker
+                      key={index}
+                      data={item}
+                      lat={item.location.latitude}
+                      lng={item.location.longitude}
+                    />
+                  );
+                }
+              } else if (timeSelected === 'tomorrow') {
+                if (
+                  new Date(item.date).getTime() > tomorrowStart &&
+                  new Date(item.date).getTime() < tomorrowEnd
+                ) {
+                  return (
+                    <CustomMarker
+                      key={index}
+                      data={item}
+                      lat={item.location.latitude}
+                      lng={item.location.longitude}
+                    />
+                  );
+                }
+              }
+              return null;
+            })
           : null}
         {error ? <CustomError message={error} onClose={onClose} map /> : null}
       </GoogleMapReact>
+      <div className="time-filter-container">
+        <CustomTimeFilter
+          name="now"
+          text="Now"
+          timeSelected={timeSelected}
+          onSelect={timeNow}
+        />
+        <CustomTimeFilter
+          name="today"
+          text="Later"
+          timeSelected={timeSelected}
+          onSelect={timeToday}
+        />
+        <CustomTimeFilter
+          name="tomorrow"
+          text="Next Day"
+          timeSelected={timeSelected}
+          onSelect={timeTomorrow}
+        />
+      </div>
     </div>
   );
 };

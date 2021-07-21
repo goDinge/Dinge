@@ -191,6 +191,13 @@ img {
   color: #333;
 }
 
+.loading {
+  flex-direction: row;
+  align-items: center;
+}
+
+/* message or error */
+
 .message {
   border-radius: 10px;
   padding: 0.8rem;
@@ -216,14 +223,18 @@ img {
   z-index: 2;
 }
 
+/* map */
+
 .time-filter-container {
-  position: fixed;
+  position: absolute;
+  width: 220px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  left: -45%;
-  bottom: 210px;
-  z-index: 3;
+  justify-content: space-between;
+  top: 80px;
+  left: 5%;
+  z-index: 2;
 }
 
 .time-icon {
@@ -232,28 +243,26 @@ img {
   width: 56px;
   border-radius: 28px;
   border: 1px solid white;
-  margin: 12px;
   background-color: var(--primary-color);
   align-items: center;
   text-align: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 3;
+  z-index: 2;
 }
 
 .time-icon-selected {
   display: flex;
-  height: 64px;
-  width: 64px;
-  border-radius: 32px;
+  height: 60px;
+  width: 60px;
+  border-radius: 30px;
   border: 1px solid var(--primary-color);
-  margin: 12px;
   background-color: white;
   align-items: center;
   text-align: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 3;
+  z-index: 2;
 }
 
 .button-container {
@@ -263,15 +272,26 @@ img {
 
 .icon-text {
   color: white;
-  font-family: 'AirbnbCerealBlack';
-  font-size: 13,
+  font-family: 'AirbnbCerealBlack','Raleway', sans-serif;
+  font-size: 0.7rem;
 }
 
 .icon-text-selected {
   color: var(--primary-color);
-  font-family: 'AirbnbCerealBlack';
-  font-size: 13,
+  font-family: 'AirbnbCerealBlack','Raleway', sans-serif;
+  font-size: 0.8rem;
 }
+
+/* Ding */
+
+.ding-container {
+  width: 700px;
+  height: 600px;
+  border-radius: 10px;
+  background-color: var(--light-color);
+}
+
+/* buttons */
 
 .btn-primary,
 .bg-primary,
@@ -279,11 +299,6 @@ img {
 .message-primary {
   background: var(--primary-color);
   color: #fff;
-}
-
-.loading {
-  flex-direction: row;
-  align-items: center;
 }
 
 .btn-light,
@@ -663,6 +678,7 @@ button {
   .navbar {
     display: block;
     text-align: center;
+    padding: 0.5rem 2rem;
   }
 
   .navbar ul {
@@ -670,12 +686,12 @@ button {
     justify-content: center;
   }
 
-  .navbar h1 {
-    margin-bottom: 1rem;
-  }
-
   .navbar .welcome {
     display: none;
+  }
+
+  .time-filter-container {
+    top: 90px;
   }
 
   /* Profiles Page */
