@@ -1,8 +1,23 @@
 import { ActionTypes } from '../types';
-import { DingActions } from '../interfaces';
+import { dingState, DingActions } from '../interfaces';
 
-const initialState = {
-  ding: null,
+const initialState: dingState = {
+  ding: {
+    description: '',
+    _id: '',
+    likes: [],
+    comments: [],
+    reports: [],
+    user: '',
+    location: {
+      longitude: 0,
+      latitude: 0,
+    },
+    thumbUrl: '',
+    imgUrl: '',
+    createdAt: new Date(),
+    lastModifiedAt: new Date(),
+  },
 };
 
 export const dingReducer = (state = initialState, action: DingActions) => {
@@ -11,6 +26,23 @@ export const dingReducer = (state = initialState, action: DingActions) => {
       return {
         ...state,
         ding: action.ding,
+      };
+
+    case ActionTypes.LIKE_DING:
+      return {
+        ...state,
+        ding: {
+          ...state.ding,
+          likes: action.ding.likes,
+        },
+      };
+    case ActionTypes.UNLIKE_DING:
+      return {
+        ...state,
+        ding: {
+          ...state.ding,
+          likes: action.ding.likes,
+        },
       };
     case ActionTypes.REMOVE_DING:
       return initialState;

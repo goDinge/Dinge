@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { authReducer } from './auth';
+import { userReducer } from './user';
 import { dingeReducer } from './dinge';
 import { dingReducer } from './ding';
 import { messageReducer } from './message';
@@ -10,6 +11,7 @@ const rootReducer = combineReducers({
   ding: dingReducer,
   message: messageReducer,
   auth: authReducer,
+  user: userReducer,
   events: eventsReducer,
 });
 

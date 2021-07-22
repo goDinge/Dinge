@@ -1,15 +1,17 @@
 import React from 'react';
 
+type errorType = 'error' | 'error-map' | 'error-socials' | 'error-ding';
+
 const CustomError = (props: {
   message: string | null;
-  onClose: any;
-  map: boolean;
+  onClose: () => void;
+  errorType: errorType;
 }) => {
-  const { message, onClose, map } = props;
+  const { message, onClose, errorType } = props;
 
   return (
-    <div key={message} className={map ? 'message-map' : 'message'}>
-      <p className="">{message}</p>
+    <div key={message} className={errorType}>
+      <p>{message}</p>
       <button onClick={onClose} className="btn btn-primary">
         Okay
       </button>

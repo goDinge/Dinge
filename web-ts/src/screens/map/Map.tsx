@@ -61,17 +61,9 @@ const Map = () => {
   const events: eventsState = useSelector((state: AppState) => state.events);
   const eventsArr: event[] = events.events;
   const ding: dingState = useSelector((state: AppState) => state.ding);
-  const dingObj: ding | {} = ding.ding;
+  const dingObj = ding.ding;
 
   const dispatch = useDispatch<Dispatch<any>>();
-
-  const errorCallback = () => {
-    setError('error');
-  };
-
-  const onClose = () => {
-    setError(null);
-  };
 
   const loadData = useCallback(
     async (location: GeolocationPosition) => {
@@ -110,6 +102,14 @@ const Map = () => {
 
   const timeTomorrow = () => {
     setTimeSelected('tomorrow');
+  };
+
+  const errorCallback = () => {
+    setError('error');
+  };
+
+  const onClose = () => {
+    setError(null);
   };
 
   const userLocation = {
@@ -219,9 +219,15 @@ const Map = () => {
               return null;
             })
           : null}
-        {error ? <CustomError message={error} onClose={onClose} map /> : null}
+        {error ? (
+          <CustomError
+            message={error}
+            onClose={onClose}
+            errorType="error-map"
+          />
+        ) : null}
       </GoogleMapReact>
-      {dingObj ? <CustomDing /> : null}
+      {dingObj.user !== '' ? <CustomDing /> : null}
 
       <div className="time-filter-container">
         <CustomTimeFilter

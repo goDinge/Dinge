@@ -84,12 +84,12 @@ const CustomSocials = (props) => {
         <View style={styles.iconLeftContainer}>
           {isLikeLoading ? (
             <View style={styles.iconActInd}>
-              <ActivityIndicator color={Colors.red} size="small" />
+              <ActivityIndicator color={Colors.primary} size="small" />
             </View>
           ) : (
             <FontAwesome
               name={initLikeItem ? 'thumbs-up' : 'thumbs-o-up'}
-              color={initLikeItem ? Colors.red : 'black'}
+              color={initLikeItem ? Colors.primary : 'black'}
               size={26}
               style={
                 initLikeItem

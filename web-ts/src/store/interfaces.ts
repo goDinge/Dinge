@@ -27,6 +27,10 @@ export interface dingState {
   ding: ding;
 }
 
+export interface userState {
+  user: user;
+}
+
 export interface eventsState {
   events: [];
 }
@@ -167,9 +171,24 @@ export interface Get_Dinge_By_Id {
   ding: ding;
 }
 
+export interface Like_Ding {
+  type: ActionTypes.LIKE_DING;
+  ding: ding;
+}
+
+export interface Unlike_Ding {
+  type: ActionTypes.UNLIKE_DING;
+  ding: ding;
+}
+
 export interface Remove_Ding {
   type: ActionTypes.REMOVE_DING;
   ding: {};
+}
+
+export interface Get_User {
+  type: ActionTypes.GET_USER;
+  user: user;
 }
 
 export interface Add_Message {
@@ -241,7 +260,12 @@ export type AuthActionTypes =
   | Set_Did_Try_Al
   | Logout;
 
+export type UserActionTypes = Get_User;
 export type DingeActions = Get_Dinge | Get_Local_Dinge;
-export type DingActions = Get_Dinge_By_Id | Remove_Ding;
+export type DingActions =
+  | Get_Dinge_By_Id
+  | Remove_Ding
+  | Like_Ding
+  | Unlike_Ding;
 export type EventsActions = Get_Local_Events;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;

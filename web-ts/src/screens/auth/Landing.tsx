@@ -172,7 +172,11 @@ export const Landing = () => {
               </div>
               <CustomMessage />
               {error ? (
-                <CustomError message={error} onClose={onClose} map={false} />
+                <CustomError
+                  message={error}
+                  onClose={onClose}
+                  errorType="error"
+                />
               ) : null}
             </Fragment>
           </div>

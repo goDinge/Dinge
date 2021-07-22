@@ -31,11 +31,38 @@ export const removeDing = () => {
   };
 };
 
-// export const removeMessage = (id: string) => {
-//   return (dispatch: Dispatch) => {
-//     dispatch({
-//       type: ActionTypes.REMOVE_MESSAGE,
-//       message: id,
-//     });
-//   };
-// };
+export const likeDing = (dingId: string) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const response = await axios.put(
+        `${CURRENT_IP}/api/ding/likes/${dingId}`
+      );
+      const ding = response.data.data;
+
+      dispatch({
+        type: ActionTypes.LIKE_DING,
+        ding: ding,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const unlikeDing = (dingId: string) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const response = await axios.delete(
+        `${CURRENT_IP}/api/ding/likes/${dingId}`
+      );
+      const ding = response.data.data;
+
+      dispatch({
+        type: ActionTypes.UNLIKE_DING,
+        ding: ding,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};

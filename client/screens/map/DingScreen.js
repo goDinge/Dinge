@@ -142,7 +142,7 @@ const DingScreen = (props) => {
   };
 
   //Like and Unlike
-  const likeDingHandler = async (dingId, userId) => {
+  const likeDingHandler = async (dingId) => {
     setError(null);
     setIsLikeLoading(true);
     //updating authUser and User would update real time rep, but kills performance

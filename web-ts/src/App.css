@@ -7,6 +7,8 @@
   --black-color: #000000;
   --danger-color: #dc3545;
   --success-color: #28a745;
+  --ding-container-width: 820px;
+  --ding-container-height: 500px;
 }
 
 * {
@@ -162,6 +164,10 @@ img {
   margin: 3rem 0;
 }
 
+.spinner-margin {
+  margin: 0rem 0.75rem 0rem 0rem;
+}
+
 .btn {
   align-self: center;
   display: inline-block;
@@ -196,9 +202,8 @@ img {
   align-items: center;
 }
 
-/* message or error */
-
-.message {
+/* error */
+.error {
   border-radius: 10px;
   padding: 0.8rem;
   margin: 1rem 0;
@@ -206,9 +211,10 @@ img {
   font-family: 'AirbnbCerealMedium','Raleway', sans-serif;;
   background: var(--light-color);
   color: var(--black-color);
+  z-index: 3;
 }
 
-.message-map {
+.error-map {
   position: absolute;
   transform: translate(-50%, -100%);
   border-radius: 10px;
@@ -216,11 +222,45 @@ img {
   margin: 1rem 0;
   opacity: 0.95;
   font-family: 'AirbnbCerealMedium','Raleway', sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   text-align: center;
   background: var(--light-color);
   color: var(--black-color);
-  z-index: 2;
+  z-index: 3;
+}
+
+.error-socials {
+  position: absolute;
+  width: 280px;
+  border-radius: 10px;
+  border: 4px solid var(--primary-color);
+  padding: 0.8rem;
+  opacity: 0.95;
+  margin: 1rem 0;
+  font-family: 'AirbnbCerealMedium','Raleway', sans-serif;
+  font-size: 1.2rem;
+  text-align: center;
+  background: var(--light-color);
+  color: var(--black-color);
+  transform: translate(4%, 50%);
+  z-index: 3;
+}
+
+.error-ding {
+  position: absolute;
+  width: 280px;
+  border-radius: 10px;
+  border: 4px solid var(--primary-color);
+  padding: 0.8rem;
+  opacity: 0.95;
+  margin: 1rem 0;
+  font-family: 'AirbnbCerealMedium','Raleway', sans-serif;
+  font-size: 1.2rem;
+  text-align: center;
+  background: var(--light-color);
+  color: var(--black-color);
+  transform: translate(40%, 100%);
+  z-index: 3;
 }
 
 /* map */
@@ -295,9 +335,8 @@ img {
 .ding-container {
   position: absolute;
   display: flex;
-  width: 780px;
-  height: 420px;
-  top: 55%;
+  width: var(--ding-container-width);
+  top: 58%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: var(--light-color);
@@ -314,19 +353,19 @@ img {
 }
 
 .dingImg {
-  width: 420px;
-  height: 420px;
+  width: var(--ding-container-height);
+  height: var(--ding-container-height);
 }
 
 .custom-socials-container {
-  width: 360px;
+  width: 320px;
   display: flex;
   justify-content: center;
 }
 
 .custom-socials {
-  width: 96%;
-  margin-top: 10px;
+  width: 94%;
+  margin-top: 12px;
 }
 
 .icon-container {
@@ -337,11 +376,17 @@ img {
 
 .icon-left-container {
   display: flex;
-  background-color:#38a1f3;
 }
 
 .icon-right-container {
   background-color: #28a745;
+}
+
+.likes-count {
+  font-family: 'AirbnbCerealBold';
+  color: black;
+  font-size: 24;
+  padding: 0px 3px;
 }
 
 /* buttons */
