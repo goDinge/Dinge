@@ -80,7 +80,6 @@ const CustomSocials = (props: {
           </div>
           <p className="description">{description}</p>
         </div>
-
         {error ? (
           <CustomError
             message={error}

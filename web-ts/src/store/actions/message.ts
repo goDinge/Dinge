@@ -1,29 +1,21 @@
-import { v4 as uuidv4 } from 'uuid';
 import { ActionTypes } from '../types';
 import { Dispatch } from 'redux';
+import { message } from '../interfaces';
 
-export const addMessage = (text: string) => {
+export const setMessage = (message: message) => {
   return (dispatch: Dispatch) => {
-    const id = uuidv4();
     dispatch({
-      type: ActionTypes.ADD_MESSAGE,
-      message: {
-        text,
-        id,
-      },
+      type: ActionTypes.SET_MESSAGE,
+      message: message,
     });
-    setTimeout(
-      () => dispatch({ type: ActionTypes.REMOVE_MESSAGE, message: id }),
-      5000
-    );
   };
 };
 
-export const removeMessage = (id: string) => {
+export const resetMessage = () => {
   return (dispatch: Dispatch) => {
     dispatch({
-      type: ActionTypes.REMOVE_MESSAGE,
-      message: id,
+      type: ActionTypes.RESET_MESSAGE,
+      message: '',
     });
   };
 };

@@ -1,17 +1,22 @@
 import { ActionTypes } from '../../store/types';
-import { MessageActionTypes, Message } from '../interfaces';
+import { MessageActionTypes } from '../interfaces';
 
-const initialState: Message[] = [];
+const initialState = {
+  message: '',
+};
 
 export const messageReducer = (
-  state: Message[] = initialState,
+  state = initialState,
   action: MessageActionTypes
 ) => {
   switch (action.type) {
-    case ActionTypes.ADD_MESSAGE:
-      return [...state, action.message];
-    case ActionTypes.REMOVE_MESSAGE:
-      return state.filter((message) => message.id !== action.message);
+    case ActionTypes.SET_MESSAGE:
+      return {
+        ...state,
+        message: action.message,
+      };
+    case ActionTypes.RESET_MESSAGE:
+      return initialState;
     default:
       return state;
   }

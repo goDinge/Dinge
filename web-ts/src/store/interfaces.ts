@@ -97,8 +97,11 @@ export interface comment {
   userId: string;
   userName: string;
   text: string;
+  likes: string[];
   dingId: string;
 }
+
+export type message = string;
 
 export interface userData {
   data: {
@@ -154,11 +157,6 @@ export interface comment_data {
   data: comment;
 }
 
-export interface Message {
-  id: string;
-  text: string;
-}
-
 //Action Types
 export interface Get_Dinge {
   type: ActionTypes.GET_DINGE;
@@ -205,16 +203,31 @@ export interface Post_Comment {
   comment: comment;
 }
 
-export interface Add_Message {
-  type: ActionTypes.ADD_MESSAGE;
+export interface Like_Comment {
+  type: ActionTypes.LIKE_COMMENT;
+  comment: comment;
+}
+
+export interface Unlike_Comment {
+  type: ActionTypes.UNLIKE_COMMENT;
+  comment: comment;
+}
+
+export interface Delete_Comment {
+  type: ActionTypes.DELETE_COMMENT;
+  comment: comment;
+}
+
+export interface Set_Message {
+  type: ActionTypes.SET_MESSAGE;
   message: {
     text: string;
     id: string;
   };
 }
 
-export interface Remove_Message {
-  type: ActionTypes.REMOVE_MESSAGE;
+export interface Reset_Message {
+  type: ActionTypes.RESET_MESSAGE;
   message: string;
 }
 
@@ -266,7 +279,7 @@ export type Marker = {
   lng: number;
 };
 
-export type MessageActionTypes = Add_Message | Remove_Message;
+export type MessageActionTypes = Set_Message | Reset_Message;
 
 export type AuthActionTypes =
   | Authenticate
@@ -287,5 +300,9 @@ export type DingActions =
 
 export type EventsActions = Get_Local_Events;
 
-export type CommentsActions = Post_Comment;
+export type CommentsActions =
+  | Post_Comment
+  | Like_Comment
+  | Unlike_Comment
+  | Delete_Comment;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;

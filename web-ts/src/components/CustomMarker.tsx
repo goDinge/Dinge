@@ -17,7 +17,7 @@ const CustomMarker = (props: itemObj) => {
     try {
       dispatch(dingActions.getDing(id));
     } catch (err) {
-      dispatch(messageActions.addMessage('Unable to get Ding info'));
+      dispatch(messageActions.setMessage('Unable to get Ding info'));
     }
   };
 

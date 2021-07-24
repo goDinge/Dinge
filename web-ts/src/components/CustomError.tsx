@@ -1,6 +1,11 @@
 import React from 'react';
 
-type errorType = 'error' | 'error-map' | 'error-socials' | 'error-ding';
+type errorType =
+  | 'error'
+  | 'error-map'
+  | 'error-ding'
+  | 'error-socials'
+  | 'error-comment';
 
 const CustomError = (props: {
   message: string | null;

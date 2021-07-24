@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import * as authActions from '../../store/actions/auth';
-import CustomMessage from '../../components/CustomMessage';
 import CustomError from '../../components/CustomError';
 import { emailRegex } from '../../helpers/emailRegex';
 
@@ -170,7 +169,6 @@ export const Landing = () => {
                   {isSignUp ? 'Login' : 'Register'}
                 </p>
               </div>
-              <CustomMessage />
               {error ? (
                 <CustomError
                   message={error}

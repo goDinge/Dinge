@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
-import { comment, userState, dingState, AuthState } from '../store/interfaces';
+import { userState, dingState, AuthState } from '../store/interfaces';
 import { AppState } from '../store/reducers/rootReducer';
 
 import * as dingActions from '../store/actions/ding';
@@ -12,6 +12,7 @@ import CustomSocials from './CustomSocials';
 import CustomError from './CustomError';
 import CustomCommentInput from './CustomCommentInput';
 import CustomComment from './CustomComment';
+import CustomMessage from './CustomMessage';
 import xMark from '../assets/x-mark.png';
 
 const CustomDing = () => {
@@ -23,7 +24,6 @@ const CustomDing = () => {
   const userObj = user.user;
 
   const comments = dingObj.comments;
-  console.log(comments);
 
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
@@ -83,11 +83,17 @@ const CustomDing = () => {
     dingId: string
   ) => {
     e.preventDefault();
+    if (!text) {
+      setError('Please type something');
+      return;
+    }
+
     setError(null);
     setIsCommentLoading(true);
+
     try {
       await dispatch(commentActions.postComment(text, dingId));
-      //await dispatch(dingActions.getDing(dingId));
+      await dispatch(dingActions.getDing(dingId));
     } catch (err) {
       setError(err.message);
     }
@@ -146,7 +152,8 @@ const CustomDing = () => {
             onClose={onClose}
             errorType="error-ding"
           />
-        ) : null}
+        ) : // <CustomMessage />
+        null}
       </div>
     </div>
   );

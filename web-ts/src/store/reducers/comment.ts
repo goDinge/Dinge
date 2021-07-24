@@ -15,6 +15,21 @@ export const commentReducer = (
         ...state,
         comment: action.comment,
       };
+    case ActionTypes.LIKE_COMMENT:
+      return {
+        ...state,
+        comment: action.comment,
+      };
+    case ActionTypes.UNLIKE_COMMENT:
+      return {
+        ...state,
+        comment: action.comment,
+      };
+    case ActionTypes.DELETE_COMMENT:
+      return {
+        ...state,
+        comment: action.comment,
+      };
     default:
       return state;
   }
