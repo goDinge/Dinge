@@ -6,7 +6,7 @@ export interface ding {
   _id: string;
   //dingType: string;
   likes: string[];
-  comments: string[];
+  comments: comment[];
   reports: string[];
   user: string;
   location: {
@@ -35,8 +35,8 @@ export interface eventsState {
   events: [];
 }
 
-export interface dingObj {
-  data: ding;
+export interface itemObj {
+  data: ding | event;
   lat: number;
   lng: number;
 }
@@ -90,7 +90,14 @@ export interface user {
   createdAt: string;
   lastLoginAt: string;
   lastModifiedAt: string;
-  __v: string;
+}
+
+export interface comment {
+  _id: string;
+  userId: string;
+  userName: string;
+  text: string;
+  dingId: string;
 }
 
 export interface userData {
@@ -122,10 +129,6 @@ export interface customInputProps {
   minLength?: number;
 }
 
-export interface button_props {
-  buttonName: string;
-}
-
 export interface formData {
   name: string;
   email: string;
@@ -133,6 +136,8 @@ export interface formData {
   password2: string;
 }
 
+// xyz_data: the returned object from Axios calls, always inside a data object
+// ie response = dinge.data.data
 export interface dinge_data {
   data: dinge;
 }
@@ -143,6 +148,10 @@ export interface ding_data {
 
 export interface events_data {
   data: events;
+}
+
+export interface comment_data {
+  data: comment;
 }
 
 export interface Message {
@@ -189,6 +198,11 @@ export interface Remove_Ding {
 export interface Get_User {
   type: ActionTypes.GET_USER;
   user: user;
+}
+
+export interface Post_Comment {
+  type: ActionTypes.POST_COMMENT;
+  comment: comment;
 }
 
 export interface Add_Message {
@@ -253,6 +267,7 @@ export type Marker = {
 };
 
 export type MessageActionTypes = Add_Message | Remove_Message;
+
 export type AuthActionTypes =
   | Authenticate
   | Set_Auth_User
@@ -261,11 +276,16 @@ export type AuthActionTypes =
   | Logout;
 
 export type UserActionTypes = Get_User;
+
 export type DingeActions = Get_Dinge | Get_Local_Dinge;
+
 export type DingActions =
   | Get_Dinge_By_Id
   | Remove_Ding
   | Like_Ding
   | Unlike_Ding;
+
 export type EventsActions = Get_Local_Events;
+
+export type CommentsActions = Post_Comment;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;

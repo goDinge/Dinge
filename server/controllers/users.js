@@ -1,6 +1,9 @@
 const fs = require('fs');
 const User = require('../models/User');
 const Ding = require('../models/Ding');
+const Comment = require('../models/Comment');
+const Event = require('../models/Event');
+const EventComment = require('../models/EventComment');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const aws = require('aws-sdk');
@@ -205,8 +208,12 @@ exports.deleteUserById = asyncHandler(async (req, res, next) => {
       user.save();
   });
 
+  //cascade delete
   await User.findByIdAndDelete(user);
   await Ding.deleteMany({ user });
+  await Event.deleteMany({ user });
+  await Comment.deleteMany({ user });
+  await EventComment.deleteMany({ user });
 
   res.status(200).json({
     success: true,

@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
-import { userState, dingState, AuthState } from '../store/interfaces';
+import { comment, userState, dingState, AuthState } from '../store/interfaces';
 import { AppState } from '../store/reducers/rootReducer';
+
 import * as dingActions from '../store/actions/ding';
 import * as userActions from '../store/actions/user';
+import * as commentActions from '../store/actions/comment';
 
 import CustomSocials from './CustomSocials';
 import CustomError from './CustomError';
+import CustomCommentInput from './CustomCommentInput';
+import CustomComment from './CustomComment';
 import xMark from '../assets/x-mark.png';
 
 const CustomDing = () => {
@@ -18,8 +22,13 @@ const CustomDing = () => {
   const user: userState = useSelector((state: AppState) => state.user);
   const userObj = user.user;
 
+  const comments = dingObj.comments;
+  console.log(comments);
+
   const [isLikeLoading, setIsLikeLoading] = useState(false);
+  const [isCommentLoading, setIsCommentLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [text, onChangeText] = useState<string>('');
 
   const dispatch = useDispatch<Dispatch<any>>();
 
@@ -64,6 +73,28 @@ const CustomDing = () => {
     await dispatch(dingActions.getDing(dingId));
   };
 
+  const updatingText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChangeText(e.target.value);
+  };
+
+  const postCommentHandler = async (
+    e: React.FormEvent<HTMLFormElement>,
+    text: string,
+    dingId: string
+  ) => {
+    e.preventDefault();
+    setError(null);
+    setIsCommentLoading(true);
+    try {
+      await dispatch(commentActions.postComment(text, dingId));
+      //await dispatch(dingActions.getDing(dingId));
+    } catch (err) {
+      setError(err.message);
+    }
+    onChangeText('');
+    setIsCommentLoading(false);
+  };
+
   const closeDingHander = () => {
     dispatch(dingActions.removeDing());
   };
@@ -81,7 +112,7 @@ const CustomDing = () => {
         <div className="dingImg">
           <img alt="ding" src={dingObj.imgUrl} />
         </div>
-        <div className="custom-socials-container">
+        <div className="ding-right-container">
           <CustomSocials
             isLikeLoading={isLikeLoading}
             initLikeDing={initLikeDing}
@@ -90,6 +121,24 @@ const CustomDing = () => {
             user={userObj}
             onLike={likeDingHandler}
           />
+          <CustomCommentInput
+            itemState={dingObj}
+            text={text}
+            isCommentLoading={isCommentLoading}
+            onText={updatingText}
+            onComment={postCommentHandler}
+          />
+          {comments &&
+            comments.map((item, index) => {
+              return (
+                <CustomComment
+                  key={index}
+                  comment={item}
+                  authUser={authUser}
+                  item={dingObj}
+                />
+              );
+            })}
         </div>
         {error ? (
           <CustomError

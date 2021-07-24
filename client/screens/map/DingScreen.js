@@ -310,7 +310,6 @@ const DingScreen = (props) => {
                 <Animated.View opacity={1} key={index}>
                   <CustomComment
                     type="ding"
-                    //key={index}
                     comment={item}
                     authUser={authUser}
                     item={ding}

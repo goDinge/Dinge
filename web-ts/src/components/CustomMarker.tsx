@@ -5,9 +5,9 @@ import { Dispatch } from 'redux';
 import * as dingActions from '../store/actions/ding';
 import * as messageActions from '../store/actions/message';
 import pin from '../assets/pin.png';
-import { dingObj } from '../store/interfaces';
+import { itemObj } from '../store/interfaces';
 
-const CustomMarker = (props: dingObj) => {
+const CustomMarker = (props: itemObj) => {
   const imageUrl = props.data.thumbUrl;
   const data = props.data;
 

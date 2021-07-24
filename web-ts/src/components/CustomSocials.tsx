@@ -7,6 +7,7 @@ import { FaRegThumbsUp, FaThumbsUp } from 'react-icons/fa';
 import { FiEdit, FiFlag } from 'react-icons/fi';
 import { RiDeleteBin2Line } from 'react-icons/ri';
 import { Colors } from '../constants/Colors';
+import { timeConverter } from '../helpers/timeConverter';
 
 import CustomError from './CustomError';
 
@@ -22,61 +23,72 @@ const CustomSocials = (props: {
     props;
 
   const [error, setError] = useState<string | null>(null);
+  const [description, setDescription] = useState(itemState.description);
 
   const onClose = () => {
     setError(null);
   };
 
   return (
-    <div className="custom-socials">
-      <div className="icon-container">
-        <div className="icon-left-container">
-          {isLikeLoading ? (
-            <div className="spinner-margin">
-              <Loader
-                type="Oval"
+    <div className="custom-socials-container">
+      <div className="custom-socials">
+        <div className="icon-container">
+          <div className="icon-left-container">
+            {isLikeLoading ? (
+              <div className="spinner-margin">
+                <Loader
+                  type="Oval"
+                  color={Colors.primary}
+                  height={20}
+                  width={20}
+                />
+              </div>
+            ) : initLikeDing ? (
+              <FaThumbsUp
+                size={24}
                 color={Colors.primary}
-                height={20}
-                width={20}
+                style={{ marginRight: 8 }}
+                onClick={() => onLike(itemState._id)}
               />
+            ) : (
+              <FaRegThumbsUp
+                size={24}
+                color="black"
+                style={{ marginRight: 8 }}
+                onClick={() => onLike(itemState._id)}
+              />
+            )}
+            <p className="likes-count">
+              {itemState.likes && itemState.likes.length}
+            </p>
+          </div>
+          {authUser && user && authUser._id === user._id ? (
+            <div className="icon-right-container">
+              <FiEdit size={24} color="black" style={{ marginRight: 8 }} />
+              <RiDeleteBin2Line size={24} color="black" />
             </div>
-          ) : initLikeDing ? (
-            <FaThumbsUp
-              size={24}
-              color={Colors.primary}
-              style={{ marginRight: 8 }}
-              onClick={() => onLike(itemState._id)}
-            />
           ) : (
-            <FaRegThumbsUp
-              size={24}
-              color="black"
-              style={{ marginRight: 8 }}
-              onClick={() => onLike(itemState._id)}
-            />
+            <div className="icon-right-container">
+              <FiFlag size={24} color="black" />
+            </div>
           )}
-          <p className="likes-count">
-            {itemState.likes && itemState.likes.length}
-          </p>
         </div>
-        {authUser && user && authUser._id === user._id ? (
-          <div className="icon-right-container">
-            <FiEdit size={24} color="black" style={{ marginRight: 8 }} />
-            <RiDeleteBin2Line size={24} color="black" />
+        <div className="social-profile">
+          <div className="name-time-container">
+            <p className="user-name">{user.name}</p>
+            <p className="time-text">{timeConverter(itemState.createdAt)}</p>
           </div>
-        ) : (
-          <div className="icon-right-container">
-            <FiFlag size={24} color="black" />
-          </div>
-        )}
+          <p className="description">{description}</p>
+        </div>
+
+        {error ? (
+          <CustomError
+            message={error}
+            onClose={onClose}
+            errorType="error-socials"
+          />
+        ) : null}
       </div>
-      {error ? (
-        <CustomError
-          message={error}
-          onClose={onClose}
-          errorType="error-socials"
-        />
-      ) : null}
     </div>
   );
 };

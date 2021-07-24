@@ -1,12 +1,14 @@
 /* Global Styles */
 :root {
   --primary-color: #FF5A5F;
+  --secondary-color: #00A699;
   --dark-color: #343a40;
   --light-grey: #ededed;
   --light-color: #f4f4f4;
   --black-color: #000000;
   --danger-color: #dc3545;
   --success-color: #28a745;
+  --light-blue: #F9FAFF;
   --ding-container-width: 820px;
   --ding-container-height: 500px;
 }
@@ -339,7 +341,7 @@ img {
   top: 58%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: var(--light-color);
+  background-color: white;
   z-index: 3;
 }
 
@@ -357,15 +359,18 @@ img {
   height: var(--ding-container-height);
 }
 
-.custom-socials-container {
+.ding-right-container {
   width: 320px;
+  padding: 0.7rem 0.5rem;
+}
+
+.custom-socials-container {
   display: flex;
   justify-content: center;
 }
 
 .custom-socials {
   width: 94%;
-  margin-top: 12px;
 }
 
 .icon-container {
@@ -379,14 +384,50 @@ img {
 }
 
 .icon-right-container {
-  background-color: #28a745;
+  padding: 0px;
 }
 
 .likes-count {
-  font-family: 'AirbnbCerealBold';
+  font-family: 'AirbnbCerealBold','Raleway', sans-serif;
   color: black;
   font-size: 24;
   padding: 0px 3px;
+}
+
+.social-profile {
+  margin: 0.5rem 0rem;
+}
+
+.name-time-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.user-name {
+  font-family: 'AirbnbCerealBold','Raleway', sans-serif;
+  font-size: 1rem;
+  align-self: 'flex-start';
+}
+
+.time-text {
+  font-family:  'AirbnbCerealMedium','Raleway', sans-serif;
+  font-size: 0.9rem;
+}
+
+.description {
+  font-family: 'AirbnbCerealLight','Raleway', sans-serif;
+  font-size: 0.9rem;
+}
+
+.comments-input {
+  width: 100%;
+  background-color: var(--light-blue);
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 3px 10px;
+  font-size: 16;
+  font-family: 'AirbnbCerealLight','Raleway', sans-serif;
 }
 
 /* buttons */
@@ -397,6 +438,18 @@ img {
 .message-primary {
   background: var(--primary-color);
   color: #fff;
+}
+
+.btn-post-comment {
+  width: 100%;
+  margin-top: 7px;
+  height: 1.8rem;
+  border-radius: 8px;
+  background-color: var(--secondary-color);
+  font-family: 'AirbnbCerealBold','Raleway', sans-serif;
+  color: #fff;
+  font-size: 14px;
+  padding: 3px 8px;
 }
 
 .btn-light,
