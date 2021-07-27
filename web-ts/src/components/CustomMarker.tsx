@@ -15,18 +15,14 @@ const CustomMarker = (props: itemObj) => {
 
   const onDetails = (id: string) => {
     try {
-      dispatch(dingActions.getDing(id));
+      dispatch(dingActions.getDingById(id));
     } catch (err) {
       dispatch(messageActions.setMessage('Unable to get Ding info'));
     }
   };
 
   return (
-    <div
-      className="marker-container"
-      style={{ position: 'absolute', transform: 'translate(-50%, -100%)' }}
-      onClick={() => onDetails(data._id)}
-    >
+    <div className="marker-container" onClick={() => onDetails(data._id)}>
       <img
         alt="marker-thumbnail"
         src={imageUrl}

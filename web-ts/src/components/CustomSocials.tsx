@@ -30,6 +30,8 @@ const CustomSocials = (props: {
 
   const [description, setDescription] = useState(itemState.description);
 
+  console.log('custom socials user: ', user);
+
   return (
     <div className="custom-socials-container">
       <div className="custom-socials">

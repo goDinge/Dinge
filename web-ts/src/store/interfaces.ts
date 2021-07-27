@@ -207,6 +207,11 @@ export interface Get_User {
   user: user;
 }
 
+export interface Remove_User {
+  type: ActionTypes.REMOVE_USER;
+  user: {};
+}
+
 export interface Post_Comment {
   type: ActionTypes.POST_COMMENT;
   comment: comment;
@@ -302,7 +307,7 @@ export type AuthActionTypes =
   | Set_Did_Try_Al
   | Logout;
 
-export type UserActionTypes = Get_User;
+export type UserActionTypes = Get_User | Remove_User;
 
 export type DingeActions = Get_Dinge | Get_Local_Dinge;
 

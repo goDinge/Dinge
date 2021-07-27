@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { Dispatch } from 'redux';
-import { userData } from '../interfaces';
+import { Remove_User, userData } from '../interfaces';
 import { ActionTypes } from '../types';
 import { CURRENT_IP } from '../../serverConfigs';
 
@@ -19,5 +19,14 @@ export const getUser = (userId: string) => {
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
     }
+  };
+};
+
+export const removeUser = () => {
+  return (dispatch: Dispatch) => {
+    dispatch<Remove_User>({
+      type: ActionTypes.REMOVE_USER,
+      user: {},
+    });
   };
 };

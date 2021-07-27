@@ -11,7 +11,7 @@ import {
 } from '../interfaces';
 import { CURRENT_IP } from '../../serverConfigs';
 
-export const getDing = (dingId: string) => {
+export const getDingById = (dingId: string) => {
   return async (dispatch: Dispatch) => {
     try {
       const response = await axios.get<ding_data>(
@@ -40,9 +40,8 @@ export const removeDing = () => {
 
 export const likeDing = (dingId: string) => {
   return async (dispatch: Dispatch) => {
-    console.log('like fired');
     try {
-      const response = await axios.put(
+      const response = await axios.put<ding_data>(
         `${CURRENT_IP}/api/ding/likes/${dingId}`
       );
       const ding = response.data.data;
@@ -59,9 +58,8 @@ export const likeDing = (dingId: string) => {
 
 export const unlikeDing = (dingId: string) => {
   return async (dispatch: Dispatch) => {
-    console.log('unlike fired');
     try {
-      const response = await axios.delete(
+      const response = await axios.delete<ding_data>(
         `${CURRENT_IP}/api/ding/likes/${dingId}`
       );
       const ding = response.data.data;

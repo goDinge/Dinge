@@ -156,7 +156,7 @@ const Map = () => {
               lng: location.coords.longitude,
             },
             cursor: 'grab',
-            radius: settingConfigs[0].radius * 1000,
+            radius: settingConfigs[0].radius * 1065,
           })
         }
       >
@@ -220,15 +220,15 @@ const Map = () => {
             })
           : null}
         {error ? (
-          <div className="error-map-overlay">
-            <CustomError
-              message={error}
-              onClose={onClose}
-              errorType="error-map"
-            />
-          </div>
+          <CustomError
+            message={error}
+            onClose={onClose}
+            errorType="error-map"
+            overlayType="map-overlay"
+          />
         ) : null}
       </GoogleMapReact>
+
       {dingObj.user !== '' ? <CustomDing /> : null}
       <div className="time-filter-container">
         <CustomTimeFilter

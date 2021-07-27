@@ -30,6 +30,8 @@ export const userReducer = (state = initialState, action: UserActionTypes) => {
         ...state,
         user: action.user,
       };
+    case ActionTypes.REMOVE_USER:
+      return initialState;
     default:
       return state;
   }

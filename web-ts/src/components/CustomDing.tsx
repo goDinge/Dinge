@@ -32,6 +32,7 @@ const CustomDing = () => {
   const messageStr = message.message;
 
   const comments = dingObj.comments;
+  console.log('custom ding dingObj: ', dingObj);
 
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
@@ -49,7 +50,7 @@ const CustomDing = () => {
       try {
         await dispatch(userActions.getUser(userId));
       } catch (err) {
-        dispatch(messageActions.setMessage('Unable to load details.'));
+        dispatch(messageActions.setMessage('Unable to load ding user'));
       }
     },
     [dispatch]
@@ -81,7 +82,7 @@ const CustomDing = () => {
       dispatch(messageActions.setMessage(err.message));
     }
     setIsLikeLoading(false);
-    await dispatch(dingActions.getDing(dingId));
+    await dispatch(dingActions.getDingById(dingId));
   };
 
   const updatingText = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +107,7 @@ const CustomDing = () => {
     setIsCommentLoading(true);
     try {
       await dispatch(commentActions.postComment(text, dingId));
-      await dispatch(dingActions.getDing(dingId));
+      await dispatch(dingActions.getDingById(dingId));
     } catch (err) {
       dispatch(messageActions.setMessage(err.message));
     }
@@ -123,7 +124,7 @@ const CustomDing = () => {
     setIsEditLoading(true);
     try {
       await dispatch(commentActions.editComment(modalText, id));
-      await dispatch(dingActions.getDing(dingId));
+      await dispatch(dingActions.getDingById(dingId));
     } catch (err) {
       dispatch(messageActions.setMessage(err.message));
     }
@@ -158,6 +159,7 @@ const CustomDing = () => {
   const closeDingHandler = () => {
     dispatch(dingActions.removeDing());
     dispatch(messageActions.resetMessage());
+    dispatch(userActions.removeUser());
   };
 
   return (

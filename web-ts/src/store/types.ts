@@ -19,5 +19,6 @@ export enum ActionTypes {
   GET_AUTH_USER = 'GET_AUTH_USER',
   SET_DID_TRY_AL = 'SET_DID_TRY_AL',
   GET_USER = 'GET_USER',
+  REMOVE_USER = 'REMOVE_USER',
   LOGOUT = 'LOGOUT',
 }

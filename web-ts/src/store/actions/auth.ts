@@ -45,7 +45,6 @@ export const register = (name: string, email: string, password: string) => {
 
 export const login = (email: string, password: string) => {
   return async (dispatch: Dispatch<any>) => {
-    console.log('before login localStorage: ', localStorage.userData);
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -75,7 +74,6 @@ export const login = (email: string, password: string) => {
         expirationDate,
         resData.user
       );
-      console.log('after login localStorage.userData: ', localStorage.userData);
       await dispatch(setAuthUser(resData.user));
     } catch (err) {
       throw new Error(err.response.data.error);

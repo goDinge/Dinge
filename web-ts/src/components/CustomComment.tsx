@@ -38,7 +38,7 @@ const CustomComment = (props: {
       } else {
         await dispatch(commentActions.unlikeComment(id));
       }
-      await dispatch(dingActions.getDing(itemId));
+      await dispatch(dingActions.getDingById(itemId));
     } catch (err) {
       messageActions.setMessage(err.message);
     }
@@ -49,7 +49,7 @@ const CustomComment = (props: {
     setIsCommentDeleteLoading(true);
     try {
       await dispatch(commentActions.deleteComment(id, itemId));
-      await dispatch(dingActions.getDing(itemId));
+      await dispatch(dingActions.getDingById(itemId));
     } catch (err) {
       dispatch(messageActions.setMessage(err.message));
     }
@@ -64,11 +64,7 @@ const CustomComment = (props: {
           <p className="description">{comment.text}</p>
         </div>
         <div className="comment-likes-count">
-          <FaRegThumbsUp
-            size={20}
-            color="black"
-            style={{ padding: 3, cursor: 'pointer' }}
-          />
+          <FaRegThumbsUp size={19} color="black" style={{ padding: 3 }} />
           <p className="comment-likes-count-text">{comment.likes.length}</p>
         </div>
       </div>

@@ -174,6 +174,7 @@ export const Landing = () => {
                   message={error}
                   onClose={onClose}
                   errorType="error"
+                  overlayType="no-overlay"
                 />
               ) : null}
             </Fragment>
