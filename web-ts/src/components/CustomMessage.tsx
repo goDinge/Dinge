@@ -6,9 +6,13 @@ import { AppState } from '../store/reducers/rootReducer';
 import { messageState } from '../store/interfaces';
 import * as MessageActions from '../store/actions/message';
 
-const CustomMessage = () => {
+type component = 'message-ding' | 'message-map';
+
+const CustomMessage = (props: { component: component }) => {
   const message: messageState = useSelector((state: AppState) => state.message);
   const messageStr = message.message;
+
+  const component = props.component;
 
   const dispatch = useDispatch<Dispatch<any>>();
 
@@ -18,7 +22,7 @@ const CustomMessage = () => {
 
   return (
     <div className="message-overlay">
-      <div className="error-ding">
+      <div className={component}>
         <p>{messageStr}</p>
         <button onClick={onClose} className="btn btn-primary">
           Okay

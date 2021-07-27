@@ -199,7 +199,7 @@ const CustomDing = () => {
               );
             })}
         </div>
-        {messageStr ? <CustomMessage /> : null}
+        {messageStr ? <CustomMessage component="message-ding" /> : null}
         {editModal ? (
           <CustomEditModal
             modalText={modalText}

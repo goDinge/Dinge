@@ -68,8 +68,7 @@ const Map = () => {
 
   const loadData = useCallback(
     async (location: GeolocationPosition) => {
-      setError(null);
-      //setError('Testing error message to see what it looks like');
+      setError('testing error message');
       try {
         await dispatch(dingeActions.getLocalDinge(location));
         await dispatch(eventsActions.getLocalEvents(location));
@@ -221,15 +220,16 @@ const Map = () => {
             })
           : null}
         {error ? (
-          <CustomError
-            message={error}
-            onClose={onClose}
-            errorType="error-map"
-          />
+          <div className="error-map-overlay">
+            <CustomError
+              message={error}
+              onClose={onClose}
+              errorType="error-map"
+            />
+          </div>
         ) : null}
       </GoogleMapReact>
       {dingObj.user !== '' ? <CustomDing /> : null}
-
       <div className="time-filter-container">
         <CustomTimeFilter
           name="now"

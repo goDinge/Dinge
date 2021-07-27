@@ -222,6 +222,17 @@ img {
   z-index: 5;
 }
 
+.error-map-overlay {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 5;
+}
+
 .error {
   border-radius: 10px;
   padding: 0.8rem;
@@ -235,37 +246,21 @@ img {
 
 .error-map {
   position: absolute;
-  transform: translate(-50%, -100%);
-  border-radius: 10px;
-  padding: 0.8rem;
-  margin: 1rem 0;
-  opacity: 0.95;
-  font-family: 'AirbnbCerealMedium','Raleway', sans-serif;
-  font-size: 1.2rem;
-  text-align: center;
-  background: var(--light-color);
-  color: var(--black-color);
-  z-index: 5;
-}
-/* 
-.error-socials {
-  position: absolute;
-  width: 280px;
-  border-radius: 10px;
+  transform: translate(260%, 200%);
   border: 4px solid var(--primary-color);
+  border-radius: 10px;
   padding: 0.8rem;
-  opacity: 0.95;
   margin: 1rem 0;
+  opacity: 0.95;
   font-family: 'AirbnbCerealMedium','Raleway', sans-serif;
   font-size: 1.2rem;
   text-align: center;
   background: var(--light-color);
   color: var(--black-color);
-  transform: translate(4%, 50%);
   z-index: 5;
 }
 
-.error-ding {
+.message-ding {
   position: absolute;
   width: 280px;
   border-radius: 10px;
@@ -280,7 +275,7 @@ img {
   color: var(--black-color);
   transform: translate(100%, 100%);
   z-index: 5;
-} */
+} 
 
 .modal-ding {
   position: absolute;
