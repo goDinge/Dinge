@@ -3,34 +3,33 @@ import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 import { user, ding, comment } from '../store/interfaces';
 
-import { FaRegThumbsUp, FaThumbsUp } from 'react-icons/fa';
+import { FaRegThumbsUp } from 'react-icons/fa';
 import { FiEdit, FiFlag } from 'react-icons/fi';
 import { RiDeleteBack2Line } from 'react-icons/ri';
 import { Colors } from '../constants/Colors';
 
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
-import CustomError from './CustomError';
 import * as commentActions from '../store/actions/comment';
 import * as dingActions from '../store/actions/ding';
+import * as messageActions from '../store/actions/message';
 
 const CustomComment = (props: {
   comment: comment;
   authUser: user | null;
   item: ding;
+  onEditor: (id: string, text: string) => void;
 }) => {
-  const { comment, authUser, item } = props;
+  const { comment, authUser, item, onEditor } = props;
 
   const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
   const [isCommentDeleteLoading, setIsCommentDeleteLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const dispatch = useDispatch<Dispatch<any>>();
 
   const comments = item.comments;
 
   const likeCommentHandler = async (id: string, itemId: string) => {
-    setError('testing error component');
     setIsCommentLikeLoading(true);
     const comment = comments.find((comment) => comment._id === id);
     try {
@@ -41,25 +40,20 @@ const CustomComment = (props: {
       }
       await dispatch(dingActions.getDing(itemId));
     } catch (err) {
-      setError(err.message);
+      messageActions.setMessage(err.message);
     }
     setIsCommentLikeLoading(false);
   };
 
   const deleteCommentHandler = async (id: string, itemId: string) => {
-    setError(null);
     setIsCommentDeleteLoading(true);
     try {
       await dispatch(commentActions.deleteComment(id, itemId));
       await dispatch(dingActions.getDing(itemId));
     } catch (err) {
-      setError(err.message);
+      dispatch(messageActions.setMessage(err.message));
     }
     setIsCommentDeleteLoading(false);
-  };
-
-  const onClose = () => {
-    setError(null);
   };
 
   return (
@@ -80,7 +74,12 @@ const CustomComment = (props: {
       </div>
       {comment.userId === authUser?._id ? (
         <div className="comments-icon-container">
-          <FiEdit size={20} color={Colors.grey} style={{ cursor: 'pointer' }} />
+          <FiEdit
+            size={20}
+            color={Colors.grey}
+            style={{ cursor: 'pointer' }}
+            onClick={() => onEditor(comment._id, comment.text)}
+          />
           {isCommentDeleteLoading ? (
             <div className="spinner-margin-left">
               <Loader
@@ -136,13 +135,6 @@ const CustomComment = (props: {
           />
         </div>
       )}
-      {error ? (
-        <CustomError
-          message={error}
-          onClose={onClose}
-          errorType="error-comment"
-        />
-      ) : null}
     </div>
   );
 };

@@ -11,6 +11,7 @@ import {
 import { AppState } from '../../store/reducers/rootReducer';
 import * as dingeActions from '../../store/actions/dinge';
 import * as eventsActions from '../../store/actions/events';
+import * as authActions from '../../store/actions/auth';
 
 import GoogleMapReact from 'google-map-react';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
@@ -72,7 +73,7 @@ const Map = () => {
       try {
         await dispatch(dingeActions.getLocalDinge(location));
         await dispatch(eventsActions.getLocalEvents(location));
-        // await dispatch(authActions.getAuthUser());
+        await dispatch(authActions.getAuthUser());
       } catch (err) {
         setError(err.message);
       }

@@ -9,8 +9,6 @@ import { RiDeleteBin2Line } from 'react-icons/ri';
 import { Colors } from '../constants/Colors';
 import { timeConverter } from '../helpers/timeConverter';
 
-import CustomError from './CustomError';
-
 const CustomSocials = (props: {
   isLikeLoading: boolean;
   initLikeDing: boolean;
@@ -18,16 +16,19 @@ const CustomSocials = (props: {
   user: user;
   authUser: user | null;
   onLike: (dingId: string) => Promise<void>;
+  onFlag: (dingId: string) => Promise<void>;
 }) => {
-  const { isLikeLoading, initLikeDing, itemState, user, authUser, onLike } =
-    props;
+  const {
+    isLikeLoading,
+    initLikeDing,
+    itemState,
+    user,
+    authUser,
+    onLike,
+    onFlag,
+  } = props;
 
-  const [error, setError] = useState<string | null>(null);
   const [description, setDescription] = useState(itemState.description);
-
-  const onClose = () => {
-    setError(null);
-  };
 
   return (
     <div className="custom-socials-container">
@@ -69,7 +70,11 @@ const CustomSocials = (props: {
             </div>
           ) : (
             <div className="icon-right-container">
-              <FiFlag size={24} color="black" />
+              <FiFlag
+                size={24}
+                color="black"
+                onClick={() => onFlag(itemState._id)}
+              />
             </div>
           )}
         </div>
@@ -80,13 +85,6 @@ const CustomSocials = (props: {
           </div>
           <p className="description">{description}</p>
         </div>
-        {error ? (
-          <CustomError
-            message={error}
-            onClose={onClose}
-            errorType="error-socials"
-          />
-        ) : null}
       </div>
     </div>
   );

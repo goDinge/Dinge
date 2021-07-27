@@ -1,18 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
-import { userState, dingState, AuthState } from '../store/interfaces';
+import {
+  userState,
+  dingState,
+  AuthState,
+  messageState,
+} from '../store/interfaces';
 import { AppState } from '../store/reducers/rootReducer';
 
 import * as dingActions from '../store/actions/ding';
 import * as userActions from '../store/actions/user';
 import * as commentActions from '../store/actions/comment';
+import * as messageActions from '../store/actions/message';
 
 import CustomSocials from './CustomSocials';
-import CustomError from './CustomError';
 import CustomCommentInput from './CustomCommentInput';
 import CustomComment from './CustomComment';
 import CustomMessage from './CustomMessage';
+import CustomEditModal from './CustomEditModal';
 import xMark from '../assets/x-mark.png';
 
 const CustomDing = () => {
@@ -22,13 +28,19 @@ const CustomDing = () => {
   const dingObj = ding.ding;
   const user: userState = useSelector((state: AppState) => state.user);
   const userObj = user.user;
+  const message: messageState = useSelector((state: AppState) => state.message);
+  const messageStr = message.message;
 
   const comments = dingObj.comments;
 
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [text, onChangeText] = useState<string>('');
+  const [isEditLoading, setIsEditLoading] = useState(false);
+  const [text, onChangeText] = useState('');
+  const [modalText, onChangeModalText] = useState('');
+  const [editModal, setEditModal] = useState(false);
+  const [editCommentId, setEditCommentId] = useState('');
+  const [editInitialText, setEditInitialText] = useState('');
 
   const dispatch = useDispatch<Dispatch<any>>();
 
@@ -37,7 +49,7 @@ const CustomDing = () => {
       try {
         await dispatch(userActions.getUser(userId));
       } catch (err) {
-        console.log(err.message);
+        dispatch(messageActions.setMessage('Unable to load details.'));
       }
     },
     [dispatch]
@@ -57,7 +69,6 @@ const CustomDing = () => {
   //Like and Unlike
   const likeDingHandler = async (dingId: string) => {
     setIsLikeLoading(true);
-    setError(null);
     try {
       if (initLikeDing) {
         initLikeDing = false;
@@ -67,7 +78,7 @@ const CustomDing = () => {
         await dispatch(dingActions.likeDing(dingId));
       }
     } catch (err) {
-      setError(err.message);
+      dispatch(messageActions.setMessage(err.message));
     }
     setIsLikeLoading(false);
     await dispatch(dingActions.getDing(dingId));
@@ -77,6 +88,11 @@ const CustomDing = () => {
     onChangeText(e.target.value);
   };
 
+  const updatingModalText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChangeModalText(e.target.value);
+  };
+
+  //Comments
   const postCommentHandler = async (
     e: React.FormEvent<HTMLFormElement>,
     text: string,
@@ -84,34 +100,69 @@ const CustomDing = () => {
   ) => {
     e.preventDefault();
     if (!text) {
-      setError('Please type something');
+      dispatch(messageActions.setMessage('Please type something'));
       return;
     }
-
-    setError(null);
     setIsCommentLoading(true);
-
     try {
       await dispatch(commentActions.postComment(text, dingId));
       await dispatch(dingActions.getDing(dingId));
     } catch (err) {
-      setError(err.message);
+      dispatch(messageActions.setMessage(err.message));
     }
     onChangeText('');
     setIsCommentLoading(false);
   };
 
-  const closeDingHander = () => {
-    dispatch(dingActions.removeDing());
+  const editCommentHandler = async (
+    e: React.FormEvent<HTMLFormElement>,
+    id: string,
+    dingId: string
+  ) => {
+    e.preventDefault();
+    setIsEditLoading(true);
+    try {
+      await dispatch(commentActions.editComment(modalText, id));
+      await dispatch(dingActions.getDing(dingId));
+    } catch (err) {
+      dispatch(messageActions.setMessage(err.message));
+    }
+    onChangeModalText('');
+    setEditInitialText('');
+    setIsEditLoading(false);
+    setEditModal(false);
+    cancelEditHandler();
   };
 
-  const onClose = () => {
-    setError(null);
+  const openEditorHandler = (id: string, text: string) => {
+    setEditModal(true);
+    setEditCommentId(id);
+    setEditInitialText(text);
+  };
+
+  const cancelEditHandler = () => {
+    setEditModal(false);
+    setEditInitialText('');
+  };
+
+  //Rport
+  const reportDingHandler = async (dingId: string) => {
+    try {
+      await dispatch(dingActions.reportDingById(dingId));
+      dispatch(messageActions.setMessage('Ding Reported!'));
+    } catch (err) {
+      dispatch(messageActions.setMessage(err.message));
+    }
+  };
+
+  const closeDingHandler = () => {
+    dispatch(dingActions.removeDing());
+    dispatch(messageActions.resetMessage());
   };
 
   return (
     <div className="ding-overlay">
-      <div className="close-ding" onClick={() => closeDingHander()}>
+      <div className="close-ding" onClick={() => closeDingHandler()}>
         <img alt="close" src={xMark} />
       </div>
       <div className="ding-container">
@@ -126,6 +177,7 @@ const CustomDing = () => {
             itemState={dingObj}
             user={userObj}
             onLike={likeDingHandler}
+            onFlag={reportDingHandler}
           />
           <CustomCommentInput
             itemState={dingObj}
@@ -142,18 +194,24 @@ const CustomDing = () => {
                   comment={item}
                   authUser={authUser}
                   item={dingObj}
+                  onEditor={openEditorHandler}
                 />
               );
             })}
         </div>
-        {error ? (
-          <CustomError
-            message={error}
-            onClose={onClose}
-            errorType="error-ding"
+        {messageStr ? <CustomMessage /> : null}
+        {editModal ? (
+          <CustomEditModal
+            modalText={modalText}
+            itemState={dingObj}
+            isEditLoading={isEditLoading}
+            editInitialText={editInitialText}
+            editCommentId={editCommentId}
+            onText={updatingModalText}
+            onEdit={editCommentHandler}
+            onCancel={cancelEditHandler}
           />
-        ) : // <CustomMessage />
-        null}
+        ) : null}
       </div>
     </div>
   );

@@ -35,6 +35,10 @@ export interface eventsState {
   events: [];
 }
 
+export interface messageState {
+  message: message;
+}
+
 export interface itemObj {
   data: ding | event;
   lat: number;
@@ -193,6 +197,11 @@ export interface Remove_Ding {
   ding: {};
 }
 
+export interface Report_Ding {
+  type: ActionTypes.REPORT_DING;
+  ding: ding;
+}
+
 export interface Get_User {
   type: ActionTypes.GET_USER;
   user: user;
@@ -215,6 +224,11 @@ export interface Unlike_Comment {
 
 export interface Delete_Comment {
   type: ActionTypes.DELETE_COMMENT;
+  comment: comment;
+}
+
+export interface Edit_Comment {
+  type: ActionTypes.EDIT_COMMENT;
   comment: comment;
 }
 
@@ -296,7 +310,8 @@ export type DingActions =
   | Get_Dinge_By_Id
   | Remove_Ding
   | Like_Ding
-  | Unlike_Ding;
+  | Unlike_Ding
+  | Report_Ding;
 
 export type EventsActions = Get_Local_Events;
 
@@ -304,5 +319,6 @@ export type CommentsActions =
   | Post_Comment
   | Like_Comment
   | Unlike_Comment
-  | Delete_Comment;
+  | Delete_Comment
+  | Edit_Comment;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;

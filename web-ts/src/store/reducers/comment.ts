@@ -30,6 +30,11 @@ export const commentReducer = (
         ...state,
         comment: action.comment,
       };
+    case ActionTypes.EDIT_COMMENT:
+      return {
+        ...state,
+        comment: action.comment,
+      };
     default:
       return state;
   }

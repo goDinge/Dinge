@@ -8,55 +8,6 @@ import { setAuthToken } from '../../helpers/setAuthToken';
 let timer: null | ReturnType<typeof setTimeout> = null;
 const twentyOneDays = 21 * 24 * 60 * 60 * 1000;
 
-export const getAuthUser: any = () => {
-  return async (dispatch: Dispatch<any>) => {
-    if (localStorage.userData) {
-      const data = JSON.parse(localStorage.userData);
-      setAuthToken(data.token);
-    }
-
-    try {
-      const response: AxiosResponse<userData> = await axios.get(
-        `${CURRENT_IP}/api/auth/me`
-      );
-      if (!response) {
-        throw new Error('You are not logged in.');
-      }
-
-      const user = response.data.data;
-      //console.log('auth actions getauthuser: ', user);
-
-      const storageData: any = localStorage.getItem('userData');
-      const storageDataTransformed: any = JSON.parse(storageData);
-      const { token, userId } = storageDataTransformed;
-      // console.log(
-      //   'auth actions storageData token: ',
-      //   storageDataTransformed.token
-      // );
-
-      await dispatch({
-        type: ActionTypes.GET_AUTH_USER,
-        token: token,
-        userId: userId,
-        authUser: user,
-      });
-    } catch (err) {
-      throw new Error(err.response.data.error);
-    }
-  };
-};
-
-export const setAuthUser = (resData: user) => {
-  return (dispatch: Dispatch<any>) => {
-    //console.log('auth actions setauthuser: ', resData);
-
-    dispatch({
-      type: ActionTypes.SET_AUTH_USER,
-      authUser: resData,
-    });
-  };
-};
-
 export const register = (name: string, email: string, password: string) => {
   return async (dispatch: Dispatch<any>) => {
     const config = {
@@ -94,6 +45,7 @@ export const register = (name: string, email: string, password: string) => {
 
 export const login = (email: string, password: string) => {
   return async (dispatch: Dispatch<any>) => {
+    console.log('before login localStorage: ', localStorage.userData);
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -123,6 +75,7 @@ export const login = (email: string, password: string) => {
         expirationDate,
         resData.user
       );
+      console.log('after login localStorage.userData: ', localStorage.userData);
       await dispatch(setAuthUser(resData.user));
     } catch (err) {
       throw new Error(err.response.data.error);
@@ -130,23 +83,58 @@ export const login = (email: string, password: string) => {
   };
 };
 
-export const logout = () => {
-  clearLogoutTimer();
-  localStorage.removeItem('userData');
-  //console.log('auth actions logout: ', localStorage.userData);
-  return { type: ActionTypes.LOGOUT };
+export const getAuthUser: any = () => {
+  return async (dispatch: Dispatch<any>) => {
+    if (localStorage.userData) {
+      const data = JSON.parse(localStorage.userData);
+      setAuthToken(data.token);
+    }
+
+    try {
+      const response: AxiosResponse<userData> = await axios.get(
+        `${CURRENT_IP}/api/auth/me`
+      );
+      if (!response) {
+        throw new Error('You are not logged in.');
+      }
+
+      const user = response.data.data;
+
+      const storageData: any = localStorage.getItem('userData');
+      const storageDataTransformed: any = JSON.parse(storageData);
+      const { token, userId } = storageDataTransformed;
+
+      await dispatch({
+        type: ActionTypes.GET_AUTH_USER,
+        token: token,
+        userId: userId,
+        authUser: user,
+      });
+    } catch (err) {
+      throw new Error(err.response.data.error);
+    }
+  };
+};
+
+export const setAuthUser = (resData: user) => {
+  return (dispatch: Dispatch<any>) => {
+    dispatch({
+      type: ActionTypes.SET_AUTH_USER,
+      authUser: resData,
+    });
+  };
 };
 
 export const authenticate = (
   token: string,
   userId: string,
   expiryTime: number,
-  result: user
+  resData: user
 ) => {
   return (dispatch: Dispatch<any>) => {
     dispatch(setLogoutTimer(expiryTime));
     dispatch({ type: ActionTypes.AUTHENTICATE, token, userId });
-    dispatch({ type: ActionTypes.SET_AUTH_USER, authUser: result });
+    dispatch({ type: ActionTypes.SET_AUTH_USER, authUser: resData });
   };
 };
 
@@ -154,7 +142,7 @@ const saveDataToStorage = (
   token: string,
   userId: string,
   expirationDate: string,
-  user: user
+  resData: user
 ) => {
   localStorage.setItem(
     'userData',
@@ -162,9 +150,15 @@ const saveDataToStorage = (
       token: token,
       userId: userId,
       expiryDate: expirationDate,
-      authUser: user,
+      authUser: resData,
     })
   );
+};
+
+export const logout = () => {
+  clearLogoutTimer();
+  localStorage.removeItem('userData');
+  return { type: ActionTypes.LOGOUT };
 };
 
 export const setDidTryAL = () => {

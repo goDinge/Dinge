@@ -1,7 +1,13 @@
 import axios from 'axios';
 import { Dispatch } from 'redux';
 import { ActionTypes } from '../types';
-import { Post_Comment, comment_data } from '../interfaces';
+import {
+  Post_Comment,
+  Like_Comment,
+  Unlike_Comment,
+  Edit_Comment,
+  comment_data,
+} from '../interfaces';
 import { CURRENT_IP } from '../../serverConfigs';
 
 export const postComment = (text: string, dingId: string) => {
@@ -52,7 +58,7 @@ export const likeComment = (commentId: string) => {
       );
       const comment = response.data.data;
 
-      dispatch({
+      dispatch<Like_Comment>({
         type: ActionTypes.LIKE_COMMENT,
         comment: comment,
       });
@@ -70,8 +76,36 @@ export const unlikeComment = (commentId: string) => {
       );
       const comment = response.data.data;
 
-      dispatch({
+      dispatch<Unlike_Comment>({
         type: ActionTypes.UNLIKE_COMMENT,
+        comment: comment,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const editComment = (text: string, commentId: string) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const body = JSON.stringify({ text });
+
+      const response = await axios.put<comment_data>(
+        `${CURRENT_IP}/api/comments/${commentId}`,
+        body,
+        config
+      );
+      const comment = response.data.data;
+
+      dispatch<Edit_Comment>({
+        type: ActionTypes.EDIT_COMMENT,
         comment: comment,
       });
     } catch (err) {

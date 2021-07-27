@@ -16,12 +16,91 @@ import { CURRENT_IP } from '../../serverConfigs.js';
 let timer;
 const oneMonth = 30 * 24 * 60 * 60 * 1000;
 
+export const register = (name, email, password) => {
+  return async (dispatch) => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const body = JSON.stringify({ name, email, password });
+
+    try {
+      const response = await axios.post(
+        `${CURRENT_IP}/api/auth/`,
+        body,
+        config
+      );
+
+      const resData = response.data;
+      await dispatch(
+        authenticate(resData.token, resData.user._id, oneMonth, resData.user)
+      );
+      const expirationDate = resData.options.expires;
+      await saveDataToStorage(
+        resData.token,
+        resData.user._id,
+        expirationDate,
+        resData.user
+      );
+      await dispatch(setAuthUser(resData.user));
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const login = (email, password) => {
+  return async (dispatch) => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const body = JSON.stringify({ email, password });
+
+    try {
+      const response = await axios.post(
+        `${CURRENT_IP}/api/auth/login`,
+        body,
+        config
+      );
+      const resData = response.data;
+      await dispatch(
+        authenticate(resData.token, resData.user._id, oneMonth, resData.user)
+      );
+      const expirationDate = resData.options.expires;
+      await saveDataToStorage(
+        resData.token,
+        resData.user._id,
+        expirationDate,
+        resData.user
+      );
+      await dispatch(setAuthUser(resData.user));
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again. ');
+    }
+  };
+};
+
 export const authenticate = (token, userId, expiryTime, resData) => {
   return (dispatch) => {
     dispatch(setLogoutTimer(expiryTime));
     dispatch({ type: AUTHENTICATE, token, userId });
     dispatch({ type: SET_AUTH_USER, authUser: resData });
   };
+};
+
+const saveDataToStorage = (token, userId, expirationDate, resData) => {
+  AsyncStorage.setItem(
+    'userData',
+    JSON.stringify({
+      token: token,
+      userId: userId,
+      expiryDate: expirationDate,
+      authUser: resData,
+    })
+  );
 };
 
 export const setAuthUser = (resData) => {
@@ -265,73 +344,6 @@ export const deleteAccount = () => {
   };
 };
 
-export const register = (name, email, password) => {
-  return async (dispatch) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-    const body = JSON.stringify({ name, email, password });
-
-    try {
-      const response = await axios.post(
-        `${CURRENT_IP}/api/auth/`,
-        body,
-        config
-      );
-
-      const resData = response.data;
-      await dispatch(
-        authenticate(resData.token, resData.user._id, oneMonth, resData.user)
-      );
-      const expirationDate = resData.options.expires;
-      await saveDataToStorage(
-        resData.token,
-        resData.user._id,
-        expirationDate,
-        resData.user
-      );
-      await dispatch(setAuthUser(resData.user));
-    } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
-    }
-  };
-};
-
-export const login = (email, password) => {
-  return async (dispatch) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
-    const body = JSON.stringify({ email, password });
-
-    try {
-      const response = await axios.post(
-        `${CURRENT_IP}/api/auth/login`,
-        body,
-        config
-      );
-      const resData = response.data;
-      await dispatch(
-        authenticate(resData.token, resData.user._id, oneMonth, resData.user)
-      );
-      const expirationDate = resData.options.expires;
-      await saveDataToStorage(
-        resData.token,
-        resData.user._id,
-        expirationDate,
-        resData.user
-      );
-      await dispatch(setAuthUser(resData.user));
-    } catch (err) {
-      throw new Error('Cannot connect with server. Please try again. ');
-    }
-  };
-};
-
 export const setDidTryAL = () => {
   return { type: SET_DID_TRY_AL };
 };
@@ -355,16 +367,4 @@ const setLogoutTimer = (expirationTime) => {
       dispatch(logout());
     }, expirationTime);
   };
-};
-
-const saveDataToStorage = (token, userId, expirationDate, resData) => {
-  AsyncStorage.setItem(
-    'userData',
-    JSON.stringify({
-      token: token,
-      userId: userId,
-      expiryDate: expirationDate,
-      authUser: resData,
-    })
-  );
 };

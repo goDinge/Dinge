@@ -2,31 +2,45 @@ import React from 'react';
 import { ding } from '../store/interfaces';
 import CustomSubmitButton from './CustomSubmitButton';
 
-const CustomCommentInput = (props: {
+const CustomEditModal = (props: {
+  modalText: string;
   itemState: ding;
-  text: string;
-  isCommentLoading: boolean;
+  isEditLoading: boolean;
+  editInitialText: string;
+  editCommentId: string;
   onText: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onComment: (
+  onEdit: (
     e: React.FormEvent<HTMLFormElement>,
     text: string,
     dingId: string
   ) => void;
+  onCancel: () => void;
 }) => {
-  const { itemState, text, isCommentLoading, onText, onComment } = props;
+  const {
+    modalText,
+    itemState,
+    isEditLoading,
+    editInitialText,
+    editCommentId,
+    onText,
+    onEdit,
+    onCancel,
+  } = props;
 
   return (
-    <div className="custom-socials-container">
-      <div className="custom-socials">
-        <form onSubmit={(e) => onComment(e, text, itemState._id)}>
+    <div className="message-overlay">
+      <div className="modal-ding">
+        <p className="mb">Edit comment:</p>
+        <form onSubmit={(e) => onEdit(e, editCommentId, itemState._id)}>
           <input
             className="comments-input"
             type="text"
-            value={text}
+            value={modalText}
             placeholder="write comment"
             onChange={(e) => onText(e)}
+            defaultValue={editInitialText}
           />
-          {isCommentLoading ? (
+          {isEditLoading ? (
             <CustomSubmitButton
               buttonName="Posting..."
               status="btn btn-post-comment"
@@ -38,9 +52,12 @@ const CustomCommentInput = (props: {
             />
           )}
         </form>
+        <button onClick={onCancel} className="btn btn-primary mb">
+          Cancel
+        </button>
       </div>
     </div>
   );
 };
 
-export default CustomCommentInput;
+export default CustomEditModal;

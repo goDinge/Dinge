@@ -63,6 +63,7 @@ export const Landing = () => {
       }
       action = authActions.register(name, email, password);
     } else {
+      console.log('landing auth action login hit');
       action = authActions.login(email, password);
     }
     try {
