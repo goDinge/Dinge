@@ -8,6 +8,7 @@ import {
   Unlike_Ding,
   Report_Ding,
   ding_data,
+  Update_Ding_Description,
 } from '../interfaces';
 import { CURRENT_IP } from '../../serverConfigs';
 
@@ -92,6 +93,34 @@ export const reportDingById = (dingId: string) => {
       } else {
         throw new Error(err.response.data);
       }
+    }
+  };
+};
+
+export const updateDingDescription = (text: string, dingId: string) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const body = JSON.stringify({ text });
+
+      const response = await axios.put<ding_data>(
+        `${CURRENT_IP}/api/ding/${dingId}`,
+        body,
+        config
+      );
+      const description = response.data.data;
+
+      dispatch<Update_Ding_Description>({
+        type: ActionTypes.UPDATE_DING_DESCRIPTION,
+        ding: description,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
     }
   };
 };

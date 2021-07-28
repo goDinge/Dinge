@@ -105,6 +105,18 @@ export interface comment {
   dingId: string;
 }
 
+export interface location {
+  coords: {
+    accuracy: number;
+    altitude: number;
+    altitudeAccuracy: number;
+    heading: number;
+    latitude: number;
+    longitude: number;
+    speed: number;
+  };
+}
+
 export type message = string;
 
 export interface userData {
@@ -202,6 +214,11 @@ export interface Report_Ding {
   ding: ding;
 }
 
+export interface Update_Ding_Description {
+  type: ActionTypes.UPDATE_DING_DESCRIPTION;
+  ding: ding;
+}
+
 export interface Get_User {
   type: ActionTypes.GET_USER;
   user: user;
@@ -283,6 +300,20 @@ export interface Get_Auth_User {
   };
 }
 
+export interface Set_Location {
+  type: ActionTypes.SET_LOCATION;
+  location: {
+    accuracy: number;
+    altitude: number;
+    altitudeAccuracy: number;
+    heading: number;
+    latitude: number;
+    longitude: number;
+    speed: number;
+  };
+  timestamp: number;
+}
+
 export interface Set_Did_Try_Al {
   type: ActionTypes.SET_DID_TRY_AL;
   didTryAutoLogin: boolean;
@@ -316,7 +347,8 @@ export type DingActions =
   | Remove_Ding
   | Like_Ding
   | Unlike_Ding
-  | Report_Ding;
+  | Report_Ding
+  | Update_Ding_Description;
 
 export type EventsActions = Get_Local_Events;
 
@@ -326,4 +358,6 @@ export type CommentsActions =
   | Unlike_Comment
   | Delete_Comment
   | Edit_Comment;
+
+export type LocationActions = Set_Location;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;

@@ -39,7 +39,7 @@ const CustomSocials = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  console.log('custom socials user: ', user);
+  console.log(locationState);
 
   useEffect(() => {
     if (error) {

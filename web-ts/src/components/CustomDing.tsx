@@ -10,6 +10,7 @@ import {
 import { AppState } from '../store/reducers/rootReducer';
 
 import * as dingActions from '../store/actions/ding';
+//import * as dingeActions from '../store/actions/dinge';
 import * as userActions from '../store/actions/user';
 import * as commentActions from '../store/actions/comment';
 import * as messageActions from '../store/actions/message';
@@ -32,13 +33,16 @@ const CustomDing = () => {
   const messageStr = message.message;
 
   const comments = dingObj.comments;
-  console.log('custom ding dingObj: ', dingObj);
 
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [text, onChangeText] = useState('');
   const [modalText, onChangeModalText] = useState('');
+  const [commentOrDescription, setCommentOrDescription] = useState<
+    'comment' | 'description'
+  >('comment');
+  const [editDingId, setEditDingId] = useState('');
   const [editModal, setEditModal] = useState(false);
   const [editCommentId, setEditCommentId] = useState('');
   const [editInitialText, setEditInitialText] = useState('');
@@ -135,9 +139,39 @@ const CustomDing = () => {
     cancelEditHandler();
   };
 
+  const editDescriptionHandler = async (
+    e: React.FormEvent<HTMLFormElement>,
+    dingId: string
+  ) => {
+    e.preventDefault();
+
+    setIsEditLoading(true);
+    try {
+      await dispatch(dingActions.updateDingDescription(modalText, dingId));
+      await dispatch(dingActions.getDingById(dingId));
+      //await dispatch(dingeActions.getLocalDinge(location)); //not sure why this is needed atm
+      dispatch(messageActions.setMessage('Description updated'));
+    } catch (err) {
+      dispatch(messageActions.setMessage(err.message));
+    }
+    onChangeModalText('');
+    setEditInitialText('');
+    setIsEditLoading(false);
+    setEditModal(false);
+    cancelEditHandler();
+  };
+
   const openEditorHandler = (id: string, text: string) => {
+    setCommentOrDescription('comment');
     setEditModal(true);
     setEditCommentId(id);
+    setEditInitialText(text);
+  };
+
+  const openUpdateDescriptionHandler = (id: string, text: string) => {
+    setCommentOrDescription('description');
+    setEditModal(true);
+    setEditDingId(id);
     setEditInitialText(text);
   };
 
@@ -158,8 +192,8 @@ const CustomDing = () => {
 
   const closeDingHandler = () => {
     dispatch(dingActions.removeDing());
-    dispatch(messageActions.resetMessage());
     dispatch(userActions.removeUser());
+    dispatch(messageActions.resetMessage());
   };
 
   return (
@@ -178,6 +212,7 @@ const CustomDing = () => {
             authUser={authUser}
             itemState={dingObj}
             user={userObj}
+            onEditor={openUpdateDescriptionHandler}
             onLike={likeDingHandler}
             onFlag={reportDingHandler}
           />
@@ -204,13 +239,20 @@ const CustomDing = () => {
         {messageStr ? <CustomMessage component="message-ding" /> : null}
         {editModal ? (
           <CustomEditModal
+            textType={commentOrDescription} //default is comment
             modalText={modalText}
             itemState={dingObj}
             isEditLoading={isEditLoading}
             editInitialText={editInitialText}
-            editCommentId={editCommentId}
+            editItemId={
+              commentOrDescription === 'comment' ? editCommentId : editDingId
+            }
             onText={updatingModalText}
-            onEdit={editCommentHandler}
+            onEdit={
+              commentOrDescription === 'comment'
+                ? editCommentHandler
+                : editDescriptionHandler
+            }
             onCancel={cancelEditHandler}
           />
         ) : null}

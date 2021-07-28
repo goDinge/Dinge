@@ -12,6 +12,7 @@ import { AppState } from '../../store/reducers/rootReducer';
 import * as dingeActions from '../../store/actions/dinge';
 import * as eventsActions from '../../store/actions/events';
 import * as authActions from '../../store/actions/auth';
+import * as locationActions from '../../store/actions/location';
 
 import GoogleMapReact from 'google-map-react';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
@@ -83,10 +84,11 @@ const Map = () => {
   const getLocation = useCallback(async () => {
     await navigator.geolocation.getCurrentPosition((position) => {
       setLocation(position);
+      dispatch(locationActions.setLocation(position));
       loadData(position);
       setIsMapLoading(false);
     }, errorCallback);
-  }, [loadData]);
+  }, [dispatch, loadData]);
 
   useEffect(() => {
     getLocation();

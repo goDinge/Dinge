@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ding, user } from '../store/interfaces';
 
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
@@ -15,6 +15,8 @@ const CustomSocials = (props: {
   itemState: ding;
   user: user;
   authUser: user | null;
+  //locationState: GeolocationPosition;
+  onEditor: (id: string, text: string) => void;
   onLike: (dingId: string) => Promise<void>;
   onFlag: (dingId: string) => Promise<void>;
 }) => {
@@ -24,13 +26,10 @@ const CustomSocials = (props: {
     itemState,
     user,
     authUser,
+    onEditor,
     onLike,
     onFlag,
   } = props;
-
-  const [description, setDescription] = useState(itemState.description);
-
-  console.log('custom socials user: ', user);
 
   return (
     <div className="custom-socials-container">
@@ -50,14 +49,14 @@ const CustomSocials = (props: {
               <FaThumbsUp
                 size={24}
                 color={Colors.primary}
-                style={{ marginRight: 8 }}
+                style={{ marginRight: 8, cursor: 'pointer' }}
                 onClick={() => onLike(itemState._id)}
               />
             ) : (
               <FaRegThumbsUp
                 size={24}
                 color="black"
-                style={{ marginRight: 8 }}
+                style={{ marginRight: 8, cursor: 'pointer' }}
                 onClick={() => onLike(itemState._id)}
               />
             )}
@@ -67,7 +66,12 @@ const CustomSocials = (props: {
           </div>
           {authUser && user && authUser._id === user._id ? (
             <div className="icon-right-container">
-              <FiEdit size={24} color="black" style={{ marginRight: 8 }} />
+              <FiEdit
+                size={24}
+                color="black"
+                style={{ marginRight: 8, cursor: 'pointer' }}
+                onClick={() => onEditor(itemState._id, itemState.description)}
+              />
               <RiDeleteBin2Line size={24} color="black" />
             </div>
           ) : (
@@ -75,6 +79,7 @@ const CustomSocials = (props: {
               <FiFlag
                 size={24}
                 color="black"
+                style={{ cursor: 'pointer' }}
                 onClick={() => onFlag(itemState._id)}
               />
             </div>
@@ -85,7 +90,7 @@ const CustomSocials = (props: {
             <p className="user-name">{user.name}</p>
             <p className="time-text">{timeConverter(itemState.createdAt)}</p>
           </div>
-          <p className="description">{description}</p>
+          <p className="description">{itemState.description}</p>
         </div>
       </div>
     </div>

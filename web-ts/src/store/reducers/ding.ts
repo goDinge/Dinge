@@ -54,7 +54,14 @@ export const dingReducer = (state = initialState, action: DingActions) => {
           reports: action.ding.reports,
         },
       };
-
+    case ActionTypes.UPDATE_DING_DESCRIPTION:
+      return {
+        ...state,
+        ding: {
+          ...state.ding,
+          description: action.ding,
+        },
+      };
     default:
       return state;
   }

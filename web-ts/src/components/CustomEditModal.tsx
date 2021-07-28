@@ -3,11 +3,12 @@ import { ding } from '../store/interfaces';
 import CustomSubmitButton from './CustomSubmitButton';
 
 const CustomEditModal = (props: {
+  textType: string;
   modalText: string;
   itemState: ding;
   isEditLoading: boolean;
   editInitialText: string;
-  editCommentId: string;
+  editItemId: string;
   onText: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onEdit: (
     e: React.FormEvent<HTMLFormElement>,
@@ -17,28 +18,29 @@ const CustomEditModal = (props: {
   onCancel: () => void;
 }) => {
   const {
+    textType,
     modalText,
     itemState,
     isEditLoading,
     editInitialText,
-    editCommentId,
+    editItemId,
     onText,
     onEdit,
     onCancel,
   } = props;
 
+  console.log('CEM: ', editInitialText);
+
   return (
     <div className="message-overlay">
       <div className="modal-ding">
-        <p className="mb">Edit comment:</p>
-        <form onSubmit={(e) => onEdit(e, editCommentId, itemState._id)}>
+        <p className="mb">Edit {textType}:</p>
+        <form onSubmit={(e) => onEdit(e, editItemId, itemState._id)}>
           <input
             className="comments-input"
             type="text"
-            value={modalText}
-            placeholder="write comment"
-            onChange={(e) => onText(e)}
-            defaultValue={editInitialText}
+            value={modalText ? modalText : editInitialText}
+            onChange={onText}
           />
           {isEditLoading ? (
             <CustomSubmitButton
