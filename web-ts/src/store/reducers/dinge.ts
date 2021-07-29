@@ -19,6 +19,11 @@ export const dingeReducer = (state = initialState, action: DingeActions) => {
         ...state,
         dinge: action.dinge,
       };
+    case ActionTypes.DELETE_DING_BY_ID:
+      return {
+        ...state,
+        ding: action.ding,
+      };
     default:
       return state;
   }

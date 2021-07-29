@@ -4,6 +4,7 @@ import {
   POST_DING,
   GET_LOCAL_DINGE,
   UPDATE_DING_LOCATION,
+  DELETE_DING_BY_ID,
 } from '../types';
 import { CURRENT_IP } from '../../serverConfigs.js';
 
@@ -113,12 +114,11 @@ export const updateDingLocation = (dingId, location) => {
 export const deleteDingById = (dingId) => {
   return async (dispatch) => {
     try {
-      const response = await axios.delete(`${CURRENT_IP}/api/ding/${dingId}`);
-      const dinge = response.data.data;
+      await axios.delete(`${CURRENT_IP}/api/ding/${dingId}`);
 
       dispatch({
-        type: GET_DINGE,
-        dinge: dinge,
+        type: DELETE_DING_BY_ID,
+        ding: {},
       });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');

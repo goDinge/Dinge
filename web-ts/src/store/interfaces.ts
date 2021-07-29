@@ -35,6 +35,13 @@ export interface eventsState {
   events: [];
 }
 
+export interface locationState {
+  location: {
+    coords: location;
+    timestamp: number;
+  };
+}
+
 export type message = string;
 
 export interface messageState {
@@ -109,15 +116,13 @@ export interface comment {
 }
 
 export interface location {
-  coords: {
-    accuracy: number;
-    altitude: number;
-    altitudeAccuracy: number;
-    heading: number;
-    latitude: number;
-    longitude: number;
-    speed: number;
-  };
+  accuracy: number;
+  altitude: number;
+  altitudeAccuracy: number;
+  heading: number;
+  latitude: number;
+  longitude: number;
+  speed: number;
 }
 
 export interface userData {
@@ -213,6 +218,11 @@ export interface Remove_Ding {
 export interface Report_Ding {
   type: ActionTypes.REPORT_DING;
   ding: ding;
+}
+
+export interface Delete_Ding_By_Id {
+  type: ActionTypes.DELETE_DING_BY_ID;
+  ding: {};
 }
 
 export interface Update_Ding_Description {
@@ -345,7 +355,7 @@ export type AuthActionTypes =
 
 export type UserActionTypes = Get_User | Remove_User;
 
-export type DingeActions = Get_Dinge | Get_Local_Dinge;
+export type DingeActions = Get_Dinge | Get_Local_Dinge | Delete_Ding_By_Id;
 
 export type DingActions =
   | Get_Dinge_By_Id

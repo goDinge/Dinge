@@ -34,6 +34,11 @@ export default (state = initialState, action) => {
         ...state,
         newDing: action.newDing,
       };
+    case DELETE_DING_BY_ID:
+      return {
+        ...state,
+        ding: action.ding,
+      };
     case UPDATE_DING_LOCATION:
       return {
         ...state,

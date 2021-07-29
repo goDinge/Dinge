@@ -45,14 +45,10 @@ export const getLocalDinge = (location: GeolocationPosition) => {
 export const deleteDingById = (dingId: string) => {
   return async (dispatch: Dispatch) => {
     try {
-      const response = await axios.delete<dinge_data>(
-        `${CURRENT_IP}/api/ding/${dingId}`
-      );
-      const dinge = response.data.data;
+      await axios.delete<dinge_data>(`${CURRENT_IP}/api/ding/${dingId}`);
 
       dispatch({
-        type: ActionTypes.GET_LOCAL_DINGE,
-        dinge: dinge,
+        type: ActionTypes.DELETE_DING_BY_ID,
       });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');

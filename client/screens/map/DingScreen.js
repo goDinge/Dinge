@@ -173,7 +173,7 @@ const DingScreen = (props) => {
     setError(null);
     setIsDeleting(true);
     try {
-      await dispatch(dingeActions.deleteDingById(dingId)); //possible to fix reducer so no need to call getLocalDinge for a fresh state?
+      await dispatch(dingeActions.deleteDingById(dingId));
       await dispatch(dingeActions.getLocalDinge(locationState));
       await setConfirmDelete(false);
       await dispatch(messageActions.setMessage('Ding Deleted'));

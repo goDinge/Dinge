@@ -52,6 +52,7 @@ img {
 }
 
 .map {
+  position: relative;
   height: 100vh; 
   width: 100%;
 }
@@ -63,7 +64,7 @@ img {
 }
 
 .marker-container {
-  position: 'absolute'; 
+  position: absolute; 
   transform: translate(-50%, -100%);
 }
 

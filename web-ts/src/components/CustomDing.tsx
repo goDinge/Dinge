@@ -6,6 +6,7 @@ import {
   dingState,
   AuthState,
   messageState,
+  locationState,
 } from '../store/interfaces';
 import { AppState } from '../store/reducers/rootReducer';
 
@@ -31,9 +32,10 @@ const CustomDing = () => {
   const userObj = user.user;
   const message: messageState = useSelector((state: AppState) => state.message);
   const messageStr = message.message;
-  // const location: GeolocationPosition = useSelector(
-  //   (state: AppState) => state.location
-  // );
+  const location: locationState = useSelector(
+    (state: AppState) => state.location
+  );
+  const locationObj: GeolocationPosition = location.location;
 
   const messageScreenDing = 'ding';
   const messageScreenMap = 'map';
@@ -125,6 +127,7 @@ const CustomDing = () => {
     setIsDeleting(true);
     try {
       await dispatch(dingeActions.deleteDingById(dingId));
+      await dispatch(dingeActions.getLocalDinge(locationObj));
       setIsDeleting(false);
       closeDingHandler();
       await dispatch(

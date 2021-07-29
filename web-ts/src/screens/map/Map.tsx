@@ -69,8 +69,6 @@ const Map = () => {
   const message: messageState = useSelector((state: AppState) => state.message);
   const messageStr = message.message;
 
-  console.log('map message: ', message);
-
   const dispatch = useDispatch<Dispatch<any>>();
 
   const loadData = useCallback(
@@ -166,7 +164,7 @@ const Map = () => {
               lng: location.coords.longitude,
             },
             cursor: 'grab',
-            radius: settingConfigs[0].radius * 1065,
+            radius: settingConfigs[0].radius * 1000,
           })
         }
       >
