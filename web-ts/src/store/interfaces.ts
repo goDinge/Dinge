@@ -214,6 +214,11 @@ export interface Report_Ding {
   ding: ding;
 }
 
+// export interface Delete_Ding {
+//   type: ActionTypes.DELETE_DING;
+//   ding: {};
+// }
+
 export interface Update_Ding_Description {
   type: ActionTypes.UPDATE_DING_DESCRIPTION;
   ding: ding;
@@ -251,6 +256,11 @@ export interface Delete_Comment {
 
 export interface Edit_Comment {
   type: ActionTypes.EDIT_COMMENT;
+  comment: comment;
+}
+
+export interface Report_Comment {
+  type: ActionTypes.REPORT_COMMENT;
   comment: comment;
 }
 
@@ -357,7 +367,8 @@ export type CommentsActions =
   | Like_Comment
   | Unlike_Comment
   | Delete_Comment
-  | Edit_Comment;
+  | Edit_Comment
+  | Report_Comment;
 
 export type LocationActions = Set_Location;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;

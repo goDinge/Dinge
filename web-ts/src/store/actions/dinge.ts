@@ -41,3 +41,21 @@ export const getLocalDinge = (location: GeolocationPosition) => {
     }
   };
 };
+
+export const deleteDingById = (dingId: string) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const response = await axios.delete<dinge_data>(
+        `${CURRENT_IP}/api/ding/${dingId}`
+      );
+      const dinge = response.data.data;
+
+      dispatch({
+        type: ActionTypes.GET_DINGE,
+        dinge: dinge,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};

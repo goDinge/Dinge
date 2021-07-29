@@ -46,6 +46,7 @@ const CustomDing = () => {
   const [editModal, setEditModal] = useState(false);
   const [editCommentId, setEditCommentId] = useState('');
   const [editInitialText, setEditInitialText] = useState('');
+  const [deleteDingModal, setDeleteDingModal] = useState(false);
 
   const dispatch = useDispatch<Dispatch<any>>();
 
@@ -97,6 +98,27 @@ const CustomDing = () => {
     onChangeModalText(e.target.value);
   };
 
+  const openDingDeleteModalHandler = () => {
+    dispatch(
+      messageActions.setMessage('Are you sure you want to delete this ding?')
+    );
+    //setModalMessage('ding');
+    setDeleteDingModal(true);
+  };
+
+  // const deleteDingHandler = async (dingId: string) => {
+  //   setIsDeleting(true);
+  //   try {
+  //     await dispatch(dingeActions.deleteDingById(dingId)); //possible to fix reducer so no need to call getLocalDinge for a fresh state?
+  //     await dispatch(dingeActions.getLocalDinge(locationState));
+  //     await setConfirmDelete(false);
+  //     dispatch(messageActions.setMessage('Ding Deleted'));
+  //   } catch (err) {
+  //     dispatch(messageActions.setMessage(err.message));
+  //   }
+  //   setIsDeleting(false);
+  // };
+
   //Comments
   const postCommentHandler = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -137,6 +159,15 @@ const CustomDing = () => {
     setIsEditLoading(false);
     setEditModal(false);
     cancelEditHandler();
+  };
+
+  const reportCommentHandler = async (id: string) => {
+    try {
+      await dispatch(commentActions.reportComment(id));
+      dispatch(messageActions.setMessage('Comment reported!'));
+    } catch (err) {
+      dispatch(messageActions.setMessage(err.message));
+    }
   };
 
   const editDescriptionHandler = async (
@@ -180,7 +211,7 @@ const CustomDing = () => {
     setEditInitialText('');
   };
 
-  //Rport
+  //Report Ding
   const reportDingHandler = async (dingId: string) => {
     try {
       await dispatch(dingActions.reportDingById(dingId));
@@ -215,6 +246,7 @@ const CustomDing = () => {
             onEditor={openUpdateDescriptionHandler}
             onLike={likeDingHandler}
             onFlag={reportDingHandler}
+            onDelete={openDingDeleteModalHandler}
           />
           <CustomCommentInput
             itemState={dingObj}
@@ -232,14 +264,17 @@ const CustomDing = () => {
                   authUser={authUser}
                   item={dingObj}
                   onEditor={openEditorHandler}
+                  onFlag={reportCommentHandler}
                 />
               );
             })}
         </div>
-        {messageStr ? <CustomMessage component="message-ding" /> : null}
+        {messageStr ? (
+          <CustomMessage component="message-ding" delete={deleteDingModal} />
+        ) : null}
         {editModal ? (
           <CustomEditModal
-            textType={commentOrDescription} //default is comment
+            textType={commentOrDescription}
             modalText={modalText}
             itemState={dingObj}
             isEditLoading={isEditLoading}

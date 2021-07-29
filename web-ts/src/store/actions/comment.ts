@@ -7,6 +7,7 @@ import {
   Unlike_Comment,
   Edit_Comment,
   comment_data,
+  Report_Comment,
 } from '../interfaces';
 import { CURRENT_IP } from '../../serverConfigs';
 
@@ -110,6 +111,28 @@ export const editComment = (text: string, commentId: string) => {
       });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const reportComment = (commentId: string) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const response = await axios.put<comment_data>(
+        `${CURRENT_IP}/api/comments/reports/${commentId}`
+      );
+      const comment = response.data.data;
+
+      dispatch<Report_Comment>({
+        type: ActionTypes.REPORT_COMMENT,
+        comment: comment,
+      });
+    } catch (err) {
+      if (!err.response) {
+        throw new Error('Cannot connect with server. Please try again.');
+      } else {
+        throw new Error(err.response.data);
+      }
     }
   };
 };

@@ -15,10 +15,10 @@ const CustomSocials = (props: {
   itemState: ding;
   user: user;
   authUser: user | null;
-  //locationState: GeolocationPosition;
   onEditor: (id: string, text: string) => void;
   onLike: (dingId: string) => Promise<void>;
   onFlag: (dingId: string) => Promise<void>;
+  onDelete: (dingId: string) => void;
 }) => {
   const {
     isLikeLoading,
@@ -29,6 +29,7 @@ const CustomSocials = (props: {
     onEditor,
     onLike,
     onFlag,
+    onDelete,
   } = props;
 
   return (
@@ -72,7 +73,11 @@ const CustomSocials = (props: {
                 style={{ marginRight: 8, cursor: 'pointer' }}
                 onClick={() => onEditor(itemState._id, itemState.description)}
               />
-              <RiDeleteBin2Line size={24} color="black" />
+              <RiDeleteBin2Line
+                size={24}
+                color="black"
+                onClick={() => onDelete(itemState._id)}
+              />
             </div>
           ) : (
             <div className="icon-right-container">

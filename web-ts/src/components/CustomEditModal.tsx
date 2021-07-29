@@ -29,8 +29,6 @@ const CustomEditModal = (props: {
     onCancel,
   } = props;
 
-  console.log('CEM: ', editInitialText);
-
   return (
     <div className="message-overlay">
       <div className="modal-ding">
@@ -44,17 +42,20 @@ const CustomEditModal = (props: {
           />
           {isEditLoading ? (
             <CustomSubmitButton
-              buttonName="Posting..."
-              status="btn btn-post-comment"
+              buttonName="Updating..."
+              status="btn btn-edit-modal"
             />
           ) : (
             <CustomSubmitButton
-              buttonName="Post"
-              status="btn btn-post-comment"
+              buttonName="Confirm Edit"
+              status="btn btn-edit-modal"
             />
           )}
         </form>
-        <button onClick={onCancel} className="btn btn-primary mb">
+        <button
+          onClick={onCancel}
+          className="btn btn-primary btn-edit-modal mb"
+        >
           Cancel
         </button>
       </div>

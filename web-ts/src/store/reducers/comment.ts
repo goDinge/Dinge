@@ -35,6 +35,11 @@ export const commentReducer = (
         ...state,
         comment: action.comment,
       };
+    case ActionTypes.REPORT_COMMENT:
+      return {
+        ...state,
+        comment: action.comment,
+      };
     default:
       return state;
   }

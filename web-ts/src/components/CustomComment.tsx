@@ -19,8 +19,9 @@ const CustomComment = (props: {
   authUser: user | null;
   item: ding;
   onEditor: (id: string, text: string) => void;
+  onFlag: (id: string) => void;
 }) => {
-  const { comment, authUser, item, onEditor } = props;
+  const { comment, authUser, item, onEditor, onFlag } = props;
 
   const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
   const [isCommentDeleteLoading, setIsCommentDeleteLoading] = useState(false);
@@ -110,6 +111,7 @@ const CustomComment = (props: {
             size={20}
             color={Colors.grey}
             style={{ marginLeft: 5, cursor: 'pointer' }}
+            onClick={() => onFlag(comment._id)}
           />
         </div>
       ) : (
@@ -128,6 +130,7 @@ const CustomComment = (props: {
             size={20}
             color={Colors.grey}
             style={{ marginLeft: 5, cursor: 'pointer' }}
+            onClick={() => onFlag(comment._id)}
           />
         </div>
       )}

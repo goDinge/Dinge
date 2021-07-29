@@ -194,6 +194,7 @@ img {
   margin-top: 1rem;
   padding: 0.4rem 1.3rem;
   font-size: 1rem;
+  font-family: 'AirbnbCerealBold','Raleway', sans-serif;
   border: none;
   cursor: pointer;
   transition: opacity 0.2s ease-in;
@@ -256,7 +257,6 @@ img {
 .error-map {
   position: absolute;
   transform: translate(260%, 200%);
-  /* transform: translate(-50%, -100%); */
   border: 4px solid var(--primary-color);
   border-radius: 10px;
   padding: 0.8rem;
@@ -272,7 +272,7 @@ img {
 
 .message-ding {
   position: absolute;
-  width: 280px;
+  width: 300px;
   border-radius: 10px;
   border: 4px solid var(--primary-color);
   padding: 0.8rem;
@@ -283,9 +283,14 @@ img {
   text-align: center;
   background: var(--light-color);
   color: var(--black-color);
-  transform: translate(100%, 100%);
+  transform: translate(87%, 60%);
   z-index: 5;
 } 
+
+.delete-button-container {
+  display: flex;
+  flex-direction: column;
+}
 
 .modal-ding {
   position: absolute;
@@ -541,11 +546,17 @@ img {
 }
 
 /* buttons */
-
 .btn-primary,
 .bg-primary,
 .badge-primary,
 .message-primary {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.btn-edit-modal {
+  width: 200px;
+  margin-top: 0.7rem;
   background: var(--primary-color);
   color: #fff;
 }
