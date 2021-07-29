@@ -3,6 +3,7 @@ import { MessageActionTypes } from '../interfaces';
 
 const initialState = {
   message: '',
+  screen: '',
 };
 
 export const messageReducer = (
@@ -14,6 +15,7 @@ export const messageReducer = (
       return {
         ...state,
         message: action.message,
+        screen: action.screen,
       };
     case ActionTypes.RESET_MESSAGE:
       return initialState;

@@ -35,8 +35,11 @@ export interface eventsState {
   events: [];
 }
 
+export type message = string;
+
 export interface messageState {
   message: message;
+  screen: string;
 }
 
 export interface itemObj {
@@ -116,8 +119,6 @@ export interface location {
     speed: number;
   };
 }
-
-export type message = string;
 
 export interface userData {
   data: {
@@ -214,11 +215,6 @@ export interface Report_Ding {
   ding: ding;
 }
 
-// export interface Delete_Ding {
-//   type: ActionTypes.DELETE_DING;
-//   ding: {};
-// }
-
 export interface Update_Ding_Description {
   type: ActionTypes.UPDATE_DING_DESCRIPTION;
   ding: ding;
@@ -266,15 +262,14 @@ export interface Report_Comment {
 
 export interface Set_Message {
   type: ActionTypes.SET_MESSAGE;
-  message: {
-    text: string;
-    id: string;
-  };
+  message: string;
+  screen: string;
 }
 
 export interface Reset_Message {
   type: ActionTypes.RESET_MESSAGE;
-  message: string;
+  message: '';
+  screen: '';
 }
 
 export interface Authenticate {

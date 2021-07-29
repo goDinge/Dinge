@@ -51,7 +51,7 @@ export const deleteDingById = (dingId: string) => {
       const dinge = response.data.data;
 
       dispatch({
-        type: ActionTypes.GET_DINGE,
+        type: ActionTypes.GET_LOCAL_DINGE,
         dinge: dinge,
       });
     } catch (err) {

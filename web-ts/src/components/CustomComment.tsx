@@ -26,6 +26,8 @@ const CustomComment = (props: {
   const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
   const [isCommentDeleteLoading, setIsCommentDeleteLoading] = useState(false);
 
+  const messageScreen = 'ding';
+
   const dispatch = useDispatch<Dispatch<any>>();
 
   const comments = item.comments;
@@ -41,7 +43,7 @@ const CustomComment = (props: {
       }
       await dispatch(dingActions.getDingById(itemId));
     } catch (err) {
-      messageActions.setMessage(err.message);
+      messageActions.setMessage(err.message, messageScreen);
     }
     setIsCommentLikeLoading(false);
   };
@@ -52,7 +54,7 @@ const CustomComment = (props: {
       await dispatch(commentActions.deleteComment(id, itemId));
       await dispatch(dingActions.getDingById(itemId));
     } catch (err) {
-      dispatch(messageActions.setMessage(err.message));
+      dispatch(messageActions.setMessage(err.message, messageScreen));
     }
     setIsCommentDeleteLoading(false);
   };

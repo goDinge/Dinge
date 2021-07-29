@@ -7,6 +7,7 @@ import {
   dingeState,
   dingState,
   eventsState,
+  messageState,
 } from '../../store/interfaces';
 import { AppState } from '../../store/reducers/rootReducer';
 import * as dingeActions from '../../store/actions/dinge';
@@ -24,6 +25,7 @@ import CustomDing from '../../components/CustomDing';
 import CustomBlueMarker from '../../components/CustomBlueMarker';
 import CustomMarker from '../../components/CustomMarker';
 import CustomError from '../../components/CustomError';
+import CustomMessage from '../../components/CustomMessage';
 import CustomTimeFilter from '../../components/CustomTimeFilter';
 
 const mapStyle = require('../../helpers/mapStyles.json');
@@ -64,12 +66,16 @@ const Map = () => {
   const eventsArr: event[] = events.events;
   const ding: dingState = useSelector((state: AppState) => state.ding);
   const dingObj = ding.ding;
+  const message: messageState = useSelector((state: AppState) => state.message);
+  const messageStr = message.message;
+
+  console.log('map message: ', message);
 
   const dispatch = useDispatch<Dispatch<any>>();
 
   const loadData = useCallback(
     async (location: GeolocationPosition) => {
-      setError('testing error message');
+      setError(null);
       try {
         await dispatch(dingeActions.getLocalDinge(location));
         await dispatch(eventsActions.getLocalEvents(location));
@@ -93,6 +99,8 @@ const Map = () => {
   useEffect(() => {
     getLocation();
   }, [getLocation]);
+
+  const deleteDingHandler = () => {}; //empty fn to pass TS
 
   const timeNow = () => {
     setTimeSelected('now');
@@ -226,12 +234,20 @@ const Map = () => {
             message={error}
             onClose={onClose}
             errorType="error-map"
-            overlayType="map-overlay"
+            overlayType="error-map-overlay"
           />
         ) : null}
       </GoogleMapReact>
 
       {dingObj.user !== '' ? <CustomDing /> : null}
+      {messageStr && message.screen === 'map' ? (
+        <CustomMessage
+          overlay="message-map-overlay"
+          component="message-map"
+          item={dingObj}
+          onDelete={deleteDingHandler} //does nothing;
+        />
+      ) : null}
       <div className="time-filter-container">
         <CustomTimeFilter
           name="now"

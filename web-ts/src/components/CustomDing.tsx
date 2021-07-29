@@ -10,7 +10,7 @@ import {
 import { AppState } from '../store/reducers/rootReducer';
 
 import * as dingActions from '../store/actions/ding';
-//import * as dingeActions from '../store/actions/dinge';
+import * as dingeActions from '../store/actions/dinge';
 import * as userActions from '../store/actions/user';
 import * as commentActions from '../store/actions/comment';
 import * as messageActions from '../store/actions/message';
@@ -31,12 +31,19 @@ const CustomDing = () => {
   const userObj = user.user;
   const message: messageState = useSelector((state: AppState) => state.message);
   const messageStr = message.message;
+  // const location: GeolocationPosition = useSelector(
+  //   (state: AppState) => state.location
+  // );
+
+  const messageScreenDing = 'ding';
+  const messageScreenMap = 'map';
 
   const comments = dingObj.comments;
 
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [text, onChangeText] = useState('');
   const [modalText, onChangeModalText] = useState('');
   const [commentOrDescription, setCommentOrDescription] = useState<
@@ -55,7 +62,12 @@ const CustomDing = () => {
       try {
         await dispatch(userActions.getUser(userId));
       } catch (err) {
-        dispatch(messageActions.setMessage('Unable to load ding user'));
+        dispatch(
+          messageActions.setMessage(
+            'Unable to load ding user',
+            messageScreenDing
+          )
+        );
       }
     },
     [dispatch]
@@ -84,7 +96,7 @@ const CustomDing = () => {
         await dispatch(dingActions.likeDing(dingId));
       }
     } catch (err) {
-      dispatch(messageActions.setMessage(err.message));
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     setIsLikeLoading(false);
     await dispatch(dingActions.getDingById(dingId));
@@ -100,24 +112,28 @@ const CustomDing = () => {
 
   const openDingDeleteModalHandler = () => {
     dispatch(
-      messageActions.setMessage('Are you sure you want to delete this ding?')
+      messageActions.setMessage(
+        'Are you sure you want to delete this ding?',
+        messageScreenDing
+      )
     );
     //setModalMessage('ding');
     setDeleteDingModal(true);
   };
 
-  // const deleteDingHandler = async (dingId: string) => {
-  //   setIsDeleting(true);
-  //   try {
-  //     await dispatch(dingeActions.deleteDingById(dingId)); //possible to fix reducer so no need to call getLocalDinge for a fresh state?
-  //     await dispatch(dingeActions.getLocalDinge(locationState));
-  //     await setConfirmDelete(false);
-  //     dispatch(messageActions.setMessage('Ding Deleted'));
-  //   } catch (err) {
-  //     dispatch(messageActions.setMessage(err.message));
-  //   }
-  //   setIsDeleting(false);
-  // };
+  const deleteDingHandler = async (dingId: string) => {
+    setIsDeleting(true);
+    try {
+      await dispatch(dingeActions.deleteDingById(dingId));
+      setIsDeleting(false);
+      closeDingHandler();
+      await dispatch(
+        messageActions.setMessage('Ding Deleted', messageScreenMap)
+      );
+    } catch (err) {
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
+    }
+  };
 
   //Comments
   const postCommentHandler = async (
@@ -127,7 +143,9 @@ const CustomDing = () => {
   ) => {
     e.preventDefault();
     if (!text) {
-      dispatch(messageActions.setMessage('Please type something'));
+      dispatch(
+        messageActions.setMessage('Please type something', messageScreenDing)
+      );
       return;
     }
     setIsCommentLoading(true);
@@ -135,7 +153,7 @@ const CustomDing = () => {
       await dispatch(commentActions.postComment(text, dingId));
       await dispatch(dingActions.getDingById(dingId));
     } catch (err) {
-      dispatch(messageActions.setMessage(err.message));
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     onChangeText('');
     setIsCommentLoading(false);
@@ -152,7 +170,7 @@ const CustomDing = () => {
       await dispatch(commentActions.editComment(modalText, id));
       await dispatch(dingActions.getDingById(dingId));
     } catch (err) {
-      dispatch(messageActions.setMessage(err.message));
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     onChangeModalText('');
     setEditInitialText('');
@@ -164,9 +182,11 @@ const CustomDing = () => {
   const reportCommentHandler = async (id: string) => {
     try {
       await dispatch(commentActions.reportComment(id));
-      dispatch(messageActions.setMessage('Comment reported!'));
+      dispatch(
+        messageActions.setMessage('Comment reported!', messageScreenDing)
+      );
     } catch (err) {
-      dispatch(messageActions.setMessage(err.message));
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
   };
 
@@ -181,9 +201,11 @@ const CustomDing = () => {
       await dispatch(dingActions.updateDingDescription(modalText, dingId));
       await dispatch(dingActions.getDingById(dingId));
       //await dispatch(dingeActions.getLocalDinge(location)); //not sure why this is needed atm
-      dispatch(messageActions.setMessage('Description updated'));
+      dispatch(
+        messageActions.setMessage('Description updated', messageScreenDing)
+      );
     } catch (err) {
-      dispatch(messageActions.setMessage(err.message));
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     onChangeModalText('');
     setEditInitialText('');
@@ -215,9 +237,9 @@ const CustomDing = () => {
   const reportDingHandler = async (dingId: string) => {
     try {
       await dispatch(dingActions.reportDingById(dingId));
-      dispatch(messageActions.setMessage('Ding Reported!'));
+      dispatch(messageActions.setMessage('Ding Reported!', messageScreenDing));
     } catch (err) {
-      dispatch(messageActions.setMessage(err.message));
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
   };
 
@@ -270,7 +292,14 @@ const CustomDing = () => {
             })}
         </div>
         {messageStr ? (
-          <CustomMessage component="message-ding" delete={deleteDingModal} />
+          <CustomMessage
+            overlay="message-ding-overlay"
+            component="message-ding"
+            item={dingObj}
+            delete={deleteDingModal}
+            isDeleting={isDeleting}
+            onDelete={deleteDingHandler}
+          />
         ) : null}
         {editModal ? (
           <CustomEditModal

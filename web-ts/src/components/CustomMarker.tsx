@@ -11,13 +11,17 @@ const CustomMarker = (props: itemObj) => {
   const imageUrl = props.data.thumbUrl;
   const data = props.data;
 
+  const messageScreen = 'map';
+
   const dispatch = useDispatch<Dispatch<any>>();
 
   const onDetails = (id: string) => {
     try {
       dispatch(dingActions.getDingById(id));
     } catch (err) {
-      dispatch(messageActions.setMessage('Unable to get Ding info'));
+      dispatch(
+        messageActions.setMessage('Unable to get Ding info', messageScreen)
+      );
     }
   };
 

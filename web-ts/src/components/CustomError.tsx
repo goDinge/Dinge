@@ -7,7 +7,7 @@ type errorType =
   | 'error-socials'
   | 'error-comment';
 
-type overlayType = 'map-overlay' | 'no-overlay';
+type overlayType = 'error-map-overlay' | 'no-overlay';
 
 const CustomError = (props: {
   message: string | null;

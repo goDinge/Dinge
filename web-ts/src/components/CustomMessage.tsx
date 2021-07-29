@@ -3,16 +3,21 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import { AppState } from '../store/reducers/rootReducer';
-import { messageState } from '../store/interfaces';
+import { ding, messageState } from '../store/interfaces';
 import * as MessageActions from '../store/actions/message';
 
-type component = 'message-ding';
-
-const CustomMessage = (props: { component: component; delete: boolean }) => {
+const CustomMessage = (props: {
+  overlay: 'message-ding-overlay' | 'message-map-overlay';
+  component: 'message-ding' | 'message-map';
+  item: ding;
+  delete?: boolean | null;
+  isDeleting?: boolean | null;
+  onDelete: (dingId: string) => void;
+}) => {
   const message: messageState = useSelector((state: AppState) => state.message);
   const messageStr = message.message;
 
-  const { component } = props;
+  const { overlay, component, item, isDeleting, onDelete } = props;
   let deleteDing = props.delete;
 
   const dispatch = useDispatch<Dispatch<any>>();
@@ -20,18 +25,24 @@ const CustomMessage = (props: { component: component; delete: boolean }) => {
   const onClose = () => {
     dispatch(MessageActions.resetMessage());
     deleteDing = false;
-    console.log(deleteDing);
   };
 
   return (
-    <div className="message-overlay">
+    <div className={overlay}>
       <div className={component}>
         <p>{messageStr}</p>
         {deleteDing && messageStr ? (
           <div className="delete-button-container">
-            <button onClick={onClose} className="btn btn-edit-modal">
-              Okay
-            </button>
+            {isDeleting ? (
+              <button className="btn btn-edit-modal">Deleting...</button>
+            ) : (
+              <button
+                onClick={() => onDelete(item._id)}
+                className="btn btn-edit-modal"
+              >
+                Yes!
+              </button>
+            )}
             <button onClick={onClose} className="btn btn-edit-modal">
               Cancel
             </button>
@@ -47,20 +58,3 @@ const CustomMessage = (props: { component: component; delete: boolean }) => {
 };
 
 export default CustomMessage;
-
-// {deleteDing ? (
-//   messageStr ? (
-//     <div>
-//       <button onClick={onClose} className="btn btn-primary">
-//         Okay
-//       </button>
-//       <button onClick={onClose} className="btn btn-primary">
-//         Cancel
-//       </button>
-//     </div>
-//   ) : null
-// ) : (
-//   <button onClick={onClose} className="btn btn-primary">
-//     Okay
-//   </button>
-// )}
