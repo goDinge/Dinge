@@ -35,6 +35,7 @@ export const SET_IMAGE = 'SET_IMAGE';
 export const RESET_IMAGE = 'RESET_IMAGE';
 
 export const GET_USER = 'GET_USER';
+export const REMOVE_USER = 'REMOVE_USER';
 export const SET_AUTH_USER = 'SET_AUTH_USER';
 export const GET_AUTH_USER = 'GET_AUTH_USER';
 export const UPDATE_USER_AVATAR = 'UPDATE_USER_AVATAR';

@@ -7,6 +7,7 @@ import {
   dingeState,
   dingState,
   eventsState,
+  eventState,
   messageState,
 } from '../../store/interfaces';
 import { AppState } from '../../store/reducers/rootReducer';
@@ -22,6 +23,7 @@ import { Colors } from '../../constants/Colors';
 
 import { GOOGLE_MAPS } from '../../serverConfigs';
 import CustomDing from '../../components/CustomDing';
+import CustomEvent from '../../components/CustomEvent';
 import CustomBlueMarker from '../../components/CustomBlueMarker';
 import CustomMarker from '../../components/CustomMarker';
 import CustomError from '../../components/CustomError';
@@ -66,6 +68,8 @@ const Map = () => {
   const eventsArr: event[] = events.events;
   const ding: dingState = useSelector((state: AppState) => state.ding);
   const dingObj = ding.ding;
+  const event: eventState = useSelector((state: AppState) => state.event);
+  const eventObj = event.event;
   const message: messageState = useSelector((state: AppState) => state.message);
   const messageStr = message.message;
 
@@ -176,6 +180,7 @@ const Map = () => {
                 key={index}
                 lat={item.location.latitude}
                 lng={item.location.longitude}
+                ding
               />
             ))
           : null}
@@ -238,6 +243,7 @@ const Map = () => {
       </GoogleMapReact>
 
       {dingObj.user !== '' ? <CustomDing /> : null}
+      {eventObj.user !== '' ? <CustomEvent /> : null}
       {messageStr && message.screen === 'map' ? (
         <CustomMessage
           overlay="message-map-overlay"

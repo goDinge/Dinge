@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_USER } from '../types';
+import { GET_USER, REMOVE_USER } from '../types';
 import { CURRENT_IP } from '../../serverConfigs.js';
 
 export const getUser = (userId) => {
@@ -13,7 +13,16 @@ export const getUser = (userId) => {
         user: user,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error('Cannot retrieve user. Please try again.');
     }
+  };
+};
+
+export const removeUser = () => {
+  return (dispatch) => {
+    dispatch({
+      type: REMOVE_USER,
+      user: {},
+    });
   };
 };

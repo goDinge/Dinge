@@ -1,4 +1,4 @@
-import { GET_USER, UPDATE_USER_AVATAR } from '../types';
+import { GET_USER, REMOVE_USER, UPDATE_USER_AVATAR } from '../types';
 
 const initialState = {
   user: {},
@@ -17,6 +17,8 @@ export default (state = initialState, action) => {
         user: action.user,
       };
     }
+    case REMOVE_USER:
+      return initialState;
   }
   return state;
 };

@@ -4,7 +4,6 @@ import {
   Text,
   Pressable,
   Dimensions,
-  Alert,
   Image,
   ScrollView,
   ActivityIndicator,
@@ -32,11 +31,9 @@ import CustomErrorModal from '../../components/CustomErrorModal';
 import CustomDeleteModal from '../../components/CustomDeleteModal';
 
 import Colors from '../../constants/Colors';
-
 import { convertAMPM, properDate } from '../../helpers/dateConversions';
 
 const mapStyle = require('../../helpers/mapStyle.json');
-
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const EventDetailsScreen = (props) => {
@@ -75,6 +72,7 @@ const EventDetailsScreen = (props) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
+    dispatch(userActions.removeUser());
     loadUser(event.user);
     loadEvent(event._id);
     loadAuthUser();
@@ -306,6 +304,7 @@ const EventDetailsScreen = (props) => {
               item={event}
               authUser={authUser}
               user={user}
+              locationState={userLocation}
               onLike={likeEventHandler}
               onFlag={openEventReportModalHandler}
               onDelete={openEventDeleteModalHandler}

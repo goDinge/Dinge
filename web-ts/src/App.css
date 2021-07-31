@@ -11,7 +11,9 @@
   --success-color: #28a745;
   --light-blue: #F9FAFF;
   --ding-container-width: 820px;
+  --event-container-width: 520px;
   --ding-container-height: 500px;
+  --event-container-height: 500px;
 }
 
 * {
@@ -454,6 +456,17 @@ img {
   z-index: 3;
 }
 
+.event-container {
+  position: absolute;
+  display: flex;
+  width: var(--event-container-width);
+  top: 58%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  z-index: 3;
+}
+
 .close-ding {
   position: absolute;
   height: 60px;
@@ -461,11 +474,16 @@ img {
   top: 80px;
   right: 5%;
   z-index: 2;
+  cursor: pointer;
 }
 
 .dingImg {
   width: var(--ding-container-height);
   height: var(--ding-container-height);
+}
+
+.eventImg {
+  width: var(--event-container-width);
 }
 
 .ding-right-container {

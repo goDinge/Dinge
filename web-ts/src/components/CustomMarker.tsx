@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import * as dingActions from '../store/actions/ding';
+import * as eventActions from '../store/actions/event';
 import * as messageActions from '../store/actions/message';
 import pin from '../assets/pin.png';
 import { itemObj } from '../store/interfaces';
@@ -10,6 +11,7 @@ import { itemObj } from '../store/interfaces';
 const CustomMarker = (props: itemObj) => {
   const imageUrl = props.data.thumbUrl;
   const data = props.data;
+  const ding = props.ding;
 
   const messageScreen = 'map';
 
@@ -17,7 +19,11 @@ const CustomMarker = (props: itemObj) => {
 
   const onDetails = (id: string) => {
     try {
-      dispatch(dingActions.getDingById(id));
+      if (ding) {
+        dispatch(dingActions.getDingById(id));
+      } else {
+        dispatch(eventActions.getEventById(id));
+      }
     } catch (err) {
       dispatch(
         messageActions.setMessage('Unable to get Ding info', messageScreen)

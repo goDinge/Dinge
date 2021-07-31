@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Dispatch } from 'redux';
 import { ActionTypes } from '../types';
 import {
-  Get_Dinge_By_Id,
+  Get_Ding_By_Id,
   Remove_Ding,
   Like_Ding,
   Unlike_Ding,
@@ -20,7 +20,7 @@ export const getDingById = (dingId: string) => {
       );
       const ding = response.data.data;
 
-      dispatch<Get_Dinge_By_Id>({
+      dispatch<Get_Ding_By_Id>({
         type: ActionTypes.GET_DING_BY_ID,
         ding: ding,
       });

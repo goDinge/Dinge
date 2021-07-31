@@ -35,6 +35,10 @@ export interface eventsState {
   events: [];
 }
 
+export interface eventState {
+  event: event;
+}
+
 export interface locationState {
   location: {
     coords: location;
@@ -53,6 +57,7 @@ export interface itemObj {
   data: ding | event;
   lat: number;
   lng: number;
+  ding?: boolean;
 }
 
 export type dinge = ding[];
@@ -65,14 +70,16 @@ export interface event {
   comments: string[];
   reports: string[];
   user: string;
+  address: string;
+  eventPic: string;
   location: {
     longitude: number;
     latitude: number;
   };
   thumbUrl: string;
   imgUrl: string;
-  date: string;
-  endDate: string;
+  date: Date;
+  endDate: Date;
   createdAt: Date;
   lastModifiedAt: Date;
 }
@@ -175,6 +182,10 @@ export interface events_data {
   data: events;
 }
 
+export interface event_data {
+  data: event;
+}
+
 export interface comment_data {
   data: comment;
 }
@@ -195,9 +206,19 @@ export interface Get_Local_Events {
   events: events;
 }
 
-export interface Get_Dinge_By_Id {
+export interface Get_Ding_By_Id {
   type: ActionTypes.GET_DING_BY_ID;
   ding: ding;
+}
+
+export interface Get_Event_By_Id {
+  type: ActionTypes.GET_EVENT_BY_ID;
+  event: event;
+}
+
+export interface Remove_Event {
+  type: ActionTypes.REMOVE_EVENT;
+  event: {};
 }
 
 export interface Like_Ding {
@@ -358,12 +379,14 @@ export type UserActionTypes = Get_User | Remove_User;
 export type DingeActions = Get_Dinge | Get_Local_Dinge | Delete_Ding_By_Id;
 
 export type DingActions =
-  | Get_Dinge_By_Id
+  | Get_Ding_By_Id
   | Remove_Ding
   | Like_Ding
   | Unlike_Ding
   | Report_Ding
   | Update_Ding_Description;
+
+export type EventActions = Get_Event_By_Id | Remove_Event;
 
 export type EventsActions = Get_Local_Events;
 

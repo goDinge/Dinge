@@ -6,6 +6,7 @@ import { dingReducer } from './ding';
 import { messageReducer } from './message';
 import { locationReducer } from './location';
 import { eventsReducer } from './events';
+import { eventReducer } from './event';
 
 const rootReducer = combineReducers({
   dinge: dingeReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   location: locationReducer,
   events: eventsReducer,
+  event: eventReducer,
 });
 
 export type AppState = ReturnType<typeof rootReducer>;

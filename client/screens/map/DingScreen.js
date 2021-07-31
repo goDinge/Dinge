@@ -84,6 +84,7 @@ const DingScreen = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(userActions.removeUser());
     loadUser(ding.user);
     loadDing(ding._id);
     loadAuthUser();

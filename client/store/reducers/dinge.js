@@ -4,6 +4,7 @@ import {
   POST_DING,
   GET_LOCAL_DINGE,
   UPDATE_DING_LOCATION,
+  DELETE_DING_BY_ID,
 } from '../types';
 
 const initialState = {
