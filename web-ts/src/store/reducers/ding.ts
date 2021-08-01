@@ -27,7 +27,6 @@ export const dingReducer = (state = initialState, action: DingActions) => {
         ...state,
         ding: action.ding,
       };
-
     case ActionTypes.LIKE_DING:
       return {
         ...state,

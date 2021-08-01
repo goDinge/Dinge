@@ -1,4 +1,3 @@
-//import { ReactElement } from 'hoist-non-react-statics/node_modules/@types/react';
 import { ActionTypes } from './types';
 
 export interface ding {
@@ -66,6 +65,7 @@ export interface event {
   description: string;
   _id: string;
   //eventType: string;
+  eventName: string;
   likes: string[];
   comments: string[];
   reports: string[];
@@ -219,6 +219,21 @@ export interface Get_Event_By_Id {
 export interface Remove_Event {
   type: ActionTypes.REMOVE_EVENT;
   event: {};
+}
+
+export interface Like_Event {
+  type: ActionTypes.LIKE_EVENT;
+  event: event;
+}
+
+export interface Unlike_Event {
+  type: ActionTypes.UNLIKE_EVENT;
+  event: event;
+}
+
+export interface Report_Event {
+  type: ActionTypes.REPORT_EVENT;
+  event: event;
 }
 
 export interface Like_Ding {
@@ -386,7 +401,12 @@ export type DingActions =
   | Report_Ding
   | Update_Ding_Description;
 
-export type EventActions = Get_Event_By_Id | Remove_Event;
+export type EventActions =
+  | Get_Event_By_Id
+  | Remove_Event
+  | Like_Event
+  | Unlike_Event
+  | Report_Event;
 
 export type EventsActions = Get_Local_Events;
 

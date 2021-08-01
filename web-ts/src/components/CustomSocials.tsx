@@ -1,5 +1,5 @@
 import React from 'react';
-import { ding, user } from '../store/interfaces';
+import { ding, user, event } from '../store/interfaces';
 
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
@@ -11,8 +11,8 @@ import { timeConverter } from '../helpers/timeConverter';
 
 const CustomSocials = (props: {
   isLikeLoading: boolean;
-  initLikeDing: boolean;
-  itemState: ding;
+  initLikeItem: boolean;
+  itemState: ding | event;
   user: user;
   authUser: user | null;
   onEditor: (id: string, text: string) => void;
@@ -22,7 +22,7 @@ const CustomSocials = (props: {
 }) => {
   const {
     isLikeLoading,
-    initLikeDing,
+    initLikeItem,
     itemState,
     user,
     authUser,
@@ -31,6 +31,8 @@ const CustomSocials = (props: {
     onFlag,
     onDelete,
   } = props;
+
+  console.log('cust socials: ', user);
 
   return (
     <div className="custom-socials-container">
@@ -46,7 +48,7 @@ const CustomSocials = (props: {
                   width={20}
                 />
               </div>
-            ) : initLikeDing ? (
+            ) : initLikeItem ? (
               <FaThumbsUp
                 size={24}
                 color={Colors.primary}

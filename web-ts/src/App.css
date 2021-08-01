@@ -448,6 +448,7 @@ img {
 .ding-container {
   position: absolute;
   display: flex;
+  height: var(--ding-container-height);
   width: var(--ding-container-width);
   top: 58%;
   left: 50%;
@@ -458,14 +459,28 @@ img {
 
 .event-container {
   position: absolute;
-  display: flex;
+  height: 460px;
   width: var(--event-container-width);
-  top: 58%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
+  overflow-y: scroll;
   z-index: 3;
 }
+
+.event-title {
+  font-family: 'AirbnbCerealBold','Raleway', sans-serif;
+  font-size: 23px;
+  margin-bottom: 1rem;
+}
+
+.event-info {
+  font-family: 'AirbnbCerealMedium','Raleway', sans-serif;
+  font-size: 15;
+  color: var(--grey-color);
+}
+
 
 .close-ding {
   position: absolute;
@@ -482,15 +497,18 @@ img {
   height: var(--ding-container-height);
 }
 
-.eventImg {
-  width: var(--event-container-width);
-}
-
 .ding-right-container {
   width: 320px;
-  height: var(--ding-container-height);
   overflow-y: scroll;
-  padding: 0.7rem 0.7rem;
+  padding: 0.7rem;
+}
+
+.event-lower-outer-container {
+
+}
+
+.event-lower-inner-container {
+  padding: 0.7rem;
 }
 
 .custom-socials-container {
