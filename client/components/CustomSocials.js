@@ -148,7 +148,6 @@ const CustomSocials = (props) => {
             <Text style={styles.userName} onPress={onProfile}>
               {user.name}
             </Text>
-
             <Text style={styles.timeText}>{timeConverter(item.createdAt)}</Text>
           </View>
           <Text style={styles.description}>{description}</Text>

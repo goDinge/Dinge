@@ -3,7 +3,7 @@ import { ActionTypes } from './types';
 export interface ding {
   description: string;
   _id: string;
-  //dingType: string;
+  //type: string;
   likes: string[];
   comments: comment[];
   reports: string[];
@@ -236,6 +236,11 @@ export interface Report_Event {
   event: event;
 }
 
+export interface Delete_Event {
+  type: ActionTypes.DELETE_EVENT_BY_ID;
+  event: event;
+}
+
 export interface Like_Ding {
   type: ActionTypes.LIKE_DING;
   ding: ding;
@@ -408,7 +413,7 @@ export type EventActions =
   | Unlike_Event
   | Report_Event;
 
-export type EventsActions = Get_Local_Events;
+export type EventsActions = Get_Local_Events | Delete_Event;
 
 export type CommentsActions =
   | Post_Comment

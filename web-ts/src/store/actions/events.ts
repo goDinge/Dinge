@@ -21,7 +21,21 @@ export const getLocalEvents = (location: GeolocationPosition) => {
         events: events,
       });
     } catch (err) {
-      throw new Error('Events. Cannot connect with server. Please try again.');
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const deleteEventById = (eventId: string) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      await axios.delete<events_data>(`${CURRENT_IP}/api/events/${eventId}`);
+
+      dispatch({
+        type: ActionTypes.DELETE_EVENT_BY_ID,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
     }
   };
 };

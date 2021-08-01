@@ -1,9 +1,9 @@
 import React from 'react';
-import { ding } from '../store/interfaces';
+import { ding, event } from '../store/interfaces';
 import CustomSubmitButton from './CustomSubmitButton';
 
 const CustomCommentInput = (props: {
-  itemState: ding;
+  itemState: ding | event;
   text: string;
   isCommentLoading: boolean;
   onText: (e: React.ChangeEvent<HTMLInputElement>) => void;

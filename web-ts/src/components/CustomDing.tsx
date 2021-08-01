@@ -263,6 +263,7 @@ const CustomDing = () => {
         </div>
         <div className="ding-right-container">
           <CustomSocials
+            type="ding"
             isLikeLoading={isLikeLoading}
             initLikeItem={initLikeDing}
             authUser={authUser}

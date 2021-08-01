@@ -15,6 +15,11 @@ export const eventsReducer = (state = initialState, action: EventsActions) => {
         ...state,
         events: action.events,
       };
+    case ActionTypes.DELETE_EVENT_BY_ID:
+      return {
+        ...state,
+        event: action.event,
+      };
     default:
       return state;
   }

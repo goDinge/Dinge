@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import { AppState } from '../store/reducers/rootReducer';
-import { ding, messageState } from '../store/interfaces';
+import { ding, event, messageState } from '../store/interfaces';
 import * as MessageActions from '../store/actions/message';
 
 const CustomMessage = (props: {
   overlay: 'message-ding-overlay' | 'message-map-overlay';
-  component: 'message-ding' | 'message-map';
-  item: ding;
+  component: 'message-ding' | 'message-map' | 'message-event';
+  item: ding | event;
   delete?: boolean | null;
   isDeleting?: boolean | null;
   onDelete: (dingId: string) => void;

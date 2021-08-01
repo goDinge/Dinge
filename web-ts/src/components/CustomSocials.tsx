@@ -10,6 +10,7 @@ import { Colors } from '../constants/Colors';
 import { timeConverter } from '../helpers/timeConverter';
 
 const CustomSocials = (props: {
+  type: 'ding' | 'event';
   isLikeLoading: boolean;
   initLikeItem: boolean;
   itemState: ding | event;
@@ -21,6 +22,7 @@ const CustomSocials = (props: {
   onDelete: (dingId: string) => void;
 }) => {
   const {
+    type,
     isLikeLoading,
     initLikeItem,
     itemState,
@@ -31,8 +33,6 @@ const CustomSocials = (props: {
     onFlag,
     onDelete,
   } = props;
-
-  console.log('cust socials: ', user);
 
   return (
     <div className="custom-socials-container">
@@ -92,13 +92,15 @@ const CustomSocials = (props: {
             </div>
           )}
         </div>
-        <div className="social-profile">
-          <div className="name-time-container">
-            <p className="user-name">{user.name}</p>
-            <p className="time-text">{timeConverter(itemState.createdAt)}</p>
+        {type === 'ding' ? (
+          <div className="social-profile">
+            <div className="name-time-container">
+              <p className="user-name">{user.name}</p>
+              <p className="time-text">{timeConverter(itemState.createdAt)}</p>
+            </div>
+            <p className="description">{itemState.description}</p>
           </div>
-          <p className="description">{itemState.description}</p>
-        </div>
+        ) : null}
       </div>
     </div>
   );
