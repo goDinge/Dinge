@@ -64,10 +64,9 @@ export type dinge = ding[];
 export interface event {
   description: string;
   _id: string;
-  //eventType: string;
   eventName: string;
   likes: string[];
-  comments: string[];
+  comments: comment[];
   reports: string[];
   user: string;
   address: string;
@@ -311,6 +310,36 @@ export interface Report_Comment {
   comment: comment;
 }
 
+export interface Post_Event_Comment {
+  type: ActionTypes.POST_EVENT_COMMENT;
+  comment: comment;
+}
+
+export interface Like_Event_Comment {
+  type: ActionTypes.LIKE_EVENT_COMMENT;
+  comment: comment;
+}
+
+export interface Unlike_Event_Comment {
+  type: ActionTypes.UNLIKE_EVENT_COMMENT;
+  comment: comment;
+}
+
+export interface Delete_Event_Comment {
+  type: ActionTypes.DELETE_EVENT_COMMENT;
+  comment: comment;
+}
+
+export interface Edit_Event_Comment {
+  type: ActionTypes.EDIT_EVENT_COMMENT;
+  comment: comment;
+}
+
+export interface Report_Event_Comment {
+  type: ActionTypes.REPORT_EVENT_COMMENT;
+  comment: comment;
+}
+
 export interface Set_Message {
   type: ActionTypes.SET_MESSAGE;
   message: string;
@@ -422,6 +451,14 @@ export type CommentsActions =
   | Delete_Comment
   | Edit_Comment
   | Report_Comment;
+
+export type EventCommentsActions =
+  | Post_Event_Comment
+  | Like_Event_Comment
+  | Unlike_Event_Comment
+  | Delete_Event_Comment
+  | Edit_Event_Comment
+  | Report_Event_Comment;
 
 export type LocationActions = Set_Location;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;

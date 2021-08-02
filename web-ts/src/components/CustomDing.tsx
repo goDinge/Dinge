@@ -86,7 +86,7 @@ const CustomDing = () => {
     }
   }
 
-  //Like and Unlike
+  //Ding
   const likeDingHandler = async (dingId: string) => {
     setIsLikeLoading(true);
     try {
@@ -102,6 +102,30 @@ const CustomDing = () => {
     }
     setIsLikeLoading(false);
     await dispatch(dingActions.getDingById(dingId));
+  };
+
+  const editDescriptionHandler = async (
+    e: React.FormEvent<HTMLFormElement>,
+    dingId: string
+  ) => {
+    e.preventDefault();
+
+    setIsEditLoading(true);
+    try {
+      await dispatch(dingActions.updateDingDescription(modalText, dingId));
+      await dispatch(dingActions.getDingById(dingId));
+      //await dispatch(dingeActions.getLocalDinge(location)); //not sure why this is needed atm
+      dispatch(
+        messageActions.setMessage('Description updated', messageScreenDing)
+      );
+    } catch (err) {
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
+    }
+    onChangeModalText('');
+    setEditInitialText('');
+    setIsEditLoading(false);
+    setEditModal(false);
+    cancelEditHandler();
   };
 
   const updatingText = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,6 +157,15 @@ const CustomDing = () => {
       await dispatch(
         messageActions.setMessage('Ding Deleted', messageScreenMap)
       );
+    } catch (err) {
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
+    }
+  };
+
+  const reportDingHandler = async (dingId: string) => {
+    try {
+      await dispatch(dingActions.reportDingById(dingId));
+      dispatch(messageActions.setMessage('Ding Reported!', messageScreenDing));
     } catch (err) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
@@ -193,30 +226,7 @@ const CustomDing = () => {
     }
   };
 
-  const editDescriptionHandler = async (
-    e: React.FormEvent<HTMLFormElement>,
-    dingId: string
-  ) => {
-    e.preventDefault();
-
-    setIsEditLoading(true);
-    try {
-      await dispatch(dingActions.updateDingDescription(modalText, dingId));
-      await dispatch(dingActions.getDingById(dingId));
-      //await dispatch(dingeActions.getLocalDinge(location)); //not sure why this is needed atm
-      dispatch(
-        messageActions.setMessage('Description updated', messageScreenDing)
-      );
-    } catch (err) {
-      dispatch(messageActions.setMessage(err.message, messageScreenDing));
-    }
-    onChangeModalText('');
-    setEditInitialText('');
-    setIsEditLoading(false);
-    setEditModal(false);
-    cancelEditHandler();
-  };
-
+  //Modals
   const openEditorHandler = (id: string, text: string) => {
     setCommentOrDescription('comment');
     setEditModal(true);
@@ -234,16 +244,6 @@ const CustomDing = () => {
   const cancelEditHandler = () => {
     setEditModal(false);
     setEditInitialText('');
-  };
-
-  //Report Ding
-  const reportDingHandler = async (dingId: string) => {
-    try {
-      await dispatch(dingActions.reportDingById(dingId));
-      dispatch(messageActions.setMessage('Ding Reported!', messageScreenDing));
-    } catch (err) {
-      dispatch(messageActions.setMessage(err.message, messageScreenDing));
-    }
   };
 
   const closeDingHandler = () => {
@@ -285,6 +285,7 @@ const CustomDing = () => {
             comments.map((item, index) => {
               return (
                 <CustomComment
+                  type="ding"
                   key={index}
                   comment={item}
                   authUser={authUser}

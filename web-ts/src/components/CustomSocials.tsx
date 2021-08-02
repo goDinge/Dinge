@@ -78,6 +78,7 @@ const CustomSocials = (props: {
               <RiDeleteBin2Line
                 size={24}
                 color="black"
+                style={{ cursor: 'pointer' }}
                 onClick={() => onDelete(itemState._id)}
               />
             </div>

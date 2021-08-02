@@ -630,6 +630,18 @@ img {
   z-index: 4
 }
 
+.event-comment-likes-count {
+  display: flex;
+  position: absolute;
+  transform: translate(1000%, -45%);
+  width: 39px;
+  flex-direction: row;
+  background-color: white;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  z-index: 4
+}
+
 .comment-likes-count-text {
   font-size: 0.8rem;
   font-family: 'AirbnbCerealBook','Raleway', sans-serif;

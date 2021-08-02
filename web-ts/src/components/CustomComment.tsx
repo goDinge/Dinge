@@ -11,37 +11,55 @@ import { Colors } from '../constants/Colors';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
 import * as commentActions from '../store/actions/comment';
+import * as eventCommentActions from '../store/actions/eventComment';
 import * as dingActions from '../store/actions/ding';
+import * as eventActions from '../store/actions/event';
 import * as messageActions from '../store/actions/message';
 
 const CustomComment = (props: {
+  type: 'ding' | 'event';
   comment: comment;
   authUser: user | null;
   item: ding;
   onEditor: (id: string, text: string) => void;
   onFlag: (id: string) => void;
 }) => {
-  const { comment, authUser, item, onEditor, onFlag } = props;
+  const { type, comment, authUser, item, onEditor, onFlag } = props;
 
   const [isCommentLikeLoading, setIsCommentLikeLoading] = useState(false);
   const [isCommentDeleteLoading, setIsCommentDeleteLoading] = useState(false);
 
-  const messageScreen = 'ding';
-
   const dispatch = useDispatch<Dispatch<any>>();
 
+  const messageScreen = 'ding';
   const comments = item.comments;
+
+  let likesCountStyle: string;
+  if (type === 'ding') {
+    likesCountStyle = 'comment-likes-count';
+  } else {
+    likesCountStyle = 'event-comment-likes-count';
+  }
 
   const likeCommentHandler = async (id: string, itemId: string) => {
     setIsCommentLikeLoading(true);
     const comment = comments.find((comment) => comment._id === id);
     try {
-      if (authUser && comment && !comment.likes.includes(authUser._id)) {
-        await dispatch(commentActions.likeComment(id));
+      if (type === 'ding') {
+        if (authUser && comment && !comment.likes.includes(authUser._id)) {
+          await dispatch(commentActions.likeComment(id));
+        } else {
+          await dispatch(commentActions.unlikeComment(id));
+        }
+        await dispatch(dingActions.getDingById(itemId));
       } else {
-        await dispatch(commentActions.unlikeComment(id));
+        if (authUser && comment && !comment.likes.includes(authUser._id)) {
+          await dispatch(eventCommentActions.likeComment(id));
+        } else {
+          await dispatch(eventCommentActions.unlikeComment(id));
+        }
+        await dispatch(eventActions.getEventById(itemId));
       }
-      await dispatch(dingActions.getDingById(itemId));
     } catch (err) {
       messageActions.setMessage(err.message, messageScreen);
     }
@@ -51,12 +69,16 @@ const CustomComment = (props: {
   const deleteCommentHandler = async (id: string, itemId: string) => {
     setIsCommentDeleteLoading(true);
     try {
-      await dispatch(commentActions.deleteComment(id, itemId));
-      await dispatch(dingActions.getDingById(itemId));
+      if (type === 'ding') {
+        await dispatch(commentActions.deleteComment(id, itemId));
+        await dispatch(dingActions.getDingById(itemId));
+      } else {
+        await dispatch(eventCommentActions.deleteComment(id, itemId));
+        await dispatch(eventActions.getEventById(itemId));
+      }
     } catch (err) {
       dispatch(messageActions.setMessage(err.message, messageScreen));
     }
-    setIsCommentDeleteLoading(false);
   };
 
   return (
@@ -66,7 +88,7 @@ const CustomComment = (props: {
           <p className="comment-username">{comment.userName}</p>
           <p className="description">{comment.text}</p>
         </div>
-        <div className="comment-likes-count">
+        <div className={likesCountStyle}>
           <FaRegThumbsUp size={19} color="black" style={{ padding: 3 }} />
           <p className="comment-likes-count-text">{comment.likes.length}</p>
         </div>

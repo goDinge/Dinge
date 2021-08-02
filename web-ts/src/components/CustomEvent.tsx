@@ -14,12 +14,14 @@ import CustomSocials from './CustomSocials';
 import CustomMarker from './CustomMarker';
 import CustomCommentInput from './CustomCommentInput';
 import CustomMessage from './CustomMessage';
+import CustomComment from './CustomComment';
+import CustomEditModal from './CustomEditModal';
 
 import * as eventActions from '../store/actions/event';
 import * as eventsActions from '../store/actions/events';
 import * as userActions from '../store/actions/user';
 import * as messageActions from '../store/actions/message';
-import * as commentActions from '../store/actions/comment';
+import * as eventCommentActions from '../store/actions/eventComment';
 
 import { convertAMPM, properDate } from '../helpers/dateConversions';
 import xMark from '../assets/x-mark.png';
@@ -51,15 +53,14 @@ const CustomEvent = () => {
   );
   const locationObj: GeolocationPosition = location.location;
 
+  const comments = eventObj.comments;
+
   const [isLikeLoading, setIsLikeLoading] = useState(false);
   const [isCommentLoading, setIsCommentLoading] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [text, onChangeText] = useState('');
   const [modalText, onChangeModalText] = useState('');
-  const [commentOrDescription, setCommentOrDescription] = useState<
-    'comment' | 'description'
-  >('comment');
   const [editEventId, setEditEventId] = useState('');
   const [editModal, setEditModal] = useState(false);
   const [editCommentId, setEditCommentId] = useState('');
@@ -98,40 +99,7 @@ const CustomEvent = () => {
     }
   }
 
-  const updatingText = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChangeText(e.target.value);
-  };
-
-  const postCommentHandler = async (
-    e: React.FormEvent<HTMLFormElement>,
-    text: string,
-    eventId: string
-  ) => {
-    e.preventDefault();
-    if (!text) {
-      dispatch(
-        messageActions.setMessage('Please type something', messageScreenDing)
-      );
-      return;
-    }
-    setIsCommentLoading(true);
-    try {
-      await dispatch(commentActions.postComment(text, eventId));
-      await dispatch(eventActions.getEventById(eventId));
-    } catch (err) {
-      dispatch(messageActions.setMessage(err.message, messageScreenDing));
-    }
-    onChangeText('');
-    setIsCommentLoading(false);
-  };
-
-  const openUpdateDescriptionHandler = (id: string, text: string) => {
-    setCommentOrDescription('description');
-    setEditModal(true);
-    setEditEventId(id);
-    setEditInitialText(text);
-  };
-
+  //Event
   const likeEventHandler = async (eventId: string) => {
     setIsLikeLoading(true);
     try {
@@ -158,15 +126,17 @@ const CustomEvent = () => {
     }
   };
 
-  const openEventDeleteModalHandler = () => {
-    dispatch(
-      messageActions.setMessage(
-        'Are you sure you want to delete this ding?',
-        messageScreenDing
-      )
-    );
-    //setModalMessage('ding');
-    setDeleteEventModal(true);
+  const updatingText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChangeText(e.target.value);
+  };
+
+  const updatingModalText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChangeModalText(e.target.value);
+  };
+
+  const editDescriptionHandler = (eventId: string) => {
+    setEditEventId(eventId);
+    console.log('edit description handler clicked: ', editEventId);
   };
 
   const deleteEventHandler = async (eventId: string) => {
@@ -184,17 +154,101 @@ const CustomEvent = () => {
     }
   };
 
-  const eventLocation = {
-    lat: eventObj.location.latitude,
-    lng: eventObj.location.longitude,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+  //Comments
+  const postCommentHandler = async (
+    e: React.FormEvent<HTMLFormElement>,
+    text: string,
+    eventId: string
+  ) => {
+    e.preventDefault();
+    if (!text) {
+      dispatch(
+        messageActions.setMessage('Please type something', messageScreenDing)
+      );
+      return;
+    }
+    setIsCommentLoading(true);
+    try {
+      await dispatch(eventCommentActions.postComment(text, eventId));
+      await dispatch(eventActions.getEventById(eventId));
+    } catch (err) {
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
+    }
+    onChangeText('');
+    setIsCommentLoading(false);
+  };
+
+  const editCommentHandler = async (
+    e: React.FormEvent<HTMLFormElement>,
+    id: string,
+    eventId: string
+  ) => {
+    e.preventDefault();
+    setIsEditLoading(true);
+    try {
+      await dispatch(eventCommentActions.editComment(modalText, id));
+      await dispatch(eventActions.getEventById(eventId));
+    } catch (err) {
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
+    }
+    onChangeModalText('');
+    setEditInitialText('');
+    setIsEditLoading(false);
+    setEditModal(false);
+    cancelEditHandler();
+  };
+
+  const reportCommentHandler = async (id: string) => {
+    try {
+      await dispatch(eventCommentActions.reportComment(id));
+      dispatch(
+        messageActions.setMessage('Comment reported!', messageScreenDing)
+      );
+    } catch (err) {
+      dispatch(messageActions.setMessage(err.message, messageScreenDing));
+    }
+  };
+
+  //Modal handlers
+  const openEditorHandler = (id: string, text: string) => {
+    setEditModal(true);
+    setEditCommentId(id);
+    setEditInitialText(text);
+  };
+
+  const cancelEditHandler = () => {
+    setEditModal(false);
+    setEditInitialText('');
   };
 
   const closeEventHandler = () => {
     dispatch(eventActions.removeEvent());
     dispatch(userActions.removeUser());
     dispatch(messageActions.resetMessage());
+  };
+
+  //will change to edit Event handler after create event is built
+  const openUpdateEventHandler = (id: string) => {
+    editDescriptionHandler(id);
+  };
+
+  const openEventDeleteModalHandler = () => {
+    dispatch(
+      messageActions.setMessage(
+        'Are you sure you want to delete this ding?',
+        messageScreenDing
+      )
+    );
+    //setModalMessage('ding');
+    setDeleteEventModal(true);
+  };
+
+  //location
+  const eventLocation = {
+    lat: eventObj.location.latitude,
+    lng: eventObj.location.longitude,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
   };
 
   return (
@@ -207,6 +261,19 @@ const CustomEvent = () => {
           delete={deleteEventModal}
           isDeleting={isDeleting}
           onDelete={deleteEventHandler}
+        />
+      ) : null}
+      {editModal ? (
+        <CustomEditModal
+          textType="comment"
+          modalText={modalText}
+          itemState={eventObj}
+          isEditLoading={isEditLoading}
+          editInitialText={editInitialText}
+          editItemId={editCommentId}
+          onText={updatingModalText}
+          onEdit={editCommentHandler}
+          onCancel={cancelEditHandler}
         />
       ) : null}
       <div className="close-ding" onClick={() => closeEventHandler()}>
@@ -256,7 +323,7 @@ const CustomEvent = () => {
               authUser={authUser}
               itemState={eventObj}
               user={userObj}
-              onEditor={openUpdateDescriptionHandler}
+              onEditor={openUpdateEventHandler}
               onLike={likeEventHandler}
               onFlag={reportEventHandler}
               onDelete={openEventDeleteModalHandler}
@@ -268,6 +335,20 @@ const CustomEvent = () => {
               onText={updatingText}
               onComment={postCommentHandler}
             />
+            {comments &&
+              comments.map((item, index) => {
+                return (
+                  <CustomComment
+                    type="event"
+                    key={index}
+                    comment={item}
+                    authUser={authUser}
+                    item={eventObj}
+                    onEditor={openEditorHandler}
+                    onFlag={reportCommentHandler}
+                  />
+                );
+              })}
           </div>
         </div>
       </div>
