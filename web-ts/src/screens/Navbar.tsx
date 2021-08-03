@@ -10,6 +10,7 @@ import * as authActions from '../store/actions/auth';
 
 export const Navbar = () => {
   const auth: AuthState = useSelector((state: AppState) => state.auth);
+  const authUser = auth.authUser;
 
   const dispatch = useDispatch<Dispatch<any>>();
 
@@ -35,14 +36,18 @@ export const Navbar = () => {
               <Link to="/map">Map</Link>
             </li>
             <li>
-              <a href="#!" onClick={() => console.log(auth.authUser)}>
-                Profile
-              </a>
-            </li>
-            <li>
               <Link to="/" onClick={logout}>
                 Logout
               </Link>
+            </li>
+            <li>
+              <a href="#!" onClick={() => console.log(auth.authUser)}>
+                <img
+                  alt="user"
+                  className="nav-bar-avatar"
+                  src={authUser?.avatar}
+                />
+              </a>
             </li>
           </ul>
         ) : null}
