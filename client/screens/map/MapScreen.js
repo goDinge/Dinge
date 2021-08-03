@@ -162,7 +162,6 @@ const MapScreen = (props) => {
   //remember: useEffect calls getLocation(), loadData() gets called inside getLocation
   const getLocation = async () => {
     setError(null);
-
     try {
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Highest,

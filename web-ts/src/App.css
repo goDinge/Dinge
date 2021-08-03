@@ -378,7 +378,6 @@ img {
 }
 
 /* map */
-
 .time-filter-container {
   position: absolute;
   width: 220px;
@@ -417,6 +416,38 @@ img {
   justify-content: center;
   cursor: pointer;
   z-index: 2;
+}
+
+.reload-container {
+  position: absolute;
+  bottom: 40px;
+  left: 5%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.compass-container {
+  position: absolute;
+  bottom: 100px;
+  left: 5%;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background-color: var(--primary-color);
+  cursor: pointer;
+  z-index: 2;
+}
+
+.loader-container {
+  position: absolute;
+  bottom: 100px;
+  left: 5%;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  z-index: 3;
 }
 
 .button-container {
