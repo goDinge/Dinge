@@ -36,6 +36,9 @@ export const Navbar = () => {
               <Link to="/map">Map</Link>
             </li>
             <li>
+              <Link to="/events">Events</Link>
+            </li>
+            <li>
               <Link to="/" onClick={logout}>
                 Logout
               </Link>

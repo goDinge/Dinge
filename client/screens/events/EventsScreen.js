@@ -59,7 +59,7 @@ const EventsScreen = (props) => {
   }, [events]);
 
   const loadEvents = async () => {
-    setError[null];
+    setError(null);
     setLoading(true);
     try {
       await dispatch(eventsActions.getLocalEvents(location));
@@ -341,6 +341,8 @@ const convertWeekDay = (num) => {
   };
   return day[num];
 };
+
+console.log('events - mobile: ', typeof currentDate);
 
 const convertDate = (dateInMilli) => {
   const dateObj = new Date(dateInMilli).toLocaleDateString();

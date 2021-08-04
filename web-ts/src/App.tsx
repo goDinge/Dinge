@@ -14,6 +14,7 @@ import About from './screens/About';
 import Investors from './screens/Investors';
 import Profile from './screens/user/Profile';
 import Map from './screens/map/Map';
+import Events from './screens/events/Events';
 import store from './store/store';
 
 import './index.css';
@@ -74,6 +75,7 @@ const App = () => {
           <Route exact path="/investors" component={Investors} />
           <Route exact path="/profile" component={Profile} />
           <Route exact path="/map" component={Map} />
+          <Route exact path="/events" component={Events} />
         </Switch>
       </Fragment>
     </Router>
