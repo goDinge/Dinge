@@ -76,6 +76,7 @@ const EventsScreen = (props) => {
   const pickDateHandler = (date, index) => {
     setDateChosen(index);
     for (const event of events) {
+      console.log('event.date:', event.date);
       if (date === convertDate(event.date)) {
         eventsToPush.push(event);
       }
@@ -342,10 +343,11 @@ const convertWeekDay = (num) => {
   return day[num];
 };
 
-console.log('events - mobile: ', typeof currentDate);
-
 const convertDate = (dateInMilli) => {
   const dateObj = new Date(dateInMilli).toLocaleDateString();
+  // console.log('dateObj:', dateObj);
+  // console.log('dateinmilli:', dateInMilli);
+  // console.log('currentdate:', currentDate);
   return dateObj.slice(0, 5);
 };
 

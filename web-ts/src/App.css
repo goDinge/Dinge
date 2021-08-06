@@ -10,7 +10,8 @@
   --danger-color: #dc3545;
   --success-color: #28a745;
   --light-blue: #F9FAFF;
-  --light-secondary: '#B4D2BF';
+  --light-secondary: #B4D2BF;
+  --very-light-secondary: #F0FFF2;
   --ding-container-width: 820px;
   --event-container-width: 570px;
   --ding-container-height: 500px;
@@ -603,7 +604,7 @@ img {
 }
 
 .time-text {
-  font-family:  'AirbnbCerealMedium','Raleway', sans-serif;
+  font-family: 'AirbnbCerealMedium','Raleway', sans-serif;
   font-size: 0.9rem;
 }
 
@@ -704,26 +705,8 @@ img {
   flex-direction: row;
   overflow-x: scroll;
 }
-
-.date-container {
-  padding: 10px 5px;
-  text-align: center;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
-  border-right: 0.1px solid #eee;
-}
-
-.chosen-date-container {
-  padding: 10px 5px;
-  text-align: center;
-  background-color: var(--light-secondary);
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
-  border-right: 0.1px solid #eee;
-}
-
-.dates-container:first-child {
-  border-left: 0.1px solid #eee;
+.dates-container .child:hover {
+  background-color: var(--very-light-secondary);
 }
 
 .date-text {
@@ -731,35 +714,40 @@ img {
 }
 
 .calendar-event-container {
+  display: flex;
+  flex-direction: row;
   width: 100%;
-  margin: 3px 5px;
-  padding: 0px 10px;
-  border-bottom: 0.5px solid #eeeeee,
+  padding: 10px 5px;
+  border-bottom: 1px solid #eeeeee;
+  cursor: pointer;
 }
 
 .calendar-event-time-container {
-  width: 100%;
-  margin-bottom: 7px;
+  width: 30%;
 }
 
 .calendar-event-text {
-  font-family: 'AirbnbCerealMedium, Raleway, sans-serif';
-  padding-left: 10px;
+  font-family: 'AirbnbCerealMedium', 'Raleway', sans-serif;
 }
 
 .calendar-event-title {
-  font-family: 'AirbnbCerealBold, Raleway, sans-serif';
+  font-family: 'AirbnbCerealBold', 'Raleway', sans-serif;
   font-size: 18px;
-  padding-left: 10px;
 }
 
 .calendar-event-info-container {
-  width: 80%;
+  width: 70%;
   align-self: flex-end;
-  padding: 10px;
+  padding: 5px;
   background-color: var(--light-blue);
   border-radius: 20px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.events-list {
+  width: 100%;
+  height: 72%;
+  padding: 4px 0px 8px;
 }
 
 /* buttons */

@@ -13,6 +13,7 @@ import {
 } from '../../store/interfaces';
 
 import * as eventsActions from '../../store/actions/events';
+import * as locationActions from '../../store/actions/location';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
 import { Colors } from '../../constants/Colors';
@@ -23,7 +24,8 @@ const todayEventsDefault = (events: event[]) => {
   let defaultEvents = [];
   for (const event of events) {
     if (
-      convertDate(Date.now().toString()) === convertDate(event.date.toString())
+      toLocaleDateStringSimplied(Date.now()).toString().slice(0, 5) ===
+      convertDate(event.date.toString())
     ) {
       defaultEvents.push(event);
     }
@@ -41,35 +43,49 @@ const Events = () => {
   );
   const locationObj: GeolocationPosition = location.location;
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
   const [showEvents, setShowEvents] = useState(
     eventsArr ? todayEventsDefault(eventsArr) : []
   );
   const [dateChosen, setDateChosen] = useState(0);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch<Dispatch<any>>();
 
-  const loadEvents = useCallback(async () => {
-    setError(null);
-    setLoading(true);
-    try {
-      await dispatch(eventsActions.getLocalEvents(locationObj));
-    } catch (err) {
-      setError(err.message);
-    }
-    setLoading(false);
-  }, [dispatch, locationObj, setLoading]);
+  const loadEvents = useCallback(
+    async (position) => {
+      setError('');
+      try {
+        await dispatch(eventsActions.getLocalEvents(position));
+      } catch (err) {
+        setError(err.message);
+      }
+    },
+    [dispatch]
+  );
+
+  const getLocation = useCallback(async () => {
+    setIsLoading(true);
+    await navigator.geolocation.getCurrentPosition((position) => {
+      dispatch(locationActions.setLocation(position));
+      loadEvents(position);
+      setIsLoading(false);
+    }, errorCallback);
+  }, [dispatch, loadEvents]);
 
   useEffect(() => {
-    loadEvents();
-  }, [loadEvents]);
+    getLocation();
+  }, [getLocation]);
 
   useEffect(() => {
     if (eventsArr.length > 0) {
       setShowEvents(todayEventsDefault(eventsArr.sort(sortEvents)));
     }
   }, [eventsArr]);
+
+  const errorCallback = () => {
+    setError('error');
+  };
 
   let eventsToPush: event[] = [];
 
@@ -86,7 +102,7 @@ const Events = () => {
     setShowEvents(eventsToPush);
   };
 
-  const Item = ({ item }: { item: event }) => (
+  const EventItem = ({ item }: { item: event }) => (
     <div className="calendar-event-container">
       <div className="calendar-event-time-container">
         <p className="calendar-event-text">
@@ -99,13 +115,11 @@ const Events = () => {
       >
         <p className="calendar-event-title">{item.eventName}</p>
         <p className="calendar-event-text">
-          {item.description.split(' ').slice(0, 9).join(' ') + '...'}
+          {item.description.split(' ').slice(0, 10).join(' ') + '...'}
         </p>
       </div>
     </div>
   );
-
-  const renderItem = ({ item }: { item: event }) => <Item item={item} />;
 
   if (isLoading) {
     return (
@@ -124,23 +138,18 @@ const Events = () => {
     );
   }
 
-  const dateDivClassName = (index: number) => {
-    if (index !== dateChosen) {
-      return 'date-container';
-    } else {
-      return 'chosen-date-container';
-    }
-  };
-
   return (
     <div className="calender-screen">
       <div className="calendar-container">
         <div className="dates-container">
-          {nextTwoWeeksArray.map((item, index) => {
+          {nextTwoWeeksArray.map((item, index: number) => {
             return (
               <div
                 key={index}
-                className={dateDivClassName(index)}
+                className="child"
+                style={
+                  index === dateChosen ? chosenDateContainer : dateContainer
+                }
                 onClick={() => pickDateHandler(item.date, index)}
               >
                 <p
@@ -154,13 +163,42 @@ const Events = () => {
             );
           })}
         </div>
-        <div></div>
+        <div className="events-list">
+          {showEvents.map((item: event, index: number) => {
+            return <div key={index}>{EventItem({ item })}</div>;
+          })}
+        </div>
       </div>
     </div>
   );
 };
 
 export default Events;
+
+const dateContainer = {
+  padding: 10,
+  textAlign: 'center' as const,
+  borderRight: 0.1,
+  borderLeft: 0.1,
+  borderTop: 1,
+  borderBottom: 1,
+  borderColor: '#ddd',
+  borderStyle: 'solid',
+  cursor: 'pointer',
+};
+
+const chosenDateContainer = {
+  padding: 10,
+  textAlign: 'center' as const,
+  borderRight: 0.1,
+  borderLeft: 0.1,
+  borderTop: 1,
+  borderBottom: 1,
+  borderColor: '#ddd',
+  borderStyle: 'solid',
+  backgroundColor: Colors.lightSecondary,
+  cursor: 'pointer',
+};
 
 //DATE FUNCTIONS
 const day = 1000 * 60 * 60 * 24;
@@ -225,73 +263,78 @@ const convertWeekDay = (num: number) => {
   return day[num];
 };
 
-const convertDate = (dateInMilli: string) => {
-  return dateInMilli.slice(0, 5);
+const convertDate = (date: string) => {
+  const dateObj = new Date(date).toLocaleDateString('en-US', dateOption);
+  return dateObj.slice(0, 5);
+};
+
+const convertSlashDate = (slashDate: string) => {
+  return slashDate.slice(0, 5);
 };
 
 const nextTwoWeeksArray = [
   {
-    date: convertDate(currentDate),
+    date: convertSlashDate(currentDate),
     day: convertWeekDay(new Date(currentDateInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusOne),
+    date: convertSlashDate(datePlusOne),
     day: convertWeekDay(new Date(datePlusOneInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusTwo),
+    date: convertSlashDate(datePlusTwo),
     day: convertWeekDay(new Date(datePlusTwoInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusThree),
+    date: convertSlashDate(datePlusThree),
     day: convertWeekDay(new Date(datePlusThreeInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusFour),
+    date: convertSlashDate(datePlusFour),
     day: convertWeekDay(new Date(datePlusFourInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusFive),
+    date: convertSlashDate(datePlusFive),
     day: convertWeekDay(new Date(datePlusFiveInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusSix),
+    date: convertSlashDate(datePlusSix),
     day: convertWeekDay(new Date(datePlusSixInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusSeven),
+    date: convertSlashDate(datePlusSeven),
     day: convertWeekDay(new Date(datePlusSevenInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusEight),
+    date: convertSlashDate(datePlusEight),
     day: convertWeekDay(new Date(datePlusEightInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusNine),
+    date: convertSlashDate(datePlusNine),
     day: convertWeekDay(new Date(datePlusNineInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusTen),
+    date: convertSlashDate(datePlusTen),
     day: convertWeekDay(new Date(datePlusTenInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusEleven),
+    date: convertSlashDate(datePlusEleven),
     day: convertWeekDay(new Date(datePlusElevenInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusTwelve),
+    date: convertSlashDate(datePlusTwelve),
     day: convertWeekDay(new Date(datePlusTwelveInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusThirteen),
+    date: convertSlashDate(datePlusThirteen),
     day: convertWeekDay(new Date(datePlusThirteenInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusFourteen),
+    date: convertSlashDate(datePlusFourteen),
     day: convertWeekDay(new Date(datePlusFourteenInMilli).getDay()),
   },
   {
-    date: convertDate(datePlusFifteen),
+    date: convertSlashDate(datePlusFifteen),
     day: convertWeekDay(new Date(datePlusFifteenInMilli).getDay()),
   },
 ];

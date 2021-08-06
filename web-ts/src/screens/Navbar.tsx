@@ -24,12 +24,6 @@ export const Navbar = () => {
         <Link to="/">Dinge</Link>
       </h1>
       <ul>
-        <li>
-          <Link to="/about">About</Link>
-        </li>
-        <li>
-          <Link to="/investors">Investors</Link>
-        </li>
         {auth.authUser !== null ? (
           <ul>
             <li>
@@ -37,6 +31,12 @@ export const Navbar = () => {
             </li>
             <li>
               <Link to="/events">Events</Link>
+            </li>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/investors">Investors</Link>
             </li>
             <li>
               <Link to="/" onClick={logout}>
