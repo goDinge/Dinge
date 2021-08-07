@@ -3,9 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 import { AppState } from '../../store/reducers/rootReducer';
 import {
-  user,
   event,
-  AuthState,
   eventsState,
   eventState,
   // messageState,
@@ -13,16 +11,17 @@ import {
 } from '../../store/interfaces';
 
 import CustomEvent from '../../components/CustomEvent';
+import CustomReloadIcon from '../../components/CustomReloadIcon';
+import CustomCalendarEventItem from '../../components/CustomCalendarEventItem';
 import * as eventsActions from '../../store/actions/events';
-import * as eventActions from '../../store/actions/event';
-import * as messageActions from '../../store/actions/message';
+// import * as eventActions from '../../store/actions/event';
+// import * as messageActions from '../../store/actions/message';
 import * as locationActions from '../../store/actions/location';
 
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
 import { Colors } from '../../constants/Colors';
 import { sortEvents } from '../../helpers/sortEvents';
-import { convertAMPM } from '../../helpers/dateConversions';
 
 const todayEventsDefault = (events: event[]) => {
   let defaultEvents = [];
@@ -40,8 +39,8 @@ const todayEventsDefault = (events: event[]) => {
 const Events = () => {
   const events: eventsState = useSelector((state: AppState) => state.events);
   const eventsArr: event[] = events.events;
-  const auth: AuthState = useSelector((state: AppState) => state.auth);
-  const authUser: user | null = auth.authUser;
+  // const auth: AuthState = useSelector((state: AppState) => state.auth);
+  // const authUser: user | null = auth.authUser;
   const event: eventState = useSelector((state: AppState) => state.event);
   const eventObj = event.event;
   const location: locationState = useSelector(
@@ -49,9 +48,9 @@ const Events = () => {
   );
   const locationObj: GeolocationPosition = location.location;
 
-  console.log('event location state: ', location);
+  //console.log('event location state: ', location);
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [showEvents, setShowEvents] = useState(
     eventsArr ? todayEventsDefault(eventsArr) : []
   );
@@ -62,7 +61,7 @@ const Events = () => {
 
   const loadEvents = useCallback(
     async (position) => {
-      setError('');
+      setError(null);
       try {
         await dispatch(eventsActions.getLocalEvents(position));
       } catch (err) {
@@ -72,23 +71,18 @@ const Events = () => {
     [dispatch]
   );
 
-  // const getLocation = useCallback(async () => {
-  //   setIsLoading(true);
-  //   await navigator.geolocation.getCurrentPosition((position) => {
-  //     dispatch(locationActions.setLocation(position));
-  //     loadEvents(position);
-  //     setIsLoading(false);
-  //   }, errorCallback);
-  // }, [dispatch, loadEvents]);
+  const getLocation = useCallback(async () => {
+    setIsLoading(true);
+    await navigator.geolocation.getCurrentPosition((position) => {
+      dispatch(locationActions.setLocation(position));
+      loadEvents(position);
+      setIsLoading(false);
+    }, errorCallback);
+  }, [dispatch, loadEvents]);
 
   // useEffect(() => {
-  //   getLocation();
-  //   console.log('get location ran');
-  // }, [getLocation]);
-
-  useEffect(() => {
-    loadEvents(locationObj);
-  }, [loadEvents, locationObj]);
+  //   loadEvents(locationObj);
+  // }, [loadEvents, locationObj]);
 
   useEffect(() => {
     if (eventsArr.length > 0) {
@@ -97,7 +91,7 @@ const Events = () => {
   }, [eventsArr]);
 
   const errorCallback = () => {
-    setError('error');
+    setError(null);
   };
 
   let eventsToPush: event[] = [];
@@ -115,36 +109,10 @@ const Events = () => {
     setShowEvents(eventsToPush);
   };
 
-  const messageScreen = 'map';
-
-  const onDetails = (id: string) => {
-    try {
-      dispatch(eventActions.getEventById(id));
-    } catch (err) {
-      dispatch(
-        messageActions.setMessage(`Unable to get event info`, messageScreen)
-      );
-    }
+  const reloadHandler = async () => {
+    //startImageRotateFunction();
+    await getLocation();
   };
-
-  const EventItem = ({ item }: { item: event }) => (
-    <div className="calendar-event-container">
-      <div className="calendar-event-time-container">
-        <p className="calendar-event-text">
-          {convertAMPM(item.date)} - {convertAMPM(item.endDate)}
-        </p>
-      </div>
-      <div
-        className="calendar-event-info-container"
-        onClick={() => onDetails(item._id)}
-      >
-        <p className="calendar-event-title">{item.eventName}</p>
-        <p className="calendar-event-text">
-          {item.description.split(' ').slice(0, 10).join(' ') + '...'}
-        </p>
-      </div>
-    </div>
-  );
 
   if (isLoading) {
     return (
@@ -190,11 +158,12 @@ const Events = () => {
         </div>
         <div className="events-list">
           {showEvents.map((item: event, index: number) => {
-            return <div key={index}>{EventItem({ item })}</div>;
+            return <CustomCalendarEventItem key={index} item={item} />;
           })}
         </div>
       </div>
       {eventObj.user !== '' ? <CustomEvent /> : null}
+      <CustomReloadIcon onSelect={() => reloadHandler()} />
     </div>
   );
 };
