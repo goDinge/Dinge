@@ -691,7 +691,6 @@ img {
   align-items: center;
   justify-content: center;
   align-content: center;
-  text-align: center;
 }
 
 .calendar-container {
@@ -728,20 +727,22 @@ img {
 
 .calendar-event-text {
   font-family: 'AirbnbCerealMedium', 'Raleway', sans-serif;
+  padding-left: 15px;
 }
 
 .calendar-event-title {
   font-family: 'AirbnbCerealBold', 'Raleway', sans-serif;
   font-size: 18px;
+  padding-left: 15px;
 }
 
 .calendar-event-info-container {
   width: 70%;
   align-self: flex-end;
-  padding: 5px;
+  padding: 10px 5px;
   background-color: var(--light-blue);
   border-radius: 20px;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
 }
 
 .events-list {

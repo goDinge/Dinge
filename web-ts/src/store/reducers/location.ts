@@ -12,6 +12,7 @@ const initialState = {
       longitude: 0,
       speed: 0,
     },
+    timestamp: 0,
   },
 };
 

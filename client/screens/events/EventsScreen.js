@@ -76,7 +76,6 @@ const EventsScreen = (props) => {
   const pickDateHandler = (date, index) => {
     setDateChosen(index);
     for (const event of events) {
-      console.log('event.date:', event.date);
       if (date === convertDate(event.date)) {
         eventsToPush.push(event);
       }

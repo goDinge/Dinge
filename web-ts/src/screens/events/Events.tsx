@@ -7,13 +7,17 @@ import {
   event,
   AuthState,
   eventsState,
-  // eventState,
+  eventState,
   // messageState,
   locationState,
 } from '../../store/interfaces';
 
+import CustomEvent from '../../components/CustomEvent';
 import * as eventsActions from '../../store/actions/events';
+import * as eventActions from '../../store/actions/event';
+import * as messageActions from '../../store/actions/message';
 import * as locationActions from '../../store/actions/location';
+
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
 import { Colors } from '../../constants/Colors';
@@ -38,10 +42,14 @@ const Events = () => {
   const eventsArr: event[] = events.events;
   const auth: AuthState = useSelector((state: AppState) => state.auth);
   const authUser: user | null = auth.authUser;
+  const event: eventState = useSelector((state: AppState) => state.event);
+  const eventObj = event.event;
   const location: locationState = useSelector(
     (state: AppState) => state.location
   );
   const locationObj: GeolocationPosition = location.location;
+
+  console.log('event location state: ', location);
 
   const [error, setError] = useState('');
   const [showEvents, setShowEvents] = useState(
@@ -64,18 +72,23 @@ const Events = () => {
     [dispatch]
   );
 
-  const getLocation = useCallback(async () => {
-    setIsLoading(true);
-    await navigator.geolocation.getCurrentPosition((position) => {
-      dispatch(locationActions.setLocation(position));
-      loadEvents(position);
-      setIsLoading(false);
-    }, errorCallback);
-  }, [dispatch, loadEvents]);
+  // const getLocation = useCallback(async () => {
+  //   setIsLoading(true);
+  //   await navigator.geolocation.getCurrentPosition((position) => {
+  //     dispatch(locationActions.setLocation(position));
+  //     loadEvents(position);
+  //     setIsLoading(false);
+  //   }, errorCallback);
+  // }, [dispatch, loadEvents]);
+
+  // useEffect(() => {
+  //   getLocation();
+  //   console.log('get location ran');
+  // }, [getLocation]);
 
   useEffect(() => {
-    getLocation();
-  }, [getLocation]);
+    loadEvents(locationObj);
+  }, [loadEvents, locationObj]);
 
   useEffect(() => {
     if (eventsArr.length > 0) {
@@ -102,6 +115,18 @@ const Events = () => {
     setShowEvents(eventsToPush);
   };
 
+  const messageScreen = 'map';
+
+  const onDetails = (id: string) => {
+    try {
+      dispatch(eventActions.getEventById(id));
+    } catch (err) {
+      dispatch(
+        messageActions.setMessage(`Unable to get event info`, messageScreen)
+      );
+    }
+  };
+
   const EventItem = ({ item }: { item: event }) => (
     <div className="calendar-event-container">
       <div className="calendar-event-time-container">
@@ -111,7 +136,7 @@ const Events = () => {
       </div>
       <div
         className="calendar-event-info-container"
-        onClick={() => console.log('event clicked')}
+        onClick={() => onDetails(item._id)}
       >
         <p className="calendar-event-title">{item.eventName}</p>
         <p className="calendar-event-text">
@@ -169,6 +194,7 @@ const Events = () => {
           })}
         </div>
       </div>
+      {eventObj.user !== '' ? <CustomEvent /> : null}
     </div>
   );
 };

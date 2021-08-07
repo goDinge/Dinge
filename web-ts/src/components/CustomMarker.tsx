@@ -26,7 +26,10 @@ const CustomMarker = (props: itemObj) => {
       }
     } catch (err) {
       dispatch(
-        messageActions.setMessage('Unable to get Ding info', messageScreen)
+        messageActions.setMessage(
+          `Unable to get ${ding ? 'ding' : 'event'} info`,
+          messageScreen
+        )
       );
     }
   };

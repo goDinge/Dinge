@@ -39,8 +39,6 @@ const CustomSocials = (props) => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  console.log(locationState);
-
   useEffect(() => {
     if (error) {
       Alert.alert('An error occurred', error, [{ text: 'Okay' }]);
