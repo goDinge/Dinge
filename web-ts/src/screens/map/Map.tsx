@@ -9,6 +9,7 @@ import {
   eventsState,
   eventState,
   messageState,
+  locationState,
 } from '../../store/interfaces';
 import { AppState } from '../../store/reducers/rootReducer';
 import * as dingeActions from '../../store/actions/dinge';
@@ -75,6 +76,10 @@ const Map = () => {
   const eventObj = event.event;
   const message: messageState = useSelector((state: AppState) => state.message);
   const messageStr = message.message;
+  const locationRedux: locationState = useSelector(
+    (state: AppState) => state.location
+  );
+  const locationReduxObj: GeolocationPosition = locationRedux.location;
 
   const dispatch = useDispatch<Dispatch<any>>();
 
@@ -93,13 +98,20 @@ const Map = () => {
   );
 
   const getLocation = useCallback(async () => {
-    await navigator.geolocation.getCurrentPosition((position) => {
-      setLocation(position);
-      dispatch(locationActions.setLocation(position));
-      loadData(position);
+    console.log('map locreduxobj: ', locationReduxObj);
+    if (!locationReduxObj.coords) {
+      await navigator.geolocation.getCurrentPosition((position) => {
+        dispatch(locationActions.setLocation(position));
+        setLocation(position);
+        loadData(position);
+        setIsMapLoading(false);
+      }, errorCallback);
+    } else {
+      setLocation(locationReduxObj);
       setIsMapLoading(false);
-    }, errorCallback);
-  }, [dispatch, loadData]);
+      //loadData(locationReduxObj);
+    }
+  }, [dispatch, loadData, locationReduxObj]);
 
   useEffect(() => {
     getLocation();
