@@ -31,7 +31,7 @@ import CustomError from '../../components/CustomError';
 import CustomMessage from '../../components/CustomMessage';
 import CustomTimeFilter from '../../components/CustomTimeFilter';
 import CustomReloadIcon from '../../components/CustomReloadIcon';
-import CustomCompassIcon from '../../components/CustomCompassIcon';
+//import CustomCompassIcon from '../../components/CustomCompassIcon';
 
 const mapStyle = require('../../helpers/mapStyles.json');
 const settingConfigs = require('../../settingConfigs.json');
@@ -61,7 +61,7 @@ const tomorrowEnd = tomorrow.setHours(23, 59, 59, 999);
 const Map = () => {
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isCompassLoading, setIsCompassLoading] = useState(false);
+  //const [isCompassLoading, setIsCompassLoading] = useState(false);
   const [timeSelected, setTimeSelected] = useState('now');
   const [location, setLocation] =
     useState<GeolocationPosition>(defaultGeoPosition);
@@ -98,7 +98,6 @@ const Map = () => {
   );
 
   const getLocation = useCallback(async () => {
-    console.log('map locreduxobj: ', locationReduxObj);
     if (!locationReduxObj.coords) {
       await navigator.geolocation.getCurrentPosition((position) => {
         dispatch(locationActions.setLocation(position));
@@ -109,7 +108,6 @@ const Map = () => {
     } else {
       setLocation(locationReduxObj);
       setIsMapLoading(false);
-      //loadData(locationReduxObj);
     }
   }, [dispatch, loadData, locationReduxObj]);
 
@@ -120,20 +118,19 @@ const Map = () => {
   const deleteDingHandler = () => {}; //empty fn to pass TS
 
   const reloadHandler = async (location: GeolocationPosition) => {
-    //startImageRotateFunction();
     await loadData(location);
   };
 
-  const compassHandler = async () => {
-    setError(null);
-    setIsCompassLoading(true);
-    try {
-      await dispatch(locationActions.setLocation(location));
-    } catch (err) {
-      setError(err.message);
-    }
-    setIsCompassLoading(false);
-  };
+  // const compassHandler = async () => {
+  //   setError(null);
+  //   setIsCompassLoading(true);
+  //   try {
+  //     await dispatch(locationActions.setLocation(location));
+  //   } catch (err) {
+  //     setError(err.message);
+  //   }
+  //   setIsCompassLoading(false);
+  // };
 
   const timeNow = () => {
     setTimeSelected('now');
@@ -305,13 +302,13 @@ const Map = () => {
         />
       </div>
       <CustomReloadIcon onSelect={() => reloadHandler(location)} />
-      {isCompassLoading ? (
+      {/* {isCompassLoading ? (
         <div className="loader-container">
           <Loader type="Oval" color={Colors.primary} height={50} width={50} />
         </div>
       ) : (
         <CustomCompassIcon onSelect={compassHandler} />
-      )}
+      )} */}
     </div>
   );
 };

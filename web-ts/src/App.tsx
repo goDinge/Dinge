@@ -13,6 +13,7 @@ import Landing from './screens/auth/Landing';
 import About from './screens/About';
 import Investors from './screens/Investors';
 import Profile from './screens/user/Profile';
+import Public from './screens/user/Public';
 import Map from './screens/map/Map';
 import Events from './screens/events/Events';
 import store from './store/store';
@@ -74,6 +75,7 @@ const App = () => {
           <Route exact path="/about" component={About} />
           <Route exact path="/investors" component={Investors} />
           <Route exact path="/profile" component={Profile} />
+          <Route exact path="/public" component={Public} />
           <Route exact path="/map" component={Map} />
           <Route exact path="/events" component={Events} />
         </Switch>

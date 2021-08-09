@@ -143,7 +143,6 @@ const CustomDing = () => {
         messageScreenDing
       )
     );
-    //setModalMessage('ding');
     setDeleteDingModal(true);
   };
 

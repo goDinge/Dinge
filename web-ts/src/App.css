@@ -4,6 +4,7 @@
   --secondary-color: #00A699;
   --dark-color: #343a40;
   --grey-color: #656565;
+  --profile-grey-color: #999;
   --light-grey: #ededed;
   --light-color: #f4f4f4;
   --black-color: #000000;
@@ -14,6 +15,7 @@
   --very-light-secondary: #F0FFF2;
   --ding-container-width: 820px;
   --event-container-width: 570px;
+  --profile-container-width: 400px;
   --ding-container-height: 500px;
   --event-container-height: 500px;
 }
@@ -271,7 +273,7 @@ img {
 
 .error-map {
   position: absolute;
-  transform: translate(260%, 200%);
+  transform: translate(350%, 200%);
   border: 4px solid var(--primary-color);
   border-radius: 10px;
   padding: 0.8rem;
@@ -427,8 +429,22 @@ img {
   width: 50px;
   height: 50px;
   cursor: pointer;
-  z-index: 2;
+  z-index: 5;
 }
+
+.rotate {
+  animation: rotate-keyframes 1s;
+ }
+ 
+ @keyframes rotate-keyframes {
+  from {
+   transform: rotate(0deg);
+  }
+ 
+  to {
+   transform: rotate(360deg);
+  }
+ }
 
 .compass-container {
   position: absolute;
@@ -484,7 +500,7 @@ img {
   display: flex;
   height: var(--ding-container-height);
   width: var(--ding-container-width);
-  top: 58%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
@@ -535,6 +551,10 @@ img {
   width: 320px;
   overflow-y: scroll;
   padding: 0.7rem;
+}
+
+.user-name {
+  cursor: pointer;
 }
 
 .event-lower-outer-container {
@@ -749,6 +769,37 @@ img {
   width: 100%;
   height: 72%;
   padding: 4px 0px 8px;
+}
+
+/* Public Profile */
+.profile-container {
+  position: absolute;
+  height: 460px;
+  width: var(--profile-container-width);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  overflow-y: scroll;
+  border-radius: 10px;
+  border: 3px solid var(--primary-color);
+  z-index: 3;
+}
+
+.profile-inner-container {
+  padding: 15px;
+}
+
+.profile-name {
+  font-family: 'AirbnbCerealMedium', 'Raleway', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.profile-text {
+  font-family: 'AirbnbCerealBook', 'Raleway', sans-serif;
+  font-size: 1rem;
+  color: var(--grey-color)
 }
 
 /* buttons */

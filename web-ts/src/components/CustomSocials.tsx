@@ -1,6 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ding, user, event } from '../store/interfaces';
-
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
 import { FaRegThumbsUp, FaThumbsUp } from 'react-icons/fa';
@@ -96,7 +96,14 @@ const CustomSocials = (props: {
         {type === 'ding' ? (
           <div className="social-profile">
             <div className="name-time-container">
-              <p className="user-name">{user.name}</p>
+              <div className="user-name">
+                <Link
+                  to={{ pathname: '/public', state: user }}
+                  style={{ color: 'black' }}
+                >
+                  {user.name}
+                </Link>
+              </div>
               <p className="time-text">{timeConverter(itemState.createdAt)}</p>
             </div>
             <p className="description">{itemState.description}</p>
