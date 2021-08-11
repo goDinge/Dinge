@@ -5,8 +5,6 @@ import { useSelector } from 'react-redux';
 import { AppState } from '../../store/reducers/rootReducer';
 import { AuthState, eventsState, event } from '../../store/interfaces';
 import { sortEvents } from '../../helpers/sortEvents';
-import websiteImg from '../../assets/website.png';
-import facebookImg from '../../assets/facebook.png';
 import CustomCalendarEventItem from '../../components/CustomCalendarEventItem';
 //import * as AuthActions from '../../store/actions/auth';
 
