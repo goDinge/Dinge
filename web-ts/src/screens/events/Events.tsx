@@ -158,7 +158,13 @@ const Events = () => {
         </div>
         <div className="events-list">
           {showEvents.map((item: event, index: number) => {
-            return <CustomCalendarEventItem key={index} item={item} />;
+            return (
+              <CustomCalendarEventItem
+                key={index}
+                item={item}
+                type="calendar"
+              />
+            );
           })}
         </div>
       </div>

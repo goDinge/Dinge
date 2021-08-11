@@ -31,6 +31,7 @@ const ProfileEditScreen = (props) => {
   const [error, setError] = useState(undefined);
   const [modalMessage, setModalMessage] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
 
   const authUser = props.route.params.authUser;
@@ -154,13 +155,14 @@ const ProfileEditScreen = (props) => {
   const closeModalHandler = async () => {
     setError(null);
     setModalMessage('');
-    setIsUpdating(false);
     setModalVisible(false);
+    setIsUpdating(false);
+    setModalDeleteVisible(false);
     setErrorModalVisible(false);
   };
 
   const deleteAccountModalHandler = () => {
-    setModalVisible(true);
+    setModalDeleteVisible(true);
   };
 
   const deleteAccountHandler = async () => {
@@ -383,9 +385,9 @@ const ProfileEditScreen = (props) => {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={modalVisible}
+            visible={modalDeleteVisible}
             onRequestClose={() => {
-              setModalVisible(!modalVisible);
+              setModalDeleteVisible(!modalDeleteVisible);
             }}
           >
             <View style={styles.centeredView}>
@@ -397,7 +399,9 @@ const ProfileEditScreen = (props) => {
                   <CustomButton onSelect={deleteAccountHandler}>
                     <Text style={styles.buttonText}>Yes</Text>
                   </CustomButton>
-                  <CustomButton onSelect={() => setModalVisible(!modalVisible)}>
+                  <CustomButton
+                    onSelect={() => setModalDeleteVisible(!modalDeleteVisible)}
+                  >
                     <Text style={styles.buttonText}>No</Text>
                   </CustomButton>
                 </View>

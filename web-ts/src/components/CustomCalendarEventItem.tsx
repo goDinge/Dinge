@@ -5,11 +5,18 @@ import { Dispatch } from 'redux';
 
 import * as eventActions from '../store/actions/event';
 import * as messageActions from '../store/actions/message';
-import { convertAMPM } from '../helpers/dateConversions';
+import { convertAMPM, properDate } from '../helpers/dateConversions';
 
-const CustomCalendarEventItem = ({ item }: { item: event }) => {
+const CustomCalendarEventItem = ({
+  item,
+  type,
+}: {
+  item: event;
+  type: string;
+}) => {
   const dispatch = useDispatch<Dispatch<any>>();
   const messageScreen = 'map';
+  const screenType = type;
 
   const onDetails = (id: string) => {
     try {
@@ -22,9 +29,24 @@ const CustomCalendarEventItem = ({ item }: { item: event }) => {
   };
 
   return (
-    <div className="calendar-event-container">
-      <div className="calendar-event-time-container">
-        <p className="calendar-event-text">
+    <div
+      className={
+        screenType === 'profile'
+          ? 'profile-event-container'
+          : 'calendar-event-container'
+      }
+    >
+      <div
+        className={
+          screenType === 'profile'
+            ? 'profile-event-time-container'
+            : 'calendar-event-time-container'
+        }
+      >
+        <p className="calendar-event-text" style={{ fontSize: 14 }}>
+          {screenType === 'profile' ? properDate(item.date) : null}
+        </p>
+        <p className="calendar-event-text" style={{ fontSize: 14 }}>
           {convertAMPM(item.date)} - {convertAMPM(item.endDate)}
         </p>
       </div>

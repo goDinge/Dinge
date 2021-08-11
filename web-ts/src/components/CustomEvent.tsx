@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 import { AppState } from '../store/reducers/rootReducer';
@@ -27,6 +28,7 @@ import { convertAMPM, properDate } from '../helpers/dateConversions';
 import xMark from '../assets/x-mark.png';
 import GoogleMapReact from 'google-map-react';
 import { GOOGLE_MAPS } from '../serverConfigs';
+import { Colors } from '../constants/Colors';
 
 const mapStyle = require('../helpers/mapStyles.json');
 const settingConfigs = require('../settingConfigs.json');
@@ -136,7 +138,6 @@ const CustomEvent = () => {
 
   const editDescriptionHandler = (eventId: string) => {
     setEditEventId(eventId);
-    console.log('edit description handler clicked: ', editEventId);
   };
 
   const deleteEventHandler = async (eventId: string) => {
@@ -291,7 +292,12 @@ const CustomEvent = () => {
               {convertAMPM(eventObj.date)} - {convertAMPM(eventObj.endDate)}
             </p>
             <p className="event-info" style={{ marginBottom: '20px' }}>
-              {userObj.name}
+              <Link
+                to={{ pathname: '/public', state: userObj }}
+                style={{ color: Colors.grey }}
+              >
+                Organizer: {userObj.name}
+              </Link>
             </p>
             <div className="event-map-container">
               <GoogleMapReact

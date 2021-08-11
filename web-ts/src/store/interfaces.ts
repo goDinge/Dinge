@@ -100,6 +100,7 @@ export interface user {
   level: string;
   status: string;
   facebook: string;
+  website: string;
   following: [];
   followers: [];
   reports: string[];

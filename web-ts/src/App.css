@@ -4,7 +4,7 @@
   --secondary-color: #00A699;
   --dark-color: #343a40;
   --grey-color: #656565;
-  --profile-grey-color: #999;
+  --profile-grey-color: #aaa;
   --light-grey: #ededed;
   --light-color: #f4f4f4;
   --black-color: #000000;
@@ -790,16 +790,95 @@ img {
   padding: 15px;
 }
 
+.profile-id-container {
+  border-bottom: 1px solid var(--profile-grey-color);
+  padding-bottom: 1rem;
+}
+
 .profile-name {
   font-family: 'AirbnbCerealMedium', 'Raleway', sans-serif;
   font-size: 1.5rem;
   margin-bottom: 10px;
 }
 
+.profile-title {
+  text-align: left;
+  font-family:  'AirbnbCerealMedium', 'Raleway', sans-serif;
+  font-size: 22px;
+  color: var(--primary-color);
+  padding: 10px 0px;
+}
+
 .profile-text {
   font-family: 'AirbnbCerealBook', 'Raleway', sans-serif;
   font-size: 1rem;
-  color: var(--grey-color)
+  color: var(--profile-grey-color)
+}
+
+.profile-avatar-container {
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid var(--profile-grey-color);
+}
+
+.profile-avatar {
+  height: 240px;
+  width: 240px;
+  border-radius: 120px;
+  margin: 35px 0px;
+}
+
+.profile-stats-container {
+  width: 100%;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--profile-grey-color);
+}
+
+.profile-socials-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.profile-social-box {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.profile-social-icon {
+  height: 90px;
+  width: 90px;
+}
+
+.profile-social-title {
+  text-align: center;
+  font-family: 'AirbnbCerealMedium', 'Raleway', sans-serif;
+  font-size: 18px;
+  color: var(--grey-color);
+  padding: 5px 0px 10px 0px;
+}
+
+.profile-events-list {
+  width: 100%;
+  padding: 5px 0px 10px 0px;
+}
+
+.profile-event-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px 5px;
+  border-bottom: 1px solid #eeeeee;
+  cursor: pointer;
+}
+
+.profile-event-time-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 7px;
 }
 
 /* buttons */
