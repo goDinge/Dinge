@@ -44,13 +44,13 @@ export const Navbar = () => {
               </Link>
             </li>
             <li>
-              <a href="#!" onClick={() => console.log(auth.authUser)}>
+              <Link to={{ pathname: '/profile', state: auth.authUser }}>
                 <img
                   alt="user"
                   className="nav-bar-avatar"
                   src={authUser?.avatar}
                 />
-              </a>
+              </Link>
             </li>
           </ul>
         ) : null}

@@ -24,7 +24,7 @@ const Public = ({ location }: { location: any }) => {
 
   activeUserEvents.sort(sortEvents);
 
-  const dynamicWebsite = useCallback(() => {
+  const dynamicURL = useCallback(() => {
     if (user.website) {
       if (user.website.length > 8 && user.website.slice(0, 8) === 'https://') {
         return;
@@ -41,8 +41,8 @@ const Public = ({ location }: { location: any }) => {
   let facebookUrl = user.facebook;
 
   useEffect(() => {
-    dynamicWebsite();
-  }, [dynamicWebsite]);
+    dynamicURL();
+  }, [dynamicURL]);
 
   return (
     <div className="profile-container">
