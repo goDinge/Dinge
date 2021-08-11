@@ -246,6 +246,16 @@ img {
   z-index: 5;
 }
 
+.error-events-calendar-overlay {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 5;
+}
+
 .message-map-overlay {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.5);
@@ -284,6 +294,24 @@ img {
   text-align: center;
   background: var(--light-color);
   color: var(--black-color);
+  z-index: 5;
+}
+
+.error-events {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 4px solid var(--primary-color);
+  border-radius: 10px;
+  padding: 0.8rem;
+  margin: 1rem 0;
+  opacity: 0.95;
+  font-family: 'AirbnbCerealMedium','Raleway', sans-serif;
+  font-size: 1.2rem;
+  text-align: center;
+  background: var(--light-color);
+  color: var(--black-color);
+  top: 50%;
+  left: 50%;
   z-index: 5;
 }
 

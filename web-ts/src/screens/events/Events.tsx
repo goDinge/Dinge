@@ -7,10 +7,10 @@ import {
   eventsState,
   eventState,
   // messageState,
-  locationState,
 } from '../../store/interfaces';
 
 import CustomEvent from '../../components/CustomEvent';
+import CustomError from '../../components/CustomError';
 import CustomReloadIcon from '../../components/CustomReloadIcon';
 import CustomCalendarEventItem from '../../components/CustomCalendarEventItem';
 import * as eventsActions from '../../store/actions/events';
@@ -43,12 +43,6 @@ const Events = () => {
   // const authUser: user | null = auth.authUser;
   const event: eventState = useSelector((state: AppState) => state.event);
   const eventObj = event.event;
-  const location: locationState = useSelector(
-    (state: AppState) => state.location
-  );
-  const locationObj: GeolocationPosition = location.location;
-
-  //console.log('event location state: ', location);
 
   const [error, setError] = useState<string | null>(null);
   const [showEvents, setShowEvents] = useState(
@@ -80,10 +74,6 @@ const Events = () => {
     }, errorCallback);
   }, [dispatch, loadEvents]);
 
-  // useEffect(() => {
-  //   loadEvents(locationObj);
-  // }, [loadEvents, locationObj]);
-
   useEffect(() => {
     if (eventsArr.length > 0) {
       setShowEvents(todayEventsDefault(eventsArr.sort(sortEvents)));
@@ -110,8 +100,11 @@ const Events = () => {
   };
 
   const reloadHandler = async () => {
-    //startImageRotateFunction();
     await getLocation();
+  };
+
+  const onClose = () => {
+    setError(null);
   };
 
   if (isLoading) {
@@ -170,6 +163,14 @@ const Events = () => {
       </div>
       {eventObj.user !== '' ? <CustomEvent /> : null}
       <CustomReloadIcon onSelect={() => reloadHandler()} />
+      {error ? (
+        <CustomError
+          message={error}
+          onClose={onClose}
+          errorType="error-events"
+          overlayType="error-events-calendar-overlay"
+        />
+      ) : null}
     </div>
   );
 };

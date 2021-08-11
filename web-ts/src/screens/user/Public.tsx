@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AppState } from '../../store/reducers/rootReducer';
 import { event, eventsState } from '../../store/interfaces';
 import { useSelector } from 'react-redux';
@@ -16,13 +16,13 @@ const Public = ({ location }: { location: any }) => {
   const user: user = location.state;
   const currentTime = Date.now();
 
+  const [hrefState, setHrefState] = useState(user.website);
+
   const activeUserEvents = eventsArr
     .filter((event) => currentTime < Date.parse(event.endDate.toString()))
     .filter((event) => user._id === event.user);
 
   activeUserEvents.sort(sortEvents);
-
-  let href = user.website;
 
   const dynamicWebsite = useCallback(() => {
     if (user.website) {
@@ -32,7 +32,7 @@ const Public = ({ location }: { location: any }) => {
       if (user.website.length > 7 && user.website.slice(0, 7) === 'http://') {
         return;
       }
-      href = 'https://' + user.website;
+      setHrefState('https://' + user.website);
     } else {
       return;
     }
@@ -61,7 +61,7 @@ const Public = ({ location }: { location: any }) => {
             <div className="profile-social-box">
               <p className="profile-social-title">Website</p>
               {user.website ? (
-                <a href={href}>
+                <a href={hrefState}>
                   <img
                     className="profile-social-icon"
                     alt="website"
@@ -97,7 +97,6 @@ const Public = ({ location }: { location: any }) => {
                   item={item}
                   key={index}
                   type="profile"
-                  //onSelect={() => eventDetailsHandler(item)}
                 />
               ))}
             </div>

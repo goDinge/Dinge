@@ -5,9 +5,13 @@ type errorType =
   | 'error-map'
   | 'error-ding'
   | 'error-socials'
-  | 'error-comment';
+  | 'error-comment'
+  | 'error-events';
 
-type overlayType = 'error-map-overlay' | 'no-overlay';
+type overlayType =
+  | 'error-map-overlay'
+  | 'error-events-calendar-overlay'
+  | 'no-overlay';
 
 const CustomError = (props: {
   message: string | null;
