@@ -36,5 +36,6 @@ export enum ActionTypes {
   GET_USER = 'GET_USER',
   REMOVE_USER = 'REMOVE_USER',
   SET_LOCATION = 'SET_LOCATION',
+  FORM_INPUT = 'FORM_INPUT',
   LOGOUT = 'LOGOUT',
 }

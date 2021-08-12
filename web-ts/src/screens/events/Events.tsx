@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 import { AppState } from '../../store/reducers/rootReducer';
@@ -42,7 +43,7 @@ const Events = () => {
   // const auth: AuthState = useSelector((state: AppState) => state.auth);
   // const authUser: user | null = auth.authUser;
   const event: eventState = useSelector((state: AppState) => state.event);
-  const eventObj = event.event;
+  const eventObj: event = event.event;
 
   const [error, setError] = useState<string | null>(null);
   const [showEvents, setShowEvents] = useState(
@@ -163,6 +164,11 @@ const Events = () => {
       </div>
       {eventObj.user !== '' ? <CustomEvent /> : null}
       <CustomReloadIcon onSelect={() => reloadHandler()} />
+      <div className="create-event-button">
+        <Link to="/createEvent">
+          <p className="button-text">Create Event</p>
+        </Link>
+      </div>
       {error ? (
         <CustomError
           message={error}

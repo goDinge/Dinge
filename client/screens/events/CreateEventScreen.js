@@ -116,7 +116,6 @@ const CreateEventScreen = (props) => {
           },
         }
   );
-
   const [eventType, setEventType] = useState(
     editedEvent ? editedEvent.eventType : 'community'
   );

@@ -127,6 +127,14 @@ img {
   font-family: 'AirbnbCerealLight';
 }
 
+.button-text {
+  color: white;
+  font-family: 'AirbnbCerealBold','Raleway', sans-serif;
+  font-size: 1rem;
+  padding: 10px;
+  text-align: center;
+}
+
 /* Padding */
 .p {
   padding: 0.5rem;
@@ -799,6 +807,15 @@ img {
   padding: 4px 0px 8px;
 }
 
+.create-event-button {
+  position: absolute;
+  bottom: 40px;
+  width: 150px;
+  background-color: var(--primary-color);
+  border-radius: 14px;
+  opacity: 0.9;
+}
+
 /* Public Profile */
 .profile-container {
   position: absolute;
@@ -1083,7 +1100,7 @@ button {
   z-index: 1;
   width: 100%;
   top: 0;
-  border-bottom: solid 1px var(--primary-color);
+  border-bottom: 1px solid var(--primary-color);
   opacity: 0.9;
 }
 

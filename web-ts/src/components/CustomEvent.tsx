@@ -306,7 +306,7 @@ const CustomEvent = () => {
                 defaultCenter={defaultLocation.center}
                 defaultZoom={defaultLocation.zoom}
                 center={eventLocation}
-                options={{ styles: mapStyle, minZoom: 13, maxZoom: 17 }}
+                options={{ styles: mapStyle, scrollwheel: false }}
                 yesIWantToUseGoogleMapApiInternals={true}
               >
                 <CustomMarker

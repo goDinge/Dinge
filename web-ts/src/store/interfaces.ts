@@ -45,6 +45,42 @@ export interface locationState {
   };
 }
 
+export interface eventFormState {
+  inputValues: {
+    eventName: string;
+    date: string;
+    eventType: string;
+    eventPic: string;
+    thumbUrl: string;
+    address: string;
+    location: string;
+    description: string;
+    hours: string;
+  };
+  inputValidities: {
+    eventName: boolean;
+    date: boolean;
+    eventType: boolean;
+    eventPic: boolean;
+    thumbUrl: boolean;
+    location: boolean;
+    description: boolean;
+    hours: boolean;
+  };
+  formIsValid: boolean;
+}
+
+// export interface inputValidities {
+//   eventName: boolean;
+//   date: boolean;
+//   eventType: boolean;
+//   eventPic: boolean;
+//   thumbUrl: boolean;
+//   location: boolean;
+//   description: boolean;
+//   hours: boolean;
+// }
+
 export type message = string;
 
 export interface messageState {
@@ -341,6 +377,13 @@ export interface Report_Event_Comment {
   comment: comment;
 }
 
+export interface Form_Input {
+  type: ActionTypes.FORM_INPUT;
+  input: string;
+  value: string;
+  isValid: boolean;
+}
+
 export interface Set_Message {
   type: ActionTypes.SET_MESSAGE;
   message: string;
@@ -460,6 +503,8 @@ export type EventCommentsActions =
   | Delete_Event_Comment
   | Edit_Event_Comment
   | Report_Event_Comment;
+
+export type eventFormAction = Form_Input;
 
 export type LocationActions = Set_Location;
 //export type DispatchActions = (dispatch: Dispatch<any>) => Promise<void>;
