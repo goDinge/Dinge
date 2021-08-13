@@ -131,7 +131,7 @@ img {
   color: white;
   font-family: 'AirbnbCerealBold','Raleway', sans-serif;
   font-size: 1rem;
-  padding: 10px;
+  padding: 10px 15px;
   text-align: center;
 }
 
@@ -567,7 +567,6 @@ img {
   color: var(--grey-color);
 }
 
-
 .close-ding {
   position: absolute;
   height: 60px;
@@ -751,11 +750,17 @@ img {
 
 .calendar-container {
   width: 600px;
+  height: 520px;
+  margin-top: 5rem;
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  overflow-y: scroll;
+
 }
 
 .dates-container {
   display: flex;
-  margin-top: 5rem;
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
   flex-direction: row;
   overflow-x: scroll;
@@ -924,6 +929,54 @@ img {
   display: flex;
   flex-direction: column;
   margin-bottom: 7px;
+}
+
+/* Create Event */
+.create-event-screen {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+}
+
+.create-event-inner-container {
+  padding: 15px;
+  width: 100%;
+}
+
+.create-event-name {
+  margin: 30px 0px;
+}
+
+.create-event-text {
+  font-family: 'AirbnbCerealBook', 'Raleway', sans-serif;
+  font-size: 1rem;
+  color: var(--dark-color)
+}
+
+.create-event-type {
+  display: flex;
+  justify-content: flex-start;
+  margin: 20px 5px;
+}
+
+.create-event-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  border: 2px solid var(--primary-color);
+  top: -15;
+  margin-left: 25px;
+}
+
+.pick-image-button {
+  width: 200px;
+  background-color: var(--primary-color);
+  border-radius: 14px;
+  opacity: 0.9;
+  margin: 25px 0px;
+  cursor: pointer;
 }
 
 /* buttons */
