@@ -271,6 +271,8 @@ const CreateEventScreen = (props) => {
     }
   };
 
+  console.log('CES: ', image);
+
   //Text input
   const inputChangeHandler = (inputType, text) => {
     let isValid = true;

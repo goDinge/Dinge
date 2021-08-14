@@ -13,6 +13,7 @@ import {
 } from '../../store/interfaces';
 import { ActionTypes } from '../../store/types';
 import {
+  FormGroup,
   FormControl,
   TextField,
   Input,
@@ -30,36 +31,10 @@ import { AWS_EVENT_TYPES, GOOGLE_MAPS } from '../../serverConfigs';
 import GoogleMapReact from 'google-map-react';
 import { Colors } from '../../constants/Colors';
 
+import CustomEventModal from '../../components/CustomEventModal';
+
 const mapStyle = require('../../helpers/mapStyles.json');
-
 const FORM_INPUT = ActionTypes.FORM_INPUT;
-
-const formReducer = (
-  state: eventFormState,
-  action: eventFormAction
-): eventFormState => {
-  if (action.type) {
-    const updatedValues = {
-      ...state.inputValues,
-      [action.input]: action.value,
-    };
-    const updatedValidities: any = {
-      //: { [key: string]: boolean }
-      ...state.inputValidities,
-      [action.input]: action.isValid,
-    };
-    let formIsValid = true;
-    for (const key in updatedValidities) {
-      formIsValid = formIsValid && updatedValidities[key];
-    }
-    return {
-      formIsValid: formIsValid,
-      inputValues: updatedValues,
-      inputValidities: updatedValidities,
-    };
-  }
-  return state;
-};
 
 const CreateEvent = () => {
   const events: eventsState = useSelector((state: AppState) => state.events);
@@ -80,6 +55,7 @@ const CreateEvent = () => {
   const [formData, setFormData] = useState({
     name: '',
   });
+  const [eventModalVisible, setEventModalVisible] = useState(false);
   // const [region, setRegion] = useState(locationRedux);
   // const [mapLoaded, setMapLoaded] = useState(false);
   // const [eventLocation, setEventLocation] = useState({
@@ -96,60 +72,122 @@ const CreateEvent = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
-    console.log(e.target.value);
+    console.log('onChange: ', e.target.value);
+  };
+
+  const eventTypeHandler = () => {
+    setEventModalVisible(true);
+  };
+
+  const chooseEventHandler = (event: string) => {
+    setEventType(event);
+  };
+
+  const closeChooseEventHandler = () => {
+    setEventModalVisible(false);
   };
 
   return (
     <div className="create-event-screen">
       <div className="calendar-container">
         <div className="create-event-inner-container">
-          <div className="create-event-name">
+          <FormGroup>
             <FormControl>
-              <InputLabel htmlFor="name">Event Name</InputLabel>
-              <Input id="name" onChange={(e) => onChange(e)} />
+              <div className="create-event-name">
+                <InputLabel htmlFor="name">Event Name</InputLabel>
+                <Input id="name" onChange={(e) => onChange(e)} />
+              </div>
             </FormControl>
-          </div>
-          <div className="create-event-type">
-            <p style={{ marginRight: 20 }}>{eventType}</p>
-            <VscTriangleDown />
-            <img
-              alt="event-type"
-              className="create-event-pic"
-              src={`${AWS_EVENT_TYPES}${eventType}.png`}
-            />
-          </div>
-          <div className="date-picker-container">
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DateTimePicker
-                renderInput={(props) => <TextField {...props} />}
-                label="DateTimePicker"
-                value={date}
-                onChange={(date) => {
-                  setDate(date);
+            <FormControl>
+              <div className="create-event-type">
+                <p style={{ marginRight: 20 }}>{eventType}</p>
+                <VscTriangleDown onClick={eventTypeHandler} />
+                <img
+                  alt="event-type"
+                  className="create-event-pic"
+                  src={`${AWS_EVENT_TYPES}${eventType}.png`}
+                />
+              </div>
+            </FormControl>
+            <FormControl>
+              <div className="date-picker-container">
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DateTimePicker
+                    renderInput={(props) => <TextField {...props} />}
+                    label="DateTimePicker"
+                    value={date}
+                    onChange={(date) => {
+                      setDate(date);
+                    }}
+                  />
+                </LocalizationProvider>
+              </div>
+            </FormControl>
+            <FormControl>
+              <Button
+                htmlFor="eventPic"
+                className="pick-image-button"
+                component="label"
+                style={{
+                  backgroundColor: Colors.primary,
+                  marginTop: 20,
+                  marginBottom: 20,
+                }}
+              >
+                <p className="button-text">Pick Event Image</p>
+              </Button>
+              <Input
+                type="file"
+                id="eventPic"
+                style={{ display: 'none' }}
+                onChange={(e: any) => {
+                  setImage(URL.createObjectURL(e.target.files[0]));
                 }}
               />
-            </LocalizationProvider>
-          </div>
-          <Button
-            className="pick-image-button"
-            component="label"
-            style={{
-              backgroundColor: Colors.primary,
-              marginTop: 20,
-              marginBottom: 20,
-            }}
-          >
-            <p className="button-text">Pick Event Image</p>
-            <input type="file" hidden />
-          </Button>
-          <div>{image ? <img alt="event-pic" src={image} /> : null}</div>
+            </FormControl>
+            <div>{image ? <img alt="event-pic" src={image} /> : null}</div>
+          </FormGroup>
         </div>
       </div>
+      {eventModalVisible ? (
+        <CustomEventModal
+          component="message-ding"
+          chooseEvent={chooseEventHandler}
+          onClose={closeChooseEventHandler}
+        />
+      ) : null}
     </div>
   );
 };
 
 export default CreateEvent;
+
+// const formReducer = (
+//   state: eventFormState,
+//   action: eventFormAction
+// ): eventFormState => {
+//   if (action.type) {
+//     const updatedValues = {
+//       ...state.inputValues,
+//       [action.input]: action.value,
+//     };
+//     const updatedValidities: any = {
+//       //: { [key: string]: boolean }
+//       ...state.inputValidities,
+//       [action.input]: action.isValid,
+//     };
+//     let formIsValid = true;
+//     for (const key in updatedValidities) {
+//       formIsValid = formIsValid && updatedValidities[key];
+//     }
+//     return {
+//       formIsValid: formIsValid,
+//       inputValues: updatedValues,
+//       inputValidities: updatedValidities,
+//     };
+//   }
+//   return state;
+// };
 
 // const [formState, dispatchFormState] = useReducer(formReducer, {
 //   inputValues: {
