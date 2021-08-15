@@ -138,7 +138,6 @@ const CustomEvent = () => {
 
   const editDescriptionHandler = (eventId: string) => {
     setEditEventId(eventId);
-    console.log('custom event: ', editEventId);
   };
 
   const deleteEventHandler = async (eventId: string) => {

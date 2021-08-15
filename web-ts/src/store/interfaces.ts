@@ -88,8 +88,23 @@ export interface messageState {
   screen: string;
 }
 
+export interface eventLocation {
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  thumbUrl: string;
+}
+
 export interface itemObj {
   data: ding | event;
+  lat: number;
+  lng: number;
+  ding?: boolean;
+}
+
+export interface createEventObj {
+  data: eventLocation;
   lat: number;
   lng: number;
   ding?: boolean;

@@ -191,7 +191,7 @@ const CreateEventScreen = (props) => {
       eventPic: editedEvent ? editedEvent.eventPic : '',
       thumbUrl: editedEvent
         ? editedEvent.thumbUrl
-        : 'https://dinge.s3.us-east-2.amazonaws.com/event-types-2/community.png',
+        : `${AWS_EVENT_TYPES}/community.png`,
       address: editedEvent ? editedEvent.address : '',
       location: editedEvent ? editedEvent.location : '',
       description: editedEvent ? editedEvent.description : '',
@@ -271,8 +271,6 @@ const CreateEventScreen = (props) => {
     }
   };
 
-  console.log('CES: ', image);
-
   //Text input
   const inputChangeHandler = (inputType, text) => {
     let isValid = true;
@@ -292,23 +290,6 @@ const CreateEventScreen = (props) => {
           isValid: isValid,
           input: inputType,
         });
-        // Alert.alert(
-        //   'Duration invalid',
-        //   'Duration of event needs to be between 1 to 8 hours.',
-        //   [
-        //     {
-        //       text: 'Ok',
-        //       onPress: () => {
-        //         dispatchFormState({
-        //           type: FORM_INPUT,
-        //           value: null,
-        //           isValid: isValid,
-        //           input: inputType,
-        //         });
-        //       },
-        //     },
-        //   ]
-        // );
       }
     }
     dispatchFormState({
@@ -946,3 +927,21 @@ const styles = StyleSheet.create({
     height: 100,
   },
 });
+
+// Alert.alert(
+//   'Duration invalid',
+//   'Duration of event needs to be between 1 to 8 hours.',
+//   [
+//     {
+//       text: 'Ok',
+//       onPress: () => {
+//         dispatchFormState({
+//           type: FORM_INPUT,
+//           value: null,
+//           isValid: isValid,
+//           input: inputType,
+//         });
+//       },
+//     },
+//   ]
+// );

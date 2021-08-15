@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useReducer, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
+import Geocode from 'react-geocode';
 import { AppState } from '../../store/reducers/rootReducer';
 import {
   event,
@@ -31,56 +32,140 @@ import { AWS_EVENT_TYPES, GOOGLE_MAPS } from '../../serverConfigs';
 import GoogleMapReact from 'google-map-react';
 import { Colors } from '../../constants/Colors';
 
+import CustomMarkerCreateEvent from '../../components/CustomMarkerCreateEvent';
 import CustomEventModal from '../../components/CustomEventModal';
 
 const mapStyle = require('../../helpers/mapStyles.json');
+const settingConfigs = require('../../settingConfigs.json');
+
+const defaultLocation = {
+  center: {
+    lat: settingConfigs[2].defaultLocation.coords.latitude,
+    lng: settingConfigs[2].defaultLocation.coords.longitude,
+  },
+  zoom: 15,
+};
+
 const FORM_INPUT = ActionTypes.FORM_INPUT;
+
+interface region {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+}
 
 const CreateEvent = () => {
   const events: eventsState = useSelector((state: AppState) => state.events);
   const eventsArr: event[] = events.events;
-  const event: eventState = useSelector((state: AppState) => state.event);
-  const eventObj: event = event.event;
   const locationRedux: locationState = useSelector(
     (state: AppState) => state.location
   );
   const locationReduxObj: GeolocationPosition = locationRedux.location;
 
-  // const [error, setError] = useState(undefined);
+  const [error, setError] = useState(null);
   // const [isLoading, setIsLoading] = useState(false);
-  // const [isFetchingMarker, setIsFetchingMarker] = useState(false);
+  const [isFetchingMarker, setIsFetchingMarker] = useState(false);
   // const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const [date, setDate] = useState<Date | null>(new Date(Date.now()));
   const [image, setImage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
+    duration: null,
+    address: '',
+  });
+  const [eventType, setEventType] = useState({
+    type: 'community',
+    thumbUrl: `${AWS_EVENT_TYPES}community.png`,
   });
   const [eventModalVisible, setEventModalVisible] = useState(false);
-  // const [region, setRegion] = useState(locationRedux);
-  // const [mapLoaded, setMapLoaded] = useState(false);
-  // const [eventLocation, setEventLocation] = useState({
-  //   location: {
-  //     latitude: 0,
-  //     longitude: 0,
-  //   },
-  // });
-  const [eventType, setEventType] = useState('community');
+  const [region, setRegion] = useState({
+    latitude: 0,
+    longitude: 0,
+    latitudeDelta: 0.04,
+    longitudeDelta: 0.04,
+  });
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [locationData, setLocationData] = useState<any>();
+  const [eventLocation, setEventLocation] = useState({
+    location: {
+      latitude: 0,
+      longitude: 0,
+    },
+    //thumbUrl: `${AWS_EVENT_TYPES}community.png`,
+  });
 
   const dispatch = useDispatch<Dispatch>();
+
+  Geocode.setApiKey(GOOGLE_MAPS);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
-    console.log('onChange: ', e.target.value);
   };
+
+  const coordLookUp = async (address: string) => {
+    setError(null);
+    let coordsMongo = {
+      latitude: null,
+      longitude: null,
+    };
+    try {
+      const geocodeData = await Geocode.fromAddress(address);
+      setLocationData(geocodeData.results);
+      coordsMongo = {
+        latitude: locationData[0].geometry.location.lat,
+        longitude: locationData[0].geometry.location.lng,
+      };
+      console.log('CE eventtype: ', eventType.thumbUrl);
+      setEventLocation({
+        location: {
+          latitude: locationData[0].geometry.location.lat,
+          longitude: locationData[0].geometry.location.lng,
+        },
+        // thumbUrl: `${AWS_EVENT_TYPES}${eventType.thumbUrl}.png`,
+      });
+      setRegion({
+        latitude: locationData[0].geometry.location.lat,
+        longitude: locationData[0].geometry.location.lng,
+        latitudeDelta: 0.04,
+        longitudeDelta: 0.04,
+      });
+
+      return coordsMongo;
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const loadMapHandler = async (region: region, address: string) => {
+    setError(null);
+    setIsFetchingMarker(true);
+    try {
+      await coordLookUp(address);
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsFetchingMarker(false);
+    setMapLoaded(true);
+  };
+
+  //eventLocation is one step behind as it is dependent on eventType
+  //it is picking up the previous eventType when it uses it for thumbUrl
+  console.log('CE eventLocation: ', eventLocation);
+  console.log('CE eventType: ', eventType.thumbUrl);
 
   const eventTypeHandler = () => {
     setEventModalVisible(true);
   };
 
-  const chooseEventHandler = (event: string) => {
-    setEventType(event);
+  const chooseEventHandler = (type: string) => {
+    setEventType({ type, thumbUrl: `${AWS_EVENT_TYPES}${type}.png` });
+    // setEventLocation({
+    //   ...eventLocation,
+    //   thumbUrl: `${AWS_EVENT_TYPES}${eventType}.png`,
+    // });
   };
 
   const closeChooseEventHandler = () => {
@@ -92,20 +177,20 @@ const CreateEvent = () => {
       <div className="calendar-container">
         <div className="create-event-inner-container">
           <FormGroup>
-            <FormControl>
-              <div className="create-event-name">
+            <div className="create-event-input-container">
+              <FormControl>
                 <InputLabel htmlFor="name">Event Name</InputLabel>
                 <Input id="name" onChange={(e) => onChange(e)} />
-              </div>
-            </FormControl>
+              </FormControl>
+            </div>
             <FormControl>
               <div className="create-event-type">
-                <p style={{ marginRight: 20 }}>{eventType}</p>
+                <p style={{ marginRight: 20 }}>{eventType.type}</p>
                 <VscTriangleDown onClick={eventTypeHandler} />
                 <img
                   alt="event-type"
                   className="create-event-pic"
-                  src={`${AWS_EVENT_TYPES}${eventType}.png`}
+                  src={`${eventType.thumbUrl}`}
                 />
               </div>
             </FormControl>
@@ -146,6 +231,59 @@ const CreateEvent = () => {
               />
             </FormControl>
             <div>{image ? <img alt="event-pic" src={image} /> : null}</div>
+            <div className="create-event-input-container">
+              <FormControl>
+                <InputLabel htmlFor="duration">Event Duration: </InputLabel>
+                <Input id="duration" onChange={(e) => onChange(e)} />
+                <FormHelperText>Number of hours</FormHelperText>
+              </FormControl>
+            </div>
+            <div className="create-event-input-container">
+              <FormControl>
+                <InputLabel htmlFor="address">Event Location:</InputLabel>
+                <Input
+                  id="address"
+                  style={{ width: 300 }}
+                  onChange={(e) => onChange(e)}
+                />
+                <FormHelperText>
+                  Event address, landmark or closest intersection
+                </FormHelperText>
+              </FormControl>
+            </div>
+            <FormControl>
+              <Button
+                htmlFor="map-marker"
+                className="pick-image-button"
+                component="label"
+                style={{
+                  backgroundColor: Colors.primary,
+                  marginTop: 20,
+                  marginBottom: 20,
+                }}
+                onClick={() => loadMapHandler(region, formData.address)}
+              >
+                <p className="button-text">Add Map Marker</p>
+              </Button>
+            </FormControl>
+            <div className="event-map-container">
+              {mapLoaded ? (
+                <GoogleMapReact
+                  bootstrapURLKeys={{ key: GOOGLE_MAPS }}
+                  defaultCenter={defaultLocation.center}
+                  defaultZoom={defaultLocation.zoom}
+                  center={locationData[0].geometry.location}
+                  options={{ styles: mapStyle, scrollwheel: false }}
+                  yesIWantToUseGoogleMapApiInternals={true}
+                >
+                  <CustomMarkerCreateEvent
+                    data={eventType}
+                    lat={locationData[0].geometry.location.lat}
+                    lng={locationData[0].geometry.location.lng}
+                  />
+                </GoogleMapReact>
+              ) : null}
+            </div>
           </FormGroup>
         </div>
       </div>

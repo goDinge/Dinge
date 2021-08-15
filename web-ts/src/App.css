@@ -945,8 +945,8 @@ img {
   width: 100%;
 }
 
-.create-event-name {
-  margin: 30px 0px;
+.create-event-input-container {
+  margin: 10px 0px;
 }
 
 .create-event-text {
