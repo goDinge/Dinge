@@ -5,15 +5,17 @@ import Geocode from 'react-geocode';
 import { AppState } from '../../store/reducers/rootReducer';
 import {
   event,
+  region,
   eventsState,
-  eventState,
-  messageState,
   locationState,
-  eventFormState,
-  eventFormAction,
+  //eventState,
+  //messageState,
+  //eventFormState,
+  //eventFormAction,
 } from '../../store/interfaces';
-import { ActionTypes } from '../../store/types';
+//import { ActionTypes } from '../../store/types';
 import {
+  Box,
   FormGroup,
   FormControl,
   TextField,
@@ -21,15 +23,19 @@ import {
   InputLabel,
   FormHelperText,
   Button,
+  Typography,
+  ThemeProvider,
 } from '@material-ui/core';
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import DateTimePicker from '@material-ui/lab/DateTimePicker';
 import { VscTriangleDown } from 'react-icons/vsc';
 
-import * as eventsActions from '../../store/actions/events';
+//import * as eventsActions from '../../store/actions/events';
 import { AWS_EVENT_TYPES, GOOGLE_MAPS } from '../../serverConfigs';
 import GoogleMapReact from 'google-map-react';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import Loader from 'react-loader-spinner';
 import { Colors } from '../../constants/Colors';
 
 import CustomMarkerCreateEvent from '../../components/CustomMarkerCreateEvent';
@@ -46,14 +52,7 @@ const defaultLocation = {
   zoom: 15,
 };
 
-const FORM_INPUT = ActionTypes.FORM_INPUT;
-
-interface region {
-  latitude: number;
-  longitude: number;
-  latitudeDelta: number;
-  longitudeDelta: number;
-}
+//const FORM_INPUT = ActionTypes.FORM_INPUT;
 
 const CreateEvent = () => {
   const events: eventsState = useSelector((state: AppState) => state.events);
@@ -73,6 +72,7 @@ const CreateEvent = () => {
     name: '',
     duration: null,
     address: '',
+    description: '',
   });
   const [eventType, setEventType] = useState({
     type: 'community',
@@ -87,13 +87,12 @@ const CreateEvent = () => {
   });
   const [mapLoaded, setMapLoaded] = useState(false);
   const [locationData, setLocationData] = useState<any>();
-  const [eventLocation, setEventLocation] = useState({
-    location: {
-      latitude: 0,
-      longitude: 0,
-    },
-    //thumbUrl: `${AWS_EVENT_TYPES}community.png`,
-  });
+  // const [eventLocation, setEventLocation] = useState({
+  //   location: {
+  //     latitude: 0,
+  //     longitude: 0,
+  //   },
+  // });
 
   const dispatch = useDispatch<Dispatch>();
 
@@ -118,14 +117,6 @@ const CreateEvent = () => {
         latitude: locationData[0].geometry.location.lat,
         longitude: locationData[0].geometry.location.lng,
       };
-      console.log('CE eventtype: ', eventType.thumbUrl);
-      setEventLocation({
-        location: {
-          latitude: locationData[0].geometry.location.lat,
-          longitude: locationData[0].geometry.location.lng,
-        },
-        // thumbUrl: `${AWS_EVENT_TYPES}${eventType.thumbUrl}.png`,
-      });
       setRegion({
         latitude: locationData[0].geometry.location.lat,
         longitude: locationData[0].geometry.location.lng,
@@ -147,14 +138,12 @@ const CreateEvent = () => {
     } catch (err) {
       setError(err.message);
     }
-    setIsFetchingMarker(false);
     setMapLoaded(true);
+    setIsFetchingMarker(false);
   };
 
-  //eventLocation is one step behind as it is dependent on eventType
-  //it is picking up the previous eventType when it uses it for thumbUrl
-  console.log('CE eventLocation: ', eventLocation);
-  console.log('CE eventType: ', eventType.thumbUrl);
+  // console.log('CE eventLocation: ', eventLocation);
+  // console.log('CE eventType: ', eventType.thumbUrl);
 
   const eventTypeHandler = () => {
     setEventModalVisible(true);
@@ -162,10 +151,6 @@ const CreateEvent = () => {
 
   const chooseEventHandler = (type: string) => {
     setEventType({ type, thumbUrl: `${AWS_EVENT_TYPES}${type}.png` });
-    // setEventLocation({
-    //   ...eventLocation,
-    //   thumbUrl: `${AWS_EVENT_TYPES}${eventType}.png`,
-    // });
   };
 
   const closeChooseEventHandler = () => {
@@ -176,115 +161,178 @@ const CreateEvent = () => {
     <div className="create-event-screen">
       <div className="calendar-container">
         <div className="create-event-inner-container">
-          <FormGroup>
-            <div className="create-event-input-container">
-              <FormControl>
-                <InputLabel htmlFor="name">Event Name</InputLabel>
-                <Input id="name" onChange={(e) => onChange(e)} />
-              </FormControl>
-            </div>
-            <FormControl>
-              <div className="create-event-type">
-                <p style={{ marginRight: 20 }}>{eventType.type}</p>
-                <VscTriangleDown onClick={eventTypeHandler} />
-                <img
-                  alt="event-type"
-                  className="create-event-pic"
-                  src={`${eventType.thumbUrl}`}
-                />
-              </div>
-            </FormControl>
-            <FormControl>
-              <div className="date-picker-container">
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DateTimePicker
-                    renderInput={(props) => <TextField {...props} />}
-                    label="DateTimePicker"
-                    value={date}
-                    onChange={(date) => {
-                      setDate(date);
-                    }}
+          <Typography component="div">
+            <FormGroup sx={{ fontFamily: 'AirbnbCerealMedium' }}>
+              <Box className="create-event-input-container">
+                <FormControl>
+                  <InputLabel
+                    sx={{ fontFamily: 'AirbnbCerealMedium' }}
+                    htmlFor="name"
+                  >
+                    Event Name
+                  </InputLabel>
+                  <Input
+                    sx={{ fontFamily: 'AirbnbCerealBook' }}
+                    id="name"
+                    onChange={(e) => onChange(e)}
                   />
-                </LocalizationProvider>
-              </div>
-            </FormControl>
-            <FormControl>
-              <Button
-                htmlFor="eventPic"
-                className="pick-image-button"
-                component="label"
-                style={{
-                  backgroundColor: Colors.primary,
-                  marginTop: 20,
-                  marginBottom: 20,
-                }}
-              >
-                <p className="button-text">Pick Event Image</p>
-              </Button>
-              <Input
-                type="file"
-                id="eventPic"
-                style={{ display: 'none' }}
-                onChange={(e: any) => {
-                  setImage(URL.createObjectURL(e.target.files[0]));
-                }}
-              />
-            </FormControl>
-            <div>{image ? <img alt="event-pic" src={image} /> : null}</div>
-            <div className="create-event-input-container">
+                </FormControl>
+              </Box>
               <FormControl>
-                <InputLabel htmlFor="duration">Event Duration: </InputLabel>
-                <Input id="duration" onChange={(e) => onChange(e)} />
-                <FormHelperText>Number of hours</FormHelperText>
+                <Box className="create-event-type">
+                  <p style={{ marginRight: 20 }}>{eventType.type}</p>
+                  <VscTriangleDown onClick={eventTypeHandler} />
+                  <img
+                    alt="event-type"
+                    className="create-event-pic"
+                    src={`${eventType.thumbUrl}`}
+                  />
+                </Box>
               </FormControl>
-            </div>
-            <div className="create-event-input-container">
               <FormControl>
-                <InputLabel htmlFor="address">Event Location:</InputLabel>
-                <Input
-                  id="address"
-                  style={{ width: 300 }}
-                  onChange={(e) => onChange(e)}
-                />
-                <FormHelperText>
-                  Event address, landmark or closest intersection
-                </FormHelperText>
+                <Box className="date-picker-container">
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DateTimePicker
+                      renderInput={(props) => <TextField {...props} />}
+                      label="DateTimePicker"
+                      value={date}
+                      onChange={(date) => {
+                        setDate(date);
+                      }}
+                    />
+                  </LocalizationProvider>
+                </Box>
               </FormControl>
-            </div>
-            <FormControl>
-              <Button
-                htmlFor="map-marker"
-                className="pick-image-button"
-                component="label"
-                style={{
-                  backgroundColor: Colors.primary,
-                  marginTop: 20,
-                  marginBottom: 20,
-                }}
-                onClick={() => loadMapHandler(region, formData.address)}
-              >
-                <p className="button-text">Add Map Marker</p>
-              </Button>
-            </FormControl>
-            <div className="event-map-container">
-              {mapLoaded ? (
-                <GoogleMapReact
-                  bootstrapURLKeys={{ key: GOOGLE_MAPS }}
-                  defaultCenter={defaultLocation.center}
-                  defaultZoom={defaultLocation.zoom}
-                  center={locationData[0].geometry.location}
-                  options={{ styles: mapStyle, scrollwheel: false }}
-                  yesIWantToUseGoogleMapApiInternals={true}
+              <FormControl>
+                <Button
+                  htmlFor="eventPic"
+                  className="pick-image-button"
+                  component="label"
+                  style={{
+                    backgroundColor: Colors.primary,
+                    marginTop: 20,
+                    marginBottom: 20,
+                  }}
                 >
-                  <CustomMarkerCreateEvent
-                    data={eventType}
-                    lat={locationData[0].geometry.location.lat}
-                    lng={locationData[0].geometry.location.lng}
+                  <p className="button-text">Pick Event Image</p>
+                </Button>
+                <Input
+                  type="file"
+                  id="eventPic"
+                  style={{ display: 'none' }}
+                  onChange={(e: any) => {
+                    setImage(URL.createObjectURL(e.target.files[0]));
+                  }}
+                />
+              </FormControl>
+              <Box>{image ? <img alt="event-pic" src={image} /> : null}</Box>
+              <Box className="create-event-input-container">
+                <FormControl>
+                  <InputLabel
+                    sx={{ fontFamily: 'AirbnbCerealMedium' }}
+                    htmlFor="duration"
+                  >
+                    Event Duration:
+                  </InputLabel>
+                  <Input
+                    sx={{ fontFamily: 'AirbnbCerealBook' }}
+                    id="duration"
+                    onChange={(e) => onChange(e)}
                   />
-                </GoogleMapReact>
+                  <FormHelperText sx={{ fontFamily: 'AirbnbCerealLight' }}>
+                    Number of hours
+                  </FormHelperText>
+                </FormControl>
+              </Box>
+              <Box className="create-event-input-container">
+                <FormControl>
+                  <InputLabel
+                    sx={{ fontFamily: 'AirbnbCerealMedium' }}
+                    htmlFor="address"
+                  >
+                    Event Location:
+                  </InputLabel>
+                  <Input
+                    sx={{ fontFamily: 'AirbnbCerealBook' }}
+                    id="address"
+                    style={{ width: 300 }}
+                    onChange={(e) => onChange(e)}
+                  />
+                  <FormHelperText sx={{ fontFamily: 'AirbnbCerealLight' }}>
+                    Event address, landmark or closest intersection
+                  </FormHelperText>
+                </FormControl>
+              </Box>
+              <FormControl>
+                <Button
+                  htmlFor="map-marker"
+                  className="pick-image-button"
+                  component="label"
+                  style={{
+                    backgroundColor: Colors.primary,
+                    marginTop: 20,
+                    marginBottom: 20,
+                  }}
+                  onClick={() => loadMapHandler(region, formData.address)}
+                >
+                  <p className="button-text">Add Map Marker</p>
+                </Button>
+              </FormControl>
+              {mapLoaded ? (
+                <Box className="event-map-container">
+                  <GoogleMapReact
+                    bootstrapURLKeys={{ key: GOOGLE_MAPS }}
+                    defaultCenter={defaultLocation.center}
+                    defaultZoom={defaultLocation.zoom}
+                    center={locationData[0].geometry.location}
+                    options={{ styles: mapStyle, scrollwheel: false }}
+                    yesIWantToUseGoogleMapApiInternals={true}
+                  >
+                    <CustomMarkerCreateEvent
+                      data={eventType}
+                      lat={locationData[0].geometry.location.lat}
+                      lng={locationData[0].geometry.location.lng}
+                    />
+                  </GoogleMapReact>
+                </Box>
+              ) : isFetchingMarker ? (
+                <Box className="event-map-container">
+                  <div
+                    style={{
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                  >
+                    <Loader
+                      type="Oval"
+                      color={Colors.primary}
+                      height={40}
+                      width={40}
+                    />
+                  </div>
+                </Box>
               ) : null}
-            </div>
-          </FormGroup>
+              <Box className="create-event-input-container">
+                <FormControl>
+                  <InputLabel
+                    sx={{ fontFamily: 'AirbnbCerealMedium' }}
+                    htmlFor="description"
+                  >
+                    Event Description:
+                  </InputLabel>
+                  <Input
+                    sx={{ fontFamily: 'AirbnbCerealBook' }}
+                    id="description"
+                    multiline
+                    rows={2}
+                    style={{ width: 300 }}
+                    onChange={(e) => onChange(e)}
+                  />
+                </FormControl>
+              </Box>
+            </FormGroup>
+          </Typography>
         </div>
       </div>
       {eventModalVisible ? (

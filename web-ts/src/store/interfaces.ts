@@ -103,11 +103,11 @@ export interface itemObj {
   ding?: boolean;
 }
 
-export interface createEventObj {
-  data: eventLocation;
-  lat: number;
-  lng: number;
-  ding?: boolean;
+export interface region {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
 }
 
 export type dinge = ding[];

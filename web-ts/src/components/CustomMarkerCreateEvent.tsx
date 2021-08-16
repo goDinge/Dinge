@@ -4,7 +4,6 @@ import pin from '../assets/pin.png';
 
 const CustomMarkerCreateEvent = (props: any) => {
   const imageUrl = props.data.thumbUrl;
-  console.log('CMCE: ', imageUrl);
 
   return (
     <div className="marker-container">
