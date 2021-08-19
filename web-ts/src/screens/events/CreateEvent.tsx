@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 import Geocode from 'react-geocode';
@@ -31,7 +31,7 @@ import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import DateTimePicker from '@material-ui/lab/DateTimePicker';
 import { VscTriangleDown } from 'react-icons/vsc';
 
-//import * as eventsActions from '../../store/actions/events';
+import * as eventsActions from '../../store/actions/events';
 import { AWS_EVENT_TYPES, GOOGLE_MAPS } from '../../serverConfigs';
 import GoogleMapReact from 'google-map-react';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
@@ -65,7 +65,7 @@ const CreateEvent = () => {
   const [error, setError] = useState(null);
   // const [isLoading, setIsLoading] = useState(false);
   const [isFetchingMarker, setIsFetchingMarker] = useState(false);
-  // const [isCreatingEvent, setIsCreatingEvent] = useState(false);
+  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const [date, setDate] = useState<Date | null>(new Date(Date.now()));
   const [image, setImage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -78,13 +78,13 @@ const CreateEvent = () => {
     type: 'community',
     thumbUrl: `${AWS_EVENT_TYPES}community.png`,
   });
-  const [eventModalVisible, setEventModalVisible] = useState(false);
   const [region, setRegion] = useState({
     latitude: 0,
     longitude: 0,
     latitudeDelta: 0.04,
     longitudeDelta: 0.04,
   });
+  const [eventModalVisible, setEventModalVisible] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [locationData, setLocationData] = useState<any>();
   // const [eventLocation, setEventLocation] = useState({
@@ -94,9 +94,11 @@ const CreateEvent = () => {
   //   },
   // });
 
-  const dispatch = useDispatch<Dispatch>();
+  const dispatch = useDispatch<Dispatch<any>>();
 
   Geocode.setApiKey(GOOGLE_MAPS);
+
+  console.log('formData: ', formData);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -142,9 +144,6 @@ const CreateEvent = () => {
     setIsFetchingMarker(false);
   };
 
-  // console.log('CE eventLocation: ', eventLocation);
-  // console.log('CE eventType: ', eventType.thumbUrl);
-
   const eventTypeHandler = () => {
     setEventModalVisible(true);
   };
@@ -155,6 +154,26 @@ const CreateEvent = () => {
 
   const closeChooseEventHandler = () => {
     setEventModalVisible(false);
+  };
+
+  const createEventHandler = async () => {
+    console.log(date, region, image, eventType, formData);
+    setError(null);
+    setIsCreatingEvent(true);
+    try {
+      await dispatch(
+        eventsActions.createEvent(
+          date,
+          image,
+          formData,
+          eventType,
+          locationData
+        )
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+    setIsCreatingEvent(false);
   };
 
   return (
@@ -329,6 +348,22 @@ const CreateEvent = () => {
                     style={{ width: 300 }}
                     onChange={(e) => onChange(e)}
                   />
+                </FormControl>
+              </Box>
+              <Box>
+                <FormControl>
+                  <Button
+                    className="pick-image-button"
+                    component="label"
+                    style={{
+                      backgroundColor: Colors.primary,
+                      marginTop: 20,
+                      marginBottom: 20,
+                    }}
+                    onClick={() => createEventHandler()}
+                  >
+                    <p className="button-text">Create Event</p>
+                  </Button>
                 </FormControl>
               </Box>
             </FormGroup>

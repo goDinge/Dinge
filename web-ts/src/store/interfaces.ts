@@ -267,6 +267,11 @@ export interface Get_Event_By_Id {
   event: event;
 }
 
+export interface Create_Event {
+  type: ActionTypes.CREATE_EVENT;
+  event: event;
+}
+
 export interface Remove_Event {
   type: ActionTypes.REMOVE_EVENT;
   event: {};
@@ -501,7 +506,7 @@ export type EventActions =
   | Unlike_Event
   | Report_Event;
 
-export type EventsActions = Get_Local_Events | Delete_Event;
+export type EventsActions = Get_Local_Events | Delete_Event | Create_Event;
 
 export type CommentsActions =
   | Post_Comment

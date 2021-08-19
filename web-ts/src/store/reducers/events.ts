@@ -20,6 +20,11 @@ export const eventsReducer = (state = initialState, action: EventsActions) => {
         ...state,
         event: action.event,
       };
+    case ActionTypes.CREATE_EVENT:
+      return {
+        ...state,
+        event: action.event,
+      };
     default:
       return state;
   }
