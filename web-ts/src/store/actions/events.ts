@@ -28,12 +28,14 @@ export const createEvent = (
     //   location,
     // } = formState.inputValues;
 
-    const eventPicName = eventPic.uri.split('/').pop();
-    const eventPicFile = new File(
-      [`file://${eventPic.uri}`],
-      `${eventPicName}`,
-      { type: 'image/jpg' }
-    );
+    const eventPicName = eventPic.name;
+    console.log('eventPic: ', eventPic);
+    const eventPicFile = new Blob([eventPic], {
+      type: 'image/jpg',
+    });
+    // const eventPicFile = new File([`file://${eventPic}`], `${eventPicName}`, {
+    //   type: 'image/jpg',
+    // });
 
     let formData = new FormData();
     formData.append('eventName', eventName);
@@ -45,7 +47,7 @@ export const createEvent = (
     formData.append('hours', hours);
     formData.append('location[longitude]', JSON.stringify(location.longitude));
     formData.append('location[latitude]', JSON.stringify(location.latitude));
-    formData.append('eventPic', eventPicFile);
+    formData.append('eventPic', eventPicFile, eventPicName);
 
     const config = {
       headers: {

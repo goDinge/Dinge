@@ -24,7 +24,6 @@ import {
   FormHelperText,
   Button,
   Typography,
-  ThemeProvider,
 } from '@material-ui/core';
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
@@ -40,9 +39,12 @@ import { Colors } from '../../constants/Colors';
 
 import CustomMarkerCreateEvent from '../../components/CustomMarkerCreateEvent';
 import CustomEventModal from '../../components/CustomEventModal';
+import CustomError from '../../components/CustomError';
 
 const mapStyle = require('../../helpers/mapStyles.json');
 const settingConfigs = require('../../settingConfigs.json');
+
+Geocode.setApiKey(GOOGLE_MAPS);
 
 const defaultLocation = {
   center: {
@@ -67,6 +69,7 @@ const CreateEvent = () => {
   const [isFetchingMarker, setIsFetchingMarker] = useState(false);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const [date, setDate] = useState<Date | null>(new Date(Date.now()));
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -96,9 +99,7 @@ const CreateEvent = () => {
 
   const dispatch = useDispatch<Dispatch<any>>();
 
-  Geocode.setApiKey(GOOGLE_MAPS);
-
-  console.log('formData: ', formData);
+  //console.log('formData: ', formData);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -114,18 +115,18 @@ const CreateEvent = () => {
     };
     try {
       const geocodeData = await Geocode.fromAddress(address);
+      console.log('geocodeData: ', geocodeData);
       setLocationData(geocodeData.results);
       coordsMongo = {
-        latitude: locationData[0].geometry.location.lat,
-        longitude: locationData[0].geometry.location.lng,
+        latitude: geocodeData.results[0].geometry.location.lat,
+        longitude: geocodeData.results[0].geometry.location.lng,
       };
       setRegion({
-        latitude: locationData[0].geometry.location.lat,
-        longitude: locationData[0].geometry.location.lng,
+        latitude: geocodeData.results[0].geometry.location.lat,
+        longitude: geocodeData.results[0].geometry.location.lng,
         latitudeDelta: 0.04,
         longitudeDelta: 0.04,
       });
-
       return coordsMongo;
     } catch (err) {
       setError(err.message);
@@ -156,8 +157,12 @@ const CreateEvent = () => {
     setEventModalVisible(false);
   };
 
+  const onClose = () => {
+    setError(null);
+  };
+
   const createEventHandler = async () => {
-    console.log(date, region, image, eventType, formData);
+    console.log('image: ', image);
     setError(null);
     setIsCreatingEvent(true);
     try {
@@ -240,11 +245,14 @@ const CreateEvent = () => {
                   id="eventPic"
                   style={{ display: 'none' }}
                   onChange={(e: any) => {
-                    setImage(URL.createObjectURL(e.target.files[0]));
+                    setImageUrl(URL.createObjectURL(e.target.files[0]));
+                    setImage(e.target.files[0]);
                   }}
                 />
               </FormControl>
-              <Box>{image ? <img alt="event-pic" src={image} /> : null}</Box>
+              <Box>
+                {imageUrl ? <img alt="event-pic" src={imageUrl} /> : null}
+              </Box>
               <Box className="create-event-input-container">
                 <FormControl>
                   <InputLabel
@@ -332,7 +340,10 @@ const CreateEvent = () => {
                   </div>
                 </Box>
               ) : null}
-              <Box className="create-event-input-container">
+              <Box
+                className="create-event-input-container"
+                style={{ marginTop: 15 }}
+              >
                 <FormControl>
                   <InputLabel
                     sx={{ fontFamily: 'AirbnbCerealMedium' }}
@@ -352,18 +363,32 @@ const CreateEvent = () => {
               </Box>
               <Box>
                 <FormControl>
-                  <Button
-                    className="pick-image-button"
-                    component="label"
-                    style={{
-                      backgroundColor: Colors.primary,
-                      marginTop: 20,
-                      marginBottom: 20,
-                    }}
-                    onClick={() => createEventHandler()}
-                  >
-                    <p className="button-text">Create Event</p>
-                  </Button>
+                  {isCreatingEvent ? (
+                    <Button
+                      className="pick-image-button"
+                      component="label"
+                      style={{
+                        backgroundColor: Colors.primary,
+                        marginTop: 20,
+                        marginBottom: 20,
+                      }}
+                    >
+                      <p className="button-text">Creating Event...</p>
+                    </Button>
+                  ) : (
+                    <Button
+                      className="pick-image-button"
+                      component="label"
+                      style={{
+                        backgroundColor: Colors.primary,
+                        marginTop: 20,
+                        marginBottom: 20,
+                      }}
+                      onClick={() => createEventHandler()}
+                    >
+                      <p className="button-text">Create Event</p>
+                    </Button>
+                  )}
                 </FormControl>
               </Box>
             </FormGroup>
@@ -375,6 +400,14 @@ const CreateEvent = () => {
           component="message-ding"
           chooseEvent={chooseEventHandler}
           onClose={closeChooseEventHandler}
+        />
+      ) : null}
+      {error ? (
+        <CustomError
+          message={error}
+          onClose={onClose}
+          errorType="error-events"
+          overlayType="error-events-calendar-overlay"
         />
       ) : null}
     </div>
