@@ -132,6 +132,7 @@ img {
   font-family: 'AirbnbCerealBold','Raleway', sans-serif;
   font-size: 1rem;
   padding: 10px 15px;
+  text-transform: none;
   text-align: center;
 }
 
@@ -962,20 +963,21 @@ img {
 }
 
 .create-event-pic {
+  position: relative;
   width: 50px;
   height: 50px;
   border-radius: 25px;
   border: 2px solid var(--primary-color);
-  top: -15;
+  transform: translateY(-6px) ;
   margin-left: 25px;
 }
 
-.pick-image-button {
+.generic-create-event-button {
   width: 200px;
   background-color: var(--primary-color);
-  border-radius: 14px;
   opacity: 0.9;
   margin: 25px 0px;
+  text-transform: none;
   cursor: pointer;
 }
 

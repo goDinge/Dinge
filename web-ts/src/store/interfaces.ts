@@ -219,6 +219,18 @@ export interface formData {
   password2: string;
 }
 
+export interface eventFormData {
+  eventName: string;
+  hours: string | Blob;
+  address: string;
+  description: string;
+}
+
+export interface eventType {
+  type: string;
+  thumbUrl: string;
+}
+
 // xyz_data: the returned object from Axios calls, always inside a data object
 // ie response = dinge.data.data
 export interface dinge_data {

@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { Dispatch } from 'redux';
 import { ActionTypes } from '../types';
-import { events_data, Get_Local_Events } from '../interfaces';
+import {
+  events_data,
+  Get_Local_Events,
+  eventType,
+  eventFormData,
+} from '../interfaces';
 import { CURRENT_IP } from '../../serverConfigs';
 
 const settingConfigs = require('../../settingConfigs.json');
@@ -9,44 +14,42 @@ const settingConfigs = require('../../settingConfigs.json');
 export const createEvent = (
   date: Date | null,
   eventPic: any,
-  formDataProp: any,
-  eventTypeProp: any,
-  location: any
+  formDataProp: eventFormData,
+  eventTypeProp: eventType,
+  locationData: any
 ) => {
   return async (dispatch: Dispatch) => {
-    const { eventType, thumbUrl } = eventTypeProp;
     const { eventName, hours, address, description } = formDataProp;
-    // const {
-    //   eventName,
-    //   date,
-    //   eventType,
-    //   eventPic,
-    //   thumbUrl,
-    //   address,
-    //   description,
-    //   hours,
-    //   location,
-    // } = formState.inputValues;
+    const { type, thumbUrl } = eventTypeProp;
 
-    const eventPicName = eventPic.name;
-    console.log('eventPic: ', eventPic);
+    const picNameTimeStamp = Date.now().toString();
+
+    const eventPicName =
+      eventPic.name.split('.')[0] +
+      '-' +
+      picNameTimeStamp +
+      '.' +
+      eventPic.name.split('.')[1];
     const eventPicFile = new Blob([eventPic], {
       type: 'image/jpg',
     });
-    // const eventPicFile = new File([`file://${eventPic}`], `${eventPicName}`, {
-    //   type: 'image/jpg',
-    // });
 
     let formData = new FormData();
     formData.append('eventName', eventName);
     formData.append('date', JSON.stringify(date));
-    formData.append('eventType', eventType);
+    formData.append('eventType', type);
     formData.append('thumbUrl', thumbUrl);
     formData.append('address', address);
     formData.append('description', description);
     formData.append('hours', hours);
-    formData.append('location[longitude]', JSON.stringify(location.longitude));
-    formData.append('location[latitude]', JSON.stringify(location.latitude));
+    formData.append(
+      'location[longitude]',
+      JSON.stringify(locationData[0].geometry.location.lng)
+    );
+    formData.append(
+      'location[latitude]',
+      JSON.stringify(locationData[0].geometry.location.lat)
+    );
     formData.append('eventPic', eventPicFile, eventPicName);
 
     const config = {

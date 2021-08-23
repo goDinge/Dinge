@@ -8,6 +8,7 @@ import {
   region,
   eventsState,
   locationState,
+  eventFormData,
   //eventState,
   //messageState,
   //eventFormState,
@@ -54,8 +55,6 @@ const defaultLocation = {
   zoom: 15,
 };
 
-//const FORM_INPUT = ActionTypes.FORM_INPUT;
-
 const CreateEvent = () => {
   const events: eventsState = useSelector((state: AppState) => state.events);
   const eventsArr: event[] = events.events;
@@ -69,11 +68,11 @@ const CreateEvent = () => {
   const [isFetchingMarker, setIsFetchingMarker] = useState(false);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
   const [date, setDate] = useState<Date | null>(new Date(Date.now()));
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [image, setImage] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    duration: null,
+  const [eventPicUrl, setEventPicUrl] = useState<string | null>(null);
+  const [eventPic, setEventPic] = useState<Blob | null>(null);
+  const [formData, setFormData] = useState<eventFormData>({
+    eventName: '',
+    hours: '',
     address: '',
     description: '',
   });
@@ -90,22 +89,8 @@ const CreateEvent = () => {
   const [eventModalVisible, setEventModalVisible] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [locationData, setLocationData] = useState<any>();
-  // const [eventLocation, setEventLocation] = useState({
-  //   location: {
-  //     latitude: 0,
-  //     longitude: 0,
-  //   },
-  // });
 
   const dispatch = useDispatch<Dispatch<any>>();
-
-  //console.log('formData: ', formData);
-
-  const onChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
 
   const coordLookUp = async (address: string) => {
     setError(null);
@@ -115,7 +100,6 @@ const CreateEvent = () => {
     };
     try {
       const geocodeData = await Geocode.fromAddress(address);
-      console.log('geocodeData: ', geocodeData);
       setLocationData(geocodeData.results);
       coordsMongo = {
         latitude: geocodeData.results[0].geometry.location.lat,
@@ -145,6 +129,12 @@ const CreateEvent = () => {
     setIsFetchingMarker(false);
   };
 
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
   const eventTypeHandler = () => {
     setEventModalVisible(true);
   };
@@ -162,19 +152,19 @@ const CreateEvent = () => {
   };
 
   const createEventHandler = async () => {
-    console.log('image: ', image);
     setError(null);
     setIsCreatingEvent(true);
     try {
       await dispatch(
         eventsActions.createEvent(
           date,
-          image,
+          eventPic,
           formData,
           eventType,
           locationData
         )
       );
+      await dispatch(eventsActions.getLocalEvents(locationReduxObj));
     } catch (err) {
       setError(err.message);
     }
@@ -191,21 +181,30 @@ const CreateEvent = () => {
                 <FormControl>
                   <InputLabel
                     sx={{ fontFamily: 'AirbnbCerealMedium' }}
-                    htmlFor="name"
+                    htmlFor="eventName"
                   >
                     Event Name
                   </InputLabel>
                   <Input
                     sx={{ fontFamily: 'AirbnbCerealBook' }}
-                    id="name"
+                    id="eventName"
                     onChange={(e) => onChange(e)}
                   />
                 </FormControl>
               </Box>
               <FormControl>
                 <Box className="create-event-type">
-                  <p style={{ marginRight: 20 }}>{eventType.type}</p>
-                  <VscTriangleDown onClick={eventTypeHandler} />
+                  <FormHelperText sx={{ fontFamily: 'AirbnbCerealMedium' }}>
+                    Event Type:
+                  </FormHelperText>
+                  <p style={{ marginRight: 20, marginLeft: 20 }}>
+                    {eventType.type}
+                  </p>
+                  <VscTriangleDown
+                    cursor="pointer"
+                    size={25}
+                    onClick={eventTypeHandler}
+                  />
                   <img
                     alt="event-type"
                     className="create-event-pic"
@@ -230,13 +229,9 @@ const CreateEvent = () => {
               <FormControl>
                 <Button
                   htmlFor="eventPic"
-                  className="pick-image-button"
+                  className="generic-create-event-button"
                   component="label"
-                  style={{
-                    backgroundColor: Colors.primary,
-                    marginTop: 20,
-                    marginBottom: 20,
-                  }}
+                  style={buttonStyle}
                 >
                   <p className="button-text">Pick Event Image</p>
                 </Button>
@@ -245,25 +240,30 @@ const CreateEvent = () => {
                   id="eventPic"
                   style={{ display: 'none' }}
                   onChange={(e: any) => {
-                    setImageUrl(URL.createObjectURL(e.target.files[0]));
-                    setImage(e.target.files[0]);
+                    if (e !== null) {
+                      setEventPicUrl(URL.createObjectURL(e.target.files[0]));
+                      setEventPic(e.target.files[0]);
+                    } else {
+                      return;
+                    }
                   }}
                 />
               </FormControl>
               <Box>
-                {imageUrl ? <img alt="event-pic" src={imageUrl} /> : null}
+                {eventPicUrl ? <img alt="event-pic" src={eventPicUrl} /> : null}
               </Box>
               <Box className="create-event-input-container">
                 <FormControl>
                   <InputLabel
                     sx={{ fontFamily: 'AirbnbCerealMedium' }}
-                    htmlFor="duration"
+                    htmlFor="hours"
                   >
                     Event Duration:
                   </InputLabel>
                   <Input
                     sx={{ fontFamily: 'AirbnbCerealBook' }}
-                    id="duration"
+                    id="hours"
+                    type="number"
                     onChange={(e) => onChange(e)}
                   />
                   <FormHelperText sx={{ fontFamily: 'AirbnbCerealLight' }}>
@@ -293,13 +293,9 @@ const CreateEvent = () => {
               <FormControl>
                 <Button
                   htmlFor="map-marker"
-                  className="pick-image-button"
+                  className="generic-create-event-button"
                   component="label"
-                  style={{
-                    backgroundColor: Colors.primary,
-                    marginTop: 20,
-                    marginBottom: 20,
-                  }}
+                  style={buttonStyle}
                   onClick={() => loadMapHandler(region, formData.address)}
                 >
                   <p className="button-text">Add Map Marker</p>
@@ -361,36 +357,27 @@ const CreateEvent = () => {
                   />
                 </FormControl>
               </Box>
-              <Box>
-                <FormControl>
-                  {isCreatingEvent ? (
-                    <Button
-                      className="pick-image-button"
-                      component="label"
-                      style={{
-                        backgroundColor: Colors.primary,
-                        marginTop: 20,
-                        marginBottom: 20,
-                      }}
-                    >
-                      <p className="button-text">Creating Event...</p>
-                    </Button>
-                  ) : (
-                    <Button
-                      className="pick-image-button"
-                      component="label"
-                      style={{
-                        backgroundColor: Colors.primary,
-                        marginTop: 20,
-                        marginBottom: 20,
-                      }}
-                      onClick={() => createEventHandler()}
-                    >
-                      <p className="button-text">Create Event</p>
-                    </Button>
-                  )}
-                </FormControl>
-              </Box>
+
+              <FormControl>
+                {isCreatingEvent ? (
+                  <Button
+                    className="generic-create-event-button"
+                    component="label"
+                    style={centeredButtonStyle}
+                  >
+                    <p className="button-text">Creating Event...</p>
+                  </Button>
+                ) : (
+                  <Button
+                    className="generic-create-event-button"
+                    component="label"
+                    style={centeredButtonStyle}
+                    onClick={() => createEventHandler()}
+                  >
+                    <p className="button-text">Create Event</p>
+                  </Button>
+                )}
+              </FormControl>
             </FormGroup>
           </Typography>
         </div>
@@ -415,6 +402,23 @@ const CreateEvent = () => {
 };
 
 export default CreateEvent;
+
+const buttonStyle = {
+  backgroundColor: Colors.primary,
+  marginTop: 20,
+  marginBottom: 20,
+  borderRadius: 20,
+  padding: 0,
+};
+
+const centeredButtonStyle = {
+  backgroundColor: Colors.primary,
+  marginTop: 20,
+  marginBottom: 20,
+  borderRadius: 20,
+  padding: 0,
+  alignSelf: 'center',
+};
 
 // const formReducer = (
 //   state: eventFormState,
