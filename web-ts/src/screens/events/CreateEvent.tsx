@@ -63,7 +63,7 @@ const CreateEvent = () => {
   );
   const locationReduxObj: GeolocationPosition = locationRedux.location;
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   // const [isLoading, setIsLoading] = useState(false);
   const [isFetchingMarker, setIsFetchingMarker] = useState(false);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
@@ -151,9 +151,20 @@ const CreateEvent = () => {
     setError(null);
   };
 
+  const onDateChangeHandler = (date: Date | null) => {
+    setError(null);
+    const dateString = date?.toString();
+    if (dateString && Date.parse(dateString) + 100000 < Date.now()) {
+      setError('Careful! Start time must be after this moment.');
+    } else {
+      setDate(date);
+    }
+  };
+
   const createEventHandler = async () => {
     setError(null);
     setIsCreatingEvent(true);
+
     try {
       await dispatch(
         eventsActions.createEvent(
@@ -219,9 +230,7 @@ const CreateEvent = () => {
                       renderInput={(props) => <TextField {...props} />}
                       label="DateTimePicker"
                       value={date}
-                      onChange={(date) => {
-                        setDate(date);
-                      }}
+                      onChange={(date) => onDateChangeHandler(date)}
                     />
                   </LocalizationProvider>
                 </Box>
@@ -254,20 +263,26 @@ const CreateEvent = () => {
               </Box>
               <Box className="create-event-input-container">
                 <FormControl>
-                  <InputLabel
-                    sx={{ fontFamily: 'AirbnbCerealMedium' }}
-                    htmlFor="hours"
-                  >
-                    Event Duration:
-                  </InputLabel>
-                  <Input
+                  {formData.hours ? null : (
+                    <InputLabel
+                      sx={{ fontFamily: 'AirbnbCerealMedium' }}
+                      htmlFor="hours"
+                    >
+                      Event Duration:
+                    </InputLabel>
+                  )}
+
+                  <TextField
                     sx={{ fontFamily: 'AirbnbCerealBook' }}
                     id="hours"
                     type="number"
+                    InputProps={{
+                      inputProps: { min: '1', max: '8' },
+                    }}
                     onChange={(e) => onChange(e)}
                   />
                   <FormHelperText sx={{ fontFamily: 'AirbnbCerealLight' }}>
-                    Number of hours
+                    Number of hours - max: 8
                   </FormHelperText>
                 </FormControl>
               </Box>
@@ -340,7 +355,7 @@ const CreateEvent = () => {
                 className="create-event-input-container"
                 style={{ marginTop: 15 }}
               >
-                <FormControl>
+                <FormControl style={{ width: '100%' }}>
                   <InputLabel
                     sx={{ fontFamily: 'AirbnbCerealMedium' }}
                     htmlFor="description"
@@ -350,11 +365,13 @@ const CreateEvent = () => {
                   <Input
                     sx={{ fontFamily: 'AirbnbCerealBook' }}
                     id="description"
-                    multiline
                     rows={2}
-                    style={{ width: 300 }}
+                    style={{ width: '100%' }}
                     onChange={(e) => onChange(e)}
                   />
+                  <FormHelperText sx={{ fontFamily: 'AirbnbCerealLight' }}>
+                    Tell us about the event
+                  </FormHelperText>
                 </FormControl>
               </Box>
 

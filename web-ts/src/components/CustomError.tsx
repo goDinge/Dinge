@@ -22,7 +22,7 @@ const CustomError = (props: {
   const { message, onClose, errorType, overlayType } = props;
 
   return (
-    <div className={overlayType}>
+    <div className={overlayType} style={{ zIndex: 20000 }}>
       <div key={message} className={errorType}>
         <p>{message}</p>
         <button onClick={onClose} className="btn btn-primary">
