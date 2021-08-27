@@ -166,9 +166,6 @@ const CreateEvent = () => {
     }
   };
 
-  //need to shrink file size
-  //console.log('eventPic blob: ', eventPic);
-
   const resizeImage = async (file: Blob) => {
     try {
       await Resizer.imageFileResizer(
@@ -179,7 +176,6 @@ const CreateEvent = () => {
         70,
         0,
         (uri) => {
-          //console.log('original eventPic: ', file);
           setCompressedEventPic(uri);
         },
         'file',
@@ -210,7 +206,6 @@ const CreateEvent = () => {
     }
 
     try {
-      console.log('compressed: ', compressedEventPic);
       await dispatch(
         eventsActions.createEvent(
           date,
@@ -224,8 +219,8 @@ const CreateEvent = () => {
       setIsCreatingEvent(false);
       setConfirmMessage(true);
     } catch (err) {
-      setError(err.message);
       setIsCreatingEvent(false);
+      setError(err.message);
     }
   };
 

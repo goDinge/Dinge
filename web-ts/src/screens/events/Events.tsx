@@ -71,6 +71,7 @@ const Events = () => {
     await navigator.geolocation.getCurrentPosition((position) => {
       dispatch(locationActions.setLocation(position));
       loadEvents(position);
+      setDateChosen(0);
       setIsLoading(false);
     }, errorCallback);
   }, [dispatch, loadEvents]);
