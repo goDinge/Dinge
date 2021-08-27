@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 import Geocode from 'react-geocode';
+import Resizer from 'react-image-file-resizer';
 import { AppState } from '../../store/reducers/rootReducer';
 import {
   event,
@@ -14,7 +15,6 @@ import {
   //eventFormState,
   //eventFormAction,
 } from '../../store/interfaces';
-//import { ActionTypes } from '../../store/types';
 import {
   Box,
   FormGroup,
@@ -71,6 +71,9 @@ const CreateEvent = () => {
   const [date, setDate] = useState<Date | null>(new Date(Date.now()));
   const [eventPicUrl, setEventPicUrl] = useState<string | null>(null);
   const [eventPic, setEventPic] = useState<Blob | null>(null);
+  const [compressedEventPic, setCompressedEventPic] = useState<
+    string | Blob | File | ProgressEvent<FileReader> | null
+  >(null);
   const [formData, setFormData] = useState<eventFormData>({
     eventName: '',
     hours: '',
@@ -163,8 +166,34 @@ const CreateEvent = () => {
     }
   };
 
+  //need to shrink file size
+  //console.log('eventPic blob: ', eventPic);
+
+  const resizeImage = async (file: Blob) => {
+    try {
+      await Resizer.imageFileResizer(
+        file,
+        700,
+        700,
+        'JPEG',
+        70,
+        0,
+        (uri) => {
+          //console.log('original eventPic: ', file);
+          setCompressedEventPic(uri);
+        },
+        'file',
+        200,
+        200
+      );
+    } catch (err) {
+      setError('Image file type incompatible');
+    }
+  };
+
   const createEventHandler = async () => {
     setError(null);
+    setIsCreatingEvent(true);
 
     const { eventName, hours, description, address } = formData;
 
@@ -180,24 +209,24 @@ const CreateEvent = () => {
       return;
     }
 
-    setIsCreatingEvent(true);
-
     try {
+      console.log('compressed: ', compressedEventPic);
       await dispatch(
         eventsActions.createEvent(
           date,
-          eventPic,
+          compressedEventPic,
           formData,
           eventType,
           locationData
         )
       );
       await dispatch(eventsActions.getLocalEvents(locationReduxObj));
+      setIsCreatingEvent(false);
+      setConfirmMessage(true);
     } catch (err) {
       setError(err.message);
+      setIsCreatingEvent(false);
     }
-    setIsCreatingEvent(false);
-    setConfirmMessage(true);
   };
 
   return (
@@ -266,6 +295,7 @@ const CreateEvent = () => {
                   if (e !== null) {
                     setEventPicUrl(URL.createObjectURL(e.target.files[0]));
                     setEventPic(e.target.files[0]);
+                    resizeImage(e.target.files[0]);
                   } else {
                     return;
                   }

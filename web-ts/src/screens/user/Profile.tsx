@@ -3,9 +3,15 @@ import { useSelector } from 'react-redux';
 //import { Dispatch } from 'redux';
 
 import { AppState } from '../../store/reducers/rootReducer';
-import { AuthState, eventsState, event } from '../../store/interfaces';
+import {
+  AuthState,
+  eventsState,
+  event,
+  eventState,
+} from '../../store/interfaces';
 import { sortEvents } from '../../helpers/sortEvents';
 import CustomCalendarEventItem from '../../components/CustomCalendarEventItem';
+import CustomEvent from '../../components/CustomEvent';
 //import * as AuthActions from '../../store/actions/auth';
 
 const Profile = () => {
@@ -13,6 +19,8 @@ const Profile = () => {
   const authUser = authState.authUser;
   const events: eventsState = useSelector((state: AppState) => state.events);
   const eventsArr: event[] = events.events;
+  const event: eventState = useSelector((state: AppState) => state.event);
+  const eventObj: event = event.event;
 
   const currentTime = Date.now();
 
@@ -51,79 +59,82 @@ const Profile = () => {
   }, [dynamicURL]);
 
   return (
-    <div className="profile-container">
-      <div className="profile-inner-container">
-        <div className="profile-id-container">
-          <p className="profile-name">{authUser?.name}</p>
-          <p className="profile-text">{authUser?.level}</p>
-          <p className="profile-text">Rep: {authUser?.reputation}</p>
-        </div>
-        <div className="profile-avatar-container">
-          <img
-            className="profile-avatar"
-            alt="profile"
-            src={authUser?.avatar}
-          />
-        </div>
-        <div className="profile-stats-container">
-          <p className="profile-title">Socials</p>
-          <div
-            className="profile-socials-container"
-            style={{ display: 'block' }}
-          >
+    <div className="calender-screen">
+      <div className="profile-container">
+        <div className="profile-inner-container">
+          <div className="profile-id-container">
+            <p className="profile-name">{authUser?.name}</p>
+            <p className="profile-text">{authUser?.level}</p>
+            <p className="profile-text">Rep: {authUser?.reputation}</p>
+          </div>
+          <div className="profile-avatar-container">
+            <img
+              className="profile-avatar"
+              alt="profile"
+              src={authUser?.avatar}
+            />
+          </div>
+          <div className="profile-stats-container">
+            <p className="profile-title">Socials</p>
             <div
-              className="profile-social-box"
-              style={{ alignItems: 'flex-start' }}
+              className="profile-socials-container"
+              style={{ display: 'block' }}
             >
-              <p className="profile-social-title">Website</p>
-              {authUser?.website ? (
-                <a href={hrefState}>
-                  <p
-                    className="profile-text"
-                    style={{ width: '360px', wordWrap: 'break-word' }}
-                  >
-                    {authUser?.website}
-                  </p>
-                </a>
-              ) : (
-                <p className="profile-text">no website</p>
-              )}
-            </div>
-            <div
-              className="profile-social-box"
-              style={{ alignItems: 'flex-start' }}
-            >
-              <p className="profile-social-title">facebook</p>
-              {authUser?.facebook ? (
-                <a href={facebookUrl}>
-                  <p
-                    className="profile-text"
-                    style={{ width: '360px', wordWrap: 'break-word' }}
-                  >
-                    {authUser?.facebook}
-                  </p>
-                </a>
-              ) : (
-                <p className="profile-text">no facebook</p>
-              )}
+              <div
+                className="profile-social-box"
+                style={{ alignItems: 'flex-start' }}
+              >
+                <p className="profile-social-title">Website</p>
+                {authUser?.website ? (
+                  <a href={hrefState}>
+                    <p
+                      className="profile-text"
+                      style={{ width: '360px', wordWrap: 'break-word' }}
+                    >
+                      {authUser?.website}
+                    </p>
+                  </a>
+                ) : (
+                  <p className="profile-text">no website</p>
+                )}
+              </div>
+              <div
+                className="profile-social-box"
+                style={{ alignItems: 'flex-start' }}
+              >
+                <p className="profile-social-title">facebook</p>
+                {authUser?.facebook ? (
+                  <a href={facebookUrl}>
+                    <p
+                      className="profile-text"
+                      style={{ width: '360px', wordWrap: 'break-word' }}
+                    >
+                      {authUser?.facebook}
+                    </p>
+                  </a>
+                ) : (
+                  <p className="profile-text">no facebook</p>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="profile-stats-container">
-          <p className="profile-title">Active Events</p>
-          <div className="profile-socials-container">
-            <div className="profile-events-list">
-              {activeUserEvents.map((item, index) => (
-                <CustomCalendarEventItem
-                  item={item}
-                  key={index}
-                  type="profile"
-                />
-              ))}
+          <div className="profile-stats-container">
+            <p className="profile-title">Active Events</p>
+            <div className="profile-socials-container">
+              <div className="profile-events-list">
+                {activeUserEvents.map((item, index) => (
+                  <CustomCalendarEventItem
+                    item={item}
+                    key={index}
+                    type="profile"
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
+      {eventObj.user !== '' ? <CustomEvent /> : null}
     </div>
   );
 };
