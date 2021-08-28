@@ -56,7 +56,9 @@ const CustomCalendarEventItem = ({
       >
         <p className="calendar-event-title">{item.eventName}</p>
         <p className="calendar-event-text">
-          {item.description.split(' ').slice(0, 10).join(' ') + '...'}
+          {item.description.length > 21
+            ? item.description.split(' ').slice(0, 20).join(' ') + '...'
+            : item.description}
         </p>
       </div>
     </div>

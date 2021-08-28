@@ -136,10 +136,6 @@ const CustomEvent = () => {
     onChangeModalText(e.target.value);
   };
 
-  const editDescriptionHandler = (eventId: string) => {
-    setEditEventId(eventId);
-  };
-
   const deleteEventHandler = async (eventId: string) => {
     setIsDeleting(true);
     try {
@@ -229,8 +225,9 @@ const CustomEvent = () => {
   };
 
   //will change to edit Event handler after create event is built
-  const openUpdateEventHandler = (id: string) => {
-    editDescriptionHandler(id);
+  const updateEventHandler = (id: string) => {
+    console.log('edit description id: ', id);
+    dispatch(eventActions.removeEvent());
   };
 
   const openEventDeleteModalHandler = () => {
@@ -329,7 +326,7 @@ const CustomEvent = () => {
               authUser={authUser}
               itemState={eventObj}
               user={userObj}
-              onEditor={openUpdateEventHandler}
+              onEditor={updateEventHandler}
               onLike={likeEventHandler}
               onFlag={reportEventHandler}
               onDelete={openEventDeleteModalHandler}

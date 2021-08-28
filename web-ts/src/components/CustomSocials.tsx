@@ -69,12 +69,14 @@ const CustomSocials = (props: {
           </div>
           {authUser && user && authUser._id === user._id ? (
             <div className="icon-right-container">
-              <FiEdit
-                size={24}
-                color="black"
-                style={{ marginRight: 8, cursor: 'pointer' }}
-                onClick={() => onEditor(itemState._id, itemState.description)}
-              />
+              <Link to={{ pathname: '/createEvent', state: itemState }}>
+                <FiEdit
+                  size={24}
+                  color="black"
+                  style={{ marginRight: 8, cursor: 'pointer' }}
+                  onClick={() => onEditor(itemState._id, itemState.description)}
+                />
+              </Link>
               <RiDeleteBin2Line
                 size={24}
                 color="black"

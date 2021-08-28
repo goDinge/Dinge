@@ -4,6 +4,8 @@ import { Dispatch } from 'redux';
 import Geocode from 'react-geocode';
 import Resizer from 'react-image-file-resizer';
 import { AppState } from '../../store/reducers/rootReducer';
+import { StaticContext } from 'react-router';
+import { RouteComponentProps } from 'react-router-dom';
 import {
   event,
   region,
@@ -56,9 +58,28 @@ const defaultLocation = {
   zoom: 15,
 };
 
-const CreateEvent = () => {
+const calcEditedHours = (eventProp: event) => {
+  let result = 0;
+  if (eventProp) {
+    result =
+      (new Date(eventProp.endDate).getTime() -
+        new Date(eventProp.date).getTime()) /
+      (1000 * 60 * 60);
+  }
+  const resultString = result.toString();
+  return resultString;
+};
+
+const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
+  const eventId = props.location.state ? props.location.state._id : null;
   const events: eventsState = useSelector((state: AppState) => state.events);
   const eventsArr: event[] = events.events;
+
+  const editedEvent: event | undefined = useSelector((state) =>
+    eventsArr.find((event) => event._id === eventId)
+  );
+  console.log('editedEvent: ', editedEvent);
+
   const locationRedux: locationState = useSelector(
     (state: AppState) => state.location
   );
@@ -74,28 +95,56 @@ const CreateEvent = () => {
   const [compressedEventPic, setCompressedEventPic] = useState<
     string | Blob | File | ProgressEvent<FileReader> | null
   >(null);
-  const [formData, setFormData] = useState<eventFormData>({
-    eventName: '',
-    hours: '',
-    address: '',
-    description: '',
-  });
+  const [formData, setFormData] = useState<eventFormData>(
+    editedEvent
+      ? {
+          eventName: editedEvent.eventName,
+          hours: calcEditedHours(editedEvent),
+          address: editedEvent.address,
+          description: editedEvent.description,
+        }
+      : {
+          eventName: '',
+          hours: '',
+          address: '',
+          description: '',
+        }
+  );
   const [eventType, setEventType] = useState({
     type: 'community',
     thumbUrl: `${AWS_EVENT_TYPES}community.png`,
   });
-  const [region, setRegion] = useState({
-    latitude: 0,
-    longitude: 0,
-    latitudeDelta: 0.04,
-    longitudeDelta: 0.04,
-  });
+  const [region, setRegion] = useState(
+    editedEvent
+      ? {
+          latitude: editedEvent.location.latitude,
+          longitude: editedEvent.location.longitude,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04,
+        }
+      : {
+          latitude: 0,
+          longitude: 0,
+          latitudeDelta: 0.04,
+          longitudeDelta: 0.04,
+        }
+  );
   const [eventModalVisible, setEventModalVisible] = useState(false);
-  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(editedEvent ? true : false);
   const [confirmMessage, setConfirmMessage] = useState(false);
-  const [locationData, setLocationData] = useState<any>();
+  const [locationData, setLocationData] = useState<any>(
+    editedEvent
+      ? {
+          lat: editedEvent.location.latitude,
+          lng: editedEvent.location.longitude,
+        }
+      : null
+  );
 
   const dispatch = useDispatch<Dispatch<any>>();
+
+  //console.log('formData: ', formData);
+  console.log('locationData: ', locationData);
 
   const coordLookUp = async (address: string) => {
     setError(null);
@@ -106,6 +155,7 @@ const CreateEvent = () => {
     try {
       const geocodeData = await Geocode.fromAddress(address);
       setLocationData(geocodeData.results);
+
       coordsMongo = {
         latitude: geocodeData.results[0].geometry.location.lat,
         longitude: geocodeData.results[0].geometry.location.lng,
@@ -237,6 +287,7 @@ const CreateEvent = () => {
                   type="text"
                   label="Event Name:"
                   inputProps={{ maxLength: 200 }}
+                  value={formData.eventName}
                   onChange={(e) => onChange(e)}
                 />
               </FormControl>
@@ -310,6 +361,7 @@ const CreateEvent = () => {
                   InputProps={{
                     inputProps: { min: '1', max: '8' },
                   }}
+                  value={formData.hours}
                   onChange={(e) => onChange(e)}
                 />
                 <FormHelperText sx={{ fontFamily: 'AirbnbCerealLight' }}>
@@ -326,6 +378,7 @@ const CreateEvent = () => {
                   id="address"
                   style={{ width: 300 }}
                   label="Event Location:"
+                  value={formData.address}
                   onChange={(e) => onChange(e)}
                 />
                 <FormHelperText sx={{ fontFamily: 'AirbnbCerealLight' }}>
@@ -350,14 +403,27 @@ const CreateEvent = () => {
                   bootstrapURLKeys={{ key: GOOGLE_MAPS }}
                   defaultCenter={defaultLocation.center}
                   defaultZoom={defaultLocation.zoom}
-                  center={locationData[0].geometry.location}
+                  center={
+                    editedEvent
+                      ? locationData
+                      : locationData[0].geometry.location
+                  }
+                  //center={defaultLocation.center}
                   options={{ styles: mapStyle, scrollwheel: false }}
                   yesIWantToUseGoogleMapApiInternals={true}
                 >
                   <CustomMarkerCreateEvent
                     data={eventType}
-                    lat={locationData[0].geometry.location.lat}
-                    lng={locationData[0].geometry.location.lng}
+                    lat={
+                      editedEvent
+                        ? locationData.lat
+                        : locationData[0].geometry.location.lat
+                    }
+                    lng={
+                      editedEvent
+                        ? locationData.lng
+                        : locationData[0].geometry.location.lng
+                    }
                   />
                 </GoogleMapReact>
               </Box>
@@ -393,6 +459,7 @@ const CreateEvent = () => {
                   rows={2}
                   style={{ width: '100%' }}
                   label="Event Description:"
+                  value={formData.description}
                   onChange={(e) => onChange(e)}
                 />
                 <FormHelperText sx={{ fontFamily: 'AirbnbCerealLight' }}>

@@ -372,7 +372,7 @@ img {
   text-align: center;
   background: var(--light-color);
   color: var(--black-color);
-  transform: translate(-50%, 200%);
+  transform: translate(-50%, 125%);
   left: 50%;
   z-index: 5;
 } 
@@ -777,7 +777,7 @@ img {
   display: flex;
   flex-direction: row;
   width: 100%;
-  padding: 10px 5px;
+  padding: 10px 20px;
   border-bottom: 1px solid #eeeeee;
   cursor: pointer;
 }
