@@ -76,11 +76,9 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
   const eventId = props.location.state ? props.location.state._id : null;
   const events: eventsState = useSelector((state: AppState) => state.events);
   const eventsArr: event[] = events.events;
-
   const editedEvent: event | undefined = useSelector((state) =>
     eventsArr.find((event) => event._id === eventId)
   );
-
   const locationRedux: locationState = useSelector(
     (state: AppState) => state.location
   );
@@ -345,7 +343,7 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
             prevLocationData
           )
         );
-        //await dispatch(eventsActions.getLocalEvents(locationReduxObj));
+        await dispatch(eventsActions.getLocalEvents(locationReduxObj));
         setIsCreatingEvent(false);
         setConfirmMessage(true);
       } catch (err) {

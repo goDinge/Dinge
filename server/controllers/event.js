@@ -229,8 +229,6 @@ exports.updateEvent = asyncHandler(async (req, res, next) => {
   }
 
   const eventPic = req.file;
-  console.log('eventPic: ', eventPic);
-  console.log('req.file: ', req.file);
   let eventPicUrl;
 
   aws.config.setPromisesDependency();
@@ -294,6 +292,8 @@ exports.updateEvent = asyncHandler(async (req, res, next) => {
     });
   };
 
+  //This will only be called from web-ts, when no new eventPic has been chosen
+  //new eventPic will always be passed from mobile even if user does not pick a new pic
   const upload = async () => {
     const dateFormattedFromJSON = JSON.parse(date);
     const dateParsed = Date.parse(dateFormattedFromJSON);
