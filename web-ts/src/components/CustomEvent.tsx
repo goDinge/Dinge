@@ -63,7 +63,7 @@ const CustomEvent = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [text, onChangeText] = useState('');
   const [modalText, onChangeModalText] = useState('');
-  const [editEventId, setEditEventId] = useState('');
+  //const [editEventId, setEditEventId] = useState('');
   const [editModal, setEditModal] = useState(false);
   const [editCommentId, setEditCommentId] = useState('');
   const [editInitialText, setEditInitialText] = useState('');
@@ -141,11 +141,11 @@ const CustomEvent = () => {
     try {
       await dispatch(eventsActions.deleteEventById(eventId));
       await dispatch(eventsActions.getLocalEvents(locationObj));
-      setIsDeleting(false);
-      closeEventHandler();
       await dispatch(
         messageActions.setMessage('Event Deleted', messageScreenMap)
       );
+      setIsDeleting(false);
+      closeEventHandler();
     } catch (err) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
@@ -226,18 +226,16 @@ const CustomEvent = () => {
 
   //will change to edit Event handler after create event is built
   const updateEventHandler = (id: string) => {
-    console.log('edit description id: ', id);
     dispatch(eventActions.removeEvent());
   };
 
   const openEventDeleteModalHandler = () => {
     dispatch(
       messageActions.setMessage(
-        'Are you sure you want to delete this ding?',
+        'Are you sure you want to delete this event?',
         messageScreenDing
       )
     );
-    //setModalMessage('ding');
     setDeleteEventModal(true);
   };
 

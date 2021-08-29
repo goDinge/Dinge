@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
 import Geocode from 'react-geocode';
@@ -32,6 +32,8 @@ import DateTimePicker from '@material-ui/lab/DateTimePicker';
 import { VscTriangleDown } from 'react-icons/vsc';
 
 import * as eventsActions from '../../store/actions/events';
+import * as eventActions from '../../store/actions/event';
+import * as locationActions from '../../store/actions/location';
 
 import { AWS_EVENT_TYPES, GOOGLE_MAPS } from '../../serverConfigs';
 import GoogleMapReact from 'google-map-react';
@@ -78,7 +80,6 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
   const editedEvent: event | undefined = useSelector((state) =>
     eventsArr.find((event) => event._id === eventId)
   );
-  console.log('editedEvent: ', editedEvent);
 
   const locationRedux: locationState = useSelector(
     (state: AppState) => state.location
@@ -86,12 +87,18 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
   const locationReduxObj: GeolocationPosition = locationRedux.location;
 
   const [error, setError] = useState<string | null>(null);
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isFetchingMarker, setIsFetchingMarker] = useState(false);
   const [isCreatingEvent, setIsCreatingEvent] = useState(false);
-  const [date, setDate] = useState<Date | null>(new Date(Date.now()));
-  const [eventPicUrl, setEventPicUrl] = useState<string | null>(null);
-  const [eventPic, setEventPic] = useState<Blob | null>(null);
+  const [date, setDate] = useState<Date | null>(
+    editedEvent ? editedEvent.date : new Date(Date.now())
+  );
+  const [eventPicUrl, setEventPicUrl] = useState<string | null>(
+    editedEvent ? editedEvent.eventPic : null
+  );
+  const [eventPic, setEventPic] = useState<Blob | string | null>(
+    editedEvent ? editedEvent.eventPic : null
+  );
   const [compressedEventPic, setCompressedEventPic] = useState<
     string | Blob | File | ProgressEvent<FileReader> | null
   >(null);
@@ -110,10 +117,14 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
           description: '',
         }
   );
-  const [eventType, setEventType] = useState({
-    type: 'community',
-    thumbUrl: `${AWS_EVENT_TYPES}community.png`,
-  });
+  const [eventType, setEventType] = useState(
+    editedEvent
+      ? { type: editedEvent.eventType, thumbUrl: editedEvent.thumbUrl }
+      : {
+          type: 'community',
+          thumbUrl: `${AWS_EVENT_TYPES}community.png`,
+        }
+  );
   const [region, setRegion] = useState(
     editedEvent
       ? {
@@ -140,11 +151,26 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
         }
       : null
   );
+  const [newLocationIndicator, setNewLocationIndicator] = useState(false);
 
   const dispatch = useDispatch<Dispatch<any>>();
 
-  //console.log('formData: ', formData);
-  console.log('locationData: ', locationData);
+  const getLocation = useCallback(async () => {
+    if (!locationReduxObj.coords) {
+      setIsLoading(true);
+      await navigator.geolocation.getCurrentPosition((position) => {
+        dispatch(locationActions.setLocation(position));
+        setIsLoading(false);
+      }, errorCallback);
+    }
+  }, [dispatch, locationReduxObj]);
+
+  useEffect(() => {
+    getLocation();
+  }, [getLocation]);
+
+  console.log('editedEvent: ', editedEvent);
+  console.log('compressed event pic: ', compressedEventPic);
 
   const coordLookUp = async (address: string) => {
     setError(null);
@@ -155,6 +181,7 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
     try {
       const geocodeData = await Geocode.fromAddress(address);
       setLocationData(geocodeData.results);
+      setNewLocationIndicator(true);
 
       coordsMongo = {
         latitude: geocodeData.results[0].geometry.location.lat,
@@ -200,6 +227,10 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
 
   const closeChooseEventHandler = () => {
     setEventModalVisible(false);
+  };
+
+  const errorCallback = () => {
+    setError('error');
   };
 
   const onClose = () => {
@@ -251,6 +282,7 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
       !eventPic ||
       !locationData
     ) {
+      setIsCreatingEvent(false);
       setError('Please complete this Create Event form.');
       return;
     }
@@ -273,6 +305,120 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
       setError(err.message);
     }
   };
+
+  const updateEventHandler = async () => {
+    setError(null);
+    setIsCreatingEvent(true);
+
+    const { eventName, hours, description, address } = formData;
+
+    if (
+      eventName === '' ||
+      hours === '' ||
+      description === '' ||
+      address === '' ||
+      !eventPic ||
+      !locationData
+    ) {
+      setIsCreatingEvent(false);
+      setError('Please complete this Create Event form.');
+      return;
+    }
+
+    const prevLocationData = {
+      lat: editedEvent?.location.latitude,
+      lng: editedEvent?.location.longitude,
+    };
+
+    if (eventId) {
+      try {
+        await dispatch(
+          eventActions.updateEvent(
+            date,
+            compressedEventPic ? compressedEventPic : editedEvent?.eventPic,
+            formData,
+            eventType,
+            locationData,
+            eventId,
+            compressedEventPic ? true : false, //newPicIndicator
+            newLocationIndicator,
+            prevLocationData
+          )
+        );
+        //await dispatch(eventsActions.getLocalEvents(locationReduxObj));
+        setIsCreatingEvent(false);
+        setConfirmMessage(true);
+      } catch (err) {
+        setIsCreatingEvent(false);
+        setError(err.message);
+      }
+    }
+  };
+
+  const renderButton = () => {
+    if (editedEvent) {
+      if (isCreatingEvent) {
+        return (
+          <Button
+            className="generic-create-event-button"
+            component="label"
+            style={centeredButtonStyle}
+          >
+            <p className="button-text">Updating Event...</p>
+          </Button>
+        );
+      } else {
+        return (
+          <Button
+            className="generic-create-event-button"
+            component="label"
+            style={centeredButtonStyle}
+            onClick={() => updateEventHandler()}
+          >
+            <p className="button-text">Update Event</p>
+          </Button>
+        );
+      }
+    } else if (isCreatingEvent) {
+      return (
+        <Button
+          className="generic-create-event-button"
+          component="label"
+          style={centeredButtonStyle}
+        >
+          <p className="button-text">Creating Event...</p>
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          className="generic-create-event-button"
+          component="label"
+          style={centeredButtonStyle}
+          onClick={() => createEventHandler()}
+        >
+          <p className="button-text">Create Event</p>
+        </Button>
+      );
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="map">
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <Loader type="Oval" color={Colors.primary} height={70} width={70} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="create-event-screen">
@@ -408,7 +554,6 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
                       ? locationData
                       : locationData[0].geometry.location
                   }
-                  //center={defaultLocation.center}
                   options={{ styles: mapStyle, scrollwheel: false }}
                   yesIWantToUseGoogleMapApiInternals={true}
                 >
@@ -467,26 +612,7 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
                 </FormHelperText>
               </FormControl>
             </Box>
-            <FormControl>
-              {isCreatingEvent ? (
-                <Button
-                  className="generic-create-event-button"
-                  component="label"
-                  style={centeredButtonStyle}
-                >
-                  <p className="button-text">Creating Event...</p>
-                </Button>
-              ) : (
-                <Button
-                  className="generic-create-event-button"
-                  component="label"
-                  style={centeredButtonStyle}
-                  onClick={() => createEventHandler()}
-                >
-                  <p className="button-text">Create Event</p>
-                </Button>
-              )}
-            </FormControl>
+            <FormControl>{renderButton()}</FormControl>
           </FormGroup>
         </div>
       </div>

@@ -121,6 +121,7 @@ export interface event {
   reports: string[];
   user: string;
   address: string;
+  eventType: string;
   eventPic: string;
   location: {
     longitude: number;
@@ -281,6 +282,11 @@ export interface Get_Event_By_Id {
 
 export interface Create_Event {
   type: ActionTypes.CREATE_EVENT;
+  event: event;
+}
+
+export interface Update_Event {
+  type: ActionTypes.UPDATE_EVENT;
   event: event;
 }
 
@@ -512,6 +518,7 @@ export type DingActions =
   | Update_Ding_Description;
 
 export type EventActions =
+  | Update_Event
   | Get_Event_By_Id
   | Remove_Event
   | Like_Event

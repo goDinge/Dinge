@@ -229,6 +229,8 @@ exports.updateEvent = asyncHandler(async (req, res, next) => {
   }
 
   const eventPic = req.file;
+  console.log('eventPic: ', eventPic);
+  console.log('req.file: ', req.file);
   let eventPicUrl;
 
   aws.config.setPromisesDependency();
@@ -240,9 +242,7 @@ exports.updateEvent = asyncHandler(async (req, res, next) => {
 
   const s3 = new aws.S3();
 
-  //extracted the 'save to S3 process' out to a function
-  //don't need to do that
-  const upload = (pic) => {
+  const uploadWithNewPic = (pic) => {
     let params = {
       ACL: 'public-read',
       Bucket: process.env.BUCKET_NAME,
@@ -289,10 +289,44 @@ exports.updateEvent = asyncHandler(async (req, res, next) => {
         );
 
         const event = await Event.findById(req.params.id).populate('comments');
-
         res.status(200).json({ success: true, data: event });
       }
     });
   };
-  await upload(eventPic);
+
+  const upload = async () => {
+    const dateFormattedFromJSON = JSON.parse(date);
+    const dateParsed = Date.parse(dateFormattedFromJSON);
+
+    const endDate = dateParsed + 1000 * 60 * 60 * hours;
+
+    await Event.updateOne(
+      {
+        _id: req.params.id,
+      },
+      {
+        $set: {
+          eventName,
+          status: 'active',
+          date: dateParsed,
+          endDate,
+          eventType,
+          address,
+          location,
+          thumbUrl,
+          description,
+          lastModifiedAt: Date.now(),
+        },
+      }
+    );
+
+    const event = await Event.findById(req.params.id).populate('comments');
+    res.status(200).json({ success: true, data: event });
+  };
+
+  if (eventPic.size === 0) {
+    await upload();
+  } else {
+    await uploadWithNewPic(eventPic);
+  }
 });

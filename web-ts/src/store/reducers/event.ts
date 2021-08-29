@@ -12,6 +12,7 @@ const initialState: eventState = {
     user: '',
     address: '',
     eventPic: '',
+    eventType: '',
     location: {
       longitude: 0,
       latitude: 0,

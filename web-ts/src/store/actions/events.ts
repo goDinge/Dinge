@@ -72,7 +72,9 @@ export const createEvent = (
         event: event,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error(
+        'Cannot connect with server while creating event. Please try again.'
+      );
     }
   };
 };
@@ -92,7 +94,9 @@ export const getLocalEvents = (location: GeolocationPosition) => {
         events: events,
       });
     } catch (err) {
-      throw new Error('Cannot connect with server. Please try again.');
+      throw new Error(
+        'Cannot connect with server while locating you. Please try again.'
+      );
     }
   };
 };
