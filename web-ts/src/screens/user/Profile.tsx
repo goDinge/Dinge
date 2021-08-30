@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 //import { Dispatch } from 'redux';
-
 import { AppState } from '../../store/reducers/rootReducer';
 import {
   AuthState,
   eventsState,
   event,
   eventState,
+  messageState,
 } from '../../store/interfaces';
 import { sortEvents } from '../../helpers/sortEvents';
 import CustomCalendarEventItem from '../../components/CustomCalendarEventItem';
 import CustomEvent from '../../components/CustomEvent';
+import CustomMessage from '../../components/CustomMessage';
 //import * as AuthActions from '../../store/actions/auth';
 
 const Profile = () => {
@@ -21,6 +22,8 @@ const Profile = () => {
   const eventsArr: event[] = events.events;
   const event: eventState = useSelector((state: AppState) => state.event);
   const eventObj: event = event.event;
+  const message: messageState = useSelector((state: AppState) => state.message);
+  const messageStr = message.message;
 
   const currentTime = Date.now();
 
@@ -57,6 +60,8 @@ const Profile = () => {
   useEffect(() => {
     dynamicURL();
   }, [dynamicURL]);
+
+  const deleteDingHandler = () => {}; //empty fn to pass TS
 
   return (
     <div className="calender-screen">
@@ -135,6 +140,14 @@ const Profile = () => {
         </div>
       </div>
       {eventObj.user !== '' ? <CustomEvent /> : null}
+      {messageStr && message.screen === 'map' ? (
+        <CustomMessage
+          overlay="message-map-overlay"
+          component="message-map"
+          item={eventObj}
+          onDelete={deleteDingHandler} //does nothing;
+        />
+      ) : null}
     </div>
   );
 };

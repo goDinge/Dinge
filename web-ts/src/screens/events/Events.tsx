@@ -7,11 +7,12 @@ import {
   event,
   eventsState,
   eventState,
-  // messageState,
+  messageState,
 } from '../../store/interfaces';
 
 import CustomEvent from '../../components/CustomEvent';
 import CustomError from '../../components/CustomError';
+import CustomMessage from '../../components/CustomMessage';
 import CustomReloadIcon from '../../components/CustomReloadIcon';
 import CustomCalendarEventItem from '../../components/CustomCalendarEventItem';
 import * as eventsActions from '../../store/actions/events';
@@ -40,10 +41,10 @@ const todayEventsDefault = (events: event[]) => {
 const Events = () => {
   const events: eventsState = useSelector((state: AppState) => state.events);
   const eventsArr: event[] = events.events;
-  // const auth: AuthState = useSelector((state: AppState) => state.auth);
-  // const authUser: user | null = auth.authUser;
   const event: eventState = useSelector((state: AppState) => state.event);
   const eventObj: event = event.event;
+  const message: messageState = useSelector((state: AppState) => state.message);
+  const messageStr = message.message;
 
   const [error, setError] = useState<string | null>(null);
   const [showEvents, setShowEvents] = useState(
@@ -85,6 +86,8 @@ const Events = () => {
   const errorCallback = () => {
     setError(null);
   };
+
+  const deleteDingHandler = () => {}; //empty fn to pass TS
 
   let eventsToPush: event[] = [];
 
@@ -176,6 +179,14 @@ const Events = () => {
           onClose={onClose}
           errorType="error-events"
           overlayType="error-events-calendar-overlay"
+        />
+      ) : null}
+      {messageStr && message.screen === 'map' ? (
+        <CustomMessage
+          overlay="message-map-overlay"
+          component="message-map"
+          item={eventObj}
+          onDelete={deleteDingHandler} //does nothing;
         />
       ) : null}
     </div>

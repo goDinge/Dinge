@@ -231,6 +231,11 @@ exports.updateEvent = asyncHandler(async (req, res, next) => {
   const eventPic = req.file;
   let eventPicUrl;
 
+  const dateFormattedFromJSON = JSON.parse(date);
+  const dateParsed = Date.parse(dateFormattedFromJSON);
+
+  const endDate = dateParsed + 1000 * 60 * 60 * hours;
+
   aws.config.setPromisesDependency();
   aws.config.update({
     accessKeyId: process.env.ACCESSKEYID,
@@ -259,11 +264,6 @@ exports.updateEvent = asyncHandler(async (req, res, next) => {
         console.log(
           'EventPic has been uploaded to S3 and URL created successfully'
         );
-
-        const dateFormattedFromJSON = JSON.parse(date);
-        const dateParsed = Date.parse(dateFormattedFromJSON);
-
-        const endDate = dateParsed + 1000 * 60 * 60 * hours;
 
         await Event.updateOne(
           {
@@ -295,11 +295,6 @@ exports.updateEvent = asyncHandler(async (req, res, next) => {
   //This will only be called from web-ts, when no new eventPic has been chosen
   //new eventPic will always be passed from mobile even if user does not pick a new pic
   const upload = async () => {
-    const dateFormattedFromJSON = JSON.parse(date);
-    const dateParsed = Date.parse(dateFormattedFromJSON);
-
-    const endDate = dateParsed + 1000 * 60 * 60 * hours;
-
     await Event.updateOne(
       {
         _id: req.params.id,

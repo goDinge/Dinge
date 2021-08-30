@@ -141,11 +141,11 @@ const CustomEvent = () => {
     try {
       await dispatch(eventsActions.deleteEventById(eventId));
       await dispatch(eventsActions.getLocalEvents(locationObj));
+      setIsDeleting(false);
+      closeEventHandler();
       await dispatch(
         messageActions.setMessage('Event Deleted', messageScreenMap)
       );
-      setIsDeleting(false);
-      closeEventHandler();
     } catch (err) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }

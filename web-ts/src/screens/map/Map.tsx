@@ -115,6 +115,8 @@ const Map = () => {
     getLocation();
   }, [getLocation]);
 
+  useEffect(() => {}, []);
+
   const deleteDingHandler = () => {}; //empty fn to pass TS
 
   const reloadHandler = async (location: GeolocationPosition) => {
@@ -280,7 +282,6 @@ const Map = () => {
           onDelete={deleteDingHandler} //does nothing;
         />
       ) : null}
-
       <div className="time-filter-container">
         <CustomTimeFilter
           name="now"
