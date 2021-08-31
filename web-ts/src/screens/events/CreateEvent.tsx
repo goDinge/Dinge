@@ -12,10 +12,6 @@ import {
   eventsState,
   locationState,
   eventFormData,
-  //eventState,
-  //messageState,
-  //eventFormState,
-  //eventFormAction,
 } from '../../store/interfaces';
 import {
   Box,
@@ -166,9 +162,6 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
   useEffect(() => {
     getLocation();
   }, [getLocation]);
-
-  console.log('editedEvent: ', editedEvent);
-  console.log('compressed event pic: ', compressedEventPic);
 
   const coordLookUp = async (address: string) => {
     setError(null);

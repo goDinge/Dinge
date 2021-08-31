@@ -8,8 +8,6 @@ const initialState: AuthState = {
   authUser: null,
 };
 
-//localStorage.getItem('token'),
-
 export const authReducer = (
   state: AuthState = initialState,
   action: AuthActionTypes

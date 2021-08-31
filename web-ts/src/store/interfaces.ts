@@ -3,7 +3,6 @@ import { ActionTypes } from './types';
 export interface ding {
   description: string;
   _id: string;
-  //type: string;
   likes: string[];
   comments: comment[];
   reports: string[];
@@ -467,6 +466,25 @@ export interface Get_Auth_User {
   };
 }
 
+export interface Profile_Update {
+  type: ActionTypes.PROFILE_UPDATE;
+  authUser: {
+    name: string;
+    email: string;
+    website: string;
+    facebook: string;
+  };
+}
+
+export interface profileObj {
+  name: string | undefined;
+  email: string | undefined;
+  website: string | undefined;
+  facebook: string | undefined;
+}
+
+export interface Password_Update {}
+
 export interface Set_Location {
   type: ActionTypes.SET_LOCATION;
   location: {
@@ -503,6 +521,7 @@ export type AuthActionTypes =
   | Set_Auth_User
   | Get_Auth_User
   | Set_Did_Try_Al
+  | Profile_Update
   | Logout;
 
 export type UserActionTypes = Get_User | Remove_User;

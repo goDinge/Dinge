@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { Dispatch } from 'redux';
-import { user, userObj, userData } from '../interfaces';
+import { user, userObj, userData, profileObj } from '../interfaces';
 import { ActionTypes } from '../types';
 import { CURRENT_IP } from '../../serverConfigs';
 import { setAuthToken } from '../../helpers/setAuthToken';
@@ -77,6 +77,41 @@ export const login = (email: string, password: string) => {
       await dispatch(setAuthUser(resData.user));
     } catch (err) {
       throw new Error(err.response.data.error);
+    }
+  };
+};
+
+export const updateProfile = (profile: profileObj) => {
+  return async (dispatch: Dispatch<any>) => {
+    const { name, email, website, facebook } = profile;
+
+    const body = JSON.stringify({
+      name,
+      email,
+      website,
+      facebook,
+    });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const response = await axios.put(
+        `${CURRENT_IP}/api/auth/me`,
+        body,
+        config
+      );
+      const profile: user = response.data.data.user;
+
+      dispatch({
+        type: ActionTypes.PROFILE_UPDATE,
+        authUser: profile,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
     }
   };
 };

@@ -61,7 +61,6 @@ const tomorrowEnd = tomorrow.setHours(23, 59, 59, 999);
 const Map = () => {
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  //const [isCompassLoading, setIsCompassLoading] = useState(false);
   const [timeSelected, setTimeSelected] = useState('now');
   const [location, setLocation] =
     useState<GeolocationPosition>(defaultGeoPosition);
@@ -115,24 +114,11 @@ const Map = () => {
     getLocation();
   }, [getLocation]);
 
-  useEffect(() => {}, []);
-
   const deleteDingHandler = () => {}; //empty fn to pass TS
 
   const reloadHandler = async (location: GeolocationPosition) => {
     await loadData(location);
   };
-
-  // const compassHandler = async () => {
-  //   setError(null);
-  //   setIsCompassLoading(true);
-  //   try {
-  //     await dispatch(locationActions.setLocation(location));
-  //   } catch (err) {
-  //     setError(err.message);
-  //   }
-  //   setIsCompassLoading(false);
-  // };
 
   const timeNow = () => {
     setTimeSelected('now');
@@ -303,13 +289,6 @@ const Map = () => {
         />
       </div>
       <CustomReloadIcon onSelect={() => reloadHandler(location)} />
-      {/* {isCompassLoading ? (
-        <div className="loader-container">
-          <Loader type="Oval" color={Colors.primary} height={50} width={50} />
-        </div>
-      ) : (
-        <CustomCompassIcon onSelect={compassHandler} />
-      )} */}
     </div>
   );
 };

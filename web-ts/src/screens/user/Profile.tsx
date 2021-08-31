@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-//import { Dispatch } from 'redux';
 import { AppState } from '../../store/reducers/rootReducer';
 import {
   AuthState,
@@ -9,11 +9,12 @@ import {
   eventState,
   messageState,
 } from '../../store/interfaces';
+import { FiSettings } from 'react-icons/fi';
 import { sortEvents } from '../../helpers/sortEvents';
 import CustomCalendarEventItem from '../../components/CustomCalendarEventItem';
 import CustomEvent from '../../components/CustomEvent';
 import CustomMessage from '../../components/CustomMessage';
-//import * as AuthActions from '../../store/actions/auth';
+import { Colors } from '../../constants/Colors';
 
 const Profile = () => {
   const authState: AuthState = useSelector((state: AppState) => state.auth);
@@ -68,7 +69,16 @@ const Profile = () => {
       <div className="profile-container">
         <div className="profile-inner-container">
           <div className="profile-id-container">
-            <p className="profile-name">{authUser?.name}</p>
+            <div className="profile-name-setting">
+              <p className="profile-name">{authUser?.name}</p>
+              <Link to="/UpdateProfile">
+                <FiSettings
+                  size={28}
+                  color={Colors.primary}
+                  style={{ marginRight: 8, cursor: 'pointer' }}
+                />
+              </Link>
+            </div>
             <p className="profile-text">{authUser?.level}</p>
             <p className="profile-text">Rep: {authUser?.reputation}</p>
           </div>

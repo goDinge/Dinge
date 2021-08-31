@@ -17,6 +17,7 @@ import Public from './screens/user/Public';
 import Map from './screens/map/Map';
 import Events from './screens/events/Events';
 import CreateEvent from './screens/events/CreateEvent';
+import updateProfile from './screens/user/UpdateProfile';
 import store from './store/store';
 
 import './index.css';
@@ -80,6 +81,7 @@ const App = () => {
           <Route exact path="/map" component={Map} />
           <Route exact path="/events" component={Events} />
           <Route exact path="/createEvent" component={CreateEvent} />
+          <Route exact path="/updateProfile" component={updateProfile} />
         </Switch>
       </Fragment>
     </Router>

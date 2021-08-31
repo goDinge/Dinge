@@ -63,7 +63,6 @@ const CustomEvent = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [text, onChangeText] = useState('');
   const [modalText, onChangeModalText] = useState('');
-  //const [editEventId, setEditEventId] = useState('');
   const [editModal, setEditModal] = useState(false);
   const [editCommentId, setEditCommentId] = useState('');
   const [editInitialText, setEditInitialText] = useState('');

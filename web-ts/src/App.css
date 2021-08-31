@@ -845,6 +845,11 @@ img {
   padding-bottom: 1rem;
 }
 
+.profile-name-setting {
+  display: flex;
+  justify-content: space-between;
+}
+
 .profile-name {
   font-family: 'AirbnbCerealMedium', 'Raleway', sans-serif;
   font-size: 1.5rem;
@@ -876,6 +881,18 @@ img {
   width: 240px;
   border-radius: 120px;
   margin: 35px 0px;
+}
+
+.profile-avatar-update {
+  height: 140px;
+  width: 140px;
+  border-radius: 70px;
+  margin: 25px 0px;
+}
+
+.profile-avatar-update-container {
+  display: flex;
+  justify-content: center;
 }
 
 .profile-stats-container {
