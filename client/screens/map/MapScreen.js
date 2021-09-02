@@ -163,8 +163,10 @@ const MapScreen = (props) => {
   const getLocation = async () => {
     setError(null);
     try {
+      //Expo Location is buggy at the moment, set Accuracy to Lowest seems to work - Sept 1st 2021
       const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Highest,
+        accuracy: Location.Accuracy.Lowest,
+        enableHighAccuracy: true,
       });
       if (!location) {
         //if can't find any location, ask user to enter address
@@ -266,6 +268,11 @@ const MapScreen = (props) => {
       </View>
     );
   }
+
+  // console.log(mapLoaded);
+  // console.log(locationState);
+  // console.log(authUser);
+  // console.log('hello');
 
   //current mapStyle - retro eco
   return (

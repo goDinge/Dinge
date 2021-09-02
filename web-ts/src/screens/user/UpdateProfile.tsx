@@ -20,11 +20,17 @@ const UpdateProfile = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
+  const [passwordUpdating, setPasswordUpdating] = useState(false);
   const [formData, setFormData] = useState<profileObj>({
     name: authUser?.name,
     email: authUser?.email,
     website: authUser?.website,
     facebook: authUser?.facebook,
+  });
+  const [password, setPassword] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
   });
 
   const dispatch = useDispatch<Dispatch<any>>();
@@ -35,8 +41,13 @@ const UpdateProfile = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const onChangePassword = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setPassword({ ...password, [e.target.id]: e.target.value });
+  };
+
   const updateProfileHandler = async () => {
-    console.log('update profile');
     setError(null);
     setUpdating(true);
 
@@ -57,7 +68,7 @@ const UpdateProfile = () => {
     <div className="calender-screen">
       <div className="profile-container">
         <div className="profile-inner-container">
-          <p className="profile-title">Profile Update</p>
+          <p className="profile-title">Your Profile</p>
           <div className="profile-avatar-update-container">
             <img
               className="profile-avatar-update"
@@ -121,16 +132,90 @@ const UpdateProfile = () => {
                 </FormControl>
               </Box>
               <FormControl>
-                <Button
-                  className="generic-create-event-button"
-                  component="label"
-                  style={centeredButtonStyle}
-                  onClick={() => updateProfileHandler()}
-                >
-                  <p className="button-text">Update Profile</p>
-                </Button>
+                {updating ? (
+                  <Button
+                    className="generic-create-event-button"
+                    component="label"
+                    style={centeredButtonStyle}
+                  >
+                    <p className="button-text">Updating...</p>
+                  </Button>
+                ) : (
+                  <Button
+                    className="generic-create-event-button"
+                    component="label"
+                    style={centeredButtonStyle}
+                    onClick={() => updateProfileHandler()}
+                  >
+                    <p className="button-text">Update Profile</p>
+                  </Button>
+                )}
               </FormControl>
             </FormGroup>
+            <div className="profile-input-line"></div>
+            <p className="profile-title">Your Password</p>
+            <FormGroup sx={{ fontFamily: 'AirbnbCerealMedium' }}>
+              <Box className="create-event-input-container">
+                <FormControl style={{ width: '100%' }}>
+                  <TextField
+                    required
+                    id="currentPassword"
+                    type="password"
+                    label="Current Password:"
+                    inputProps={{ maxLength: 300 }}
+                    value={password.currentPassword}
+                    onChange={(e) => onChangePassword(e)}
+                  />
+                </FormControl>
+              </Box>
+              <Box className="create-event-input-container">
+                <FormControl style={{ width: '100%' }}>
+                  <TextField
+                    required
+                    id="newPassword"
+                    type="password"
+                    label="New Password:"
+                    inputProps={{ maxLength: 300 }}
+                    value={password.newPassword}
+                    onChange={(e) => onChangePassword(e)}
+                  />
+                </FormControl>
+              </Box>
+              <Box className="create-event-input-container">
+                <FormControl style={{ width: '100%' }}>
+                  <TextField
+                    required
+                    id="confirmNewPassword"
+                    type="password"
+                    label="Password Confirm:"
+                    inputProps={{ maxLength: 300 }}
+                    value={password.confirmNewPassword}
+                    onChange={(e) => onChangePassword(e)}
+                  />
+                </FormControl>
+              </Box>
+              <FormControl>
+                {passwordUpdating ? (
+                  <Button
+                    className="generic-create-event-button"
+                    component="label"
+                    style={centeredButtonStyle}
+                  >
+                    <p className="button-text">Updating...</p>
+                  </Button>
+                ) : (
+                  <Button
+                    className="generic-create-event-button"
+                    component="label"
+                    style={centeredButtonStyle}
+                    onClick={() => console.log('update password')}
+                  >
+                    <p className="button-text">Update Password</p>
+                  </Button>
+                )}
+              </FormControl>
+            </FormGroup>
+            <div className="profile-input-line"></div>
           </div>
         </div>
       </div>

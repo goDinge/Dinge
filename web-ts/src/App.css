@@ -901,6 +901,11 @@ img {
   border-bottom: 1px solid var(--profile-grey-color);
 }
 
+.profile-input-line {
+  margin: 30px 0px;
+  border-bottom: 1px solid var(--profile-grey-color);
+}
+
 .profile-socials-container {
   display: flex;
   width: 100%;
