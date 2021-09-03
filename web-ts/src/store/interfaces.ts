@@ -483,7 +483,11 @@ export interface profileObj {
   facebook: string | undefined;
 }
 
-export interface Password_Update {}
+export interface passwordObj {
+  oldPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
 
 export interface Set_Location {
   type: ActionTypes.SET_LOCATION;

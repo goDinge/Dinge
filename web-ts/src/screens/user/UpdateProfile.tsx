@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
+import Resizer from 'react-image-file-resizer';
+
 import { AppState } from '../../store/reducers/rootReducer';
 import { AuthState, profileObj } from '../../store/interfaces';
 import {
@@ -9,10 +11,14 @@ import {
   FormControl,
   TextField,
   Button,
+  Input,
 } from '@material-ui/core';
 import { Colors } from '../../constants/Colors';
 
 import * as authActions from '../../store/actions/auth';
+import CustomError from '../../components/CustomError';
+import CustomLocalMessage from '../../components/CustomLocalMessage';
+import CustomAvatarEditor from '../../components/CustomAvatarEditor';
 
 const UpdateProfile = () => {
   const authState: AuthState = useSelector((state: AppState) => state.auth);
@@ -20,7 +26,13 @@ const UpdateProfile = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
+  const [avatar, setAvatar] = useState<Blob | string | null>(null);
+  const [compressedAvatar, setCompressedAvatar] = useState<
+    string | Blob | File | ProgressEvent<FileReader> | null
+  >(null);
   const [passwordUpdating, setPasswordUpdating] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<profileObj>({
     name: authUser?.name,
     email: authUser?.email,
@@ -28,10 +40,11 @@ const UpdateProfile = () => {
     facebook: authUser?.facebook,
   });
   const [password, setPassword] = useState({
-    currentPassword: '',
+    oldPassword: '',
     newPassword: '',
     confirmNewPassword: '',
   });
+  const [croppedImageUrl, setCroppedImageUrl] = useState('');
 
   const dispatch = useDispatch<Dispatch<any>>();
 
@@ -58,11 +71,69 @@ const UpdateProfile = () => {
     }
 
     try {
-      await await dispatch(authActions.updateProfile(formData));
+      await dispatch(authActions.updateProfile(formData));
+      setMessage('Profile updated');
+      setUpdating(false);
     } catch (err) {
       setError(err.message);
     }
+    setUpdating(false);
   };
+
+  const changePasswordHandler = async () => {
+    setError(null);
+    setPasswordUpdating(true);
+
+    if (password.newPassword !== password.confirmNewPassword) {
+      setError('Please make sure your new password inputs are identical.');
+      setPasswordUpdating(false);
+      return;
+    }
+
+    try {
+      await dispatch(authActions.changePassword(password));
+      setPasswordUpdating(false);
+      setMessage('Password updated');
+      setPassword({
+        oldPassword: '',
+        newPassword: '',
+        confirmNewPassword: '',
+      });
+    } catch (err) {
+      setError(err.message);
+    }
+    setPasswordUpdating(false);
+  };
+
+  const resizeImage = async (file: Blob) => {
+    try {
+      await Resizer.imageFileResizer(
+        file,
+        500,
+        500,
+        'JPEG',
+        70,
+        0,
+        (uri) => {
+          setCompressedAvatar(uri);
+        },
+        'file',
+        200,
+        200
+      );
+    } catch (err) {
+      setError('Image file type incompatible');
+    }
+  };
+
+  const onClose = () => {
+    setError(null);
+    setMessage(null);
+    setAvatarUrl('');
+  };
+
+  console.log('avatarUrl: ', avatarUrl);
+  console.log('update profile croppedImageUrl: ', croppedImageUrl);
 
   return (
     <div className="calender-screen">
@@ -70,12 +141,62 @@ const UpdateProfile = () => {
         <div className="profile-inner-container">
           <p className="profile-title">Your Profile</p>
           <div className="profile-avatar-update-container">
-            <img
-              className="profile-avatar-update"
-              alt="profile"
-              src={authUser?.avatar}
-              onClick={() => console.log('update avatar')}
-            />
+            <FormControl style={{ alignSelf: 'center' }}>
+              <Button
+                htmlFor="avatar"
+                component="label"
+                style={{ width: 130, borderRadius: 65 }}
+              >
+                {avatarUrl !== '' ? (
+                  <img
+                    className="profile-avatar-update"
+                    alt="profile"
+                    src={avatarUrl}
+                  />
+                ) : (
+                  <img
+                    className="profile-avatar-update"
+                    alt="profile"
+                    src={authUser?.avatar}
+                  />
+                )}
+              </Button>
+              <Input
+                type="file"
+                id="avatar"
+                style={{ display: 'none' }}
+                //onChange will not be triggered if user selects the same pic
+                onChange={(e: any) => {
+                  console.log('e: ', e);
+                  if (e !== null) {
+                    setAvatarUrl(URL.createObjectURL(e.target.files[0]));
+                    setAvatar(e.target.files[0]);
+                    //resizeImage(e.target.files[0]);
+                  } else {
+                    return;
+                  }
+                }}
+              />
+            </FormControl>
+            <FormControl>
+              <Button
+                className="upload-avatar-button"
+                component="label"
+                style={
+                  compressedAvatar
+                    ? centeredButtonStyle
+                    : centeredButtonStyleDisable
+                }
+                disabled={compressedAvatar === null ? true : false}
+                onClick={() => console.log('upload')}
+              >
+                <p className="upload-avatar-text">
+                  {compressedAvatar
+                    ? 'Upload Avatar'
+                    : 'Click Avatar to choose new image'}
+                </p>
+              </Button>
+            </FormControl>
           </div>
           <div className="create-event-inner-container">
             <FormGroup sx={{ fontFamily: 'AirbnbCerealMedium' }}>
@@ -159,11 +280,11 @@ const UpdateProfile = () => {
                 <FormControl style={{ width: '100%' }}>
                   <TextField
                     required
-                    id="currentPassword"
+                    id="oldPassword"
                     type="password"
                     label="Current Password:"
                     inputProps={{ maxLength: 300 }}
-                    value={password.currentPassword}
+                    value={password.oldPassword}
                     onChange={(e) => onChangePassword(e)}
                   />
                 </FormControl>
@@ -208,7 +329,7 @@ const UpdateProfile = () => {
                     className="generic-create-event-button"
                     component="label"
                     style={centeredButtonStyle}
-                    onClick={() => console.log('update password')}
+                    onClick={() => changePasswordHandler()}
                   >
                     <p className="button-text">Update Password</p>
                   </Button>
@@ -219,6 +340,28 @@ const UpdateProfile = () => {
           </div>
         </div>
       </div>
+      {error ? (
+        <CustomError
+          message={error}
+          onClose={onClose}
+          errorType="error-events"
+          overlayType="error-events-calendar-overlay"
+        />
+      ) : null}
+      {message ? (
+        <CustomLocalMessage
+          message={message}
+          onClose={onClose}
+          overlayType="error-events-calendar-overlay"
+        />
+      ) : null}
+      {avatarUrl !== '' ? (
+        <CustomAvatarEditor
+          onClose={onClose}
+          getCroppedUrl={setCroppedImageUrl}
+          avatarUrl={avatarUrl}
+        />
+      ) : null}
     </div>
   );
 };
@@ -235,6 +378,15 @@ const buttonStyle = {
 
 const centeredButtonStyle = {
   backgroundColor: Colors.primary,
+  marginTop: 20,
+  marginBottom: 20,
+  borderRadius: 20,
+  padding: 0,
+  alignSelf: 'center',
+};
+
+const centeredButtonStyleDisable = {
+  backgroundColor: Colors.grey,
   marginTop: 20,
   marginBottom: 20,
   borderRadius: 20,

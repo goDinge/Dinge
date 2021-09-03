@@ -1,6 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
 import { Dispatch } from 'redux';
-import { user, userObj, userData, profileObj } from '../interfaces';
+import {
+  user,
+  userObj,
+  userData,
+  profileObj,
+  passwordObj,
+} from '../interfaces';
 import { ActionTypes } from '../types';
 import { CURRENT_IP } from '../../serverConfigs';
 import { setAuthToken } from '../../helpers/setAuthToken';
@@ -77,6 +83,32 @@ export const login = (email: string, password: string) => {
       await dispatch(setAuthUser(resData.user));
     } catch (err) {
       throw new Error(err.response.data.error);
+    }
+  };
+};
+
+export const changePassword = (password: passwordObj) => {
+  return async () => {
+    const { oldPassword, newPassword, confirmNewPassword } = password;
+
+    if (newPassword !== confirmNewPassword) {
+      return new Error(
+        'Please check your new password fields to make sure they are the same.'
+      );
+    }
+
+    const body = JSON.stringify({ oldPassword, newPassword });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      await axios.put(`${CURRENT_IP}/api/auth/password`, body, config);
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
     }
   };
 };
