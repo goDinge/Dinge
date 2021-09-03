@@ -238,7 +238,10 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
     }
   };
 
+  console.log('compressed event pic: ', compressedEventPic);
+
   const resizeImage = async (file: Blob) => {
+    console.log('file or blob: ', file);
     try {
       await Resizer.imageFileResizer(
         file,

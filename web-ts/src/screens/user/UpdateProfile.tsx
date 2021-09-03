@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
-import Resizer from 'react-image-file-resizer';
-
 import { AppState } from '../../store/reducers/rootReducer';
 import { AuthState, profileObj } from '../../store/interfaces';
 import {
@@ -27,10 +25,8 @@ const UpdateProfile = () => {
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string>('');
-  const [avatar, setAvatar] = useState<Blob | string | null>(null);
-  const [compressedAvatar, setCompressedAvatar] = useState<
-    string | Blob | File | ProgressEvent<FileReader> | null
-  >(null);
+  const [avatarCroppedUrl, setAvatarCroppedUrl] = useState<string>('');
+  //const [avatar, setAvatar] = useState<Blob | string | null>(null);
   const [passwordUpdating, setPasswordUpdating] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<profileObj>({
@@ -44,7 +40,6 @@ const UpdateProfile = () => {
     newPassword: '',
     confirmNewPassword: '',
   });
-  const [croppedImageUrl, setCroppedImageUrl] = useState('');
 
   const dispatch = useDispatch<Dispatch<any>>();
 
@@ -105,35 +100,11 @@ const UpdateProfile = () => {
     setPasswordUpdating(false);
   };
 
-  const resizeImage = async (file: Blob) => {
-    try {
-      await Resizer.imageFileResizer(
-        file,
-        500,
-        500,
-        'JPEG',
-        70,
-        0,
-        (uri) => {
-          setCompressedAvatar(uri);
-        },
-        'file',
-        200,
-        200
-      );
-    } catch (err) {
-      setError('Image file type incompatible');
-    }
-  };
-
   const onClose = () => {
     setError(null);
     setMessage(null);
     setAvatarUrl('');
   };
-
-  console.log('avatarUrl: ', avatarUrl);
-  console.log('update profile croppedImageUrl: ', croppedImageUrl);
 
   return (
     <div className="calender-screen">
@@ -147,11 +118,11 @@ const UpdateProfile = () => {
                 component="label"
                 style={{ width: 130, borderRadius: 65 }}
               >
-                {avatarUrl !== '' ? (
+                {avatarCroppedUrl ? (
                   <img
                     className="profile-avatar-update"
                     alt="profile"
-                    src={avatarUrl}
+                    src={avatarCroppedUrl}
                   />
                 ) : (
                   <img
@@ -167,36 +138,18 @@ const UpdateProfile = () => {
                 style={{ display: 'none' }}
                 //onChange will not be triggered if user selects the same pic
                 onChange={(e: any) => {
-                  console.log('e: ', e);
                   if (e !== null) {
                     setAvatarUrl(URL.createObjectURL(e.target.files[0]));
-                    setAvatar(e.target.files[0]);
-                    //resizeImage(e.target.files[0]);
+                    // setAvatar(e.target.files[0]);
                   } else {
                     return;
                   }
                 }}
               />
             </FormControl>
-            <FormControl>
-              <Button
-                className="upload-avatar-button"
-                component="label"
-                style={
-                  compressedAvatar
-                    ? centeredButtonStyle
-                    : centeredButtonStyleDisable
-                }
-                disabled={compressedAvatar === null ? true : false}
-                onClick={() => console.log('upload')}
-              >
-                <p className="upload-avatar-text">
-                  {compressedAvatar
-                    ? 'Upload Avatar'
-                    : 'Click Avatar to choose new image'}
-                </p>
-              </Button>
-            </FormControl>
+            <p style={{ alignSelf: 'center' }}>
+              Click image to choose new avatar
+            </p>
           </div>
           <div className="create-event-inner-container">
             <FormGroup sx={{ fontFamily: 'AirbnbCerealMedium' }}>
@@ -358,7 +311,7 @@ const UpdateProfile = () => {
       {avatarUrl !== '' ? (
         <CustomAvatarEditor
           onClose={onClose}
-          getCroppedUrl={setCroppedImageUrl}
+          getCroppedUrl={setAvatarCroppedUrl}
           avatarUrl={avatarUrl}
         />
       ) : null}
@@ -368,25 +321,8 @@ const UpdateProfile = () => {
 
 export default UpdateProfile;
 
-const buttonStyle = {
-  backgroundColor: Colors.primary,
-  marginTop: 20,
-  marginBottom: 20,
-  borderRadius: 20,
-  padding: 0,
-};
-
 const centeredButtonStyle = {
   backgroundColor: Colors.primary,
-  marginTop: 20,
-  marginBottom: 20,
-  borderRadius: 20,
-  padding: 0,
-  alignSelf: 'center',
-};
-
-const centeredButtonStyleDisable = {
-  backgroundColor: Colors.grey,
   marginTop: 20,
   marginBottom: 20,
   borderRadius: 20,

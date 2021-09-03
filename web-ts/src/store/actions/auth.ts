@@ -148,6 +148,37 @@ export const updateProfile = (profile: profileObj) => {
   };
 };
 
+export const updateAuthAvatar = (avatar: any) => {
+  return async (dispatch: Dispatch<any>) => {
+    try {
+      const avatarName = avatar.name;
+      const avatarFile = new Blob([avatar], {
+        type: 'image/jpg',
+      });
+      let formData = new FormData();
+
+      formData.append('avatar', avatarFile, avatarName);
+
+      const config = {
+        headers: {
+          'Content-Type': 'form-data',
+        },
+      };
+      const response = await axios.put(
+        `${CURRENT_IP}/api/users/me`,
+        formData,
+        config
+      );
+
+      const newAvatar = response.data.data;
+
+      await dispatch(setAuthUser(newAvatar)); //essentially setting new user profile - could improve
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
 export const getAuthUser: any = () => {
   return async (dispatch: Dispatch<any>) => {
     if (localStorage.userData) {

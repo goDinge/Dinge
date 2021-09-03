@@ -1,7 +1,14 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Dispatch } from 'redux';
 import ReactCrop, { Crop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+
+import { AppState } from '../store/reducers/rootReducer';
+import { AuthState } from '../store/interfaces';
 import xMark from '../assets/x-mark.png';
+
+import * as authActions from '../store/actions/auth';
 
 interface CompletedCrop {
   x: number;
@@ -12,53 +19,60 @@ interface CompletedCrop {
   aspect: number;
 }
 
-type TgenerateDownload = (
-  canvas: HTMLCanvasElement,
-  crop: CompletedCrop
-) => void;
-
-//type TonSelectFile = (evt: React.ChangeEvent<HTMLInputElement>) => void;
+type TgenerateUpload = (canvas: HTMLCanvasElement, crop: CompletedCrop) => void;
 
 const CustomAvatarEditor = (props: {
   avatarUrl: string;
   getCroppedUrl: any;
   onClose: () => void;
 }) => {
+  const authState: AuthState = useSelector((state: AppState) => state.auth);
+  const authUser = authState.authUser;
+
   const { avatarUrl, getCroppedUrl, onClose } = props;
 
   const imgRef = useRef<HTMLImageElement>();
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const [completedCrop, setCompletedCrop] = useState<CompletedCrop>();
+  const [error, setError] = useState(false);
   const [crop, setCrop] = useState<Crop>({
     x: 1,
     y: 1,
-    width: 250,
-    height: 250,
+    width: 160,
+    height: 160,
     unit: 'px',
     aspect: 1 / 1,
   });
 
-  const generateDownload: TgenerateDownload = (canvas, crop) => {
+  const dispatch = useDispatch<Dispatch<any>>();
+  const lastModified = Date.now();
+
+  const generateUpload: TgenerateUpload = async (canvas, crop) => {
     if (!crop || !canvas) {
       return;
     }
 
-    canvas.toBlob(
-      (blob) => {
-        const previewUrl = window.URL.createObjectURL(blob);
-        console.log('previewUrl: ', previewUrl);
-        getCroppedUrl(previewUrl);
+    let file;
 
-        // const anchor = document.createElement('a');
-        // anchor.download = 'cropPreview.png';
-        // anchor.href = URL.createObjectURL(blob);
-        // anchor.click();
-
-        window.URL.revokeObjectURL(previewUrl);
-      },
-      'image/png',
-      1
-    );
+    try {
+      await canvas.toBlob(
+        (blob) => {
+          const croppedUrl = URL.createObjectURL(blob);
+          getCroppedUrl(croppedUrl);
+          if (blob && authUser) {
+            file = new File([blob], `${authUser.name + '-' + lastModified}`, {
+              lastModified,
+            });
+            dispatch(authActions.updateAuthAvatar(file));
+          }
+        },
+        'image/JPEG',
+        0.7
+      );
+      onClose();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const onLoad = useCallback((img) => {
@@ -101,10 +115,10 @@ const CustomAvatarEditor = (props: {
     );
   }, [crop, completedCrop]);
 
-  const getGenerateDownload = () => {
+  const getGenerateUpload = () => {
     const canvas = previewCanvasRef.current as HTMLCanvasElement;
     const cropObject = completedCrop as CompletedCrop;
-    return generateDownload(canvas, cropObject);
+    return generateUpload(canvas, cropObject);
   };
 
   return (
@@ -123,23 +137,21 @@ const CustomAvatarEditor = (props: {
         <div>
           <canvas
             ref={previewCanvasRef}
-            // Rounding is important so the canvas width and height matches/is a multiple for sharpness.
-            // style={{
-            //   width: Math.round(completedCrop?.width ?? 0),
-            //   height: Math.round(completedCrop?.height ?? 0),
-            // }}
             style={{
               width: 200,
               height: 200,
+              borderRadius: 100,
+              border: '2px solid #FF5A5F',
             }}
           />
         </div>
         <button
+          className="btn btn-primary"
           type="button"
           disabled={!completedCrop?.width || !completedCrop?.height}
-          onClick={getGenerateDownload}
+          onClick={getGenerateUpload}
         >
-          Download cropped image
+          Upload New Avatar
         </button>
       </div>
     </div>
