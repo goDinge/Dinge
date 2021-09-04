@@ -172,7 +172,7 @@ export const reportEventById = (eventId: string) => {
         type: ActionTypes.REPORT_EVENT,
         event: event,
       });
-    } catch (err) {
+    } catch (err: any) {
       if (!err.response) {
         throw new Error('Cannot connect with server. Please try again.');
       } else {

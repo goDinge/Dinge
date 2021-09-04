@@ -69,7 +69,7 @@ const UpdateProfile = () => {
       await dispatch(authActions.updateProfile(formData));
       setMessage('Profile updated');
       setUpdating(false);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
     setUpdating(false);
@@ -94,7 +94,7 @@ const UpdateProfile = () => {
         newPassword: '',
         confirmNewPassword: '',
       });
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
     setPasswordUpdating(false);

@@ -70,7 +70,7 @@ const CustomAvatarEditor = (props: {
         0.7
       );
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
   };

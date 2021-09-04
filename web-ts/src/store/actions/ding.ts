@@ -87,7 +87,7 @@ export const reportDingById = (dingId: string) => {
         type: ActionTypes.REPORT_DING,
         ding: ding,
       });
-    } catch (err) {
+    } catch (err: any) {
       if (!err.response) {
         throw new Error('Cannot connect with server. Please try again.');
       } else {

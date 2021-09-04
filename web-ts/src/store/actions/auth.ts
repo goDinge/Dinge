@@ -81,7 +81,7 @@ export const login = (email: string, password: string) => {
         resData.user
       );
       await dispatch(setAuthUser(resData.user));
-    } catch (err) {
+    } catch (err: any) {
       throw new Error(err.response.data.error);
     }
   };
@@ -206,7 +206,7 @@ export const getAuthUser: any = () => {
         userId: userId,
         authUser: user,
       });
-    } catch (err) {
+    } catch (err: any) {
       throw new Error(err.response.data.error);
     }
   };

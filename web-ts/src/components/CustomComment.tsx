@@ -60,7 +60,7 @@ const CustomComment = (props: {
         }
         await dispatch(eventActions.getEventById(itemId));
       }
-    } catch (err) {
+    } catch (err: any) {
       messageActions.setMessage(err.message, messageScreen);
     }
     setIsCommentLikeLoading(false);
@@ -76,7 +76,7 @@ const CustomComment = (props: {
         await dispatch(eventCommentActions.deleteComment(id, itemId));
         await dispatch(eventActions.getEventById(itemId));
       }
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreen));
     }
   };

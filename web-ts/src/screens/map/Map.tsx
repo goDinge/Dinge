@@ -89,7 +89,7 @@ const Map = () => {
         await dispatch(dingeActions.getLocalDinge(location));
         await dispatch(eventsActions.getLocalEvents(location));
         await dispatch(authActions.getAuthUser());
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
       }
     },

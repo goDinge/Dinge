@@ -111,7 +111,7 @@ const CustomEvent = () => {
         initLikeEvent = true;
         await dispatch(eventActions.likeEvent(eventId));
       }
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     setIsLikeLoading(false);
@@ -122,7 +122,7 @@ const CustomEvent = () => {
     try {
       await dispatch(eventActions.reportEventById(eventId));
       dispatch(messageActions.setMessage('Event Reported!', messageScreenDing));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
   };
@@ -145,7 +145,7 @@ const CustomEvent = () => {
       await dispatch(
         messageActions.setMessage('Event Deleted', messageScreenMap)
       );
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
   };
@@ -167,7 +167,7 @@ const CustomEvent = () => {
     try {
       await dispatch(eventCommentActions.postComment(text, eventId));
       await dispatch(eventActions.getEventById(eventId));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     onChangeText('');
@@ -184,7 +184,7 @@ const CustomEvent = () => {
     try {
       await dispatch(eventCommentActions.editComment(modalText, id));
       await dispatch(eventActions.getEventById(eventId));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     onChangeModalText('');
@@ -200,7 +200,7 @@ const CustomEvent = () => {
       dispatch(
         messageActions.setMessage('Comment reported!', messageScreenDing)
       );
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
   };

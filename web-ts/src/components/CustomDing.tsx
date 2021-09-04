@@ -97,7 +97,7 @@ const CustomDing = () => {
         initLikeDing = true;
         await dispatch(dingActions.likeDing(dingId));
       }
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     setIsLikeLoading(false);
@@ -118,7 +118,7 @@ const CustomDing = () => {
       dispatch(
         messageActions.setMessage('Description updated', messageScreenDing)
       );
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     onChangeModalText('');
@@ -156,7 +156,7 @@ const CustomDing = () => {
       await dispatch(
         messageActions.setMessage('Ding Deleted', messageScreenMap)
       );
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
   };
@@ -165,7 +165,7 @@ const CustomDing = () => {
     try {
       await dispatch(dingActions.reportDingById(dingId));
       dispatch(messageActions.setMessage('Ding Reported!', messageScreenDing));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
   };
@@ -187,7 +187,7 @@ const CustomDing = () => {
     try {
       await dispatch(commentActions.postComment(text, dingId));
       await dispatch(dingActions.getDingById(dingId));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     onChangeText('');
@@ -204,7 +204,7 @@ const CustomDing = () => {
     try {
       await dispatch(commentActions.editComment(modalText, id));
       await dispatch(dingActions.getDingById(dingId));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
     onChangeModalText('');
@@ -220,7 +220,7 @@ const CustomDing = () => {
       dispatch(
         messageActions.setMessage('Comment reported!', messageScreenDing)
       );
-    } catch (err) {
+    } catch (err: any) {
       dispatch(messageActions.setMessage(err.message, messageScreenDing));
     }
   };

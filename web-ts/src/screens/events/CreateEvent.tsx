@@ -185,7 +185,7 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
         longitudeDelta: 0.04,
       });
       return coordsMongo;
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
   };
@@ -195,7 +195,7 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
     setIsFetchingMarker(true);
     try {
       await coordLookUp(address);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
     setMapLoaded(true);
@@ -294,7 +294,7 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
       await dispatch(eventsActions.getLocalEvents(locationReduxObj));
       setIsCreatingEvent(false);
       setConfirmMessage(true);
-    } catch (err) {
+    } catch (err: any) {
       setIsCreatingEvent(false);
       setError(err.message);
     }
@@ -342,7 +342,7 @@ const CreateEvent = (props: RouteComponentProps<{}, StaticContext, event>) => {
         await dispatch(eventsActions.getLocalEvents(locationReduxObj));
         setIsCreatingEvent(false);
         setConfirmMessage(true);
-      } catch (err) {
+      } catch (err: any) {
         setIsCreatingEvent(false);
         setError(err.message);
       }

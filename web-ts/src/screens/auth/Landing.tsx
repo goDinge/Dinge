@@ -67,7 +67,7 @@ export const Landing = () => {
     }
     try {
       await dispatch(action);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
       setIsLoading(false);
     }

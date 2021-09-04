@@ -127,7 +127,7 @@ export const reportComment = (commentId: string) => {
         type: ActionTypes.REPORT_COMMENT,
         comment: comment,
       });
-    } catch (err) {
+    } catch (err: any) {
       if (!err.response) {
         throw new Error('Cannot connect with server. Please try again.');
       } else {

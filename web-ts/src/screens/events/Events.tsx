@@ -60,7 +60,7 @@ const Events = () => {
       setError(null);
       try {
         await dispatch(eventsActions.getLocalEvents(position));
-      } catch (err) {
+      } catch (err: any) {
         setError(err.message);
       }
     },

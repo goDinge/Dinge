@@ -56,7 +56,7 @@ const App = () => {
       const expirationTime = expirationDate.getTime() - new Date().getTime();
       try {
         AuthActions.authenticate(token, userId, expirationTime, authUser);
-      } catch (err) {
+      } catch (err: any) {
         console.log(err.message);
       }
     };
