@@ -167,8 +167,9 @@ const MapScreen = (props) => {
       //Expo Location is buggy at the moment, set Accuracy to Lowest seems to work - Sept 1st 2021
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Lowest,
-        enableHighAccuracy: true,
+        //enableHighAccuracy: true,
       });
+      //const location = await getLastKnownPositionAsync();
       console.log('ran location: ', location);
       if (!location) {
         //if can't find any location, ask user to enter address
