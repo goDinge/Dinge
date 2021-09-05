@@ -170,6 +170,7 @@ const UploadScreen = (props) => {
       const getLocation = async () => {
         const location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Highest,
+          enableHighAccuracy: true,
         });
         setLocation(location);
         await dispatch(locationActions.setLocation(location));
