@@ -162,15 +162,30 @@ const MapScreen = (props) => {
   //remember: useEffect calls getLocation(), loadData() gets called inside getLocation
   const getLocation = async () => {
     setError(null);
+
+    // const timer = new Promise((resolve) => {
+    //   setTimeout(() => resolve('too-slow'), 6000);
+    // });
+
+    // const possibleLocation = await Promise.race([location, timer]);
+
+    // if (possibleLocation === 'too-slow') {
+    //   addressLocation();
+    // }
+
     try {
-      console.log('before running location');
+      //console.log('before running location');
+
       //Expo Location is buggy at the moment, set Accuracy to Lowest seems to work - Sept 1st 2021
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Lowest,
-        //enableHighAccuracy: true,
+        enableHighAccuracy: true,
       });
+
       //const location = await getLastKnownPositionAsync();
-      console.log('ran location: ', location);
+
+      //console.log('ran location: ', location);
+
       if (!location) {
         //if can't find any location, ask user to enter address
         addressLocation();
