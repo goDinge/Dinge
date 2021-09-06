@@ -92,7 +92,6 @@ const Auth = (props) => {
         formState.inputValues.email,
         formState.inputValues.password
       );
-      //console.log(formState);
     }
     setError(null);
     try {

@@ -508,6 +508,10 @@ export interface Set_Did_Try_Al {
   didTryAutoLogin: boolean;
 }
 
+export interface Get_Verification_Code {
+  type: ActionTypes.GET_VERIFICATION_CODE;
+}
+
 export interface Logout {
   type: ActionTypes.LOGOUT;
   didTryAutoLogin: boolean;

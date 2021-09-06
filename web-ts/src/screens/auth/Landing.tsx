@@ -2,6 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { Redirect } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { Dispatch } from 'redux';
+import { Link } from 'react-router-dom';
 
 import * as authActions from '../../store/actions/auth';
 import CustomError from '../../components/CustomError';
@@ -145,20 +146,31 @@ export const Landing = () => {
                     />
                   </div>
                 ) : null}
-                <input
+                <button
                   type="submit"
                   className="btn btn-primary"
-                  value={
-                    isSignUp
-                      ? isLoading
-                        ? 'Registering...'
-                        : 'Register'
-                      : isLoading
-                      ? 'Logging in...'
-                      : 'Login'
-                  }
-                />
+                  style={{ width: 170 }}
+                >
+                  {isSignUp
+                    ? isLoading
+                      ? 'Registering...'
+                      : 'Register'
+                    : isLoading
+                    ? 'Logging in...'
+                    : 'Login'}
+                </button>
               </form>
+              {isSignUp ? null : (
+                <Link to="/forgotPassword">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    style={{ width: 170 }}
+                  >
+                    Forgot Password
+                  </button>
+                </Link>
+              )}
               <div className="center">
                 <p className="my-1">
                   {isSignUp

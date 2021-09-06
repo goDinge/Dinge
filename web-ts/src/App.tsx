@@ -17,7 +17,9 @@ import Public from './screens/user/Public';
 import Map from './screens/map/Map';
 import Events from './screens/events/Events';
 import CreateEvent from './screens/events/CreateEvent';
-import updateProfile from './screens/user/UpdateProfile';
+import UpdateProfile from './screens/user/UpdateProfile';
+import ForgotPassword from './screens/auth/ForgotPassword';
+import VerificationCode from './screens/auth/VerificationCode';
 import store from './store/store';
 
 import './index.css';
@@ -81,7 +83,9 @@ const App = () => {
           <Route exact path="/map" component={Map} />
           <Route exact path="/events" component={Events} />
           <Route exact path="/createEvent" component={CreateEvent} />
-          <Route exact path="/updateProfile" component={updateProfile} />
+          <Route exact path="/updateProfile" component={UpdateProfile} />
+          <Route exact path="/forgotPassword" component={ForgotPassword} />
+          <Route exact path="/verificationCode" component={VerificationCode} />
         </Switch>
       </Fragment>
     </Router>

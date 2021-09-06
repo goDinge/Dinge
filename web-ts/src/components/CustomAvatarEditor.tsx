@@ -9,6 +9,7 @@ import { AuthState } from '../store/interfaces';
 import xMark from '../assets/x-mark.png';
 
 import * as authActions from '../store/actions/auth';
+import CustomError from '../components/CustomError';
 
 interface CompletedCrop {
   x: number;
@@ -34,7 +35,7 @@ const CustomAvatarEditor = (props: {
   const imgRef = useRef<HTMLImageElement>();
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const [completedCrop, setCompletedCrop] = useState<CompletedCrop>();
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null);
   const [crop, setCrop] = useState<Crop>({
     x: 1,
     y: 1,
@@ -154,6 +155,14 @@ const CustomAvatarEditor = (props: {
           Upload New Avatar
         </button>
       </div>
+      {error ? (
+        <CustomError
+          message={error}
+          onClose={onClose}
+          errorType="error-events"
+          overlayType="error-events-calendar-overlay"
+        />
+      ) : null}
     </div>
   );
 };
