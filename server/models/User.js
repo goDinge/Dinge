@@ -129,7 +129,7 @@ const getRandomInt = (min, max) => {
 UserSchema.methods.getVerificationCode = function () {
   const veriCodeNumber = getRandomInt(1000, 9999);
   const veriCode = veriCodeNumber.toString();
-  console.log(veriCode);
+  console.log('mongo user Model veriCode: ', veriCode);
 
   this.verificationCode = crypto
     .createHash('sha256')

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { AppState } from '../../store/reducers/rootReducer';
+import { AuthState } from '../../store/interfaces';
 
 import * as authActions from '../../store/actions/auth';
 import CustomError from '../../components/CustomError';
@@ -12,6 +14,16 @@ const ForgotPassword = () => {
   const [error, setError] = useState<string | null>(null);
 
   const dispatch = useDispatch<Dispatch<any>>();
+  const history = useHistory<History>();
+
+  const authState: AuthState = useSelector((state: AppState) => state.auth);
+  const veriCode: string = authState.veriCode;
+
+  useEffect(() => {
+    if (veriCode) {
+      history.push('/verificationCode');
+    }
+  }, [veriCode, history]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -21,9 +33,9 @@ const ForgotPassword = () => {
     setError(null);
   };
 
-  console.log('email: ', email);
+  console.log('veriCode: ', veriCode);
 
-  const verificationHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+  const emailHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -60,10 +72,10 @@ const ForgotPassword = () => {
             with your profile. An email will be sent to your email address with
             a 4-digit verification code.
           </p>
-          <form className="form" onSubmit={(e) => verificationHandler(e)}>
+          <form className="form" onSubmit={(e) => emailHandler(e)}>
             <div className="form-group">
               <input
-                id="name"
+                id="email"
                 type="text"
                 placeholder="your email"
                 value={email}

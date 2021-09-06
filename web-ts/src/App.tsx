@@ -20,6 +20,7 @@ import CreateEvent from './screens/events/CreateEvent';
 import UpdateProfile from './screens/user/UpdateProfile';
 import ForgotPassword from './screens/auth/ForgotPassword';
 import VerificationCode from './screens/auth/VerificationCode';
+import ResetPassword from './screens/auth/ResetPassword';
 import store from './store/store';
 
 import './index.css';
@@ -86,6 +87,7 @@ const App = () => {
           <Route exact path="/updateProfile" component={UpdateProfile} />
           <Route exact path="/forgotPassword" component={ForgotPassword} />
           <Route exact path="/verificationCode" component={VerificationCode} />
+          <Route exact path="/resetPassword" component={ResetPassword} />
         </Switch>
       </Fragment>
     </Router>

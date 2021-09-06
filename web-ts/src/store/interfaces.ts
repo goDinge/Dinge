@@ -194,6 +194,9 @@ export interface AuthState {
   userId: string | null;
   didTryAutoLogin: boolean;
   authUser: user | null;
+  veriCode: string;
+  verified: boolean;
+  newPassword: boolean;
 }
 
 export interface customInputProps {
@@ -510,6 +513,12 @@ export interface Set_Did_Try_Al {
 
 export interface Get_Verification_Code {
   type: ActionTypes.GET_VERIFICATION_CODE;
+  veriCode: string;
+}
+
+export interface Code_Verified {
+  type: ActionTypes.CODE_VERIFIED;
+  verified: boolean;
 }
 
 export interface Logout {
@@ -529,6 +538,8 @@ export type AuthActionTypes =
   | Set_Auth_User
   | Get_Auth_User
   | Set_Did_Try_Al
+  | Get_Verification_Code
+  | Code_Verified
   | Profile_Update
   | Logout;
 

@@ -241,6 +241,35 @@ export const forgotPassword = (email: string) => {
   };
 };
 
+export const verifyCode = (code: string) => {
+  return async (dispatch: Dispatch<any>) => {
+    const body = JSON.stringify({ code });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const response = await axios.post(
+        `${CURRENT_IP}/api/auth/forgotpassword/${code}`,
+        body,
+        config
+      );
+
+      const verified = response.data.success;
+
+      dispatch({
+        type: ActionTypes.CODE_VERIFIED,
+        verified: verified,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
 export const setAuthUser = (resData: user) => {
   return (dispatch: Dispatch<any>) => {
     dispatch({

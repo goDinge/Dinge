@@ -6,6 +6,9 @@ const initialState: AuthState = {
   userId: null,
   didTryAutoLogin: false,
   authUser: null,
+  veriCode: '',
+  verified: false,
+  newPassword: false,
 };
 
 export const authReducer = (
@@ -34,6 +37,16 @@ export const authReducer = (
       return {
         ...state,
         didTryAutoLogin: true,
+      };
+    case ActionTypes.GET_VERIFICATION_CODE:
+      return {
+        ...state,
+        veriCode: action.veriCode,
+      };
+    case ActionTypes.CODE_VERIFIED:
+      return {
+        ...state,
+        veriCode: action.verified,
       };
     case ActionTypes.LOGOUT:
       return {
