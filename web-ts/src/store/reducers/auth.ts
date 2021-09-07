@@ -46,7 +46,12 @@ export const authReducer = (
     case ActionTypes.CODE_VERIFIED:
       return {
         ...state,
-        veriCode: action.verified,
+        verified: action.verified,
+      };
+    case ActionTypes.SET_NEW_PASSWORD:
+      return {
+        ...state,
+        newPassword: action.newPassword,
       };
     case ActionTypes.LOGOUT:
       return {

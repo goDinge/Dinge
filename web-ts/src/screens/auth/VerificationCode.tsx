@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { useHistory } from 'react-router-dom';
 import { AppState } from '../../store/reducers/rootReducer';
 import { AuthState } from '../../store/interfaces';
-import { ActionTypes } from '../../store/types';
 
 import * as authActions from '../../store/actions/auth';
 import CustomError from '../../components/CustomError';
@@ -21,12 +20,6 @@ const VerificationCode = () => {
   const veriCode: string = authState.veriCode;
   const verified: boolean = authState.verified;
 
-  useEffect(() => {
-    if (verified) {
-      history.push('/resetPassword');
-    }
-  }, [verified, history]);
-
   const verificationCodeHandler = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
@@ -35,23 +28,24 @@ const VerificationCode = () => {
     setIsLoading(true);
     try {
       await dispatch(authActions.verifyCode(code));
+      setIsLoading(false);
+      history.push('/resetPassword');
     } catch (err: any) {
       setError(err.messsage);
     }
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    if (veriCode) {
-      console.log('we have a veriCode');
-      setTimeout(() => {
-        dispatch({
-          type: ActionTypes.GET_VERIFICATION_CODE,
-          veriCode: '',
-        });
-      }, 1000 * 60 * 10); // veriCode state will last 10 minutes
-    }
-  }, [veriCode, dispatch]);
+  // useEffect(() => {
+  //   if (veriCode) {
+  //     setTimeout(() => {
+  //       dispatch({
+  //         type: ActionTypes.GET_VERIFICATION_CODE,
+  //         veriCode: '',
+  //       });
+  //     }, 1000 * 60 * 10 * 6); // veriCode state will last 60 minutes
+  //   }
+  // }, [veriCode, verified, dispatch]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value);
@@ -61,9 +55,9 @@ const VerificationCode = () => {
     setError(null);
   };
 
-  console.log('veriCode: ', veriCode);
+  console.log('verified: ', verified);
 
-  if (!veriCode) {
+  if (!veriCode && !verified) {
     return (
       <div className="calender-screen">
         <div className="profile-container">

@@ -521,6 +521,16 @@ export interface Code_Verified {
   verified: boolean;
 }
 
+export interface Set_New_Password {
+  type: ActionTypes.SET_NEW_PASSWORD;
+  newPassword: string;
+}
+
+export interface PasswordForm {
+  password: string;
+  confirmPassword: string;
+}
+
 export interface Logout {
   type: ActionTypes.LOGOUT;
   didTryAutoLogin: boolean;
@@ -538,9 +548,10 @@ export type AuthActionTypes =
   | Set_Auth_User
   | Get_Auth_User
   | Set_Did_Try_Al
+  | Profile_Update
   | Get_Verification_Code
   | Code_Verified
-  | Profile_Update
+  | Set_New_Password
   | Logout;
 
 export type UserActionTypes = Get_User | Remove_User;

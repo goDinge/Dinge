@@ -53,7 +53,16 @@ export const Navbar = () => {
               </Link>
             </li>
           </ul>
-        ) : null}
+        ) : (
+          <ul>
+            <li>
+              <Link to="/about">About</Link>
+            </li>
+            <li>
+              <Link to="/investors">Investors</Link>
+            </li>
+          </ul>
+        )}
       </ul>
     </nav>
   );

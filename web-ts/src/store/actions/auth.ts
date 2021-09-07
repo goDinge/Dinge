@@ -260,9 +260,50 @@ export const verifyCode = (code: string) => {
 
       const verified = response.data.success;
 
+      console.log('auth actions: ', verified);
+
       dispatch({
         type: ActionTypes.CODE_VERIFIED,
         verified: verified,
+      });
+    } catch (err) {
+      throw new Error('Cannot connect with server. Please try again.');
+    }
+  };
+};
+
+export const setNewPassword = (
+  password: string,
+  passwordConfirm: string,
+  veriCode: string
+) => {
+  return async (dispatch: Dispatch<any>) => {
+    if (password !== passwordConfirm) {
+      return new Error(
+        'Please check your new password fields to make sure they are the same.'
+      );
+    }
+
+    const body = JSON.stringify({ password });
+
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    try {
+      const response = await axios.put(
+        `${CURRENT_IP}/api/auth/forgotpassword/${veriCode}`,
+        body,
+        config
+      );
+
+      const success = response.data.success;
+
+      dispatch({
+        type: ActionTypes.SET_NEW_PASSWORD,
+        newPassword: success,
       });
     } catch (err) {
       throw new Error('Cannot connect with server. Please try again.');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { useHistory } from 'react-router-dom';
@@ -10,7 +10,6 @@ import CustomError from '../../components/CustomError';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const dispatch = useDispatch<Dispatch<any>>();
@@ -18,12 +17,6 @@ const ForgotPassword = () => {
 
   const authState: AuthState = useSelector((state: AppState) => state.auth);
   const veriCode: string = authState.veriCode;
-
-  useEffect(() => {
-    if (veriCode) {
-      history.push('/verificationCode');
-    }
-  }, [veriCode, history]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -37,7 +30,6 @@ const ForgotPassword = () => {
 
   const emailHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
     setError(null);
 
     if (!email) {
@@ -56,10 +48,10 @@ const ForgotPassword = () => {
 
     try {
       await dispatch(authActions.forgotPassword(email));
+      history.push('/verificationCode');
     } catch (err: any) {
       setError(err.message);
     }
-    setIsLoading(false);
   };
 
   return (
@@ -82,23 +74,13 @@ const ForgotPassword = () => {
                 onChange={(e) => onChange(e)}
               />
             </div>
-            {isLoading ? (
-              <button
-                type="submit"
-                className="btn btn-primary"
-                style={{ width: '100%' }}
-              >
-                Sending Verification Code...
-              </button>
-            ) : (
-              <button
-                type="submit"
-                className="btn btn-primary"
-                style={{ width: '100%' }}
-              >
-                Get Verification Code
-              </button>
-            )}
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{ width: '100%' }}
+            >
+              Get Verification Code
+            </button>
           </form>
         </div>
       </div>

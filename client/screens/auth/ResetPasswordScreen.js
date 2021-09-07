@@ -59,8 +59,6 @@ const ResetPasswordScreen = (props) => {
     formIsValid: false,
   });
 
-  //console.log('formState: ', formState);
-
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {
       dispatchFormState({

@@ -7,9 +7,10 @@ const User = require('../models/User');
 exports.protect = asyncHandler(async (req, res, next) => {
   let token = req.cookies.token || req.headers.authorization;
 
-  // console.log('middleware auth token or: ', token);
-  // console.log('middleware auth req.headers: ', req.headers.authorization);
-  // console.log('middleware auth req.cookies: ', req.cookies);
+  console.log('middleware auth token: ', token);
+  console.log('middleware auth req.headers: ', req.headers.authorization);
+  console.log('middleware auth req.cookies: ', req.cookies);
+
   //Make sure token is sent
   if (!token) {
     return next(
@@ -20,6 +21,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   try {
     //Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('decoded: ', decoded);
 
     req.user = await User.findById(decoded.id);
 
