@@ -236,7 +236,7 @@ img {
 }
 
 /* error */
- .error-title {
+ .message-title {
   text-align: center;
   font-family:  'AirbnbCerealBold', 'Raleway', sans-serif;
   font-size: 22px;

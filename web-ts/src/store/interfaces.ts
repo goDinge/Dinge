@@ -541,6 +541,19 @@ export type Marker = {
   lng: number;
 };
 
+export type errorType =
+  | 'error'
+  | 'error-map'
+  | 'error-ding'
+  | 'error-socials'
+  | 'error-comment'
+  | 'error-events';
+
+export type overlayType =
+  | 'error-map-overlay'
+  | 'error-events-calendar-overlay'
+  | 'no-overlay';
+
 export type MessageActionTypes = Set_Message | Reset_Message;
 
 export type AuthActionTypes =

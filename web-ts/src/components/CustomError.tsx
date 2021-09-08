@@ -1,17 +1,5 @@
 import React from 'react';
-
-type errorType =
-  | 'error'
-  | 'error-map'
-  | 'error-ding'
-  | 'error-socials'
-  | 'error-comment'
-  | 'error-events';
-
-type overlayType =
-  | 'error-map-overlay'
-  | 'error-events-calendar-overlay'
-  | 'no-overlay';
+import { errorType, overlayType } from '../store/interfaces';
 
 const CustomError = (props: {
   message: string | null;
@@ -24,7 +12,7 @@ const CustomError = (props: {
   return (
     <div className={overlayType} style={{ zIndex: 20000 }}>
       <div key={message} className={errorType}>
-        <p className="error-title">An error occurred!</p>
+        <p className="message-title">An error occurred!</p>
         <p>{message}</p>
         <button onClick={onClose} className="btn btn-primary">
           Okay
