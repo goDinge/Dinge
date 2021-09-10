@@ -21,6 +21,7 @@ import UpdateProfile from './screens/user/UpdateProfile';
 import ForgotPassword from './screens/auth/ForgotPassword';
 import VerificationCode from './screens/auth/VerificationCode';
 import ResetPassword from './screens/auth/ResetPassword';
+import PrivateRoute from './PrivateRoute';
 import store from './store/store';
 
 import './index.css';
@@ -64,7 +65,6 @@ const App = () => {
       }
     };
     tryLogin();
-    //console.log('app.tsx storage: ', localStorage.userData);
 
     if (localStorage.userData) {
       store.dispatch(getAuthUser());
@@ -79,12 +79,12 @@ const App = () => {
         <Switch>
           <Route exact path="/about" component={About} />
           <Route exact path="/investors" component={Investors} />
-          <Route exact path="/profile" component={Profile} />
           <Route exact path="/public" component={Public} />
-          <Route exact path="/map" component={Map} />
-          <Route exact path="/events" component={Events} />
-          <Route exact path="/createEvent" component={CreateEvent} />
-          <Route exact path="/updateProfile" component={UpdateProfile} />
+          <PrivateRoute exact path="/profile" component={Profile} />
+          <PrivateRoute exact path="/map" component={Map} />
+          <PrivateRoute exact path="/events" component={Events} />
+          <PrivateRoute exact path="/createEvent" component={CreateEvent} />
+          <PrivateRoute exact path="/updateProfile" component={UpdateProfile} />
           <Route exact path="/forgotPassword" component={ForgotPassword} />
           <Route exact path="/verificationCode" component={VerificationCode} />
           <Route exact path="/resetPassword" component={ResetPassword} />
