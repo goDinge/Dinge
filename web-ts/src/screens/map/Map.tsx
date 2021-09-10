@@ -145,6 +145,8 @@ const Map = () => {
     lng: location.coords.longitude,
   };
 
+  console.log('map hooks error: ', error);
+
   if (isMapLoading) {
     return (
       <div className="map">

@@ -260,8 +260,6 @@ export const verifyCode = (code: string) => {
 
       const verified = response.data.success;
 
-      console.log('auth actions: ', verified);
-
       dispatch({
         type: ActionTypes.CODE_VERIFIED,
         verified: verified,

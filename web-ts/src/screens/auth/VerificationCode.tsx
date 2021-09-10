@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { useHistory } from 'react-router-dom';
@@ -11,6 +11,7 @@ import CustomError from '../../components/CustomError';
 const VerificationCode = () => {
   const [code, setCode] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const dispatch = useDispatch<Dispatch<any>>();
@@ -19,6 +20,12 @@ const VerificationCode = () => {
   const authState: AuthState = useSelector((state: AppState) => state.auth);
   const veriCode: string = authState.veriCode;
   const verified: boolean = authState.verified;
+
+  useEffect(() => {
+    if (isDone) {
+      history.push('/resetPassword');
+    }
+  }, [isDone, history]);
 
   const verificationCodeHandler = async (
     e: React.FormEvent<HTMLFormElement>
@@ -29,23 +36,12 @@ const VerificationCode = () => {
     try {
       await dispatch(authActions.verifyCode(code));
       setIsLoading(false);
-      history.push('/resetPassword');
+      setIsDone(true);
     } catch (err: any) {
       setError(err.messsage);
     }
     setIsLoading(false);
   };
-
-  // useEffect(() => {
-  //   if (veriCode) {
-  //     setTimeout(() => {
-  //       dispatch({
-  //         type: ActionTypes.GET_VERIFICATION_CODE,
-  //         veriCode: '',
-  //       });
-  //     }, 1000 * 60 * 10 * 6); // veriCode state will last 60 minutes
-  //   }
-  // }, [veriCode, verified, dispatch]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCode(e.target.value);
@@ -54,8 +50,6 @@ const VerificationCode = () => {
   const onClose = () => {
     setError(null);
   };
-
-  console.log('verified: ', verified);
 
   if (!veriCode && !verified) {
     return (
@@ -93,11 +87,7 @@ const VerificationCode = () => {
               />
             </div>
             {isLoading ? (
-              <button
-                type="submit"
-                className="btn btn-primary"
-                style={{ width: '100%' }}
-              >
+              <button className="btn btn-primary" style={{ width: '100%' }}>
                 Verifying Code...
               </button>
             ) : (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from 'redux';
 import { useHistory } from 'react-router-dom';
@@ -10,6 +10,8 @@ import CustomError from '../../components/CustomError';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDone, setIsDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const dispatch = useDispatch<Dispatch<any>>();
@@ -17,6 +19,12 @@ const ForgotPassword = () => {
 
   const authState: AuthState = useSelector((state: AppState) => state.auth);
   const veriCode: string = authState.veriCode;
+
+  useEffect(() => {
+    if (isDone) {
+      history.push('/verificationCode');
+    }
+  }, [isDone, history]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -46,12 +54,15 @@ const ForgotPassword = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
       await dispatch(authActions.forgotPassword(email));
-      history.push('/verificationCode');
+      setIsLoading(false);
+      setIsDone(true);
     } catch (err: any) {
       setError(err.message);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -74,13 +85,19 @@ const ForgotPassword = () => {
                 onChange={(e) => onChange(e)}
               />
             </div>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              style={{ width: '100%' }}
-            >
-              Get Verification Code
-            </button>
+            {isLoading ? (
+              <button className="btn btn-primary" style={{ width: '100%' }}>
+                Getting Code...
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ width: '100%' }}
+              >
+                Get Verification Code
+              </button>
+            )}
           </form>
         </div>
       </div>

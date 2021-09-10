@@ -23,9 +23,6 @@ const ResetPassword = () => {
   const verified: boolean = authState.verified;
   const newPasswordState: boolean = authState.newPassword;
 
-  console.log('veriCode: ', veriCode);
-  console.log('verified: ', verified);
-
   const setNewPasswordHandler = async (
     e: React.FormEvent<HTMLFormElement>,
     password: string,
@@ -52,6 +49,20 @@ const ResetPassword = () => {
   const onClose = () => {
     setError(null);
   };
+
+  if (!veriCode && !verified) {
+    return (
+      <div className="calender-screen">
+        <div className="profile-container">
+          <div className="profile-inner-container">
+            <p className="profile-title">
+              You do not have the pre-requisite to visit this webpage.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="calender-screen">

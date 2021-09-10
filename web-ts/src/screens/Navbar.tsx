@@ -22,6 +22,7 @@ export const Navbar = () => {
     <nav className="navbar bg-primary">
       <h1 className="cerealBold">
         <Link to="/">Dinge</Link>
+        <span style={{ fontSize: 14 }}>beta</span>
       </h1>
       <ul>
         {auth.authUser !== null ? (
