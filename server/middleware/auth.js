@@ -5,6 +5,7 @@ const User = require('../models/User');
 
 //Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
+  console.log('protect route hit');
   let token = req.cookies.token || req.headers.authorization;
 
   console.log('middleware auth token: ', token);
@@ -21,7 +22,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   try {
     //Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('decoded: ', decoded);
+    console.log('auth: verify token decoded: ', decoded);
 
     req.user = await User.findById(decoded.id);
 

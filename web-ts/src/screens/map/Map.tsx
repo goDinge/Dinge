@@ -98,6 +98,7 @@ const Map = () => {
 
   const getLocation = useCallback(async () => {
     if (!locationReduxObj.coords) {
+      // if (true) {
       await navigator.geolocation.getCurrentPosition((position) => {
         dispatch(locationActions.setLocation(position));
         setLocation(position);
@@ -106,6 +107,7 @@ const Map = () => {
       }, errorCallback);
     } else {
       setLocation(locationReduxObj);
+      loadData(locationReduxObj);
       setIsMapLoading(false);
     }
   }, [dispatch, loadData, locationReduxObj]);
@@ -144,8 +146,6 @@ const Map = () => {
     lat: location.coords.latitude,
     lng: location.coords.longitude,
   };
-
-  console.log('map hooks error: ', error);
 
   if (isMapLoading) {
     return (

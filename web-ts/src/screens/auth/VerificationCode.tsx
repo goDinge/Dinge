@@ -18,7 +18,7 @@ const VerificationCode = () => {
   const history = useHistory<History>();
 
   const authState: AuthState = useSelector((state: AppState) => state.auth);
-  const veriCode: string = authState.veriCode;
+  const veriCode: string | null = authState.veriCode;
   const verified: boolean = authState.verified;
 
   useEffect(() => {

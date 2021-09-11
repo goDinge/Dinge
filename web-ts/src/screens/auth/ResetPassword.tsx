@@ -19,15 +19,15 @@ const ResetPassword = () => {
   const dispatch = useDispatch<Dispatch<any>>();
 
   const authState: AuthState = useSelector((state: AppState) => state.auth);
-  const veriCode: string = authState.veriCode;
+  const veriCode: string | null = authState.veriCode;
   const verified: boolean = authState.verified;
-  const newPasswordState: boolean = authState.newPassword;
+  const newPasswordState = authState.newPassword;
 
   const setNewPasswordHandler = async (
     e: React.FormEvent<HTMLFormElement>,
     password: string,
     confirmPassword: string,
-    veriCode: string
+    veriCode: string | null
   ) => {
     e.preventDefault();
     setIsLoading(true);

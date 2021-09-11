@@ -194,9 +194,9 @@ export interface AuthState {
   userId: string | null;
   didTryAutoLogin: boolean;
   authUser: user | null;
-  veriCode: string;
+  veriCode: string | null;
   verified: boolean;
-  newPassword: boolean;
+  newPassword: string | null;
 }
 
 export interface customInputProps {
@@ -444,7 +444,7 @@ export interface Authenticate {
     name: string;
     email: string;
     password: string;
-  };
+  } | null;
 }
 
 export interface Set_Auth_User {
@@ -474,8 +474,8 @@ export interface Profile_Update {
   authUser: {
     name: string;
     email: string;
-    website: string;
-    facebook: string;
+    website?: string;
+    facebook?: string;
   };
 }
 

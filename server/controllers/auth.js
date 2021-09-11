@@ -45,6 +45,8 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
 //route   POST /api/auth/login
 //access  public
 exports.login = asyncHandler(async (req, res, next) => {
+  console.log('controller login');
+
   const { email, password } = req.body;
   const cleanEmail = sanitize(email);
   const cleanPassword = sanitize(password);
@@ -191,7 +193,6 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
         leonard@getdinge.com
         </p>`,
     });
-    //console.log('server veriCode: ', veriCode);
     res.status(200).json({
       success: true,
       data: veriCode,

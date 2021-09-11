@@ -29,6 +29,8 @@ export const Landing = () => {
 
   const dispatch = useDispatch<Dispatch<any>>();
 
+  console.log('Landing: ', authState);
+
   if (authState.authUser) {
     return <Redirect to="map" />;
   }

@@ -6,9 +6,14 @@ const initialState: AuthState = {
   userId: null,
   didTryAutoLogin: false,
   authUser: null,
-  veriCode: '',
+  // authData: {
+  //   name: '',
+  //   email: '',
+  //   password: '',
+  // },
+  veriCode: null,
   verified: false,
-  newPassword: false,
+  newPassword: null,
 };
 
 export const authReducer = (
@@ -18,6 +23,7 @@ export const authReducer = (
   switch (action.type) {
     case ActionTypes.AUTHENTICATE:
       return {
+        ...state,
         token: action.token,
         userId: action.userId,
         didTryAutoLogin: true,

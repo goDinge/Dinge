@@ -51,6 +51,7 @@ export const register = (name: string, email: string, password: string) => {
 
 export const login = (email: string, password: string) => {
   return async (dispatch: Dispatch<any>) => {
+    console.log('action login');
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -273,7 +274,7 @@ export const verifyCode = (code: string) => {
 export const setNewPassword = (
   password: string,
   passwordConfirm: string,
-  veriCode: string
+  veriCode: string | null
 ) => {
   return async (dispatch: Dispatch<any>) => {
     if (password !== passwordConfirm) {
