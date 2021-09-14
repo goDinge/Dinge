@@ -22,6 +22,7 @@ import ForgotPassword from './screens/auth/ForgotPassword';
 import VerificationCode from './screens/auth/VerificationCode';
 import ResetPassword from './screens/auth/ResetPassword';
 import PrivateRoute from './PrivateRoute';
+import Privacy from './screens/user/Privacy';
 import store from './store/store';
 
 import './index.css';
@@ -88,6 +89,7 @@ const App = () => {
           <Route exact path="/forgotPassword" component={ForgotPassword} />
           <Route exact path="/verificationCode" component={VerificationCode} />
           <Route exact path="/resetPassword" component={ResetPassword} />
+          <Route exact path="/privacy" component={Privacy} />
         </Switch>
       </Fragment>
     </Router>

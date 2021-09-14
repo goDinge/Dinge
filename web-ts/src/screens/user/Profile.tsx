@@ -147,6 +147,19 @@ const Profile = () => {
               </div>
             </div>
           </div>
+          <div className="profile-stats-container">
+            <div className="my-1 center">
+              <Link to="/privacy">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ width: '50%' }}
+                >
+                  Privacy Policy
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
       {eventObj.user !== '' ? <CustomEvent /> : null}
