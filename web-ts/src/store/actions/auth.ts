@@ -51,7 +51,6 @@ export const register = (name: string, email: string, password: string) => {
 
 export const login = (email: string, password: string) => {
   return async (dispatch: Dispatch<any>) => {
-    console.log('action login');
     const config = {
       headers: {
         'Content-Type': 'application/json',

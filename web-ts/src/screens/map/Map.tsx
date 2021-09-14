@@ -97,8 +97,7 @@ const Map = () => {
   );
 
   const getLocation = useCallback(async () => {
-    if (!locationReduxObj.coords) {
-      // if (true) {
+    if (locationReduxObj.coords.accuracy === 0) {
       await navigator.geolocation.getCurrentPosition((position) => {
         dispatch(locationActions.setLocation(position));
         setLocation(position);
