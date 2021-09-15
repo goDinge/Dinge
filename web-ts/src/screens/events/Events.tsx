@@ -130,7 +130,7 @@ const Events = () => {
   }
 
   return (
-    <div className="calender-screen">
+    <div className="generic-screen">
       <div className="calendar-container">
         <div className="dates-container">
           {nextTwoWeeksArray.map((item, index: number) => {

@@ -52,7 +52,7 @@ const ResetPassword = () => {
 
   if (!veriCode && !verified) {
     return (
-      <div className="calender-screen">
+      <div className="generic-screen">
         <div className="profile-container">
           <div className="profile-inner-container">
             <p className="profile-title">
@@ -65,7 +65,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="calender-screen">
+    <div className="generic-screen">
       <div className="profile-container">
         <div className="profile-inner-container">
           <p className="profile-title">Enter your new password</p>

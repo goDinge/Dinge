@@ -66,7 +66,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="calender-screen">
+    <div className="generic-screen">
       <div className="profile-container">
         <div className="profile-inner-container">
           <p className="profile-title">Reset Your Password</p>

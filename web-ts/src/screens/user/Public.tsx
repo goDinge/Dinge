@@ -48,7 +48,7 @@ const Public = ({ location }: { location: any }) => {
   }, [dynamicURL]);
 
   return (
-    <div className="calender-screen">
+    <div className="generic-screen">
       <div className="profile-container">
         <div className="profile-inner-container">
           <div className="profile-id-container">

@@ -2,7 +2,7 @@ import React from 'react';
 
 const Privacy = () => {
   return (
-    <div className="calender-screen">
+    <div className="generic-screen">
       <div className="profile-container">
         <div className="profile-inner-container">
           <div className="profile-stats-container">
