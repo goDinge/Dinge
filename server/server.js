@@ -6,6 +6,7 @@ const errorHandler = require('./middleware/error');
 const helmet = require('helmet');
 const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
 
 //.env setup
 dotenv.config({ path: '.env' });
@@ -44,6 +45,9 @@ app.get('/', (req, res) => {
   console.log('Route connected');
   res.send('Route connected');
 });
+
+//sanitize data
+app.use(mongoSanitize());
 
 //set security headers
 app.use(helmet());

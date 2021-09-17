@@ -5,12 +5,11 @@ const User = require('../models/User');
 
 //Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
-  console.log('protect route hit');
   let token = req.cookies.token || req.headers.authorization;
 
-  console.log('middleware auth token: ', token);
-  console.log('middleware auth req.headers: ', req.headers.authorization);
-  console.log('middleware auth req.cookies: ', req.cookies);
+  // console.log('middleware auth token: ', token);
+  // console.log('middleware auth req.headers: ', req.headers.authorization);
+  // console.log('middleware auth req.cookies: ', req.cookies);
 
   //Make sure token is sent
   if (!token) {

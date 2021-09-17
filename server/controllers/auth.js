@@ -45,8 +45,6 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
 //route   POST /api/auth/login
 //access  public
 exports.login = asyncHandler(async (req, res, next) => {
-  console.log('controller login');
-
   const { email, password } = req.body;
   const cleanEmail = sanitize(email);
   const cleanPassword = sanitize(password);
